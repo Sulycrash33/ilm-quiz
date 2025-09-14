@@ -18,7 +18,9 @@ import {
   Palette,
   Atom,
   BrainCircuit,
-  Globe
+  Globe,
+  Star as StarIcon,
+  BookCopy,
 } from 'lucide-react';
 import type { Rank, Category, Question, Topic, CategoryAchievement, CategoryDetails } from './types';
 import { MosqueIcon } from '@/components/icons/MosqueIcon';
@@ -36,8 +38,9 @@ export const RANKS: Rank[] = [
 ];
 
 export const CATEGORIES: Category[] = [
-  { id: 'allahs-names', title: "Allah's Names & Attributes", description: "Explore the Asma ul-Husna.", icon: Heart },
-  { id: 'holy-quran', title: 'Holy Quran', description: 'Surahs, verses, themes, and more.', icon: Book },
+  { id: 'allahs-names', title: "Allah's Names & Attributes", description: "Learn the 99 beautiful names of Allah", icon: Heart },
+  { id: 'holy-quran', title: 'Holy Quran', description: 'Surahs, verses, themes, and memorization', icon: Book },
+  { id: 'hadith-sciences', title: 'Hadith Sciences', description: 'Prophetic sayings and their authenticity', icon: BookCopy },
   { id: 'prophetic-biography', title: 'Prophetic Biography', description: 'Life of Prophet Muhammad (PBUH).', icon: Users },
   { id: 'islamic-law', title: 'Islamic Law (Fiqh)', description: 'Practical religious rulings.', icon: Scale },
   { id: 'five-pillars', title: 'Five Pillars', description: 'Practice of fundamental obligations.', icon: Landmark },
@@ -97,6 +100,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       explanation: "Surah Al-Fatiha, 'The Opening', is an essential part of every unit (Rak'ah) of Islamic prayer.",
     }
   ],
+    'hadith-sciences': [],
   'prophetic-biography': [
     {
       id: 'pb1',
@@ -137,113 +141,142 @@ export const DAILY_HADITH = {
 };
 
 const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
+  'allahs-names': {
+    id: 'allahs-names',
+    name: "Allah's Names & Attributes",
+    icon: '✨',
+    description: "Learn the 99 beautiful names of Allah",
+    difficulty: "Beginner",
+    questions: 150,
+    completed: 45,
+    mastery: 30,
+    estimatedTime: "Approx. 1-2 hours",
+    xpReward: 1500,
+    unlocked: true,
+    color: 'border-emerald-300',
+    topics: [
+      { id: 'an-meaning', name: 'Meanings of Names 1-20', description: 'Understand the meanings of the first 20 names.', questions: 20, completed: 20, difficulty: 'Beginner', unlocked: true },
+      { id: 'an-application', name: 'Applying Names in Dua', description: 'Learn how to use the names of Allah in your supplications.', questions: 25, completed: 10, difficulty: 'Intermediate', unlocked: true },
+      { id: 'an-groups', name: 'Groups of Names', description: 'Study names related to mercy, power, and wisdom.', questions: 30, completed: 15, difficulty: 'Intermediate', unlocked: false },
+    ],
+    achievements: [
+        { id: 1, name: 'Name Knower', description: 'Complete your first topic on Allah\'s Names.', icon: '🌟', unlocked: true },
+        { id: 2, name: 'Attribute Admirer', description: 'Master the "Meanings" topic.', icon: '📜', unlocked: false, progress: 10, target: 20 },
+    ]
+  },
   'holy-quran': {
     id: 'holy-quran',
     name: 'Holy Quran',
     icon: '📖',
-    description: 'Master the book of Allah',
-    difficulty: 'Mixed',
-    questions: 150,
-    completed: 45,
-    mastery: 30,
-    estimatedTime: 'Approx. 2-3 hours',
-    xpReward: 3000,
-    color: 'border-emerald-300',
+    description: 'Surahs, verses, themes, and memorization',
+    difficulty: 'All Levels',
+    questions: 300,
+    completed: 78,
+    mastery: 26,
+    estimatedTime: 'Approx. 4-5 hours',
+    xpReward: 5000,
+    unlocked: true,
+    color: 'border-blue-300',
     topics: [
-      {
-        id: 'quran-revelation',
-        name: 'Revelation of the Quran',
-        description: 'Learn about the historical context and timeline of the Quranic revelation.',
-        questions: 20,
-        completed: 20,
-        difficulty: 'Beginner',
-        unlocked: true,
-      },
-      {
-        id: 'quran-makkan-surahs',
-        name: 'Makkan Surahs',
-        description: 'Study the themes and characteristics of Surahs revealed in Makkah.',
-        questions: 30,
-        completed: 15,
-        difficulty: 'Intermediate',
-        unlocked: true,
-      },
-      {
-        id: 'quran-madani-surahs',
-        name: 'Madani Surahs',
-        description: 'Explore the legal rulings and community-building themes of Madani Surahs.',
-        questions: 30,
-        completed: 10,
-        difficulty: 'Intermediate',
-        unlocked: true,
-      },
-      {
-        id: 'quran-tafsir',
-        name: 'Science of Tafsir',
-        description: 'Introduction to the principles of Quranic interpretation.',
-        questions: 35,
-        completed: 0,
-        difficulty: 'Advanced',
-        unlocked: false,
-      },
-      {
-        id: 'quran-memorization',
-        name: 'Memorization Techniques',
-        description: 'Tips and tricks for Hifdh (memorizing) the Quran.',
-        questions: 35,
-        completed: 0,
-        difficulty: 'Beginner',
-        unlocked: false,
-      },
+      { id: 'quran-revelation', name: 'Revelation of the Quran', description: 'Learn about the historical context and timeline of the Quranic revelation.', questions: 20, completed: 20, difficulty: 'Beginner', unlocked: true },
+      { id: 'quran-makkan-surahs', name: 'Makkan Surahs', description: 'Study the themes and characteristics of Surahs revealed in Makkah.', questions: 30, completed: 15, difficulty: 'Intermediate', unlocked: true },
+      { id: 'quran-madani-surahs', name: 'Madani Surahs', description: 'Explore the legal rulings and community-building themes of Madani Surahs.', questions: 30, completed: 10, difficulty: 'Intermediate', unlocked: true },
+      { id: 'quran-tafsir', name: 'Science of Tafsir', description: 'Introduction to the principles of Quranic interpretation.', questions: 35, completed: 0, difficulty: 'Advanced', unlocked: false },
+      { id: 'quran-memorization', name: 'Memorization Techniques', description: 'Tips and tricks for Hifdh (memorizing) the Quran.', questions: 35, completed: 0, difficulty: 'Beginner', unlocked: false },
     ],
     achievements: [
-      {
-        id: 1,
-        name: 'Quranic Novice',
-        description: 'Complete the "Revelation" topic.',
-        icon: '🌟',
-        unlocked: true,
-      },
-      {
-        id: 2,
-        name: 'Surah Specialist',
-        description: 'Master both Makkan and Madani Surah topics.',
-        icon: '📜',
-        unlocked: false,
-        progress: 25,
-        target: 60
-      },
-      {
-        id: 3,
-        name: 'Tafsir Explorer',
-        description: 'Unlock the "Science of Tafsir" topic.',
-        icon: '🔍',
-        unlocked: false,
-      },
-      {
-        id: 4,
-        name: 'Quran Competitor',
-        description: 'Get a perfect score in challenge mode.',
-        icon: '🏆',
-        unlocked: false
-      }
+      { id: 1, name: 'Quranic Novice', description: 'Complete the "Revelation" topic.', icon: '🌟', unlocked: true, },
+      { id: 2, name: 'Surah Specialist', description: 'Master both Makkan and Madani Surah topics.', icon: '📜', unlocked: false, progress: 25, target: 60 },
+      { id: 3, name: 'Tafsir Explorer', description: 'Unlock the "Science of Tafsir" topic.', icon: '🔍', unlocked: false, },
+      { id: 4, name: 'Quran Competitor', description: 'Get a perfect score in challenge mode.', icon: '🏆', unlocked: false }
     ],
+  },
+   'hadith-sciences': {
+    id: 'hadith-sciences',
+    name: 'Hadith Sciences',
+    icon: '📜',
+    description: "Prophetic sayings and their authenticity",
+    difficulty: "Intermediate",
+    questions: 200,
+    completed: 23,
+    mastery: 11,
+    estimatedTime: 'Approx. 3-4 hours',
+    xpReward: 2500,
+    unlocked: true,
+    color: "border-amber-300",
+    topics: [],
+    achievements: [],
+  },
+  'prophetic-biography': {
+    id: 'prophetic-biography',
+    name: 'Prophetic Biography',
+    icon: '⭐',
+    description: "Life of Prophet Muhammad (PBUH)",
+    difficulty: "Beginner",
+    questions: 180,
+    completed: 67,
+    mastery: 37,
+    estimatedTime: 'Approx. 2-3 hours',
+    xpReward: 2000,
+    unlocked: true,
+    color: "border-yellow-300",
+    topics: [],
+    achievements: [],
+  },
+  'islamic-law': {
+    id: 'islamic-law',
+    name: 'Islamic Law (Fiqh)',
+    icon: '⚖️',
+    description: "Practical religious rulings",
+    difficulty: "Advanced",
+    questions: 250,
+    completed: 12,
+    mastery: 5,
+    unlocked: true,
+    color: "border-purple-300",
+    topics: [],
+    achievements: [],
+  },
+  'five-pillars': {
+    id: 'five-pillars',
+    name: 'Five Pillars',
+    icon: '🕌',
+    description: "Fundamental obligations of Islam",
+    difficulty: "Beginner",
+    questions: 120,
+    completed: 89,
+    mastery: 74,
+    unlocked: true,
+    color: "border-teal-300",
+    topics: [],
+    achievements: [],
   },
 };
 
 // Add placeholder data for other categories
 CATEGORIES.forEach(cat => {
     if (!CATEGORY_DETAILS_DATA[cat.id]) {
+        const isUnlocked = Math.random() > 0.3; // 70% chance of being unlocked
         CATEGORY_DETAILS_DATA[cat.id] = {
-            ...CATEGORY_DETAILS_DATA['holy-quran'], // copy structure
             id: cat.id,
             name: cat.title,
+            icon: '❓',
             description: cat.description,
-            // You might want to generate more varied placeholder data
-            topics: CATEGORY_DETAILS_DATA['holy-quran'].topics.map(t => ({...t, completed: 0, unlocked: t.difficulty === 'Beginner'})),
-            achievements: CATEGORY_DETAILS_DATA['holy-quran'].achievements.map(a => ({...a, unlocked: false, progress: 0})),
-            completed: 0,
-            mastery: 0,
+            difficulty: 'Mixed',
+            questions: Math.floor(Math.random() * 100) + 50, // 50-150 questions
+            completed: isUnlocked ? Math.floor(Math.random() * 40) : 0,
+            mastery: isUnlocked ? Math.floor(Math.random() * 50) : 0,
+            estimatedTime: `Approx. ${Math.floor(Math.random() * 2) + 1}-${Math.floor(Math.random() * 2) + 2} hours`,
+            xpReward: (Math.floor(Math.random() * 10) + 5) * 100, // 500-1500 XP
+            unlocked: isUnlocked,
+            color: 'border-gray-300',
+            topics: [
+              { id: `${cat.id}-1`, name: 'Introduction', description: 'Basic concepts.', questions: 20, completed: 0, difficulty: 'Beginner', unlocked: isUnlocked },
+              { id: `${cat.id}-2`, name: 'Core Concepts', description: 'Deeper dive into the subject.', questions: 30, completed: 0, difficulty: 'Intermediate', unlocked: false },
+            ],
+            achievements: [
+              { id: 1, name: 'First Step', description: `Complete a quiz in ${cat.title}.`, icon: '🌟', unlocked: false },
+            ],
         };
     }
 });

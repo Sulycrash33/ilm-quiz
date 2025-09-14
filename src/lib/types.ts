@@ -91,6 +91,7 @@ export interface CategoryDetails {
   mastery: number;
   estimatedTime: string;
   xpReward: number;
+  unlocked: boolean;
   color: string;
   topics: Topic[];
   achievements: CategoryAchievement[];
