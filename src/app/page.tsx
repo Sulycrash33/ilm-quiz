@@ -19,7 +19,7 @@ export default function WelcomePage() {
           Embark on a journey to deepen your knowledge and strengthen your faith.
         </p>
         <Button asChild size="lg" className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-6 text-lg font-bold shadow-lg transition-transform hover:scale-105">
-          <Link href="/home">Begin Your Quest</Link>
+          <Link href="/language">Begin Your Quest</Link>
         </Button>
       </div>
     </div>
