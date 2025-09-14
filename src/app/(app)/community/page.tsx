@@ -4,18 +4,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, MessageSquare, Trophy, Star, Hammer } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 export default function CommunityPage() {
   return (
     <div className="container mx-auto max-w-4xl p-4 py-8">
-      <header className="mb-8 text-center">
-        <div className="inline-block p-4 bg-primary/10 rounded-full mb-4">
-          <Users className="h-10 w-10 text-primary" />
+      <header className="flex items-center justify-between mb-8">
+         <div className="flex-1"></div>
+        <div className="flex-1 text-center">
+            <div className="inline-block p-4 bg-primary/10 rounded-full mb-4">
+                <Users className="h-10 w-10 text-primary" />
+            </div>
+            <h1 className="text-4xl font-bold">Community Hub</h1>
+            <p className="text-muted-foreground text-lg">
+            Connect, learn, and grow with other knowledge seekers.
+            </p>
         </div>
-        <h1 className="text-4xl font-bold">Community Hub</h1>
-        <p className="text-muted-foreground text-lg">
-          Connect, learn, and grow with other knowledge seekers.
-        </p>
+        <div className="flex-1 flex justify-end">
+            <Button asChild>
+                <Link href="/leaderboard">
+                    <Trophy className="h-4 w-4 mr-2" />
+                    Leaderboard
+                </Link>
+            </Button>
+        </div>
       </header>
 
       <Tabs defaultValue="groups" className="w-full">

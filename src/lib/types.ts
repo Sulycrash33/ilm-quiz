@@ -95,3 +95,25 @@ export interface CategoryDetails {
   topics: Topic[];
   achievements: CategoryAchievement[];
 }
+
+// Leaderboard Types
+export interface LeaderboardUser {
+  rank: number;
+  name: string;
+  points: number;
+  rank_title: string;
+  streak?: number;
+  country: string;
+  avatar: string;
+  badge?: string;
+  questionsAnswered?: number;
+}
+
+export interface CategoryLeader {
+  category: string;
+  icon: string;
+  leader: string;
+  points: number;
+  rank_title: string;
+  country: string;
+}
