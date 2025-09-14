@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Globe } from 'lucide-react';
+import { Globe, ArrowRight } from 'lucide-react';
 
 const languages = [
-  { name: 'Hausa', href: '/login' },
+  { name: 'Hausa', href: '/login', dir: 'ltr' },
   { name: 'Arabic', href: '/login', dir: 'rtl', font: "'Amiri', serif" },
-  { name: 'French', href: '/login' },
-  { name: 'Swahili', href: '/login' },
+  { name: 'French', href: '/login', dir: 'ltr' },
+  { name: 'Swahili', href: '/login', dir: 'ltr' },
 ];
 
 export default function LanguageSelectionPage() {
@@ -21,17 +21,20 @@ export default function LanguageSelectionPage() {
           <CardTitle className="text-2xl font-bold">Select a Language</CardTitle>
           <CardDescription>Choose your preferred language to continue.</CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4">
+        <CardContent className="grid grid-cols-1 gap-3">
           {languages.map((lang) => (
             <Button
               key={lang.name}
               asChild
               size="lg"
               variant="outline"
-              className="h-14 text-lg"
-              style={{ direction: lang.dir, fontFamily: lang.font }}
+              className="h-16 text-lg justify-between"
+              style={{ direction: lang.dir as 'ltr' | 'rtl', fontFamily: lang.font }}
             >
-              <Link href={lang.href}>{lang.name}</Link>
+              <Link href={lang.href}>
+                <span>{lang.name}</span>
+                <ArrowRight className="h-5 w-5 text-muted-foreground" />
+              </Link>
             </Button>
           ))}
         </CardContent>
