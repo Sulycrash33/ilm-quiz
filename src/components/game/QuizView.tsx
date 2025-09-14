@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -457,5 +458,3 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
     </>
   );
 }
-
-    

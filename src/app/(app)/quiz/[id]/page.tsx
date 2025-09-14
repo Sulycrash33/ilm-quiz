@@ -326,5 +326,3 @@ export async function generateStaticParams() {
     id,
   }));
 }
-
-    
