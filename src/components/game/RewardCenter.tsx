@@ -1,16 +1,11 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Gift, Coins, Crown, Sparkles, RefreshCw, Clock } from "lucide-react"
-import Confetti from "react-confetti"
-import { useWindowSize } from "react-use"
-import type { DailyReward, SpinReward } from "@/lib/types"
-import { DAILY_REWARDS, SPIN_REWARDS } from "@/lib/achievements-data"
+import { useState, useEffect } from "react"
 import { DailyLoginRewards } from "./DailyLoginRewards"
 import { SpinWheel } from "./SpinWheel"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Crown } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 export function RewardCenter() {
   const [coins, setCoins] = useState(() => {
