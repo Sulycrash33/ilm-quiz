@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Trophy, Users, User, Coins, Play, Gift } from "lucide-react";
+import { BookOpen, Trophy, Users, User, Coins, Play, Gift, ShoppingCart } from "lucide-react";
 
 export function HomeActions() {
   const actions = [
     { href: "/quiz", label: "Quick Quiz", icon: Play, color: "bg-primary text-primary-foreground", hover: "hover:bg-primary/90" },
     { href: "/challenges", label: "Rewards", icon: Gift, color: "text-yellow-700", borderColor: "border-yellow-300", hover: "hover:bg-yellow-50" },
-    { href: "/community", label: "Community", icon: Users, color: "text-blue-700", borderColor: "border-blue-300", hover: "hover:bg-blue-50" },
+    { href: "/store", label: "Store", icon: ShoppingCart, color: "text-blue-700", borderColor: "border-blue-300", hover: "hover:bg-blue-50" },
     { href: "/profile", label: "Profile", icon: User, color: "text-purple-700", borderColor: "border-purple-300", hover: "hover:bg-purple-50" },
   ];
 
