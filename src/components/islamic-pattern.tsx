@@ -1,8 +1,10 @@
 "use client";
 
-export function IslamicPattern() {
+import { cn } from "@/lib/utils";
+
+export function IslamicPattern({ className }: { className?: string }) {
   return (
-    <div className="absolute inset-0 opacity-10">
+    <div className={cn("absolute inset-0 opacity-10", className)}>
       {/* Placeholder for Islamic pattern */}
     </div>
   );
