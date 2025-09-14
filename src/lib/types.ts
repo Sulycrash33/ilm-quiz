@@ -58,3 +58,40 @@ export interface Challenge {
   timeLeft: string;
   completed: boolean;
 }
+
+// Category Detail Page Types
+export interface Topic {
+  id: string;
+  name: string;
+  description: string;
+  questions: number;
+  completed: number;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  unlocked: boolean;
+}
+
+export interface CategoryAchievement {
+  id: number;
+  name: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+  progress?: number;
+  target?: number;
+}
+
+export interface CategoryDetails {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  difficulty: string;
+  questions: number;
+  completed: number;
+  mastery: number;
+  estimatedTime: string;
+  xpReward: number;
+  color: string;
+  topics: Topic[];
+  achievements: CategoryAchievement[];
+}

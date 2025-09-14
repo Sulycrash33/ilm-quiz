@@ -20,7 +20,7 @@ import {
   BrainCircuit,
   Globe
 } from 'lucide-react';
-import type { Rank, Category, Question } from './types';
+import type { Rank, Category, Question, Topic, CategoryAchievement, CategoryDetails } from './types';
 import { MosqueIcon } from '@/components/icons/MosqueIcon';
 
 export const RANKS: Rank[] = [
@@ -81,6 +81,21 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Surah Yasin',
       explanation: 'Surah Yasin (Chapter 36) is often referred to as the Heart of the Quran due to its powerful themes.',
     },
+     {
+      id: 'hq3',
+      type: 'true-false',
+      text: "The first revealed verses of the Quran are from Surah Al-Alaq.",
+      answer: true,
+      explanation: "The first five verses of Surah Al-Alaq were the first to be revealed to Prophet Muhammad (PBUH) in the cave of Hira.",
+    },
+    {
+      id: 'hq4',
+      type: 'multiple-choice',
+      text: "Which Surah is recited in every Rak'ah of Salah?",
+      options: ['Surah Al-Ikhlas', 'Surah Al-Fatiha', 'Surah An-Nas', 'Surah Al-Kawthar'],
+      answer: 'Surah Al-Fatiha',
+      explanation: "Surah Al-Fatiha, 'The Opening', is an essential part of every unit (Rak'ah) of Islamic prayer.",
+    }
   ],
   'prophetic-biography': [
     {
@@ -120,3 +135,117 @@ export const DAILY_HADITH = {
   text: "The best among you are those who have the best manners and character.",
   source: "Sahih al-Bukhari 6029"
 };
+
+const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
+  'holy-quran': {
+    id: 'holy-quran',
+    name: 'Holy Quran',
+    icon: '📖',
+    description: 'Master the book of Allah',
+    difficulty: 'Mixed',
+    questions: 150,
+    completed: 45,
+    mastery: 30,
+    estimatedTime: 'Approx. 2-3 hours',
+    xpReward: 3000,
+    color: 'border-emerald-300',
+    topics: [
+      {
+        id: 'quran-revelation',
+        name: 'Revelation of the Quran',
+        description: 'Learn about the historical context and timeline of the Quranic revelation.',
+        questions: 20,
+        completed: 20,
+        difficulty: 'Beginner',
+        unlocked: true,
+      },
+      {
+        id: 'quran-makkan-surahs',
+        name: 'Makkan Surahs',
+        description: 'Study the themes and characteristics of Surahs revealed in Makkah.',
+        questions: 30,
+        completed: 15,
+        difficulty: 'Intermediate',
+        unlocked: true,
+      },
+      {
+        id: 'quran-madani-surahs',
+        name: 'Madani Surahs',
+        description: 'Explore the legal rulings and community-building themes of Madani Surahs.',
+        questions: 30,
+        completed: 10,
+        difficulty: 'Intermediate',
+        unlocked: true,
+      },
+      {
+        id: 'quran-tafsir',
+        name: 'Science of Tafsir',
+        description: 'Introduction to the principles of Quranic interpretation.',
+        questions: 35,
+        completed: 0,
+        difficulty: 'Advanced',
+        unlocked: false,
+      },
+      {
+        id: 'quran-memorization',
+        name: 'Memorization Techniques',
+        description: 'Tips and tricks for Hifdh (memorizing) the Quran.',
+        questions: 35,
+        completed: 0,
+        difficulty: 'Beginner',
+        unlocked: false,
+      },
+    ],
+    achievements: [
+      {
+        id: 1,
+        name: 'Quranic Novice',
+        description: 'Complete the "Revelation" topic.',
+        icon: '🌟',
+        unlocked: true,
+      },
+      {
+        id: 2,
+        name: 'Surah Specialist',
+        description: 'Master both Makkan and Madani Surah topics.',
+        icon: '📜',
+        unlocked: false,
+        progress: 25,
+        target: 60
+      },
+      {
+        id: 3,
+        name: 'Tafsir Explorer',
+        description: 'Unlock the "Science of Tafsir" topic.',
+        icon: '🔍',
+        unlocked: false,
+      },
+      {
+        id: 4,
+        name: 'Quran Competitor',
+        description: 'Get a perfect score in challenge mode.',
+        icon: '🏆',
+        unlocked: false
+      }
+    ],
+  },
+};
+
+// Add placeholder data for other categories
+CATEGORIES.forEach(cat => {
+    if (!CATEGORY_DETAILS_DATA[cat.id]) {
+        CATEGORY_DETAILS_DATA[cat.id] = {
+            ...CATEGORY_DETAILS_DATA['holy-quran'], // copy structure
+            id: cat.id,
+            name: cat.title,
+            description: cat.description,
+            // You might want to generate more varied placeholder data
+            topics: CATEGORY_DETAILS_DATA['holy-quran'].topics.map(t => ({...t, completed: 0, unlocked: t.difficulty === 'Beginner'})),
+            achievements: CATEGORY_DETAILS_DATA['holy-quran'].achievements.map(a => ({...a, unlocked: false, progress: 0})),
+            completed: 0,
+            mastery: 0,
+        };
+    }
+});
+
+export const CATEGORY_DETAILS = CATEGORY_DETAILS_DATA;
