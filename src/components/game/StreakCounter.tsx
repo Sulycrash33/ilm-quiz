@@ -1,6 +1,7 @@
-import { Flame } from "lucide-react";
+import { Flame, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 
 interface StreakCounterProps {
   streak: number;
@@ -15,13 +16,32 @@ export function StreakCounter({ streak }: StreakCounterProps) {
   };
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-accent/20 shadow-md">
-      <CardContent className="flex flex-col items-center justify-center p-4 text-center">
-        <Flame className={cn("h-8 w-8 mb-2", getFlameColor())} style={{
+    <Card className="border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Flame className={cn("h-8 w-8", getFlameColor())} style={{
           filter: streak > 0 ? `drop-shadow(0 0 ${streak / 5}px currentColor)` : 'none'
-        }} />
-        <p className="text-2xl font-bold font-headline text-foreground">{streak}</p>
-        <p className="text-xs font-medium text-muted-foreground">Day Streak</p>
+        }} aria-hidden="true" />
+            <div>
+              <p className="text-2xl font-bold text-orange-600">{streak}</p>
+              <p className="text-sm text-muted-foreground">Day Streak</p>
+            </div>
+          </div>
+          <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+            <Shield className="h-3 w-3 mr-1" aria-hidden="true" />
+            Protected
+          </Badge>
+        </div>
+        <div className="flex gap-1" role="meter" aria-label={`Streak progress: ${streak} days`}>
+          {[...Array(7)].map((_, i) => (
+            <div
+              key={i}
+              className={`h-2 flex-1 rounded ${i < streak % 7 ? "bg-orange-400" : "bg-muted"}`}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

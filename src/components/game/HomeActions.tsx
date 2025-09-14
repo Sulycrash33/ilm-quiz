@@ -1,22 +1,33 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Trophy } from "lucide-react";
+import { BookOpen, Trophy, Users, User, Coins, Play } from "lucide-react";
 
 export function HomeActions() {
+  const actions = [
+    { href: "/quiz", label: "Quick Quiz", icon: Play, color: "bg-primary text-primary-foreground", hover: "hover:bg-primary/90" },
+    { href: "/challenges", label: "Challenges", icon: Trophy, color: "text-yellow-700", borderColor: "border-yellow-300", hover: "hover:bg-yellow-50" },
+    { href: "/community", label: "Community", icon: Users, color: "text-blue-700", borderColor: "border-blue-300", hover: "hover:bg-blue-50" },
+    { href: "/profile", label: "Profile", icon: User, color: "text-purple-700", borderColor: "border-purple-300", hover: "hover:bg-purple-50" },
+  ];
+
   return (
-    <div className="grid grid-cols-1 gap-4">
-      <Button asChild className="h-20 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 text-xl font-bold shadow-lg flex items-center justify-start p-6">
-        <Link href="/quiz">
-          <BookOpen className="mr-4 h-8 w-8" />
-          Start New Quiz
-        </Link>
-      </Button>
-      <Button asChild variant="secondary" className="h-20 rounded-lg text-secondary-foreground text-xl font-bold shadow-lg flex items-center justify-start p-6">
-        <Link href="/challenges">
-          <Trophy className="mr-4 h-8 w-8" />
-          Daily Challenge
-        </Link>
-      </Button>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+       {actions.map(action => (
+         <Button
+            key={action.href}
+            asChild
+            size="lg"
+            variant={action.color.startsWith('bg-') ? 'default' : 'outline'}
+            className={`h-20 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-transparent ${action.color} ${action.borderColor || ''} ${action.hover}`}
+        >
+            <Link href={action.href}>
+                <div className="flex flex-col items-center gap-2">
+                    <action.icon className="h-6 w-6" />
+                    <span className="text-sm font-semibold">{action.label}</span>
+                </div>
+            </Link>
+        </Button>
+       ))}
     </div>
   );
 }

@@ -1,18 +1,16 @@
 import { DAILY_HADITH } from "@/lib/constants";
 import { Card, CardContent } from "@/components/ui/card";
-import { Pilcrow } from "lucide-react";
 
 export function DailyHadith() {
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-accent/20 shadow-md">
-      <CardContent className="p-4 text-center">
-        <Pilcrow className="mx-auto h-6 w-6 text-accent mb-2" />
-        <p className="mb-2 text-lg italic text-foreground">
-          "{DAILY_HADITH.text}"
-        </p>
-        <p className="text-sm font-medium text-muted-foreground font-headline">
-          - {DAILY_HADITH.source}
-        </p>
+    <Card className="mb-8 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/10">
+      <CardContent className="pt-6">
+        <div className="text-center">
+          <h3 className="font-semibold text-primary mb-3">Daily Hadith</h3>
+          <blockquote className="text-foreground/80 italic text-lg leading-relaxed">
+            "{DAILY_HADITH.text}" - {DAILY_HADITH.source}
+          </blockquote>
+        </div>
       </CardContent>
     </Card>
   );

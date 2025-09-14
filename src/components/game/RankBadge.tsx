@@ -1,7 +1,7 @@
 import { RANKS } from "@/lib/constants";
 import type { Rank } from "@/lib/types";
 import { Progress } from "@/components/ui/progress";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface RankBadgeProps {
@@ -23,25 +23,29 @@ export function RankBadge({ currentPoints }: RankBadgeProps) {
   const Icon = currentRank.icon;
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-accent/20 shadow-md">
-      <CardContent className="p-4">
-        <div className="flex items-center space-x-4">
-          <div className={cn("p-3 rounded-full bg-accent/10", currentRank.theme)}>
-            <Icon className="h-8 w-8" />
+    <Card className="relative overflow-hidden border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
+      <CardHeader className={cn("pb-4", nextRank ? "bg-secondary" : "bg-accent/20")}>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className={cn("text-lg", currentRank.theme)}>{currentRank.title}</CardTitle>
+            <p className="text-sm text-muted-foreground">Rank {currentRank.level}</p>
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-muted-foreground">Current Rank</p>
-            <h3 className={cn("text-2xl font-bold font-headline", currentRank.theme)}>{currentRank.title}</h3>
+          <div className={cn("text-4xl", currentRank.theme)} aria-hidden="true">
+            <Icon className="h-10 w-10" />
           </div>
         </div>
-        {nextRank && (
-          <div className="mt-4">
-            <div className="mb-1 flex justify-between text-xs font-medium text-muted-foreground">
+      </CardHeader>
+      <CardContent className="pt-4">
+        {nextRank ? (
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
               <span>Progress to {nextRank.title}</span>
-              <span>{Math.floor(progress)}%</span>
+              <span className="font-semibold">{currentPoints}/{nextRank.minPoints} XP</span>
             </div>
-            <Progress value={progress} className="h-2 [&>div]:bg-accent" />
+            <Progress value={progress} className="h-3" aria-label={`Progress to ${nextRank.title}`} />
           </div>
+        ) : (
+          <p className="text-center text-sm font-semibold text-accent">You have reached the highest rank!</p>
         )}
       </CardContent>
     </Card>
