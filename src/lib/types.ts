@@ -122,4 +122,20 @@ export interface CategoryLeader {
   country: string;
 }
 
+// Reward Center Types
+export interface SpinReward {
+  id: number
+  name: string
+  icon: string
+  probability: number
+  value: number
+  type: "coins" | "xp" | "lifeline" | "badge"
+}
+
+export interface DailyReward {
+  day: number
+  coins: number
+  xp: number
+  bonus: string | null
+}
     

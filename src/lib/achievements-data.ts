@@ -1,4 +1,4 @@
-import type { Achievement, Challenge } from './types';
+import type { Achievement, Challenge, DailyReward, SpinReward } from './types';
 
 export const ACHIEVEMENTS_DATA: Achievement[] = [
     {
@@ -123,4 +123,23 @@ export const WEEKLY_CHALLENGES_DATA: Challenge[] = [
         timeLeft: "6d 10h",
         completed: false,
     },
+];
+
+export const SPIN_REWARDS: SpinReward[] = [
+  { id: 1, name: "50 Coins", icon: "🪙", probability: 30, value: 50, type: "coins" },
+  { id: 2, name: "25 XP", icon: "⭐", probability: 25, value: 25, type: "xp" },
+  { id: 3, name: "100 Coins", icon: "💰", probability: 20, value: 100, type: "coins" },
+  { id: 4, name: "Lifeline", icon: "💡", probability: 15, value: 1, type: "lifeline" },
+  { id: 5, name: "500 Coins", icon: "💎", probability: 8, value: 500, type: "coins" },
+  { id: 6, name: "Rare Badge", icon: "🏆", probability: 2, value: 1, type: "badge" },
+];
+
+export const DAILY_REWARDS: DailyReward[] = [
+  { day: 1, coins: 50, xp: 25, bonus: null },
+  { day: 2, coins: 75, xp: 35, bonus: null },
+  { day: 3, coins: 100, xp: 50, bonus: "Lifeline x1" },
+  { day: 4, coins: 125, xp: 60, bonus: null },
+  { day: 5, coins: 150, xp: 75, bonus: null },
+  { day: 6, coins: 200, xp: 100, bonus: "Double XP (1hr)" },
+  { day: 7, coins: 500, xp: 250, bonus: "Exclusive Badge" },
 ];
