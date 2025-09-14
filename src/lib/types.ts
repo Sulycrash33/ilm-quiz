@@ -24,6 +24,9 @@ export interface Question {
   options?: string[];
   answer: string | boolean;
   explanation: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  points?: number;
+  timeLimit?: number;
 }
 
 // Achievement System Types
@@ -118,3 +121,5 @@ export interface CategoryLeader {
   rank_title: string;
   country: string;
 }
+
+    

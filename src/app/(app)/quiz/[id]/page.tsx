@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Trophy, Star, Clock, Target, Zap, Award, CheckCircle } from "lucide-react";
-import { CATEGORY_DETAILS } from "@/lib/constants";
+import { CATEGORY_DETAILS, QUESTIONS } from "@/lib/constants";
 import type { Topic, CategoryAchievement, CategoryDetails } from "@/lib/types";
+import { QuizView } from "@/components/game/QuizView";
 
 interface CategoryDetailProps {
   params: {
@@ -19,6 +21,8 @@ interface CategoryDetailProps {
 }
 
 export default function CategoryDetailPage({ params }: CategoryDetailProps) {
+  const [showQuiz, setShowQuiz] = useState(false);
+
   const category: CategoryDetails | undefined = useMemo(() => 
     CATEGORY_DETAILS[params.id],
     [params.id]
@@ -33,12 +37,13 @@ export default function CategoryDetailPage({ params }: CategoryDetailProps) {
     totalTopics: category.topics.length
   }), [category.topics]);
 
-  const handleStartQuiz = useCallback((topicId?: string) => {
-    // In a real app, you'd navigate to the specific quiz
-    // For now, we'll just log it.
-    console.log("Starting quiz for topic:", topicId || "all");
-    // Example navigation: router.push(`/quiz/play/${category.id}?topic=${topicId || 'all'}`)
-  }, [category.id]);
+  const handleStartQuiz = () => {
+    setShowQuiz(true);
+  };
+  
+  const handleQuizExit = () => {
+    setShowQuiz(false);
+  }
 
   const difficultyBreakdown = useMemo(() => 
     ["Beginner", "Intermediate", "Advanced"].map((difficulty) => {
@@ -52,6 +57,19 @@ export default function CategoryDetailPage({ params }: CategoryDetailProps) {
         percentage: totalInDifficulty > 0 ? (completedInDifficulty / totalInDifficulty) * 100 : 0
       };
     }), [category.topics]);
+
+  if (showQuiz) {
+    return (
+        <div className="container mx-auto px-4 py-6 max-w-4xl">
+            <QuizView 
+                questions={QUESTIONS[params.id] || []}
+                categoryTitle={category.name}
+                onExit={handleQuizExit}
+            />
+        </div>
+    );
+  }
+
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
@@ -112,19 +130,19 @@ export default function CategoryDetailPage({ params }: CategoryDetailProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                 <Button size="lg" className="h-16" onClick={() => handleStartQuiz()}>
+                 <Button size="lg" className="h-16" onClick={handleStartQuiz}>
                     <div className="flex flex-col items-center gap-1">
                       <Play className="h-5 w-5" />
                       <span className="text-sm">Mixed Quiz</span>
                     </div>
                   </Button>
-                  <Button size="lg" variant="secondary" className="h-16">
+                  <Button size="lg" variant="secondary" className="h-16" onClick={handleStartQuiz}>
                      <div className="flex flex-col items-center gap-1">
                         <Target className="h-5 w-5" />
                         <span className="text-sm">Practice Mode</span>
                       </div>
                   </Button>
-                  <Button size="lg" variant="outline" className="h-16 border-accent text-accent hover:bg-accent/10 hover:text-accent">
+                  <Button size="lg" variant="outline" className="h-16 border-accent text-accent hover:bg-accent/10 hover:text-accent" onClick={handleStartQuiz}>
                       <div className="flex flex-col items-center gap-1">
                         <Trophy className="h-5 w-5" />
                         <span className="text-sm">Challenge Mode</span>
@@ -141,7 +159,7 @@ export default function CategoryDetailPage({ params }: CategoryDetailProps) {
                 className={`border-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${
                   !topic.unlocked ? "opacity-60 cursor-not-allowed bg-muted/50" : "cursor-pointer"
                 } ${topic.completed === topic.questions ? "border-green-300 bg-green-50" : "hover:border-accent"}`}
-                onClick={() => topic.unlocked && handleStartQuiz(topic.id)}
+                onClick={() => topic.unlocked && handleStartQuiz()}
                 role="button"
                 tabIndex={topic.unlocked ? 0 : -1}
               >
@@ -304,7 +322,9 @@ export default function CategoryDetailPage({ params }: CategoryDetailProps) {
 }
 
 export async function generateStaticParams() {
-  return CATEGORIES.map((category) => ({
-    id: category.id,
+  return Object.keys(CATEGORY_DETAILS).map((id) => ({
+    id,
   }));
 }
+
+    

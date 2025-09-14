@@ -27,7 +27,9 @@ const StarParticles = ({ count = 20, isEmitting }: { count?: number; isEmitting:
     }
   }, [isEmitting, count]);
 
-  return <div className="absolute inset-0 pointer-events-none">{particles}</div>;
+  return <div className="absolute inset-0 pointer-events-none z-20">{particles}</div>;
 };
 
 export default StarParticles;
+
+    
