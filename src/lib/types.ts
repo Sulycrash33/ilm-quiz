@@ -25,3 +25,36 @@ export interface Question {
   answer: string | boolean;
   explanation: string;
 }
+
+// Achievement System Types
+export interface Reward {
+  coins: number;
+  xp: number;
+  badge?: string;
+  title?: string;
+}
+
+export interface Achievement {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+  category: string;
+  progress: number;
+  target: number;
+  completed: boolean;
+  reward: Reward;
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+}
+
+export interface Challenge {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+  progress: number;
+  target: number;
+  reward: Reward;
+  timeLeft: string;
+  completed: boolean;
+}
