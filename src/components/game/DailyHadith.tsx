@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export function DailyHadith() {
   return (
-    <Card className="mb-8 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/10">
+    <Card className="mb-8 bg-gradient-to-r from-teal-50 to-emerald-50 border-teal-200/50">
       <CardContent className="pt-6">
         <div className="text-center">
           <h3 className="font-semibold text-primary mb-3">Daily Hadith</h3>
