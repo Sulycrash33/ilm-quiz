@@ -15,6 +15,17 @@ export default {
         amiri: ['var(--font-amiri)', 'serif'],
         code: ['monospace'],
       },
+      fontSize: {
+        'xs': '0.875rem', // ~14px
+        'sm': '1rem',    // ~16px
+        'base': '1.125rem', // ~18px
+        'lg': '1.25rem',   // ~20px
+        'xl': '1.5rem',    // ~24px
+        '2xl': '1.75rem',  // ~28px
+        '3xl': '2.125rem',  // ~34px
+        '4xl': '2.625rem',  // ~42px
+        '5xl': '3.25rem',   // ~52px
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
