@@ -21,6 +21,10 @@ import {
   Globe,
   Star as StarIcon,
   BookCopy,
+  Gem,
+  Languages,
+  History,
+  Plus
 } from 'lucide-react';
 import type { Rank, Category, Question, Topic, CategoryAchievement, CategoryDetails } from './types';
 import { MosqueIcon } from '@/components/icons/MosqueIcon';
@@ -38,14 +42,15 @@ export const RANKS: Rank[] = [
 ];
 
 export const CATEGORIES: Category[] = [
-  { id: 'allahs-names', title: "Allah's Names & Attributes", description: "Learn the 99 beautiful names of Allah", icon: Heart },
-  { id: 'holy-quran', title: 'Holy Quran', description: 'Surahs, verses, themes, and memorization', icon: Book },
-  { id: 'hadith-sciences', title: 'Hadith Sciences', description: 'Prophetic sayings and their authenticity', icon: BookCopy },
-  { id: 'prophetic-biography', title: 'Prophetic Biography', description: 'Life of Prophet Muhammad (PBUH).', icon: Users },
-  { id: 'islamic-law', title: 'Islamic Law (Fiqh)', description: 'Practical religious rulings.', icon: Scale },
-  { id: 'five-pillars', title: 'Five Pillars', description: 'Practice of fundamental obligations.', icon: Landmark },
-  { id: 'islamic-ethics', title: 'Islamic Ethics (Akhlaq)', description: 'Character development and morals.', icon: BrainCircuit },
-  { id: 'islamic-civilization', title: 'Islamic Civilization', description: 'Golden age achievements.', icon: Globe },
+  { id: 'holy-quran', title: 'Quran', description: 'Surahs, verses, themes, and memorization', icon: Book, color: 'bg-green-100 text-green-800 hover:bg-green-200' },
+  { id: 'hadith-sciences', title: 'Hadith', description: 'Prophetic sayings and their authenticity', icon: BookCopy, color: 'bg-blue-100 text-blue-800 hover:bg-blue-200' },
+  { id: 'prophetic-biography', title: 'Prophets', description: 'Life of Prophet Muhammad (PBUH) & others.', icon: StarIcon, color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
+  { id: 'islamic-law', title: 'Fiqh', description: 'Practical religious rulings.', icon: Scale, color: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200' },
+  { id: 'islamic-civilization', title: 'History', description: 'Golden age achievements.', icon: History, color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' },
+  { id: 'allahs-names', title: 'Aqeedah', description: "Allah's Names & Attributes", icon: Gem, color: 'bg-sky-100 text-sky-800 hover:bg-sky-200' },
+  { id: 'islamic-ethics', title: 'Ethics', description: 'Character development and morals.', icon: Heart, color: 'bg-pink-100 text-pink-800 hover:bg-pink-200' },
+  { id: 'arabic-language', title: 'Arabic', description: 'Learn the language of the Quran.', icon: Languages, color: 'bg-teal-100 text-teal-800 hover:bg-teal-200' },
+  { id: 'five-pillars', title: 'Pillars', description: 'Practice of fundamental obligations.', icon: Landmark, color: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' },
   { id: 'contemporary-issues', title: 'Contemporary Issues', description: 'Modern Islamic perspectives.', icon: ShieldQuestion },
 ];
 
@@ -133,6 +138,7 @@ export const QUESTIONS: Record<string, Question[]> = {
   'islamic-ethics': [],
   'islamic-civilization': [],
   'contemporary-issues': [],
+  'arabic-language': [],
 };
 
 export const DAILY_HADITH = {

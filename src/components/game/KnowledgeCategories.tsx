@@ -4,8 +4,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CATEGORIES } from "@/lib/constants";
-import { BookOpen, ChevronRight } from "lucide-react";
+import { BookOpen, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function KnowledgeCategories() {
     return (
@@ -17,31 +18,36 @@ export function KnowledgeCategories() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {CATEGORIES.map((category) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                {CATEGORIES.slice(0,9).map((category) => {
+                    const Icon = category.icon;
+                    return (
                     <Button
                         key={category.id}
                         asChild
-                        variant="ghost"
-                        className="h-20 bg-secondary/50 hover:bg-secondary hover:text-secondary-foreground transition-all duration-200 shadow-sm hover:shadow-md justify-start"
+                        variant="outline"
+                        className={cn(
+                            "h-20 justify-start text-left flex-col items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105",
+                            category.color,
+                        )}
                     >
                         <Link href={`/quiz/${category.id}`}>
-                            <div className="flex items-center gap-3">
-                                <category.icon className="h-6 w-6 text-primary" />
-                                <span className="text-sm font-medium text-left">{category.title}</span>
+                           <div className="flex flex-col items-center gap-1">
+                                <Icon className="h-6 w-6" />
+                                <span className="text-sm font-medium text-center">{category.title}</span>
                             </div>
                         </Link>
                     </Button>
-                ))}
+                )})}
                  <Button
                     asChild
-                    variant="ghost"
-                    className="h-20 bg-muted/50 hover:bg-muted transition-all duration-200 shadow-sm hover:shadow-md"
+                    variant="outline"
+                    className="h-20 justify-start text-left flex-col items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 bg-muted/50 hover:bg-muted"
                 >
                     <Link href="/quiz">
-                        <div className="flex items-center justify-between w-full">
-                            <span className="text-sm font-medium">View All</span>
-                            <ChevronRight className="h-5 w-5" />
+                         <div className="flex flex-col items-center gap-1">
+                            <Plus className="h-6 w-6" />
+                            <span className="text-sm font-medium">More...</span>
                         </div>
                     </Link>
                 </Button>

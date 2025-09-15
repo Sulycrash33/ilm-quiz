@@ -1,24 +1,27 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Trophy, Users, User, Coins, Play, Gift, ShoppingCart } from "lucide-react";
+import { BookOpen, Trophy, Users, User, Gift, Play, ShoppingCart, Star } from "lucide-react";
 
 export function HomeActions() {
   const actions = [
     { href: "/quiz", label: "Quick Quiz", icon: Play, color: "bg-primary text-primary-foreground", hover: "hover:bg-primary/90" },
-    { href: "/challenges", label: "Rewards", icon: Gift, color: "text-yellow-700", borderColor: "border-yellow-300", hover: "hover:bg-yellow-50" },
-    { href: "/store", label: "Store", icon: ShoppingCart, color: "text-blue-700", borderColor: "border-blue-300", hover: "hover:bg-blue-50" },
-    { href: "/profile", label: "Profile", icon: User, color: "text-purple-700", borderColor: "border-purple-300", hover: "hover:bg-purple-50" },
+    { href: "/achievements", label: "Achievements", icon: Star, color: "text-primary", borderColor: "border-primary", hover: "hover:bg-primary/10" },
+    { href: "/community", label: "Community", icon: Users, color: "text-primary", borderColor: "border-primary", hover: "hover:bg-primary/10" },
+    { href: "/profile", label: "Profile", icon: User, color: "text-primary", borderColor: "border-primary", hover: "hover:bg-primary/10" },
+    { href: "/store", label: "Store", icon: ShoppingCart, color: "text-primary", borderColor: "border-primary", hover: "hover:bg-primary/10" },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-       {actions.map(action => (
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+       {actions.map((action, index) => (
          <Button
             key={action.href}
             asChild
             size="lg"
-            variant={action.color.startsWith('bg-') ? 'default' : 'outline'}
-            className={`h-20 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-transparent ${action.color} ${action.borderColor || ''} ${action.hover}`}
+            variant={index === 0 ? 'default' : 'outline'}
+            className={`h-20 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${action.color} ${action.borderColor || ''} ${action.hover}`}
         >
             <Link href={action.href}>
                 <div className="flex flex-col items-center gap-2">

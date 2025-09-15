@@ -13,6 +13,7 @@ export interface Category {
   title: string;
   description: string;
   icon: LucideIcon;
+  color?: string;
 }
 
 export type QuestionType = 'multiple-choice' | 'true-false' | 'fill-in-the-blank';
