@@ -51,7 +51,7 @@ export const CATEGORIES: Category[] = [
   { id: 'islamic-ethics', title: 'Ethics', description: 'Character development and morals.', icon: Heart, color: 'bg-pink-100 text-pink-800 hover:bg-pink-200' },
   { id: 'arabic-language', title: 'Arabic', description: 'Learn the language of the Quran.', icon: Languages, color: 'bg-teal-100 text-teal-800 hover:bg-teal-200' },
   { id: 'five-pillars', title: 'Pillars', description: 'Practice of fundamental obligations.', icon: Landmark, color: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' },
-  { id: 'contemporary-issues', title: 'Contemporary Issues', description: 'Modern Islamic perspectives.', icon: ShieldQuestion },
+  { id: 'contemporary-issues', title: 'Contemporary Issues', description: 'Modern Islamic perspectives.', icon: ShieldQuestion, color: 'bg-slate-100 text-slate-800 hover:bg-slate-200' },
 ];
 
 export const QUESTIONS: Record<string, Question[]> = {
@@ -63,6 +63,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       options: ['Al-Ghafoor', 'Ar-Rahman', 'Al-Jabbar', 'Al-Mumin'],
       answer: 'Ar-Rahman',
       explanation: "Ar-Rahman refers to Allah's encompassing mercy for all of creation.",
+      difficulty: 'Beginner',
     },
     {
       id: 'an2',
@@ -70,6 +71,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       text: "The name 'Al-Khaliq' means 'The Provider'.",
       answer: false,
       explanation: "'Al-Khaliq' means 'The Creator', while 'Ar-Razzaq' means 'The Provider'.",
+      difficulty: 'Beginner',
     },
   ],
   'holy-quran': [
@@ -80,6 +82,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       options: ['114', '100', '124', '99'],
       answer: '114',
       explanation: 'The Quran is composed of 114 chapters, or Surahs, of varying lengths.',
+      difficulty: 'Beginner',
     },
     {
       id: 'hq2',
@@ -88,6 +91,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       options: ['Surah Al-Fatiha', 'Surah Al-Baqarah', 'Surah Yasin', 'Surah Al-Ikhlas'],
       answer: 'Surah Yasin',
       explanation: 'Surah Yasin (Chapter 36) is often referred to as the Heart of the Quran due to its powerful themes.',
+      difficulty: 'Intermediate',
     },
      {
       id: 'hq3',
@@ -95,6 +99,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       text: "The first revealed verses of the Quran are from Surah Al-Alaq.",
       answer: true,
       explanation: "The first five verses of Surah Al-Alaq were the first to be revealed to Prophet Muhammad (PBUH) in the cave of Hira.",
+      difficulty: 'Beginner',
     },
     {
       id: 'hq4',
@@ -103,6 +108,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       options: ['Surah Al-Ikhlas', 'Surah Al-Fatiha', 'Surah An-Nas', 'Surah Al-Kawthar'],
       answer: 'Surah Al-Fatiha',
       explanation: "Surah Al-Fatiha, 'The Opening', is an essential part of every unit (Rak'ah) of Islamic prayer.",
+      difficulty: 'Beginner',
     }
   ],
     'hadith-sciences': [],
@@ -114,6 +120,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       options: ['Madinah', 'Jerusalem', 'Makkah', 'Taif'],
       answer: 'Makkah',
       explanation: 'Prophet Muhammad (PBUH) was born in the city of Makkah in the Year of the Elephant.',
+      difficulty: 'Beginner',
     },
   ],
   'islamic-law': [
@@ -123,6 +130,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       text: 'Wudu (ablution) is required before performing Salah (prayer).',
       answer: true,
       explanation: 'Wudu is a state of ritual purity necessary for performing prayers and other acts of worship.',
+      difficulty: 'Beginner',
     },
   ],
   'five-pillars': [
@@ -133,6 +141,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       options: ['Shahadah (Faith)', 'Salah (Prayer)', 'Jihad (Struggle)', 'Zakat (Charity)'],
       answer: 'Jihad (Struggle)',
       explanation: 'While Jihad is an important concept in Islam, the Five Pillars are Shahadah, Salah, Zakat, Sawm (Fasting), and Hajj (Pilgrimage).',
+      difficulty: 'Beginner',
     },
   ],
   'islamic-ethics': [],
@@ -159,7 +168,7 @@ const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
     estimatedTime: "Approx. 1-2 hours",
     xpReward: 1500,
     unlocked: true,
-    color: 'border-emerald-300',
+    color: 'border-accent',
     topics: [
       { id: 'an-meaning', name: 'Meanings of Names 1-20', description: 'Understand the meanings of the first 20 names.', questions: 20, completed: 20, difficulty: 'Beginner', unlocked: true },
       { id: 'an-application', name: 'Applying Names in Dua', description: 'Learn how to use the names of Allah in your supplications.', questions: 25, completed: 10, difficulty: 'Intermediate', unlocked: true },
@@ -182,7 +191,7 @@ const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
     estimatedTime: 'Approx. 4-5 hours',
     xpReward: 5000,
     unlocked: true,
-    color: 'border-blue-300',
+    color: 'border-primary',
     topics: [
       { id: 'quran-revelation', name: 'Revelation of the Quran', description: 'Learn about the historical context and timeline of the Quranic revelation.', questions: 20, completed: 20, difficulty: 'Beginner', unlocked: true },
       { id: 'quran-makkan-surahs', name: 'Makkan Surahs', description: 'Study the themes and characteristics of Surahs revealed in Makkah.', questions: 30, completed: 15, difficulty: 'Intermediate', unlocked: true },
@@ -275,7 +284,7 @@ CATEGORIES.forEach(cat => {
             estimatedTime: `Approx. ${Math.floor(Math.random() * 2) + 1}-${Math.floor(Math.random() * 2) + 2} hours`,
             xpReward: (Math.floor(Math.random() * 10) + 5) * 100, // 500-1500 XP
             unlocked: isUnlocked,
-            color: 'border-gray-300',
+            color: 'border-muted',
             topics: [
               { id: `${cat.id}-1`, name: 'Introduction', description: 'Basic concepts.', questions: 20, completed: 0, difficulty: 'Beginner', unlocked: isUnlocked },
               { id: `${cat.id}-2`, name: 'Core Concepts', description: 'Deeper dive into the subject.', questions: 30, completed: 0, difficulty: 'Intermediate', unlocked: false },

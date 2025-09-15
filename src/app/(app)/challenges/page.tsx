@@ -1,7 +1,6 @@
 "use client";
 
 import { RewardCenter } from "@/components/game/RewardCenter";
-import { IslamicPattern } from "@/components/islamic-pattern";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -9,8 +8,7 @@ import { ArrowLeft } from "lucide-react";
 
 export default function RewardsPage() {
   return (
-    <main className="min-h-screen relative overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50">
-      <IslamicPattern className="absolute inset-0 z-0" />
+    <main className="min-h-screen">
       <motion.div
         className="relative z-10 container mx-auto px-4 py-8 sm:px-6 lg:px-8"
         initial={{ opacity: 0, y: 20 }}

@@ -92,10 +92,9 @@ function ComingSoon({ title, description, icon: Icon }: { title: string, descrip
 export default function CommunityPage() {
   return (
     <main 
-      className="min-h-screen relative overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50"
+      className="min-h-screen"
       aria-labelledby="community-page-title"
     >
-      <IslamicPattern />
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <header className="mb-8 text-center">
           <h1 

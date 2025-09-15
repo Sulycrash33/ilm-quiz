@@ -10,7 +10,7 @@ import type { SpinReward } from "@/lib/types"
 import { SPIN_REWARDS } from "@/lib/achievements-data"
 
 const WheelSegment: React.FC<{ reward: SpinReward; angle: number; index: number }> = ({ reward, angle, index }) => {
-  const colors = ["#FFF9C4", "#FFE082", "#FFCA28", "#FFB300", "#FFA000", "#FF8F00"]
+  const colors = ["hsl(var(--secondary))", "hsl(var(--secondary)/0.8)", "hsl(var(--secondary)/0.6)","hsl(var(--secondary)/0.4)", "hsl(var(--secondary)/0.2)"]
   return (
     <div
       className="absolute w-full h-full"
@@ -35,8 +35,8 @@ const WheelSegment: React.FC<{ reward: SpinReward; angle: number; index: number 
           transform: `rotate(${angle + 45}deg) translate(20px, -50%)`,
           width: '50px',
           textAlign: 'center',
-          color: "#422006",
-          textShadow: '0px 0px 2px rgba(255,255,255,0.7)',
+          color: "hsl(var(--accent-foreground))",
+          textShadow: '0px 0px 2px hsl(var(--background))',
         }}
       >
         <span className="text-lg">{reward.icon}</span>
@@ -134,17 +134,17 @@ export function SpinWheel({ coins, setCoins }: SpinWheelProps) {
   }
 
   return (
-    <Card className="border-2 border-yellow-200 shadow-xl">
+    <Card className="border-2 border-accent/50 shadow-xl">
       {showConfetti && <Confetti width={width} height={height} recycle={false} numberOfPieces={300} gravity={0.1} />}
-      <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50">
-        <CardTitle className="flex items-center gap-2 text-accent">
+      <CardHeader className="bg-gradient-to-r from-accent/10 to-accent/20">
+        <CardTitle className="flex items-center gap-2 text-accent-foreground">
           <Sparkles className="h-6 w-6" />
           Daily Spin Wheel
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
         <div className="relative mx-auto w-64 h-64">
-           <div className="absolute inset-0 rounded-full border-8 border-yellow-300 bg-gradient-to-br from-yellow-100 to-orange-100 overflow-hidden shadow-inner">
+           <div className="absolute inset-0 rounded-full border-8 border-accent/50 bg-gradient-to-br from-accent/20 to-accent/30 overflow-hidden shadow-inner">
              <div ref={wheelRef} className="absolute w-full h-full transition-transform duration-5000 ease-out">
                 <div className="absolute w-full h-full">
                     {SPIN_REWARDS.map((reward, index) => {
@@ -154,8 +154,8 @@ export function SpinWheel({ coins, setCoins }: SpinWheelProps) {
                 </div>
             </div>
            </div>
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-background border-4 border-yellow-400 shadow-md"/>
-           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-12 border-l-transparent border-r-transparent border-t-yellow-600 rotate-180"/>
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-background border-4 border-accent shadow-md"/>
+           <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-12 border-l-transparent border-r-transparent border-t-accent-foreground rotate-180"/>
         </div>
         {lastSpinResult && (
           <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg" role="alert">

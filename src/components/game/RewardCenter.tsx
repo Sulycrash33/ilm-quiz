@@ -27,8 +27,8 @@ export function RewardCenter() {
         <DailyLoginRewards coins={coins} setCoins={setCoins} />
       </div>
 
-      <Card className="border-2 border-purple-200 shadow-xl">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
+      <Card className="border-2 border-purple-200/50 shadow-xl">
+        <CardHeader className="bg-gradient-to-r from-purple-50/50 to-pink-50/50">
           <CardTitle className="flex items-center gap-2 text-purple-800">
             <Crown className="h-6 w-6" />
             Special Events

@@ -34,9 +34,9 @@ export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
   }
 
   return (
-    <Card className="border-2 border-emerald-200 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
-        <CardTitle className="flex items-center gap-2 text-emerald-800">
+    <Card className="border-2 border-accent/50 shadow-xl">
+      <CardHeader className="bg-gradient-to-r from-accent/10 to-accent/20">
+        <CardTitle className="flex items-center gap-2 text-accent-foreground">
           <Gift className="h-6 w-6" />
           Daily Login Rewards
         </CardTitle>
@@ -58,7 +58,7 @@ export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
                 className={`
                   flex items-center justify-between p-4 rounded-lg border-2 transition-all duration-200
                   ${isClaimed ? "bg-green-50 border-green-200" : ""}
-                  ${isToday ? "bg-emerald-50 border-emerald-300 shadow-md" : ""}
+                  ${isToday ? "bg-secondary border-primary/50 shadow-md" : ""}
                   ${isLocked ? "bg-muted/50 border-border opacity-60" : ""}
                 `}
                 role="region"
