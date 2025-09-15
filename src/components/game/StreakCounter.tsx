@@ -24,7 +24,7 @@ export function StreakCounter({ streak }: StreakCounterProps) {
           filter: streak > 0 ? `drop-shadow(0 0 ${streak / 5}px currentColor)` : 'none'
         }} aria-hidden="true" />
             <div>
-              <p className="text-2xl font-bold text-orange-600">{streak}</p>
+              <p className="text-xl font-bold text-orange-600">{streak}</p>
               <p className="text-sm text-muted-foreground">Day Streak</p>
             </div>
           </div>

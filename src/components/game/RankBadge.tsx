@@ -27,7 +27,7 @@ export function RankBadge({ currentPoints }: RankBadgeProps) {
       <CardHeader className={cn("pb-4", nextRank ? "bg-purple-50/50" : "bg-accent/20")}>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className={cn("text-lg", "text-purple-800")}>{currentRank.title}</CardTitle>
+            <CardTitle className={cn("text-base", "text-purple-800")}>{currentRank.title}</CardTitle>
             <p className="text-sm text-muted-foreground">Rank {currentRank.level}</p>
           </div>
           <div className={cn("text-4xl", "text-purple-600")} aria-hidden="true">

@@ -18,7 +18,7 @@ export function UserStats({ coins }: UserStatsProps) {
                 <div className="flex items-center gap-2">
                     <Coins className="h-8 w-8 text-yellow-500" aria-hidden="true" />
                     <div>
-                        <p className="text-2xl font-bold text-yellow-600">{coins.toLocaleString()}</p>
+                        <p className="text-xl font-bold text-yellow-600">{coins.toLocaleString()}</p>
                         <p className="text-sm text-muted-foreground">Ilm Coins</p>
                     </div>
                 </div>

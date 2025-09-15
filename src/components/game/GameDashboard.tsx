@@ -32,8 +32,8 @@ export function GameDashboard() {
       variants={cardVariants}
     >
       <motion.div className="text-center mb-8" variants={cardVariants}>
-        <h1 className="text-3xl font-bold text-primary mb-2">Assalamu Alaikum, Seeker!</h1>
-        <p className="text-muted-foreground text-lg">Ready to expand your Islamic knowledge today?</p>
+        <h1 className="text-2xl font-bold text-primary mb-2">Assalamu Alaikum, Seeker!</h1>
+        <p className="text-muted-foreground text-base">Ready to expand your Islamic knowledge today?</p>
       </motion.div>
 
       <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" variants={cardVariants}>
