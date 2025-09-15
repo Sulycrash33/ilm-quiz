@@ -45,7 +45,7 @@ export const CATEGORIES: Category[] = [
   { id: 'holy-quran', title: 'Quran', description: 'Surahs, verses, themes, and memorization', icon: Book, color: 'bg-green-100 text-green-800 hover:bg-green-200' },
   { id: 'hadith-sciences', title: 'Hadith', description: 'Prophetic sayings and their authenticity', icon: BookCopy, color: 'bg-blue-100 text-blue-800 hover:bg-blue-200' },
   { id: 'prophetic-biography', title: 'Prophets', description: 'Life of Prophet Muhammad (PBUH) & others.', icon: StarIcon, color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
-  { id: 'islamic-law', title: 'Fiqh', description: 'Practical religious rulings.', icon: Scale, color: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200' },
+  { id: 'islamic-law', title: 'Fiqh', description: 'Practical religious rulings.', icon: Scale, color: 'bg-white text-black hover:bg-gray-100' },
   { id: 'islamic-civilization', title: 'History', description: 'Golden age achievements.', icon: History, color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' },
   { id: 'allahs-names', title: 'Aqeedah', description: "Allah's Names & Attributes", icon: Gem, color: 'bg-sky-100 text-sky-800 hover:bg-sky-200' },
   { id: 'islamic-ethics', title: 'Ethics', description: 'Character development and morals.', icon: Heart, color: 'bg-pink-100 text-pink-800 hover:bg-pink-200' },
