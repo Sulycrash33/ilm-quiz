@@ -73,6 +73,28 @@ const STUDY_GROUPS = [
     lastActivity: "3 hours ago",
     avatar: "🏛️",
   },
+    {
+    id: 5,
+    name: "Fiqh Fundamentals",
+    description: "Discussing the basics of Islamic jurisprudence.",
+    members: 78,
+    category: "Fiqh",
+    level: "Beginner",
+    isJoined: false,
+    lastActivity: "1 day ago",
+    avatar: "⚖️",
+  },
+  {
+    id: 6,
+    name: "Arabic Language Learners",
+    description: "Practice Arabic with fellow students.",
+    members: 182,
+    category: "Language",
+    level: "All Levels",
+    isJoined: true,
+    lastActivity: "Just now",
+    avatar: "🔤",
+  },
 ]
 
 const FORUM_POSTS = [
@@ -124,6 +146,18 @@ const FORUM_POSTS = [
     content: "Detailed comparison of Islamic banking principles with conventional systems.",
     isAnswered: true,
   },
+  {
+    id: 5,
+    title: "Question about the validity of a hadith",
+    author: "StudentOfKnowledge",
+    authorRank: "Mubtadi",
+    category: "Hadith",
+    replies: 5,
+    likes: 12,
+    timeAgo: "1 day ago",
+    content: "I came across a hadith and I'm not sure about its authenticity. Can anyone help?",
+    isAnswered: false,
+  },
 ]
 
 const CHALLENGES = [
@@ -155,6 +189,16 @@ const CHALLENGES = [
     timeLeft: "1d 6h",
     reward: "300 coins",
     difficulty: "Easy",
+    isActive: true,
+  },
+  {
+    id: 4,
+    title: "Fiqh Case Study",
+    description: "Solve a real-world Fiqh problem.",
+    participants: 543,
+    timeLeft: "4d 2h",
+    reward: "600 coins",
+    difficulty: "Hard",
     isActive: true,
   },
 ]
@@ -323,7 +367,7 @@ export default function CommunityPage() {
 
         <TabsContent value="forum" className="space-y-6">
           {/* Create New Post */}
-          <Card className="border-2 border-accent/20 shadow-lg">
+          <Card className="border-2 border-accent/20 shadow-lg bg-gradient-to-br from-accent/5 to-accent/10">
             <CardHeader>
               <CardTitle className="text-accent-foreground">Start a Discussion</CardTitle>
             </CardHeader>
@@ -499,18 +543,18 @@ export default function CommunityPage() {
                 <p className="text-muted-foreground leading-relaxed">
                   Share your knowledge and help guide fellow learners on their Islamic education journey.
                 </p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span>Earn mentor badges and recognition</span>
+                <div className="space-y-2 text-sm text-card-foreground">
+                  <div className="flex items-start gap-3">
+                    <Star className="h-4 w-4 mt-1 text-yellow-500 shrink-0" />
+                    <span>Earn mentor badges and community recognition for your contributions.</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Heart className="h-4 w-4 text-red-500" />
-                    <span>Make a positive impact in the community</span>
+                  <div className="flex items-start gap-3">
+                    <Heart className="h-4 w-4 mt-1 text-red-500 shrink-0" />
+                    <span>Make a positive and lasting impact in the Ummah.</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Trophy className="h-4 w-4 text-purple-500" />
-                    <span>Access to exclusive mentor resources</span>
+                  <div className="flex items-start gap-3">
+                    <Trophy className="h-4 w-4 mt-1 text-purple-500 shrink-0" />
+                    <span>Access exclusive resources and training materials for mentors.</span>
                   </div>
                 </div>
                 <Button className="w-full">Apply to be a Mentor</Button>
@@ -529,18 +573,18 @@ export default function CommunityPage() {
                 <p className="text-muted-foreground leading-relaxed">
                   Get personalized guidance from experienced scholars and advanced learners.
                 </p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <BookOpen className="h-4 w-4 text-blue-500" />
-                    <span>Personalized learning paths</span>
+                <div className="space-y-2 text-sm text-card-foreground">
+                   <div className="flex items-start gap-3">
+                    <BookOpen className="h-4 w-4 mt-1 text-blue-500 shrink-0" />
+                    <span>Receive personalized learning paths tailored to your goals.</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <MessageCircle className="h-4 w-4 text-green-500" />
-                    <span>One-on-one guidance sessions</span>
+                  <div className="flex items-start gap-3">
+                    <MessageCircle className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Benefit from one-on-one guidance and Q&A sessions.</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Target className="h-4 w-4 text-purple-500" />
-                    <span>Goal-oriented learning support</span>
+                  <div className="flex items-start gap-3">
+                    <Target className="h-4 w-4 mt-1 text-purple-500 shrink-0" />
+                    <span>Accelerate your learning with goal-oriented support.</span>
                   </div>
                 </div>
                 <Button variant="secondary" className="w-full">Browse Mentors</Button>
