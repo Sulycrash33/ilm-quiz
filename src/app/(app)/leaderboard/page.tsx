@@ -1,6 +1,5 @@
 
 import { Leaderboard } from "@/components/leaderboard";
-import { Suspense } from "react";
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -29,18 +28,10 @@ export default function LeaderboardPage() {
            <div className="w-40" /> {/* Spacer */}
         </header>
 
-        {/* Leaderboard Content with Suspense for Loading */}
-        <Suspense
-          fallback={
-            <div className="flex-1 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            </div>
-          }
-        >
-          <div className="w-full bg-card/80 backdrop-blur-sm rounded-xl shadow-lg p-4 sm:p-6">
-            <Leaderboard />
-          </div>
-        </Suspense>
+        {/* Leaderboard Content */}
+        <div className="w-full bg-card/80 backdrop-blur-sm rounded-xl shadow-lg p-4 sm:p-6">
+          <Leaderboard />
+        </div>
       </div>
     </main>
   );

@@ -90,7 +90,7 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
         setShowResult(true)
       }
     }, 2000);
-  }, [lives, isLastQuestion, currentQuestion]);
+  }, [lives, isLastQuestion, currentQuestion, handleNext]);
 
   useEffect(() => {
     if (!currentQuestion || timeLeft <= 0 || isAnswered || showResult) return;
@@ -143,7 +143,9 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
 
     setTimeout(() => setShowExplanation(true), 1000);
     setTimeout(() => {
-      if ((lives <= 1 && !isCorrect) || isLastQuestion) {
+      if ((lives <= 1 && !isCorrect)) {
+        setShowResult(true);
+      } else if (isLastQuestion) {
         setShowResult(true);
       } else {
         handleNext();
@@ -179,7 +181,7 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
           break;
       }
     },
-    [coins, currentQuestion, usedLifelines]
+    [coins, currentQuestion, usedLifelines, handleNext]
   );
 
   const restartQuiz = () => {

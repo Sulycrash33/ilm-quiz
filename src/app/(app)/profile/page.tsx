@@ -88,14 +88,14 @@ export default function ProfilePage() {
     <>
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         {showCelebration && <Confetti width={width} height={height} recycle={false} numberOfPieces={200} gravity={0.1} />}
-        <div className="flex items-center justify-between mb-8">
+        
+        <header className="flex items-center justify-between mb-8">
           <Button variant="ghost" asChild>
             <Link href="/home">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Link>
           </Button>
-
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleShareProfile}>
               <Share2 className="h-4 w-4 mr-2" />
@@ -106,7 +106,7 @@ export default function ProfilePage() {
               Settings
             </Button>
           </div>
-        </div>
+        </header>
 
         <Card className="mb-8 border-2 border-primary/20 shadow-xl bg-gradient-to-r from-primary/5 to-accent/5 transition-all duration-300 hover:shadow-2xl">
           <CardContent className="pt-8 pb-8">

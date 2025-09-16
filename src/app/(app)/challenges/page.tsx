@@ -15,21 +15,22 @@ export default function RewardsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div className="flex items-center justify-between mb-8">
+        <header className="flex items-center justify-between mb-8">
             <Button asChild variant="ghost">
               <Link href="/home">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
             </Button>
-            <h1
-                id="rewards-heading"
-                className="text-3xl font-bold text-center text-primary"
-            >
-                Rewards Center
-            </h1>
-            <div className="w-40" />
-        </div>
+            <div className="text-center">
+                <h1 id="rewards-heading" className="text-3xl font-bold text-primary">
+                    Rewards Center
+                </h1>
+                <p className="text-muted-foreground">Claim your rewards and try your luck</p>
+            </div>
+            <div className="w-40" /> {/* Spacer */}
+        </header>
+        
         <section aria-labelledby="rewards-heading">
           <RewardCenter />
         </section>

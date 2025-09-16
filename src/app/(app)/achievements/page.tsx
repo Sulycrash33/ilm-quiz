@@ -1,16 +1,9 @@
 "use client";
 
 import { AchievementSystem } from "@/components/achievement-system";
-import { Suspense } from "react";
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-
-const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
-  </div>
-);
 
 export default function AchievementsPage() {
   return (
@@ -35,9 +28,7 @@ export default function AchievementsPage() {
             <div className="w-40" /> {/* Spacer */}
         </header>
 
-        <Suspense fallback={<LoadingFallback />}>
-          <AchievementSystem />
-        </Suspense>
+        <AchievementSystem />
       </div>
     </main>
   );

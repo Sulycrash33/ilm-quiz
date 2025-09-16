@@ -227,8 +227,7 @@ export default function CommunityPage() {
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <header className="flex items-center justify-between mb-8">
         <Button variant="ghost" asChild>
           <Link href="/home">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -237,7 +236,7 @@ export default function CommunityPage() {
         </Button>
 
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-primary mb-2">Community Hub</h1>
+          <h1 className="text-3xl font-bold text-primary">Community Hub</h1>
           <p className="text-muted-foreground">Connect, learn, and grow together</p>
         </div>
 
@@ -247,7 +246,7 @@ export default function CommunityPage() {
                 Leaderboard
             </Link>
         </Button>
-      </div>
+      </header>
 
       {/* Community Stats */}
       <Card className="mb-8 border-2 border-primary/20 shadow-lg">
