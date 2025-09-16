@@ -139,4 +139,3 @@ export interface DailyReward {
   xp: number
   bonus: string | null
 }
-    
