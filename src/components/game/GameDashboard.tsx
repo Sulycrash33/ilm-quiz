@@ -10,6 +10,7 @@ import { RankBadge } from "@/components/game/RankBadge";
 import { StreakCounter } from "@/components/game/StreakCounter";
 import { UserStats } from "@/components/game/UserStats";
 import { DailyProgressCard } from "@/components/game/DailyProgressCard";
+import { PrayerTimesCard } from "./PrayerTimesCard";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -36,6 +37,10 @@ export function GameDashboard() {
         <p className="text-muted-foreground text-base">Ready to expand your Islamic knowledge today?</p>
       </motion.div>
 
+      <motion.div variants={cardVariants} className="mb-8">
+        <PrayerTimesCard />
+      </motion.div>
+      
       <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" variants={cardVariants}>
         <RankBadge currentPoints={userPoints} />
         <StreakCounter streak={streak} />
