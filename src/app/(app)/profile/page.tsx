@@ -54,8 +54,8 @@ export default function ProfilePage() {
   const [selectedTab, setSelectedTab] = useState("overview")
   const [showCelebration, setShowCelebration] = useState(true)
   const [userData, setUserData] = useState({
-    name: "Suleiman Ahmad",
-    location: "New York, USA",
+    name: "Suleiman Abdullahi",
+    location: "Nigeria",
     joinDate: "Jan 2024",
     avatar: "https://picsum.photos/seed/123/200",
   })
@@ -111,7 +111,7 @@ export default function ProfilePage() {
               <Avatar className="h-32 w-32 border-4 border-accent">
                 <AvatarImage src={userData.avatar} alt="User avatar" />
                 <AvatarFallback className="text-4xl font-bold bg-secondary text-secondary-foreground">
-                  {userData.name[0]}
+                  {userData.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
               {showCelebration && (
@@ -138,7 +138,7 @@ export default function ProfilePage() {
               <div className="flex items-center gap-4 justify-center md:justify-start mb-4 text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
-                  <span>{userData.location}</span>
+                  <span>{userData.location} 🇳🇬</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
@@ -353,3 +353,5 @@ export default function ProfilePage() {
     </div>
   )
 }
+
+    
