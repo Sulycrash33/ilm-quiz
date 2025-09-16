@@ -1,10 +1,54 @@
 "use client";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Trophy, Star, Shield } from "lucide-react";
+import { ACHIEVEMENTS_DATA, DAILY_CHALLENGES_DATA, WEEKLY_CHALLENGES_DATA } from "@/lib/achievements-data";
+import { AchievementCard } from "./game/AchievementCard";
+import { ChallengeCard } from "./game/ChallengeCard";
+
 export function AchievementSystem() {
-  return (
-    <div className="text-center p-8 bg-card/50 rounded-lg">
-      <h1 className="text-2xl font-bold text-primary">Achievement System</h1>
-      <p className="text-muted-foreground">This is a placeholder for the achievement system. Please provide the component code.</p>
-    </div>
-  );
+    return (
+        <div className="w-full">
+            <Tabs defaultValue="achievements" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="achievements">
+                    <Star className="h-4 w-4 mr-2" />
+                    Achievements
+                </TabsTrigger>
+                <TabsTrigger value="daily">
+                    <Trophy className="h-4 w-4 mr-2" />
+                    Daily Challenges
+                </TabsTrigger>
+                <TabsTrigger value="weekly">
+                    <Shield className="h-4 w-4 mr-2" />
+                    Weekly Challenges
+                </TabsTrigger>
+                </TabsList>
+
+                <div className="mt-6">
+                    <TabsContent value="achievements">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                           {ACHIEVEMENTS_DATA.map((achievement) => (
+                                <AchievementCard key={achievement.id} achievement={achievement} />
+                            ))}
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="daily">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {DAILY_CHALLENGES_DATA.map((challenge) => (
+                                <ChallengeCard key={challenge.id} challenge={challenge} type="daily" />
+                            ))}
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="weekly">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {WEEKLY_CHALLENGES_DATA.map((challenge) => (
+                                <ChallengeCard key={challenge.id} challenge={challenge} type="weekly" />
+                            ))}
+                        </div>
+                    </TabsContent>
+                </div>
+            </Tabs>
+        </div>
+    );
 }
