@@ -144,6 +144,42 @@ export const ACHIEVEMENTS_DATA: Achievement[] = [
         completed: false,
         reward: { coins: 1000, xp: 500, title: "Grandmaster" },
         rarity: "epic",
+    },
+    {
+        id: 13,
+        title: "Quiz Marathoner",
+        description: "Answer 500 questions correctly",
+        icon: "🏃",
+        category: "Progress",
+        progress: 87,
+        target: 500,
+        completed: false,
+        reward: { coins: 500, xp: 250 },
+        rarity: "rare",
+    },
+    {
+        id: 14,
+        title: "Unstoppable",
+        description: "Maintain a 7-day learning streak",
+        icon: "🔥",
+        category: "Dedication",
+        progress: 7,
+        target: 7,
+        completed: true,
+        reward: { coins: 400, xp: 200 },
+        rarity: "rare",
+    },
+    {
+        id: 15,
+        title: "Wise Spender",
+        description: "Purchase an item from the store",
+        icon: "🛍️",
+        category: "Gameplay",
+        progress: 0,
+        target: 1,
+        completed: false,
+        reward: { coins: 30, xp: 15 },
+        rarity: "common",
     }
 ];
 
@@ -170,6 +206,28 @@ export const DAILY_CHALLENGES_DATA: Challenge[] = [
         timeLeft: "23:15:05",
         completed: false,
     },
+    {
+        id: 103,
+        title: "Seerah Speedrun",
+        description: "Answer 3 questions about Prophets in under a minute total.",
+        icon: "⭐",
+        progress: 0,
+        target: 3,
+        reward: { coins: 60, xp: 35 },
+        timeLeft: "23:15:05",
+        completed: false,
+    },
+    {
+        id: 104,
+        title: "Streak Starter",
+        description: "Get a 5-question answer streak.",
+        icon: "🔥",
+        progress: 3,
+        target: 5,
+        reward: { coins: 80, xp: 50 },
+        timeLeft: "23:15:05",
+        completed: false,
+    }
 ];
 
 export const WEEKLY_CHALLENGES_DATA: Challenge[] = [
@@ -179,7 +237,7 @@ export const WEEKLY_CHALLENGES_DATA: Challenge[] = [
         description: "Complete all quizzes in the 'Prophetic Biography' category",
         icon: "🕌",
         progress: 1,
-        target: 4, // Assuming there are 4 quizzes
+        target: 4,
         reward: { coins: 500, xp: 250, badge: "Seerah Scholar Badge" },
         timeLeft: "6d 10h",
         completed: false,
@@ -195,6 +253,28 @@ export const WEEKLY_CHALLENGES_DATA: Challenge[] = [
         timeLeft: "6d 10h",
         completed: false,
     },
+    {
+        id: 203,
+        title: "Knowledge Marathon",
+        description: "Answer 100 questions correctly throughout the week.",
+        icon: "🏃",
+        progress: 34,
+        target: 100,
+        reward: { coins: 600, xp: 300, badge: "Marathoner" },
+        timeLeft: "6d 10h",
+        completed: false,
+    },
+    {
+        id: 204,
+        title: "Category Conqueror",
+        description: "Complete a quiz in 5 different categories.",
+        icon: "🗺️",
+        progress: 2,
+        target: 5,
+        reward: { coins: 400, xp: 200 },
+        timeLeft: "6d 10h",
+        completed: false,
+    }
 ];
 
 export const SPIN_REWARDS: SpinReward[] = [
