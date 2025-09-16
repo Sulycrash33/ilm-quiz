@@ -28,7 +28,7 @@ export function UserStats({ coins }: UserStatsProps) {
                     className="border-yellow-300 text-yellow-700 hover:bg-yellow-50 bg-transparent"
                     asChild
                 >
-                    <Link href="/challenges">
+                    <Link href="/rewards">
                         <Zap className="h-3 w-3 mr-1" aria-hidden="true" />
                         Earn More
                     </Link>

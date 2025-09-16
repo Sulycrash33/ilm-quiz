@@ -1,13 +1,13 @@
 
 "use client";
 
-import { GameModes } from "@/components/game/GameModes";
+import { RewardCenter } from "@/components/game/RewardCenter";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-export default function GameModesPage() {
+export default function RewardsPage() {
   return (
     <main className="min-h-screen">
       <motion.div
@@ -24,16 +24,16 @@ export default function GameModesPage() {
               </Link>
             </Button>
             <div className="text-center">
-                <h1 id="gamemodes-heading" className="text-3xl font-bold text-primary">
-                    Game Modes
+                <h1 id="rewards-heading" className="text-3xl font-bold text-primary">
+                    Rewards Center
                 </h1>
-                <p className="text-muted-foreground">Choose your path to knowledge</p>
+                <p className="text-muted-foreground">Claim your rewards and try your luck</p>
             </div>
             <div className="w-40" /> {/* Spacer */}
         </header>
         
-        <section aria-labelledby="gamemodes-heading">
-          <GameModes />
+        <section aria-labelledby="rewards-heading">
+          <RewardCenter />
         </section>
       </motion.div>
     </main>

@@ -11,6 +11,7 @@ import { StreakCounter } from "@/components/game/StreakCounter";
 import { UserStats } from "@/components/game/UserStats";
 import { DailyProgressCard } from "@/components/game/DailyProgressCard";
 import { PrayerTimesCard } from "./PrayerTimesCard";
+import { GameModes } from "./GameModes";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },

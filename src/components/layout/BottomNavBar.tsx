@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Trophy, Users, User, Gift } from "lucide-react";
+import { BookOpen, Trophy, Users, User, Gift, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MosqueIcon } from "@/components/icons/MosqueIcon";
 
 const navItems = [
   { href: "/home", icon: MosqueIcon, label: "Home" },
   { href: "/quiz", icon: BookOpen, label: "Quiz" },
-  { href: "/challenges", icon: Gift, label: "Rewards" },
+  { href: "/challenges", icon: Zap, label: "Game Modes" },
   { href: "/community", icon: Users, label: "Community" },
   { href: "/profile", icon: User, label: "Profile" },
 ];
