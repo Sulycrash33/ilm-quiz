@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookUp, Repeat, Home as HomeIcon } from "lucide-react";
+import { ArrowRight, BookUp, Repeat, Home as HomeIcon, Swords, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 
 const gameModes = [
@@ -22,6 +22,22 @@ const gameModes = [
         color: "border-accent/20 bg-accent/5 text-accent",
         buttonText: "Start Running",
         href: "/quiz"
+    },
+     {
+        title: "Revision Mode",
+        description: "Practice questions you've previously answered incorrectly to master difficult topics.",
+        icon: RefreshCcw,
+        color: "border-blue-200/20 bg-blue-500/5 text-blue-500",
+        buttonText: "Start Revising",
+        href: "/quiz",
+    },
+    {
+        title: "Head-to-Head",
+        description: "Challenge a friend or a random opponent in a real-time quiz battle.",
+        icon: Swords,
+        color: "border-destructive/10 bg-destructive/5 text-destructive",
+        buttonText: "Find Opponent",
+        href: "/community"
     },
     {
         title: "Family Mode",
