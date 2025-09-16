@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Play, Trophy, Star, Clock, Target, Zap, Award, CheckCircle } from "lucide-react";
 import type { Topic, CategoryAchievement, CategoryDetails, Question } from "@/lib/types";
 import { QuizView } from "@/components/game/QuizView";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RANKS } from "@/lib/constants";
 
 interface CategoryDetailClientProps {
   category: CategoryDetails;
@@ -117,7 +119,7 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <Button size="lg" className="h-16" onClick={handleStartQuiz}>
                     <div className="flex flex-col items-center gap-1">
                       <Play className="h-5 w-5" />
@@ -136,6 +138,21 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
                         <span className="text-sm">Challenge Mode</span>
                       </div>
                   </Button>
+                  <Select>
+                    <SelectTrigger className="h-16 text-base">
+                      <SelectValue placeholder="Select a difficulty level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {RANKS.map((rank) => (
+                        <SelectItem key={rank.level} value={rank.title.toLowerCase()}>
+                          <div className="flex items-center gap-2">
+                            <rank.icon className={`h-4 w-4 ${rank.theme}`} />
+                            <span>{rank.title}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
               </div>
             </CardContent>
           </Card>
