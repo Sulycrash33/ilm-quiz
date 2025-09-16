@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation"
 const KNOWLEDGE_CATEGORIES = [
   {
     id: 1,
-    slug: "allah-names",
+    slug: "allahs-names",
     name: "Allah's Names & Attributes",
     icon: "✨",
     description: "Learn the 99 beautiful names of Allah (Asma ul-Husna) with their meanings and context",
@@ -553,5 +553,7 @@ export default function KnowledgeCategoriesPage() {
     </div>
   )
 }
+
+    
 
     
