@@ -14,24 +14,24 @@ import { cn } from "@/lib/utils"
 
 const avatars = {
   female: [
-    { id: "f-1", name: "Aisha", src: "https://avatar.iran.liara.run/public/girl?username=aisha" },
-    { id: "f-2", name: "Fatima", src: "https://avatar.iran.liara.run/public/girl?username=fatima" },
-    { id: "f-3", name: "Zainab", src: "https://avatar.iran.liara.run/public/girl?username=zainab" },
-    { id: "f-4", name: "Khadija", src: "https://avatar.iran.liara.run/public/girl?username=khadija" },
-    { id: "f-5", name: "Maryam", src: "https://avatar.iran.liara.run/public/girl?username=maryam" },
-    { id: "f-6", name: "Hafsa", src: "https://avatar.iran.liara.run/public/girl?username=hafsa" },
-    { id: "f-7", name: "Sumayyah", src: "https://avatar.iran.liara.run/public/girl?username=sumayyah" },
-    { id: "f-8", name: "Nusaiba", src: "https://avatar.iran.liara.run/public/girl?username=nusaiba" },
+    { id: "f-1", src: "https://avatar.iran.liara.run/public/girl?username=aisha" },
+    { id: "f-2", src: "https://avatar.iran.liara.run/public/girl?username=fatima" },
+    { id: "f-3", src: "https://avatar.iran.liara.run/public/girl?username=zainab" },
+    { id: "f-4", src: "https://avatar.iran.liara.run/public/girl?username=khadija" },
+    { id: "f-5", src: "https://avatar.iran.liara.run/public/girl?username=maryam" },
+    { id: "f-6", src: "https://avatar.iran.liara.run/public/girl?username=hafsa" },
+    { id: "f-7", src: "https://avatar.iran.liara.run/public/girl?username=sumayyah" },
+    { id: "f-8", src: "https://avatar.iran.liara.run/public/girl?username=nusaiba" },
   ],
   male: [
-    { id: "m-1", name: "Omar", src: "https://avatar.iran.liara.run/public/boy?username=omar" },
-    { id: "m-2", name: "Ali", src: "https://avatar.iran.liara.run/public/boy?username=ali" },
-    { id: "m-3", name: "Yusuf", src: "https://avatar.iran.liara.run/public/boy?username=yusuf" },
-    { id: "m-4", name: "Bilal", src: "https://avatar.iran.liara.run/public/boy?username=bilal" },
-    { id: "m-5", name: "Khalid", src: "https://avatar.iran.liara.run/public/boy?username=khalid" },
-    { id: "m-6", name: "Hassan", src: "https://avatar.iran.liara.run/public/boy?username=hassan" },
-    { id: "m-7", name: "Ibrahim", src: "https://avatar.iran.liara.run/public/boy?username=ibrahim" },
-    { id: "m-8", name: "Salim", src: "https://avatar.iran.liara.run/public/boy?username=salim" },
+    { id: "m-1", src: "https://avatar.iran.liara.run/public/boy?username=omar" },
+    { id: "m-2", src: "https://avatar.iran.liara.run/public/boy?username=ali" },
+    { id: "m-3", src: "https://avatar.iran.liara.run/public/boy?username=yusuf" },
+    { id: "m-4", src: "https://avatar.iran.liara.run/public/boy?username=bilal" },
+    { id: "m-5", src: "https://avatar.iran.liara.run/public/boy?username=khalid" },
+    { id: "m-6", src: "https://avatar.iran.liara.run/public/boy?username=hassan" },
+    { id: "m-7", src: "https://avatar.iran.liara.run/public/boy?username=ibrahim" },
+    { id: "m-8", src: "https://avatar.iran.liara.run/public/boy?username=salim" },
   ],
 }
 
@@ -73,7 +73,7 @@ export default function AvatarSelectionPage() {
                 <TabsTrigger value="male">Male</TabsTrigger>
               </TabsList>
               <TabsContent value="female" className="mt-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
                   {avatars.female.map((avatar) => (
                     <div
                       key={avatar.id}
@@ -83,19 +83,18 @@ export default function AvatarSelectionPage() {
                       )}
                       onClick={() => handleSelect(avatar.id)}
                       role="button"
-                      aria-label={`Select avatar: ${avatar.name}`}
+                      aria-label={`Select avatar ${avatar.id}`}
                     >
                       <Avatar className="h-24 w-24">
-                        <AvatarImage src={avatar.src} alt={avatar.name} />
-                        <AvatarFallback>{avatar.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={avatar.src} alt={`Avatar ${avatar.id}`} />
+                        <AvatarFallback>{avatar.id.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <span className="font-semibold text-center text-sm">{avatar.name}</span>
                     </div>
                   ))}
                 </div>
               </TabsContent>
               <TabsContent value="male" className="mt-6">
-                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                 <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
                   {avatars.male.map((avatar) => (
                     <div
                       key={avatar.id}
@@ -105,13 +104,12 @@ export default function AvatarSelectionPage() {
                       )}
                       onClick={() => handleSelect(avatar.id)}
                       role="button"
-                      aria-label={`Select avatar: ${avatar.name}`}
+                      aria-label={`Select avatar ${avatar.id}`}
                     >
                       <Avatar className="h-24 w-24">
-                        <AvatarImage src={avatar.src} alt={avatar.name} />
-                        <AvatarFallback>{avatar.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={avatar.src} alt={`Avatar ${avatar.id}`} />
+                        <AvatarFallback>{avatar.id.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <span className="font-semibold text-center text-sm">{avatar.name}</span>
                     </div>
                   ))}
                 </div>
