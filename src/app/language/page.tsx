@@ -6,11 +6,11 @@ import { IslamicBackground } from '@/components/layout/IslamicBackground';
 import { MosqueIcon } from '@/components/icons/MosqueIcon';
 
 const languages = [
-  { name: 'English', href: '/login', dir: 'ltr', emoji: '🇬🇧' },
-  { name: 'Hausa', href: '/login', dir: 'ltr', emoji: '🇳🇬' },
-  { name: 'العربية', href: '/login', dir: 'rtl', font: "'Amiri', serif", emoji: '🇸🇦' },
-  { name: 'Français', href: '/login', dir: 'ltr', emoji: '🇫🇷' },
-  { name: 'Kiswahili', href: '/login', dir: 'ltr', emoji: '🇹🇿' },
+  { name: 'English', href: '/onboarding/age', dir: 'ltr', emoji: '🇬🇧' },
+  { name: 'Hausa', href: '/onboarding/age', dir: 'ltr', emoji: '🇳🇬' },
+  { name: 'العربية', href: '/onboarding/age', dir: 'rtl', font: "'Amiri', serif", emoji: '🇸🇦' },
+  { name: 'Français', href: '/onboarding/age', dir: 'ltr', emoji: '🇫🇷' },
+  { name: 'Kiswahili', href: '/onboarding/age', dir: 'ltr', emoji: '🇹🇿' },
 ];
 
 export default function LanguageSelectionPage() {
