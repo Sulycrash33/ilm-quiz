@@ -14,16 +14,16 @@ import { cn } from "@/lib/utils"
 
 const avatars = {
   male: [
-    { id: "m-child", name: "Young Boy", src: "https://picsum.photos/seed/m-child/200", age: "child" },
-    { id: "m-teen", name: "Teenage Boy", src: "https://picsum.photos/seed/m-teen/200", age: "teen" },
-    { id: "m-adult", name: "Adult Man", src: "https://picsum.photos/seed/m-adult/200", age: "adult" },
-    { id: "m-elder", name: "Elderly Man", src: "https://picsum.photos/seed/m-elder/200", age: "elder" },
+    { id: "m-child", name: "Young Boy", src: "https://avatar.iran.liara.run/public/boy?username=m-child", age: "child" },
+    { id: "m-teen", name: "Teenage Boy", src: "https://avatar.iran.liara.run/public/boy?username=m-teen", age: "teen" },
+    { id: "m-adult", name: "Adult Man", src: "https://avatar.iran.liara.run/public/boy?username=m-adult", age: "adult" },
+    { id: "m-elder", name: "Elderly Man", src: "https://avatar.iran.liara.run/public/boy?username=m-elder", age: "elder" },
   ],
   female: [
-    { id: "f-child", name: "Young Girl", src: "https://picsum.photos/seed/f-child/200", age: "child" },
-    { id: "f-teen", name: "Teenage Girl", src: "https://picsum.photos/seed/f-teen/200", age: "teen" },
-    { id: "f-adult", name: "Adult Woman", src: "https://picsum.photos/seed/f-adult/200", age: "adult" },
-    { id: "f-elder", name: "Elderly Woman", src: "https://picsum.photos/seed/f-elder/200", age: "elder" },
+    { id: "f-child", name: "Young Girl", src: "https://avatar.iran.liara.run/public/girl?username=f-child", age: "child" },
+    { id: "f-teen", name: "Teenage Girl", src: "https://avatar.iran.liara.run/public/girl?username=f-teen", age: "teen" },
+    { id: "f-adult", name: "Adult Woman", src: "https://avatar.iran.liara.run/public/girl?username=f-adult", age: "adult" },
+    { id: "f-elder", name: "Elderly Woman", src: "https://avatar.iran.liara.run/public/girl?username=f-elder", age: "elder" },
   ],
 }
 
