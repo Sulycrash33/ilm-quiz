@@ -13,17 +13,25 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 
 const avatars = {
-  male: [
-    { id: "m-child", name: "Young Boy", src: "https://avatar.iran.liara.run/public/boy?username=m-child", age: "child" },
-    { id: "m-teen", name: "Teenage Boy", src: "https://avatar.iran.liara.run/public/boy?username=m-teen", age: "teen" },
-    { id: "m-adult", name: "Adult Man", src: "https://avatar.iran.liara.run/public/boy?username=m-adult", age: "adult" },
-    { id: "m-elder", name: "Elderly Man", src: "https://avatar.iran.liara.run/public/boy?username=m-elder", age: "elder" },
-  ],
   female: [
-    { id: "f-child", name: "Young Girl", src: "https://avatar.iran.liara.run/public/girl?username=f-child", age: "child" },
-    { id: "f-teen", name: "Teenage Girl", src: "https://avatar.iran.liara.run/public/girl?username=f-teen", age: "teen" },
-    { id: "f-adult", name: "Adult Woman", src: "https://avatar.iran.liara.run/public/girl?username=f-adult", age: "adult" },
-    { id: "f-elder", name: "Elderly Woman", src: "https://avatar.iran.liara.run/public/girl?username=f-elder", age: "elder" },
+    { id: "f-1", name: "Aisha", src: "https://avatar.iran.liara.run/public/girl?username=aisha" },
+    { id: "f-2", name: "Fatima", src: "https://avatar.iran.liara.run/public/girl?username=fatima" },
+    { id: "f-3", name: "Zainab", src: "https://avatar.iran.liara.run/public/girl?username=zainab" },
+    { id: "f-4", name: "Khadija", src: "https://avatar.iran.liara.run/public/girl?username=khadija" },
+    { id: "f-5", name: "Maryam", src: "https://avatar.iran.liara.run/public/girl?username=maryam" },
+    { id: "f-6", name: "Hafsa", src: "https://avatar.iran.liara.run/public/girl?username=hafsa" },
+    { id: "f-7", name: "Sumayyah", src: "https://avatar.iran.liara.run/public/girl?username=sumayyah" },
+    { id: "f-8", name: "Nusaiba", src: "https://avatar.iran.liara.run/public/girl?username=nusaiba" },
+  ],
+  male: [
+    { id: "m-1", name: "Omar", src: "https://avatar.iran.liara.run/public/boy?username=omar" },
+    { id: "m-2", name: "Ali", src: "https://avatar.iran.liara.run/public/boy?username=ali" },
+    { id: "m-3", name: "Yusuf", src: "https://avatar.iran.liara.run/public/boy?username=yusuf" },
+    { id: "m-4", name: "Bilal", src: "https://avatar.iran.liara.run/public/boy?username=bilal" },
+    { id: "m-5", name: "Khalid", src: "https://avatar.iran.liara.run/public/boy?username=khalid" },
+    { id: "m-6", name: "Hassan", src: "https://avatar.iran.liara.run/public/boy?username=hassan" },
+    { id: "m-7", name: "Ibrahim", src: "https://avatar.iran.liara.run/public/boy?username=ibrahim" },
+    { id: "m-8", name: "Salim", src: "https://avatar.iran.liara.run/public/boy?username=salim" },
   ],
 }
 
@@ -75,12 +83,13 @@ export default function AvatarSelectionPage() {
                       )}
                       onClick={() => handleSelect(avatar.id)}
                       role="button"
+                      aria-label={`Select avatar: ${avatar.name}`}
                     >
                       <Avatar className="h-24 w-24">
                         <AvatarImage src={avatar.src} alt={avatar.name} />
                         <AvatarFallback>{avatar.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <span className="font-semibold text-center">{avatar.name}</span>
+                      <span className="font-semibold text-center text-sm">{avatar.name}</span>
                     </div>
                   ))}
                 </div>
@@ -96,12 +105,13 @@ export default function AvatarSelectionPage() {
                       )}
                       onClick={() => handleSelect(avatar.id)}
                       role="button"
+                      aria-label={`Select avatar: ${avatar.name}`}
                     >
                       <Avatar className="h-24 w-24">
                         <AvatarImage src={avatar.src} alt={avatar.name} />
                         <AvatarFallback>{avatar.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <span className="font-semibold text-center">{avatar.name}</span>
+                      <span className="font-semibold text-center text-sm">{avatar.name}</span>
                     </div>
                   ))}
                 </div>
