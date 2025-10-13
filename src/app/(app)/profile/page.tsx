@@ -56,11 +56,11 @@ export default function ProfilePage() {
   const [showCelebration, setShowCelebration] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [userData, setUserData] = useState({
-    name: "Suleiman Abdullahi",
-    email: "suleiman@ilmhunt.com",
-    location: "Nigeria",
+    name: "Zainab Zawu",
+    email: "zainab@ilmhunt.com",
+    location: "Maiduguri, Nigeria",
     joinDate: "Jan 2024",
-    avatar: "https://picsum.photos/seed/123/200",
+    avatar: "https://picsum.photos/seed/zainab/200",
   })
   const { width, height } = useWindowSize()
 
