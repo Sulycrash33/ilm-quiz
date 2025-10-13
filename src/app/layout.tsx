@@ -20,23 +20,23 @@ const amiri = Amiri({
 })
 
 export const metadata: Metadata = {
-  title: "IlmQuest - Islamic Knowledge Journey",
+  title: "IlmHunt - Islamic Knowledge Journey",
   description:
     "Embark on a scholarly journey through Islamic knowledge with gamified learning.",
   keywords:
-    "Islamic education, Quran, Hadith, Islamic quiz, Islamic learning, IlmQuest",
+    "Islamic education, Quran, Hadith, Islamic quiz, Islamic learning, IlmHunt",
   openGraph: {
-    title: "IlmQuest - Islamic Knowledge Journey",
+    title: "IlmHunt - Islamic Knowledge Journey",
     description:
       "Gamified Islamic education platform for learning Quran, Hadith, and more.",
-    url: "https://ilmquest.com",
-    siteName: "IlmQuest",
+    url: "https://ilmhunt.com",
+    siteName: "IlmHunt",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "IlmQuest - Islamic Knowledge Journey",
+        alt: "IlmHunt - Islamic Knowledge Journey",
       },
     ],
     locale: "en_US",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "IlmQuest - Islamic Knowledge Journey",
+    title: "IlmHunt - Islamic Knowledge Journey",
     description:
       "Gamified Islamic education platform for learning Quran, Hadith, and more.",
     images: ["/og-image.png"],

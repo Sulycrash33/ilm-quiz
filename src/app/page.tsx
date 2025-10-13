@@ -10,7 +10,7 @@ export default function WelcomePage() {
       <div className="z-10 flex flex-col items-center gap-6">
         <div className="flex items-center gap-4 text-primary">
           <MosqueIcon className="h-12 w-12" />
-          <h1 className="text-5xl font-bold tracking-tight font-headline">IlmQuest</h1>
+          <h1 className="text-5xl font-bold tracking-tight font-headline">IlmHunt</h1>
         </div>
         <p style={{ fontFamily: "'Amiri', serif" }} className="text-4xl text-foreground/80">
           ٱلسَّلَامُ عَلَيْكُمْ

@@ -6,7 +6,7 @@ export default function HomePage() {
   return (
     <main
       role="main"
-      aria-label="IlmQuest Game Dashboard"
+      aria-label="IlmHunt Game Dashboard"
       className="min-h-screen"
     >
       {/* Foreground content */}

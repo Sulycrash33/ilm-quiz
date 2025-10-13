@@ -57,7 +57,7 @@ export default function ProfilePage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [userData, setUserData] = useState({
     name: "Suleiman Abdullahi",
-    email: "suleiman@ilmquest.com",
+    email: "suleiman@ilmhunt.com",
     location: "Nigeria",
     joinDate: "Jan 2024",
     avatar: "https://picsum.photos/seed/123/200",
