@@ -10,7 +10,6 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 import { IslamicBackground } from "@/components/layout/IslamicBackground"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { cn } from "@/lib/utils"
 
 const avatars = {
   female: [
@@ -28,7 +27,7 @@ const avatars = {
     { id: "m-2", src: "https://avatar.iran.liara.run/public/boy?username=ali" },
     { id: "m-3", src: "https://avatar.iran.liara.run/public/boy?username=yusuf" },
     { id: "m-4", src: "https://avatar.iran.liara.run/public/boy?username=bilal" },
-    { id: "m-5", src: "https://avatar.iran.liara.run/public/boy?username=khalid" },
+    { id: "m-5", src: "https://avatar.iran.liara.run.com/public/boy?username=khalid" },
     { id: "m-6", src: "https://avatar.iran.liara.run/public/boy?username=hassan" },
     { id: "m-7", src: "https://avatar.iran.liara.run/public/boy?username=ibrahim" },
     { id: "m-8", src: "https://avatar.iran.liara.run/public/boy?username=salim" },
@@ -39,10 +38,10 @@ export default function AvatarSelectionPage() {
   const router = useRouter()
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
 
-  const handleSelect = (avatarId: string) => {
-    setSelectedAvatar(avatarId)
+  const handleSelect = (avatarSrc: string) => {
+    setSelectedAvatar(avatarSrc)
     // In a real app, you'd save this to state management or a cookie
-    console.log("Selected avatar:", avatarId)
+    console.log("Selected avatar:", avatarSrc)
     setTimeout(() => router.push("/onboarding/name"), 300)
   }
 
@@ -73,15 +72,14 @@ export default function AvatarSelectionPage() {
                 <TabsTrigger value="male">Male</TabsTrigger>
               </TabsList>
               <TabsContent value="female" className="mt-6">
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-4 md:grid-cols-4 gap-6">
                   {avatars.female.map((avatar) => (
                     <div
                       key={avatar.id}
-                      className={cn(
-                        "flex flex-col items-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all",
-                        selectedAvatar === avatar.id ? "border-primary bg-primary/10" : "border-transparent hover:bg-muted"
-                      )}
-                      onClick={() => handleSelect(avatar.id)}
+                      className={`flex flex-col items-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all ${
+                        selectedAvatar === avatar.src ? "border-primary bg-primary/10" : "border-transparent hover:bg-muted"
+                      }`}
+                      onClick={() => handleSelect(avatar.src)}
                       role="button"
                       aria-label={`Select avatar ${avatar.id}`}
                     >
@@ -94,15 +92,14 @@ export default function AvatarSelectionPage() {
                 </div>
               </TabsContent>
               <TabsContent value="male" className="mt-6">
-                 <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
+                 <div className="grid grid-cols-4 md:grid-cols-4 gap-6">
                   {avatars.male.map((avatar) => (
                     <div
                       key={avatar.id}
-                      className={cn(
-                        "flex flex-col items-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all",
-                        selectedAvatar === avatar.id ? "border-primary bg-primary/10" : "border-transparent hover:bg-muted"
-                      )}
-                      onClick={() => handleSelect(avatar.id)}
+                      className={`flex flex-col items-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all ${
+                        selectedAvatar === avatar.src ? "border-primary bg-primary/10" : "border-transparent hover:bg-muted"
+                      }`}
+                      onClick={() => handleSelect(avatar.src)}
                       role="button"
                       aria-label={`Select avatar ${avatar.id}`}
                     >
