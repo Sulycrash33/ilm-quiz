@@ -9,14 +9,12 @@ const pt_sans = PT_Sans({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-pt-sans",
-  display: "swap",
 })
 
 const amiri = Amiri({
   subsets: ["arabic", "latin"],
   weight: ["400", "700"],
   variable: "--font-amiri",
-  display: "swap",
 })
 
 export const metadata: Metadata = {

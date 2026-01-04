@@ -13,7 +13,7 @@ export default function LoginPage() {
       <IslamicBackground />
        <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost" size="icon">
-          <Link href="/language">
+          <Link href="/">
             <ArrowLeft className="h-6 w-6" />
             <span className="sr-only">Back</span>
           </Link>
