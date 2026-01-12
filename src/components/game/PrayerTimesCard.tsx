@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { FajrIcon, DhuhrIcon, AsrIcon, MaghribIcon, IshaIcon, SunriseIcon } from '@/components/icons/prayer-time-icons';
-import { Calendar, Clock, MapPin, AlertCircle } from 'lucide-react';
+import { Calendar, MapPin, AlertCircle } from 'lucide-react';
 
 interface PrayerTimes {
   Fajr: string;
@@ -26,6 +25,13 @@ interface HijriDate {
   year: string;
 }
 
+interface CachedPrayerData {
+  prayerTimes: PrayerTimes;
+  hijriDate: HijriDate;
+  location: string;
+  timestamp: number;
+}
+
 export function PrayerTimesCard() {
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimes | null>(null);
   const [hijriDate, setHijriDate] = useState<HijriDate | null>(null);
@@ -34,6 +40,37 @@ export function PrayerTimesCard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const CACHE_KEY = 'prayerTimesCache';
+    const CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours
+
+    const loadFromCache = () => {
+      try {
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+          const { prayerTimes, hijriDate, location, timestamp } = JSON.parse(cachedData) as CachedPrayerData;
+          if (Date.now() - timestamp < CACHE_DURATION) {
+            setPrayerTimes(prayerTimes);
+            setHijriDate(hijriDate);
+            setLocation(location);
+            setLoading(false);
+            return true; // Cache is valid and used
+          }
+        }
+      } catch (e) {
+        console.error("Failed to read from cache", e);
+      }
+      return false; // Cache is invalid or non-existent
+    };
+
+    const saveDataToCache = (data: Omit<CachedPrayerData, 'timestamp'>) => {
+      try {
+        const cacheData: CachedPrayerData = { ...data, timestamp: Date.now() };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+      } catch (e) {
+        console.error("Failed to save to cache", e);
+      }
+    };
+
     const fetchPrayerTimes = (latitude: number, longitude: number) => {
       const date = new Date();
       const year = date.getFullYear();
@@ -41,18 +78,33 @@ export function PrayerTimesCard() {
       const day = date.getDate();
 
       axios.get(`https://api.aladhan.com/v1/calendar/${year}/${month}`, {
-        params: {
-          latitude,
-          longitude,
-          method: 2 // ISNA
-        }
+        params: { latitude, longitude, method: 2 } // ISNA
       })
       .then(response => {
         const data = response.data.data;
         const todayData = data[day-1];
-        setPrayerTimes(todayData.timings);
-        setHijriDate(todayData.date.hijri);
-        setLoading(false);
+        const newPrayerTimes = todayData.timings;
+        const newHijriDate = todayData.date.hijri;
+        
+        setPrayerTimes(newPrayerTimes);
+        setHijriDate(newHijriDate);
+        
+        // Fetch location and then save to cache
+        axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
+          .then(res => {
+            const newLocation = `${res.data.city}, ${res.data.countryCode}`;
+            setLocation(newLocation);
+            saveDataToCache({ prayerTimes: newPrayerTimes, hijriDate: newHijriDate, location: newLocation });
+          })
+          .catch(err => {
+            console.error("Error fetching city name:", err);
+            setLocation("Unknown Location");
+            // Still save other data to cache
+            saveDataToCache({ prayerTimes: newPrayerTimes, hijriDate: newHijriDate, location: "Unknown Location" });
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       })
       .catch(err => {
         console.error("Error fetching prayer times:", err);
@@ -60,33 +112,28 @@ export function PrayerTimesCard() {
         setLoading(false);
       });
     };
-
-    const fetchCityName = (latitude: number, longitude: number) => {
-        axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
-        .then(response => {
-            setLocation(`${response.data.city}, ${response.data.countryCode}`);
-        })
-        .catch(err => {
-            console.error("Error fetching city name:", err);
-            setLocation("Unknown Location");
-        });
-    };
+    
+    // Main logic
+    const cacheLoaded = loadFromCache();
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         position => {
           const { latitude, longitude } = position.coords;
           fetchPrayerTimes(latitude, longitude);
-          fetchCityName(latitude, longitude);
         },
         err => {
-          setError("Please enable location services to see prayer times.");
-          setLoading(false);
+          if (!cacheLoaded) { // Only show error if there's no cached data to display
+            setError("Please enable location services to see prayer times.");
+            setLoading(false);
+          }
         }
       );
     } else {
-      setError("Geolocation is not supported by your browser.");
-      setLoading(false);
+       if (!cacheLoaded) {
+          setError("Geolocation is not supported by your browser.");
+          setLoading(false);
+       }
     }
   }, []);
 
@@ -120,18 +167,18 @@ export function PrayerTimesCard() {
               ))}
             </div>
           </div>
-        ) : error ? (
+        ) : error && !prayerTimes ? ( // Only show error if there are no prayer times to display
            <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Location Error</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
           </Alert>
-        ) : (
+        ) : prayerTimes ? (
           <div className="space-y-4">
              <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-primary" />
-                    <span className="font-semibold text-card-foreground">{location}</span>
+                    <span className="font-semibold text-card-foreground">{location || <Skeleton className="h-4 w-24" />}</span>
                 </div>
                 {hijriDate && (
                     <div className="flex items-center gap-2">
@@ -152,7 +199,7 @@ export function PrayerTimesCard() {
               ))}
             </div>
           </div>
-        )}
+        ) : null}
       </CardContent>
     </Card>
   );
