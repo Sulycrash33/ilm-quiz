@@ -68,16 +68,16 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (isLastQuestion) {
         setShowResult(true);
     } else {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
-  };
+  }, [isLastQuestion, currentQuestionIndex]);
 
   const handleTimeUp = useCallback(() => {
-    if (!currentQuestion) return;
+    if (!currentQuestion || isAnswered) return;
     setIsAnswered(true);
     setLives((prev) => Math.max(0, prev - 1));
     setStreak(0);
@@ -90,7 +90,7 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
         setShowResult(true)
       }
     }, 2000);
-  }, [lives, isLastQuestion, currentQuestion, handleNext]);
+  }, [lives, isLastQuestion, currentQuestion, handleNext, isAnswered]);
 
   useEffect(() => {
     if (!currentQuestion || timeLeft <= 0 || isAnswered || showResult) return;
@@ -271,6 +271,16 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
         </Card>
       </motion.div>
     );
+  }
+
+  if (!currentQuestion) {
+    return (
+        <div className="flex flex-col items-center justify-center h-full text-center p-8">
+            <h2 className="text-2xl font-bold mb-2">Error</h2>
+            <p className="text-muted-foreground">Could not load the question. Please try again.</p>
+            <Button onClick={onExit} className="mt-6">Back to Categories</Button>
+        </div>
+    )
   }
 
   return (

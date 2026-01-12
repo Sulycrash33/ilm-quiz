@@ -31,5 +31,3 @@ const StarParticles = ({ count = 20, isEmitting }: { count?: number; isEmitting:
 };
 
 export default StarParticles;
-
-    

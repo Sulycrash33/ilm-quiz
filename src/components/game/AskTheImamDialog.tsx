@@ -85,5 +85,3 @@ export function AskTheImamDialog({ open, onOpenChange, question }: AskTheImamDia
     </Dialog>
   );
 }
-
-    

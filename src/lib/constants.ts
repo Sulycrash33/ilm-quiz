@@ -64,6 +64,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Ar-Rahman',
       explanation: "Ar-Rahman refers to Allah's encompassing mercy for all of creation.",
       difficulty: 'Beginner',
+      points: 10,
     },
     {
       id: 'an2',
@@ -72,6 +73,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: false,
       explanation: "'Al-Khaliq' means 'The Creator', while 'Ar-Razzaq' means 'The Provider'.",
       difficulty: 'Beginner',
+      points: 10,
     },
   ],
   'holy-quran': [
@@ -83,6 +85,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: '114',
       explanation: 'The Quran is composed of 114 chapters, or Surahs, of varying lengths.',
       difficulty: 'Beginner',
+      points: 5,
     },
     {
       id: 'hq2',
@@ -92,6 +95,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Surah Yasin',
       explanation: 'Surah Yasin (Chapter 36) is often referred to as the Heart of the Quran due to its powerful themes.',
       difficulty: 'Intermediate',
+      points: 15,
     },
      {
       id: 'hq3',
@@ -100,6 +104,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: true,
       explanation: "The first five verses of Surah Al-Alaq were the first to be revealed to Prophet Muhammad (PBUH) in the cave of Hira.",
       difficulty: 'Beginner',
+      points: 10,
     },
     {
       id: 'hq4',
@@ -109,6 +114,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Surah Al-Fatiha',
       explanation: "Surah Al-Fatiha, 'The Opening', is an essential part of every unit (Rak'ah) of Islamic prayer.",
       difficulty: 'Beginner',
+      points: 5,
     },
     {
       id: 'hq5',
@@ -118,6 +124,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Surah Al-Baqarah',
       explanation: "Surah Al-Baqarah (The Cow) is the longest chapter in the Quran, with 286 verses.",
       difficulty: 'Beginner',
+      points: 10,
     },
     {
       id: 'hq6',
@@ -126,6 +133,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: false,
       explanation: "All Surahs begin with the Bismillah except for Surah At-Tawbah (Chapter 9).",
       difficulty: 'Intermediate',
+      points: 15,
     },
     {
       id: 'hq7',
@@ -135,6 +143,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Surah Al-Ikhlas',
       explanation: "Prophet Muhammad (PBUH) said that reciting Surah Al-Ikhlas (Chapter 112) is equivalent to reciting one-third of the Quran.",
       difficulty: 'Intermediate',
+      points: 15,
     }
   ],
   'hadith-sciences': [
@@ -146,6 +155,7 @@ export const QUESTIONS: Record<string, Question[]> = {
         answer: 'Authentic',
         explanation: '"Sahih" is the highest level of authentication for a hadith, meaning it has a connected and reliable chain of narrators.',
         difficulty: 'Beginner',
+        points: 10,
     },
     {
         id: 'hs2',
@@ -155,6 +165,7 @@ export const QUESTIONS: Record<string, Question[]> = {
         answer: 'Imam al-Bukhari',
         explanation: 'Sahih al-Bukhari is one of the most famous and respected hadith collections, compiled by Imam Muhammad al-Bukhari.',
         difficulty: 'Beginner',
+        points: 10,
     },
     {
         id: 'hs3',
@@ -163,6 +174,7 @@ export const QUESTIONS: Record<string, Question[]> = {
         answer: false,
         explanation: 'Weak (Da\'if) hadith are generally not used for deriving primary legal rulings, though they may sometimes be used for virtues of deeds (Fada\'il al-A\'mal).',
         difficulty: 'Intermediate',
+        points: 15,
     }
   ],
   'prophetic-biography': [
@@ -174,6 +186,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Makkah',
       explanation: 'Prophet Muhammad (PBUH) was born in the city of Makkah in the Year of the Elephant.',
       difficulty: 'Beginner',
+      points: 5,
     },
   ],
   'islamic-law': [
@@ -184,6 +197,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: true,
       explanation: 'Wudu is a state of ritual purity necessary for performing prayers and other acts of worship.',
       difficulty: 'Beginner',
+      points: 5,
     },
   ],
   'five-pillars': [
@@ -195,6 +209,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       answer: 'Jihad (Struggle)',
       explanation: 'While Jihad is an important concept in Islam, the Five Pillars are Shahadah, Salah, Zakat, Sawm (Fasting), and Hajj (Pilgrimage).',
       difficulty: 'Beginner',
+      points: 10,
     },
   ],
   'islamic-history': [
@@ -206,6 +221,7 @@ export const QUESTIONS: Record<string, Question[]> = {
         answer: 'Abu Bakr As-Siddiq',
         explanation: 'Abu Bakr As-Siddiq was the closest companion of the Prophet and was chosen as the first Caliph of the Muslim Ummah.',
         difficulty: 'Beginner',
+        points: 10,
     },
     {
         id: 'ih2',
@@ -215,6 +231,7 @@ export const QUESTIONS: Record<string, Question[]> = {
         answer: 'Battle of Badr',
         explanation: 'The Battle of Badr was a key early Islamic battle fought in 624 CE (2 AH) and resulted in a decisive victory for the Muslims.',
         difficulty: 'Intermediate',
+        points: 15,
     },
     {
         id: 'ih3',
@@ -223,6 +240,7 @@ export const QUESTIONS: Record<string, Question[]> = {
         answer: true,
         explanation: 'The Abbasid Caliphate (c. 750–1258) saw a flourishing of science, culture, and philosophy, often referred to as the Islamic Golden Age.',
         difficulty: 'Intermediate',
+        points: 15,
     }
   ],
   'islamic-ethics': [],
