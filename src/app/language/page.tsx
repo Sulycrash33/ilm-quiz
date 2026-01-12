@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -6,11 +7,11 @@ import { IslamicBackground } from '@/components/layout/IslamicBackground';
 import { MosqueIcon } from '@/components/icons/MosqueIcon';
 
 const languages = [
-  { name: 'English', href: '/onboarding/age', dir: 'ltr', emoji: '🇬🇧' },
-  { name: 'Hausa', href: '/onboarding/age', dir: 'ltr', emoji: '🇳🇬' },
-  { name: 'العربية', href: '/onboarding/age', dir: 'rtl', font: "'Amiri', serif", emoji: '🇸🇦' },
-  { name: 'Français', href: '/onboarding/age', dir: 'ltr', emoji: '🇫🇷' },
-  { name: 'Kiswahili', href: '/onboarding/age', dir: 'ltr', emoji: '🇹🇿' },
+  { name: 'English', href: '/onboarding/age', dir: 'ltr', code: 'gb' },
+  { name: 'Hausa', href: '/onboarding/age', dir: 'ltr', code: 'ng' },
+  { name: 'العربية', href: '/onboarding/age', dir: 'rtl', font: "'Amiri', serif", code: 'sa' },
+  { name: 'Français', href: '/onboarding/age', dir: 'ltr', code: 'fr' },
+  { name: 'Kiswahili', href: '/onboarding/age', dir: 'ltr', code: 'tz' },
 ];
 
 export default function LanguageSelectionPage() {
@@ -48,7 +49,14 @@ export default function LanguageSelectionPage() {
               >
                 <Link href={lang.href} className="flex w-full items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <span className="text-2xl">{lang.emoji}</span>
+                    <div className="relative h-6 w-8 overflow-hidden rounded-sm">
+                        <Image
+                            src={`https://flagcdn.com/${lang.code}.svg`}
+                            alt={`${lang.name} flag`}
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                    </div>
                     <span>{lang.name}</span>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground" />
