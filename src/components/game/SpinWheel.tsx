@@ -8,6 +8,7 @@ import Confetti from "react-confetti"
 import { useWindowSize } from "react-use"
 import type { SpinReward } from "@/lib/types"
 import { SPIN_REWARDS } from "@/lib/achievements-data"
+import { useProfile } from "@/hooks/use-profile"
 
 const WheelSegment: React.FC<{ reward: SpinReward; angle: number; index: number }> = ({ reward, angle, index }) => {
   const colors = ["hsl(var(--secondary))", "hsl(var(--secondary)/0.8)", "hsl(var(--secondary)/0.6)","hsl(var(--secondary)/0.4)", "hsl(var(--secondary)/0.2)"]
@@ -53,25 +54,33 @@ interface SpinWheelProps {
 }
 
 export function SpinWheel({ coins, setCoins }: SpinWheelProps) {
+  const { profile, updateProfile } = useProfile();
   const [spinning, setSpinning] = useState(false)
   const [lastSpinResult, setLastSpinResult] = useState<SpinReward | null>(null)
-  const [canSpin, setCanSpin] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    const lastSpin = localStorage.getItem("lastSpinTime")
-    if (!lastSpin) return true
-    const diff = Date.now() - Number(lastSpin)
-    return diff >= 4 * 60 * 60 * 1000
-  })
+  const [lastSpinAt, setLastSpinAt] = useState<string | null>(null)
+  const [canSpin, setCanSpin] = useState(true)
   const [nextSpinTime, setNextSpinTime] = useState("")
   const [showConfetti, setShowConfetti] = useState(false)
   const wheelRef = useRef<HTMLDivElement>(null)
   const { width, height } = useWindowSize()
 
+  // Seed from the real, cross-device profile once it loads.
   useEffect(() => {
-    if (typeof window !== 'undefined' && !canSpin) {
+    if (!profile) return;
+    setLastSpinAt(profile.lastSpinAt);
+    if (!profile.lastSpinAt) {
+      setCanSpin(true);
+      return;
+    }
+    const diff = Date.now() - new Date(profile.lastSpinAt).getTime();
+    setCanSpin(diff >= 4 * 60 * 60 * 1000);
+  }, [profile]);
+
+  useEffect(() => {
+    if (!canSpin && lastSpinAt) {
       const timer = setInterval(() => {
         const now = new Date()
-        const lastSpin = new Date(Number(localStorage.getItem("lastSpinTime")))
+        const lastSpin = new Date(lastSpinAt)
         const nextSpin = new Date(lastSpin.getTime() + 4 * 60 * 60 * 1000)
         const diff = nextSpin.getTime() - now.getTime()
 
@@ -87,7 +96,7 @@ export function SpinWheel({ coins, setCoins }: SpinWheelProps) {
 
       return () => clearInterval(timer)
     }
-  }, [canSpin])
+  }, [canSpin, lastSpinAt])
 
   const handleSpin = () => {
     if (!canSpin || spinning) return
@@ -119,17 +128,18 @@ export function SpinWheel({ coins, setCoins }: SpinWheelProps) {
     }
 
     setTimeout(() => {
+      const now = new Date().toISOString();
       setLastSpinResult(selectedReward)
       setSpinning(false)
       setCanSpin(false)
       setShowConfetti(true)
-      if (typeof window !== 'undefined') {
-        localStorage.setItem("lastSpinTime", Date.now().toString())
-      }
+      setLastSpinAt(now)
 
+      const newCoins = selectedReward.type === "coins" ? coins + selectedReward.value : coins;
       if (selectedReward.type === "coins") {
         setCoins((prev) => prev + selectedReward.value)
       }
+      updateProfile({ lastSpinAt: now, coins: newCoins });
     }, spinDuration)
   }
 

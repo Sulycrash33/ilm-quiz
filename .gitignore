@@ -39,7 +39,14 @@ next-env.d.ts
 
 .genkit/*
 .env*
+!.env.local.example
 
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# Firebase Studio / IDX editor-specific (not needed for GitHub collaborators)
+.agents/
+.vscode/
+studio.json
+.idx/

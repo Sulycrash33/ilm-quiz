@@ -6,17 +6,25 @@ import { SpinWheel } from "./SpinWheel"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Crown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useProfile } from "@/hooks/use-profile"
 
 export function RewardCenter() {
-  const [coins, setCoins] = useState(() => {
-    if (typeof window === 'undefined') return 1250;
-    return Number(localStorage.getItem("coins")) || 1250;
-  });
+  const { profile, updateProfile } = useProfile();
+  const [coins, setCoins] = useState(1250);
 
+  // Seed from the real, cross-device profile once it loads.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        localStorage.setItem("coins", coins.toString())
+    if (profile) {
+      setCoins(profile.coins);
     }
+  }, [profile]);
+
+  // Persist back to Supabase (replaces localStorage writes).
+  useEffect(() => {
+    if (!profile) return;
+    if (coins === profile.coins) return;
+    updateProfile({ coins });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coins]);
   
 

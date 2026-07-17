@@ -12,6 +12,7 @@ import { AlertCircle, CheckCircle, BrainCircuit, Star, ArrowLeft, Clock, Heart, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { AskTheImamDialog } from './AskTheImamDialog';
 import StarParticles from './StarParticles';
+import { useProfile } from '@/hooks/use-profile';
 
 interface QuizViewProps {
   questions: Question[];
@@ -55,14 +56,24 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
   const [doublePoints, setDoublePoints] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
 
-  useEffect(() => {
-    setHighScore(Number(localStorage.getItem("highScore")) || 0);
-    setCoins(Number(localStorage.getItem("coins")) || 1250);
-  }, []);
+  const { profile, updateProfile } = useProfile();
 
+  // Seed local state from the real, cross-device profile once it loads.
   useEffect(() => {
-    localStorage.setItem("highScore", highScore.toString());
-    localStorage.setItem("coins", coins.toString());
+    if (profile) {
+      setHighScore(profile.highScore);
+      setCoins(profile.coins);
+    }
+  }, [profile]);
+
+  // Persist coins/highScore back to Supabase (replaces localStorage writes).
+  // Skipped until the profile has loaded once, so we don't overwrite real
+  // data with this component's initial default state.
+  useEffect(() => {
+    if (!profile) return;
+    if (coins === profile.coins && highScore === profile.highScore) return;
+    updateProfile({ coins, highScore });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highScore, coins]);
   
   const currentQuestion = questions[currentQuestionIndex];

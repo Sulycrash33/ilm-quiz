@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Gift } from "lucide-react"
 import type { DailyReward } from "@/lib/types"
 import { DAILY_REWARDS } from "@/lib/achievements-data"
+import { useProfile } from "@/hooks/use-profile"
 
 interface DailyLoginRewardsProps {
   coins: number;
@@ -14,22 +15,23 @@ interface DailyLoginRewardsProps {
 }
 
 export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
-  const [dailyStreak, setDailyStreak] = useState(() => {
-    if (typeof window === 'undefined') return 3;
-    return Number(localStorage.getItem("dailyStreak")) || 3
-  });
+  const { profile, updateProfile } = useProfile();
+  const [dailyStreak, setDailyStreak] = useState(3);
 
-   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem("dailyStreak", dailyStreak.toString())
+  // Seed from the real, cross-device profile once it loads.
+  useEffect(() => {
+    if (profile) {
+      setDailyStreak(profile.streakCount || 3);
     }
-  }, [dailyStreak]);
+  }, [profile]);
 
   const claimDailyReward = (day: number) => {
     if (day === dailyStreak) {
       const reward = DAILY_REWARDS[day - 1]
+      const newStreak = Math.min(dailyStreak + 1, 8);
       setCoins((prev) => prev + reward.coins)
-      setDailyStreak((prev) => Math.min(prev + 1, 8))
+      setDailyStreak(newStreak)
+      updateProfile({ streakCount: newStreak, coins: coins + reward.coins });
     }
   }
 
