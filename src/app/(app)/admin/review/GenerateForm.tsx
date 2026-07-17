@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { generateDraftQuestions } from './actions';
 import { Loader2, Sparkles } from 'lucide-react';
 
@@ -17,6 +18,7 @@ export function GenerateForm({ categories }: { categories: Category[] }) {
   const [difficulty, setDifficulty] = useState('medium');
   const [language, setLanguage] = useState('en');
   const [count, setCount] = useState(5);
+  const [autoPublish, setAutoPublish] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,11 +30,17 @@ export function GenerateForm({ categories }: { categories: Category[] }) {
     formData.set('difficulty', difficulty);
     formData.set('language', language);
     formData.set('count', String(count));
+    formData.set('autoPublish', autoPublish ? 'true' : 'false');
 
     startTransition(async () => {
       const result = await generateDraftQuestions(formData);
       if (result.ok) {
-        setMessage({ type: 'ok', text: `Drafted ${result.draftedCount} question(s) — review them below before they can be published.` });
+        setMessage({
+          type: 'ok',
+          text: autoPublish
+            ? `Published ${result.draftedCount} question(s) directly — live for players now.`
+            : `Drafted ${result.draftedCount} question(s) — review them below before they can be published.`,
+        });
       } else {
         setMessage({ type: 'error', text: result.error });
       }
@@ -93,9 +101,15 @@ export function GenerateForm({ categories }: { categories: Category[] }) {
           />
         </div>
       </div>
+      <div className="flex items-start gap-2">
+        <Checkbox id="autoPublish" checked={autoPublish} onCheckedChange={c => setAutoPublish(c === true)} className="mt-0.5" />
+        <label htmlFor="autoPublish" className="text-sm leading-tight">
+          Auto-publish (skip manual review) — <span className="text-muted-foreground">faster, but a bad AI citation goes live immediately instead of getting caught first.</span>
+        </label>
+      </div>
       <Button type="submit" disabled={isPending || !categoryId}>
         {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-        {isPending ? 'Drafting…' : 'Draft candidates'}
+        {isPending ? (autoPublish ? 'Drafting & publishing…' : 'Drafting…') : (autoPublish ? 'Draft & publish' : 'Draft candidates')}
       </Button>
       {message && (
         <p className={`text-sm ${message.type === 'ok' ? 'text-emerald-600' : 'text-destructive'}`}>

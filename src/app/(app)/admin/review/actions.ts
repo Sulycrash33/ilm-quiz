@@ -33,13 +33,14 @@ export type GenerateResult =
 
 export async function generateDraftQuestions(formData: FormData): Promise<GenerateResult> {
   try {
-    const { supabase } = await requireReviewer();
+    const { supabase, userId } = await requireReviewer();
 
     const categoryId = String(formData.get('categoryId') ?? '');
     const categoryName = String(formData.get('categoryName') ?? '');
     const count = Number(formData.get('count') ?? 5);
     const difficulty = String(formData.get('difficulty') ?? 'medium') as 'easy' | 'medium' | 'hard';
     const language = String(formData.get('language') ?? 'en') as 'ha' | 'en' | 'fr' | 'ar' | 'id' | 'ms';
+    const autoPublish = formData.get('autoPublish') === 'true';
 
     if (!categoryId || !categoryName) {
       return { ok: false, error: 'Missing category.' };
@@ -62,7 +63,8 @@ export async function generateDraftQuestions(formData: FormData): Promise<Genera
       explanation: q.explanation,
       citation_reference: q.citationReference + (q.confidenceFlag === 'needs_scholar_verification' ? ' [AI: please verify]' : ''),
       source_type: 'ai',
-      review_status: 'ai_drafted' as const,
+      review_status: autoPublish ? ('published' as const) : ('ai_drafted' as const),
+      ...(autoPublish ? { reviewed_by: userId, reviewed_at: new Date().toISOString() } : {}),
     }));
 
     const { error } = await supabase.from('questions').insert(rows);
