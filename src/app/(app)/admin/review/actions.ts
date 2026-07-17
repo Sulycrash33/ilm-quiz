@@ -62,7 +62,7 @@ export async function generateDraftQuestions(formData: FormData): Promise<Genera
       correct_choice_index: q.correctChoiceIndex,
       explanation: q.explanation,
       citation_reference: q.citationReference + (q.confidenceFlag === 'needs_scholar_verification' ? ' [AI: please verify]' : ''),
-      source_type: 'ai',
+      source_type: 'ai_drafted',
       review_status: autoPublish ? ('published' as const) : ('ai_drafted' as const),
       ...(autoPublish ? { reviewed_by: userId, reviewed_at: new Date().toISOString() } : {}),
     }));
