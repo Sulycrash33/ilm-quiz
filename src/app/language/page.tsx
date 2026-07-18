@@ -32,7 +32,7 @@ export default function LanguageSelectionPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
               <MosqueIcon className="h-10 w-10 text-primary" />
             </div>
-            <CardTitle className="text-3xl font-bold" style={{ fontFamily: "'Amiri', serif" }}>
+            <CardTitle className="text-3xl font-bold font-headline">
               Select a Language
             </CardTitle>
             <CardDescription>Choose your preferred language to continue.</CardDescription>
@@ -44,10 +44,9 @@ export default function LanguageSelectionPage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-16 transform text-lg transition-transform hover:scale-105 hover:bg-muted/80"
-                style={{ direction: lang.dir as 'ltr' | 'rtl', fontFamily: lang.font }}
+                className={`h-16 transform text-lg transition-transform hover:scale-105 hover:bg-muted/80 ${lang.font ? "font-amiri" : ""}`}
               >
-                <Link href={lang.href} className="flex w-full items-center justify-between">
+                <Link href={lang.href} dir={lang.dir} className="flex w-full items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="relative h-6 w-8 overflow-hidden rounded-sm">
                         <Image

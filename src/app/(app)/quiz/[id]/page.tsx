@@ -5,19 +5,20 @@ import type { CategoryDetails } from "@/lib/types";
 import { CategoryDetailClient } from "@/components/game/CategoryDetailClient";
 
 interface CategoryDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function CategoryDetailPage({ params }: CategoryDetailPageProps) {
-  const category: CategoryDetails | undefined = CATEGORY_DETAILS[params.id];
+export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
+  const { id } = await params;
+  const category: CategoryDetails | undefined = CATEGORY_DETAILS[id];
 
   if (!category) {
     notFound();
   }
 
-  const questions = QUESTIONS[params.id] || [];
+  const questions = QUESTIONS[id] || [];
 
   return <CategoryDetailClient category={category} questions={questions} />;
 }

@@ -12,7 +12,7 @@ export default function WelcomePage() {
           <MosqueIcon className="h-12 w-12" />
           <h1 className="text-5xl font-bold tracking-tight font-headline">IlmHunt</h1>
         </div>
-        <p style={{ fontFamily: "'Amiri', serif" }} className="text-4xl text-foreground/80">
+        <p className="font-amiri text-4xl text-foreground/80">
           ٱلسَّلَامُ عَلَيْكُمْ
         </p>
         <p className="max-w-md text-lg text-muted-foreground">
