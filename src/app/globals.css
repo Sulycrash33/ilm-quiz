@@ -27,11 +27,22 @@ body {
     --border: 45 20% 85%;
     --input: 45 20% 85%;
     --ring: 45 76% 47%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    /* Jade: geometric tilework green. Used for "easy"/positive/correct states. */
+    --jade: 168 45% 30%;
+    --jade-foreground: 0 0% 98%;
+    --jade-soft: 168 40% 92%;
+    /* Henna/rust: traditional dye tone. Used for "hard"/advanced states. */
+    --henna: 14 55% 40%;
+    --henna-foreground: 0 0% 98%;
+    --henna-soft: 14 55% 93%;
+    /* Lapis: manuscript-illumination blue. Used for "rare" tier states. */
+    --lapis: 217 60% 35%;
+    --lapis-foreground: 0 0% 98%;
+    --lapis-soft: 217 55% 93%;
+    /* Amethyst: Tyrian-purple, historically the rarest illumination dye. "epic" tier. */
+    --amethyst: 271 40% 38%;
+    --amethyst-foreground: 0 0% 98%;
+    --amethyst-soft: 271 40% 93%;
     --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -52,7 +63,7 @@ body {
     --primary: 45 70% 50%;
     --primary-foreground: 45 30% 95%;
     --secondary: 45 15% 20%;
-    --secondary-foreground: 45, 70%, 90%;
+    --secondary-foreground: 45 70% 90%;
     --muted: 45 10% 15%;
     --muted-foreground: 45 10% 55%;
     --accent: 45 75% 55%;
@@ -62,11 +73,18 @@ body {
     --border: 45 10% 25%;
     --input: 45 10% 25%;
     --ring: 45 70% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --jade: 168 40% 55%;
+    --jade-foreground: 168 40% 8%;
+    --jade-soft: 168 30% 18%;
+    --henna: 14 60% 60%;
+    --henna-foreground: 14 60% 10%;
+    --henna-soft: 14 40% 20%;
+    --lapis: 217 55% 62%;
+    --lapis-foreground: 217 55% 10%;
+    --lapis-soft: 217 35% 20%;
+    --amethyst: 271 35% 62%;
+    --amethyst-foreground: 271 35% 10%;
+    --amethyst-soft: 271 25% 20%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

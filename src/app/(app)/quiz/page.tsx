@@ -341,7 +341,7 @@ export default function KnowledgeCategoriesPage() {
         </Button>
 
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-primary mb-2">Knowledge Categories</h1>
+          <h1 className="text-3xl font-bold font-headline text-primary mb-2">Knowledge Categories</h1>
           <p className="text-muted-foreground">Explore 25 areas of Islamic knowledge</p>
         </div>
 
@@ -353,7 +353,7 @@ export default function KnowledgeCategoriesPage() {
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">{unlockedCount}</div>
+              <div className="text-3xl font-bold font-headline text-primary mb-1">{unlockedCount}</div>
               <div className="text-sm text-muted-foreground">Categories Unlocked</div>
             </div>
             <div className="text-center">

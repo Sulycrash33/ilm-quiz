@@ -133,7 +133,7 @@ export default function ProfilePage() {
 
               <div className="text-center md:text-left flex-1">
                 <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
-                  <h1 className="text-3xl font-bold text-primary">{userData.name}</h1>
+                  <h1 className="text-3xl font-bold font-headline text-primary">{userData.name}</h1>
                   <Button size="sm" variant="ghost" onClick={handleEditProfile}>
                     <Edit3 className="h-4 w-4" />
                   </Button>

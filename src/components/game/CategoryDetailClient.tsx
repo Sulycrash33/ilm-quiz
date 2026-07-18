@@ -85,10 +85,10 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[
-              { value: category.completed, label: "Questions Completed", subtext: `of ${category.questions} total`, color: "text-blue-600" },
-              { value: `${category.mastery}%`, label: "Mastery Level", component: <Progress value={category.mastery} className="mt-2 h-2" />, color: "text-purple-600" },
-              { value: completedTopics, label: "Topics Mastered", subtext: `of ${totalTopics} topics`, color: "text-green-600" },
-              { value: category.xpReward, label: "Total XP Available", subtext: category.estimatedTime, color: "text-yellow-600" }
+              { value: category.completed, label: "Questions Completed", subtext: `of ${category.questions} total`, color: "text-lapis" },
+              { value: `${category.mastery}%`, label: "Mastery Level", component: <Progress value={category.mastery} className="mt-2 h-2" />, color: "text-primary" },
+              { value: completedTopics, label: "Topics Mastered", subtext: `of ${totalTopics} topics`, color: "text-jade" },
+              { value: category.xpReward, label: "Total XP Available", subtext: category.estimatedTime, color: "text-amethyst" }
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className={`text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
@@ -163,7 +163,7 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
                 key={topic.id}
                 className={`border-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${
                   !topic.unlocked ? "opacity-60 cursor-not-allowed bg-muted/50" : "cursor-pointer"
-                } ${topic.completed === topic.questions ? "border-green-300 bg-green-50" : "hover:border-accent"}`}
+                } ${topic.completed === topic.questions ? "border-jade/40 bg-jade-soft" : "hover:border-accent"}`}
                 onClick={() => topic.unlocked && handleStartQuiz()}
                 role="button"
                 tabIndex={topic.unlocked ? 0 : -1}
@@ -177,7 +177,7 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
                           {topic.difficulty}
                         </Badge>
                         {topic.completed === topic.questions && (
-                          <Badge className="bg-green-100 text-green-700 text-xs">
+                          <Badge className="bg-jade-soft text-jade text-xs">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Complete
                           </Badge>
@@ -234,7 +234,7 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
                 key={achievement.id}
                 className={`border-2 shadow-lg ${
                   achievement.unlocked
-                    ? "border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50"
+                    ? "border-primary/30 bg-primary/5"
                     : ""
                 }`}
               >
@@ -244,7 +244,7 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
                       {achievement.icon}
                     </div>
                     <div>
-                      <CardTitle className={`text-lg ${achievement.unlocked ? "text-yellow-800" : ""}`}>
+                      <CardTitle className={`text-lg font-headline ${achievement.unlocked ? "text-primary" : ""}`}>
                         {achievement.name}
                       </CardTitle>
                     </div>
@@ -263,7 +263,7 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
                   )}
                   <div className="pt-2 border-t">
                     {achievement.unlocked ? (
-                      <Badge className="bg-green-100 text-green-700">
+                      <Badge className="bg-jade-soft text-jade">
                         <Award className="h-3 w-3 mr-1" />
                         Unlocked
                       </Badge>

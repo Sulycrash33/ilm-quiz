@@ -20,7 +20,7 @@ export default function AchievementsPage() {
               </Link>
             </Button>
             <div className="text-center">
-                <h1 id="achievements-heading" className="text-3xl font-bold text-primary">
+                <h1 id="achievements-heading" className="text-3xl font-bold font-headline text-primary">
                     Achievements & Challenges
                 </h1>
                 <p className="text-muted-foreground">Track your progress and earn rewards</p>

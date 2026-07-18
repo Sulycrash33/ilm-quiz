@@ -11,7 +11,7 @@ export default {
     extend: {
       fontFamily: {
         body: ['var(--font-pt-sans)', 'sans-serif'],
-        headline: ['var(--font-pt-sans)', 'sans-serif'],
+        headline: ['var(--font-amiri)', 'serif'],
         amiri: ['var(--font-amiri)', 'serif'],
         code: ['monospace'],
       },
@@ -56,6 +56,26 @@ export default {
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+        },
+        jade: {
+          DEFAULT: 'hsl(var(--jade))',
+          foreground: 'hsl(var(--jade-foreground))',
+          soft: 'hsl(var(--jade-soft))',
+        },
+        henna: {
+          DEFAULT: 'hsl(var(--henna))',
+          foreground: 'hsl(var(--henna-foreground))',
+          soft: 'hsl(var(--henna-soft))',
+        },
+        lapis: {
+          DEFAULT: 'hsl(var(--lapis))',
+          foreground: 'hsl(var(--lapis-foreground))',
+          soft: 'hsl(var(--lapis-soft))',
+        },
+        amethyst: {
+          DEFAULT: 'hsl(var(--amethyst))',
+          foreground: 'hsl(var(--amethyst-foreground))',
+          soft: 'hsl(var(--amethyst-soft))',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

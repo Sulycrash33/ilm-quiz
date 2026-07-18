@@ -23,14 +23,14 @@ export function RankBadge({ currentPoints }: RankBadgeProps) {
   const Icon = currentRank.icon;
 
   return (
-    <Card className="relative overflow-hidden border-2 border-purple-200/50 shadow-lg hover:shadow-xl transition-all duration-300">
-      <CardHeader className={cn("pb-4", nextRank ? "bg-purple-50/50" : "bg-accent/20")}>
+    <Card className="relative overflow-hidden border-2 border-primary/30 shadow-lg hover:shadow-xl transition-all duration-300">
+      <CardHeader className={cn("pb-4", nextRank ? "bg-primary/10" : "bg-accent/20")}>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className={cn("text-base", "text-purple-800")}>{currentRank.title}</CardTitle>
+            <CardTitle className={cn("text-base font-headline", "text-primary")}>{currentRank.title}</CardTitle>
             <p className="text-sm text-muted-foreground">Rank {currentRank.level}</p>
           </div>
-          <div className={cn("text-4xl", "text-purple-600")} aria-hidden="true">
+          <div className={cn("text-4xl", "text-primary")} aria-hidden="true">
             <Icon className="h-10 w-10" />
           </div>
         </div>

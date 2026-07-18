@@ -24,7 +24,7 @@ export default function GameModesPage() {
               </Link>
             </Button>
             <div className="text-center">
-                <h1 id="gamemodes-heading" className="text-3xl font-bold text-primary">
+                <h1 id="gamemodes-heading" className="text-3xl font-bold font-headline text-primary">
                     Game Modes
                 </h1>
                 <p className="text-muted-foreground">Choose your path to knowledge</p>

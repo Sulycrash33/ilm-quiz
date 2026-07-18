@@ -18,7 +18,7 @@ export default function LeaderboardPage() {
               </Link>
             </Button>
           <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-bold font-headline text-primary tracking-tight">
               Community Leaderboard
             </h1>
             <p className="mt-2 text-sm sm:text-base text-muted-foreground">

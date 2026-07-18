@@ -42,7 +42,7 @@ export default function StorePage() {
           </Link>
         </Button>
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-primary mb-2">IlmHunt Store</h1>
+          <h1 className="text-3xl font-bold font-headline text-primary mb-2">IlmHunt Store</h1>
           <p className="text-muted-foreground">Enhance your learning journey</p>
         </div>
         <div className="flex items-center gap-4">

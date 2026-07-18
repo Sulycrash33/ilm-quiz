@@ -24,7 +24,7 @@ export default function RewardsPage() {
               </Link>
             </Button>
             <div className="text-center">
-                <h1 id="rewards-heading" className="text-3xl font-bold text-primary">
+                <h1 id="rewards-heading" className="text-3xl font-bold font-headline text-primary">
                     Rewards Center
                 </h1>
                 <p className="text-muted-foreground">Claim your rewards and try your luck</p>

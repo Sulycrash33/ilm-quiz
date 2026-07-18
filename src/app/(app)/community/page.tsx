@@ -236,7 +236,7 @@ export default function CommunityPage() {
         </Button>
 
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-primary">Community Hub</h1>
+          <h1 className="text-3xl font-bold font-headline text-primary">Community Hub</h1>
           <p className="text-muted-foreground">Connect, learn, and grow together</p>
         </div>
 
@@ -253,7 +253,7 @@ export default function CommunityPage() {
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">12,847</div>
+              <div className="text-3xl font-bold font-headline text-primary mb-1">12,847</div>
               <div className="text-sm text-muted-foreground">Active Learners</div>
             </div>
             <div className="text-center">
