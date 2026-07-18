@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AskTheImamDialog } from './AskTheImamDialog';
 import StarParticles from './StarParticles';
 import { useProfile } from '@/hooks/use-profile';
+import { DIFFICULTY_STYLES } from '@/lib/design-tokens';
 
 interface QuizViewProps {
   questions: Question[];
@@ -259,10 +260,10 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-blue-100 p-4 rounded-lg"
+                  className="bg-primary/10 p-4 rounded-lg"
                 >
-                  <div className="text-2xl font-bold text-blue-600">{highScore}</div>
-                  <div className="text-sm text-blue-500">High Score</div>
+                  <div className="text-2xl font-bold text-primary">{highScore}</div>
+                  <div className="text-sm text-primary/80">High Score</div>
                 </motion.div>
               </div>
             </div>
@@ -305,15 +306,15 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
             </Button>
             <div className="flex items-center gap-4 sm:gap-6 mt-4 sm:mt-0">
                 <div className="flex items-center gap-2" aria-label={`Lives remaining: ${lives}`}>
-                    <Heart className="h-5 w-5 text-red-500" />
+                    <Heart className="h-5 w-5 text-destructive" />
                     <span className="font-semibold">{lives}</span>
                 </div>
                 <div className="flex items-center gap-2" aria-label={`Coins: ${coins}`}>
-                    <Coins className="h-5 w-5 text-yellow-500" />
+                    <Coins className="h-5 w-5 text-accent" />
                     <span className="font-semibold">{coins}</span>
                 </div>
                 <div className="flex items-center gap-2" aria-label={`Streak: ${streak}`}>
-                    <Star className="h-5 w-5 text-orange-500" />
+                    <Star className="h-5 w-5 text-primary" />
                     <span className="font-semibold">{streak} streak</span>
                 </div>
             </div>
@@ -340,10 +341,10 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
                         variant="outline"
                         className={
                           currentQuestion.difficulty === "Beginner"
-                            ? "border-green-300 text-green-700"
+                            ? `${DIFFICULTY_STYLES.easy.border} ${DIFFICULTY_STYLES.easy.text}`
                             : currentQuestion.difficulty === "Intermediate"
-                              ? "border-yellow-300 text-yellow-700"
-                              : "border-red-300 text-red-700"
+                              ? `${DIFFICULTY_STYLES.medium.border} ${DIFFICULTY_STYLES.medium.text}`
+                              : `${DIFFICULTY_STYLES.hard.border} ${DIFFICULTY_STYLES.hard.text}`
                         }
                       >
                         {currentQuestion.difficulty}
@@ -351,7 +352,7 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
                 </div>
                  <div className="flex items-center gap-2" aria-label={`Time remaining: ${timeLeft} seconds`}>
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className={`font-bold ${timeLeft <= 10 ? "text-red-500 animate-pulse" : "text-foreground"}`}>
+                    <span className={`font-bold ${timeLeft <= 10 ? "text-destructive animate-pulse" : "text-foreground"}`}>
                         {timeLeft}s
                     </span>
                 </div>
@@ -388,16 +389,16 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
                         className={cn(
                           'h-auto p-4 text-left justify-start transition-all duration-300 w-full',
                           isEliminated && "opacity-30 cursor-not-allowed",
-                          showCorrectAnswer && 'bg-green-100 border-green-500 text-green-800 hover:bg-green-100',
-                          showWrongAnswer && 'bg-red-100 border-red-500 text-red-800 hover:bg-red-100',
+                          showCorrectAnswer && 'bg-jade-soft border-jade text-jade hover:bg-jade-soft',
+                          showWrongAnswer && 'bg-destructive/10 border-destructive text-destructive hover:bg-destructive/10',
                           !isAnswered && !isEliminated && 'hover:bg-secondary hover:border-primary'
                         )}
                       >
                         <div className="flex items-center gap-3 w-full">
                            <div className={cn(
                                 "w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-semibold shrink-0",
-                                showCorrectAnswer ? "bg-green-500 border-green-500 text-white" : "",
-                                showWrongAnswer ? "bg-red-500 border-red-500 text-white" : "",
+                                showCorrectAnswer ? "bg-jade border-jade text-jade-foreground" : "",
+                                showWrongAnswer ? "bg-destructive border-destructive text-destructive-foreground" : "",
                                 !isAnswered ? "border-input" : ""
                             )}>
                                {showCorrectAnswer ? <CheckCircle className="h-4 w-4" /> : showWrongAnswer ? <XCircle className="h-4 w-4" /> : String.fromCharCode(65 + index)}
@@ -417,13 +418,13 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+                    className="bg-lapis-soft border border-lapis/30 rounded-lg p-4"
                   >
                     <div className="flex items-start gap-2">
-                      <Lightbulb className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <Lightbulb className="h-5 w-5 text-lapis mt-0.5" />
                       <div>
-                        <div className="font-semibold text-blue-800 mb-1">Explanation</div>
-                        <div className="text-blue-700 text-sm leading-relaxed">{currentQuestion.explanation}</div>
+                        <div className="font-semibold text-lapis mb-1">Explanation</div>
+                        <div className="text-lapis/90 text-sm leading-relaxed">{currentQuestion.explanation}</div>
                       </div>
                     </div>
                   </motion.div>
@@ -433,7 +434,7 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
         </Card>
 
         {/* Lifelines */}
-        <Card className="border-2 border-yellow-200/50">
+        <Card className="border-2 border-accent/30">
             <CardHeader>
             <CardTitle className="flex items-center gap-2 text-accent">
                 <Zap className="h-5 w-5" />
@@ -460,7 +461,7 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
                           'h-20 flex-col gap-1 text-xs w-full',
                            isUsed && "opacity-50 cursor-not-allowed",
                            !canAfford && "opacity-60",
-                           canAfford && !isUsed && "hover:bg-yellow-50/50 hover:border-accent"
+                           canAfford && !isUsed && "hover:bg-accent/10 hover:border-accent"
                         )}
                         aria-label={`${lifeline.name}: ${lifeline.description}, costs ${lifeline.cost} coins`}
                         aria-disabled={isUsed || !canAfford || isAnswered}

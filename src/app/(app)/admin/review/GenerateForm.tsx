@@ -112,7 +112,7 @@ export function GenerateForm({ categories }: { categories: Category[] }) {
         {isPending ? (autoPublish ? 'Drafting & publishing…' : 'Drafting…') : (autoPublish ? 'Draft & publish' : 'Draft candidates')}
       </Button>
       {message && (
-        <p className={`text-sm ${message.type === 'ok' ? 'text-emerald-600' : 'text-destructive'}`}>
+        <p className={`text-sm ${message.type === 'ok' ? 'text-jade' : 'text-destructive'}`}>
           {message.text}
         </p>
       )}

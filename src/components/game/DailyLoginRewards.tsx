@@ -59,7 +59,7 @@ export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
                 key={day}
                 className={`
                   flex items-center justify-between p-4 rounded-lg border-2 transition-all duration-200
-                  ${isClaimed ? "bg-green-50 border-green-200" : ""}
+                  ${isClaimed ? "bg-jade-soft border-jade/30" : ""}
                   ${isToday ? "bg-secondary border-primary/50 shadow-md" : ""}
                   ${isLocked ? "bg-muted/50 border-border opacity-60" : ""}
                 `}
@@ -70,7 +70,7 @@ export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
                   <div
                     className={`
                       w-10 h-10 rounded-full flex items-center justify-center font-bold
-                      ${isClaimed ? "bg-green-500 text-white" : ""}
+                      ${isClaimed ? "bg-jade text-jade-foreground" : ""}
                       ${isToday ? "bg-primary text-primary-foreground" : ""}
                       ${isLocked ? "bg-muted text-muted-foreground" : ""}
                     `}
@@ -86,7 +86,7 @@ export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
                   </div>
                 </div>
                 <div>
-                  {isClaimed && <Badge className="bg-green-100 text-green-700">Claimed</Badge>}
+                  {isClaimed && <Badge className="bg-jade-soft text-jade">Claimed</Badge>}
                   {isToday && (
                     <Button
                       size="sm"

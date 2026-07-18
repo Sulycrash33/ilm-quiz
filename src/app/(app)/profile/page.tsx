@@ -38,10 +38,10 @@ const ACHIEVEMENTS = [
 ]
 
 const STATS = [
-  { label: "Total Questions", value: "1,247", icon: Target, color: "text-blue-600" },
-  { label: "Correct Answers", value: "1,084", icon: Trophy, color: "text-green-600" },
-  { label: "Study Time", value: "42h 15m", icon: Clock, color: "text-purple-600" },
-  { label: "Categories Mastered", value: "3/12", icon: BookOpen, color: "text-orange-600" },
+  { label: "Total Questions", value: "1,247", icon: Target, color: "text-lapis" },
+  { label: "Correct Answers", value: "1,084", icon: Trophy, color: "text-jade" },
+  { label: "Study Time", value: "42h 15m", icon: Clock, color: "text-amethyst" },
+  { label: "Categories Mastered", value: "3/12", icon: BookOpen, color: "text-henna" },
 ]
 
 const RECENT_ACTIVITY = [
@@ -120,7 +120,7 @@ export default function ProfilePage() {
                 </Avatar>
                 {showCelebration && (
                   <div className="absolute -top-2 -right-2">
-                    <Star className="h-8 w-8 text-yellow-400 animate-pulse" />
+                    <Star className="h-8 w-8 text-primary animate-pulse" />
                   </div>
                 )}
                 <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
@@ -156,15 +156,15 @@ export default function ProfilePage() {
                     <div className="text-sm text-muted-foreground">Total Points</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">7</div>
+                    <div className="text-2xl font-bold text-henna">7</div>
                     <div className="text-sm text-muted-foreground">Day Streak</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">47</div>
+                    <div className="text-2xl font-bold text-amethyst">47</div>
                     <div className="text-sm text-muted-foreground">Global Rank</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">87%</div>
+                    <div className="text-2xl font-bold text-lapis">87%</div>
                     <div className="text-sm text-muted-foreground">Accuracy</div>
                   </div>
                 </div>
@@ -191,16 +191,16 @@ export default function ProfilePage() {
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-2 border-blue-200/50 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="border-2 border-lapis/30 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-800">
+                  <CardTitle className="flex items-center gap-2 font-headline text-lapis">
                     <TrendingUp className="h-5 w-5" />
                     Learning Progress
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {STATS.map((stat, index) => (
-                    <div key={index} className="flex items-center justify-between hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                    <div key={index} className="flex items-center justify-between hover:bg-lapis-soft p-2 rounded-lg transition-colors">
                       <div className="flex items-center gap-3">
                         <stat.icon className={`h-5 w-5 ${stat.color}`} />
                         <span className="text-card-foreground">{stat.label}</span>
@@ -211,9 +211,9 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-yellow-200/50 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="border-2 border-primary/30 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-yellow-800">
+                  <CardTitle className="flex items-center gap-2 font-headline text-primary">
                     <Award className="h-5 w-5" />
                     Recent Achievements
                   </CardTitle>
@@ -223,7 +223,7 @@ export default function ProfilePage() {
                     {ACHIEVEMENTS.filter((a) => a.earned)
                       .slice(0, 3)
                       .map((achievement, index) => (
-                        <div key={index} className="flex items-center gap-3 p-2 bg-yellow-50/50 rounded-lg hover:bg-yellow-100/50 transition-colors">
+                        <div key={index} className="flex items-center gap-3 p-2 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors">
                           <span className="text-2xl">{achievement.icon}</span>
                           <div className="flex-1">
                             <h4 className="font-semibold text-card-foreground">{achievement.name}</h4>
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                   key={index}
                   className={`border-2 shadow-lg transition-all duration-300 hover:scale-105 ${
                     achievement.earned
-                      ? "border-yellow-200/80 bg-gradient-to-br from-yellow-50 to-orange-50"
+                      ? "border-primary/30 bg-primary/5"
                       : "border-border bg-muted/30 opacity-60"
                   }`}
                 >
@@ -256,7 +256,7 @@ export default function ProfilePage() {
                     <h3 className="font-bold text-card-foreground mb-2">{achievement.name}</h3>
                     <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
                     {achievement.earned ? (
-                      <Badge className="bg-green-100 text-green-700">Earned {achievement.date}</Badge>
+                      <Badge className="bg-jade-soft text-jade">Earned {achievement.date}</Badge>
                     ) : (
                       <Badge variant="outline">Not Earned</Badge>
                     )}
@@ -291,20 +291,20 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 border-purple-200/50 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="border-2 border-primary/30 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader>
-                  <CardTitle className="text-purple-800">Learning Streaks</CardTitle>
+                  <CardTitle className="font-headline text-primary">Learning Streaks</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-orange-600 mb-2">7</div>
+                    <div className="text-4xl font-bold text-primary mb-2">7</div>
                     <div className="text-sm text-muted-foreground">Current Streak</div>
                   </div>
                   <div className="grid grid-cols-7 gap-1 mb-4">
                     {[...Array(7)].map((_, i) => (
                       <div
                         key={i}
-                        className={`h-8 rounded ${i < 7 ? "bg-orange-400 hover:bg-orange-500" : "bg-muted"} transition-colors`}
+                        className={`h-8 rounded ${i < 7 ? "bg-primary/60 hover:bg-primary/80" : "bg-muted"} transition-colors`}
                       />
                     ))}
                   </div>
@@ -345,7 +345,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="font-bold text-green-600">{activity.points}</span>
+                        <span className="font-bold text-jade">{activity.points}</span>
                       </div>
                     </div>
                   ))}

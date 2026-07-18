@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { DIFFICULTY_STYLES } from "@/lib/design-tokens"
 import {
   ArrowLeft,
   Users,
@@ -257,15 +258,15 @@ export default function CommunityPage() {
               <div className="text-sm text-muted-foreground">Active Learners</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-1">156</div>
+              <div className="text-3xl font-bold text-lapis mb-1">156</div>
               <div className="text-sm text-muted-foreground">Study Groups</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-1">2,341</div>
+              <div className="text-3xl font-bold text-amethyst mb-1">2,341</div>
               <div className="text-sm text-muted-foreground">Forum Posts</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-600 mb-1">45</div>
+              <div className="text-3xl font-bold text-henna mb-1">45</div>
               <div className="text-sm text-muted-foreground">Active Challenges</div>
             </div>
           </div>
@@ -325,7 +326,7 @@ export default function CommunityPage() {
                         </div>
                       </div>
                     </div>
-                    {group.isJoined && <Badge className="bg-green-100 text-green-700">Joined</Badge>}
+                    {group.isJoined && <Badge className="bg-jade-soft text-jade">Joined</Badge>}
                   </div>
                 </CardHeader>
 
@@ -443,7 +444,7 @@ export default function CommunityPage() {
                       </Button>
                     </div>
                     {post.isAnswered && (
-                      <Badge className="bg-green-100 text-green-700">
+                      <Badge className="bg-jade-soft text-jade">
                         <Star className="h-3 w-3 mr-1" />
                         Answered
                       </Badge>
@@ -465,26 +466,26 @@ export default function CommunityPage() {
             {CHALLENGES.map((challenge) => (
               <Card
                 key={challenge.id}
-                className="border-2 border-purple-200/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="border-2 border-amethyst/30 shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-lg text-purple-800">{challenge.title}</CardTitle>
+                      <CardTitle className="text-lg font-headline text-amethyst">{challenge.title}</CardTitle>
                       <Badge
                         variant="outline"
                         className={`mt-1 text-xs ${
                           challenge.difficulty === "Easy"
-                            ? "border-green-300 text-green-700"
+                            ? `${DIFFICULTY_STYLES.easy.border} ${DIFFICULTY_STYLES.easy.text}`
                             : challenge.difficulty === "Medium"
-                              ? "border-yellow-300 text-yellow-700"
-                              : "border-red-300 text-red-700"
+                              ? `${DIFFICULTY_STYLES.medium.border} ${DIFFICULTY_STYLES.medium.text}`
+                              : `${DIFFICULTY_STYLES.hard.border} ${DIFFICULTY_STYLES.hard.text}`
                         }`}
                       >
                         {challenge.difficulty}
                       </Badge>
                     </div>
-                    {challenge.isActive && <Badge className="bg-green-100 text-green-700">Active</Badge>}
+                    {challenge.isActive && <Badge className="bg-jade-soft text-jade">Active</Badge>}
                   </div>
                 </CardHeader>
 
@@ -498,11 +499,11 @@ export default function CommunityPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Time Left</span>
-                      <span className="font-semibold text-orange-600">{challenge.timeLeft}</span>
+                      <span className="font-semibold text-henna">{challenge.timeLeft}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Reward</span>
-                      <span className="font-semibold text-yellow-600">{challenge.reward}</span>
+                      <span className="font-semibold text-primary">{challenge.reward}</span>
                     </div>
                   </div>
 
@@ -544,15 +545,15 @@ export default function CommunityPage() {
                 </p>
                 <div className="space-y-2 text-sm text-card-foreground">
                   <div className="flex items-start gap-3">
-                    <Star className="h-4 w-4 mt-1 text-yellow-500 shrink-0" />
+                    <Star className="h-4 w-4 mt-1 text-primary shrink-0" />
                     <span>Earn mentor badges and community recognition for your contributions.</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Heart className="h-4 w-4 mt-1 text-red-500 shrink-0" />
+                    <Heart className="h-4 w-4 mt-1 text-primary shrink-0" />
                     <span>Make a positive and lasting impact in the Ummah.</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Trophy className="h-4 w-4 mt-1 text-purple-500 shrink-0" />
+                    <Trophy className="h-4 w-4 mt-1 text-primary shrink-0" />
                     <span>Access exclusive resources and training materials for mentors.</span>
                   </div>
                 </div>
@@ -574,15 +575,15 @@ export default function CommunityPage() {
                 </p>
                 <div className="space-y-2 text-sm text-card-foreground">
                    <div className="flex items-start gap-3">
-                    <BookOpen className="h-4 w-4 mt-1 text-blue-500 shrink-0" />
+                    <BookOpen className="h-4 w-4 mt-1 text-secondary-foreground shrink-0" />
                     <span>Receive personalized learning paths tailored to your goals.</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <MessageCircle className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <MessageCircle className="h-4 w-4 mt-1 text-secondary-foreground shrink-0" />
                     <span>Benefit from one-on-one guidance and Q&A sessions.</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Target className="h-4 w-4 mt-1 text-purple-500 shrink-0" />
+                    <Target className="h-4 w-4 mt-1 text-secondary-foreground shrink-0" />
                     <span>Accelerate your learning with goal-oriented support.</span>
                   </div>
                 </div>
@@ -617,7 +618,7 @@ export default function CommunityPage() {
                     <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
                       <span>{mentor.students} students</span>
                       <span className="flex items-center gap-1">
-                        <Star className="h-3 w-3 text-yellow-500" />
+                        <Star className="h-3 w-3 text-primary" />
                         {mentor.rating}
                       </span>
                     </div>

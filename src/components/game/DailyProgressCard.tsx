@@ -11,9 +11,9 @@ interface DailyProgressCardProps {
 
 export function DailyProgressCard({ questionsToday, accuracy, dailyProgress }: DailyProgressCardProps) {
     return (
-        <Card className="border-2 border-blue-200/50 shadow-lg h-full">
+        <Card className="border-2 border-primary/20 shadow-lg h-full">
             <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-800">
+            <CardTitle className="flex items-center gap-2 text-primary font-headline">
                 <Target className="h-5 w-5" aria-hidden="true" />
                 Today's Progress
             </CardTitle>
@@ -25,12 +25,12 @@ export function DailyProgressCard({ questionsToday, accuracy, dailyProgress }: D
                     <div className="text-xs text-primary/80 mt-1">Goal: 20</div>
                 </div>
                 <div className="text-center">
-                    <div className="text-3xl font-bold text-blue-600 mb-1">{accuracy}%</div>
+                    <div className="text-3xl font-bold text-jade mb-1">{accuracy}%</div>
                     <div className="text-sm text-muted-foreground">Accuracy Rate</div>
-                    <div className="text-xs text-blue-500 mt-1">Personal Best: 92%</div>
+                    <div className="text-xs text-jade/80 mt-1">Personal Best: 92%</div>
                 </div>
                 <div className="text-center">
-                    <div className="text-3xl font-bold text-purple-600 mb-1">{dailyProgress}%</div>
+                    <div className="text-3xl font-bold text-amethyst mb-1">{dailyProgress}%</div>
                     <div className="text-sm text-muted-foreground">Daily Goal</div>
                     <Progress
                         value={dailyProgress}

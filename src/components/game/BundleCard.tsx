@@ -49,13 +49,13 @@ export function BundleCard({ bundle, userCoins, handlePurchase }: BundleCardProp
         <div className="flex items-center justify-between p-4 bg-background rounded-lg">
           <div>
             <div className="flex items-center gap-2">
-              <Coins className="h-5 w-5 text-yellow-500" />
+              <Coins className="h-5 w-5 text-primary" />
               <span className="text-2xl font-bold text-card-foreground">{bundle.price}</span>
             </div>
             <div className="text-sm text-muted-foreground line-through">Regular: {bundle.originalPrice}</div>
           </div>
           <div className="text-right">
-            <div className="text-lg font-bold text-green-600">Save {savings}!</div>
+            <div className="text-lg font-bold text-jade">Save {savings}!</div>
             <div className="text-sm text-muted-foreground">{discount}% off</div>
           </div>
         </div>

@@ -168,9 +168,9 @@ export function SpinWheel({ coins, setCoins }: SpinWheelProps) {
            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-12 border-l-transparent border-r-transparent border-t-accent-foreground rotate-180"/>
         </div>
         {lastSpinResult && (
-          <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg" role="alert">
+          <div className="text-center p-4 bg-jade-soft border border-jade/30 rounded-lg" role="alert">
             <div className="text-4xl mb-2">{lastSpinResult.icon}</div>
-            <div className="font-semibold text-green-800">You won: {lastSpinResult.name}!</div>
+            <div className="font-semibold text-jade">You won: {lastSpinResult.name}!</div>
           </div>
         )}
         <div className="text-center">

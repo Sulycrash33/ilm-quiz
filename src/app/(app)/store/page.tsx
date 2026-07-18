@@ -46,9 +46,9 @@ export default function StorePage() {
           <p className="text-muted-foreground">Enhance your learning journey</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full">
-            <Coins className="h-5 w-5 text-yellow-600" />
-            <span className="font-bold text-yellow-700">{userCoins.toLocaleString()}</span>
+          <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
+            <Coins className="h-5 w-5 text-primary" />
+            <span className="font-bold text-primary">{userCoins.toLocaleString()}</span>
           </div>
           <Button variant="outline">
             <ShoppingCart className="h-4 w-4 mr-2" /> Cart ({cart.length})

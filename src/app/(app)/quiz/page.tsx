@@ -25,7 +25,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "2-3 hours",
     xpReward: 500,
-    color: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    color: "bg-primary/10 text-primary border-primary/30",
     topics: ["Asma ul-Husna", "Divine Attributes", "Names in Quran", "Practical Application"],
   },
   {
@@ -41,7 +41,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "5-7 hours",
     xpReward: 1000,
-    color: "bg-blue-100 text-blue-700 border-blue-200",
+    color: "bg-lapis-soft text-lapis border-lapis/30",
     topics: ["Surahs", "Verses", "Themes", "Memorization", "Tafsir", "Revelation Context"],
   },
   {
@@ -57,7 +57,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "4-5 hours",
     xpReward: 750,
-    color: "bg-amber-100 text-amber-700 border-amber-200",
+    color: "bg-henna-soft text-henna border-henna/30",
     topics: ["Sahih Hadith", "Classification", "Narrators", "Practical Application"],
   },
   {
@@ -73,7 +73,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "3-4 hours",
     xpReward: 600,
-    color: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    color: "bg-amethyst-soft text-amethyst border-amethyst/30",
     topics: ["Early Life", "Prophethood", "Hijra", "Battles", "Final Years", "Character"],
   },
   {
@@ -89,7 +89,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "2-3 hours",
     xpReward: 450,
-    color: "bg-purple-100 text-purple-700 border-purple-200",
+    color: "bg-primary/10 text-primary border-primary/30",
     topics: ["Family Members", "Historical Role", "Respect & Reverence", "Contributions"],
   },
   {
@@ -105,7 +105,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "3-4 hours",
     xpReward: 550,
-    color: "bg-indigo-100 text-indigo-700 border-indigo-200",
+    color: "bg-jade-soft text-jade border-jade/30",
     topics: ["Adam", "Noah", "Abraham", "Moses", "Jesus", "Other Messengers"],
   },
   {
@@ -121,7 +121,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "3-4 hours",
     xpReward: 500,
-    color: "bg-green-100 text-green-700 border-green-200",
+    color: "bg-lapis-soft text-lapis border-lapis/30",
     topics: ["Four Caliphs", "Ten Promised Paradise", "Women Companions", "Contributions"],
   },
   {
@@ -137,7 +137,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "6-8 hours",
     xpReward: 900,
-    color: "bg-red-100 text-red-700 border-red-200",
+    color: "bg-henna-soft text-henna border-henna/30",
     topics: ["Worship", "Transactions", "Family Law", "Criminal Law", "Contemporary Issues"],
   },
   {
@@ -153,7 +153,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "4-5 hours",
     xpReward: 650,
-    color: "bg-cyan-100 text-cyan-700 border-cyan-200",
+    color: "bg-amethyst-soft text-amethyst border-amethyst/30",
     topics: ["Belief in Allah", "Angels", "Books", "Prophets", "Day of Judgment", "Divine Decree"],
   },
   {
@@ -169,7 +169,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "2-3 hours",
     xpReward: 400,
-    color: "bg-teal-100 text-teal-700 border-teal-200",
+    color: "bg-jade-soft text-jade border-jade/30",
     topics: ["Shahada", "Salah", "Zakat", "Sawm", "Hajj"],
   },
   {
@@ -185,7 +185,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "3-4 hours",
     xpReward: 600,
-    color: "bg-orange-100 text-orange-700 border-orange-200",
+    color: "bg-henna-soft text-henna border-henna/30",
     topics: ["Death", "Grave", "Day of Judgment", "Paradise", "Hell", "Resurrection"],
   },
   {
@@ -201,7 +201,7 @@ const KNOWLEDGE_CATEGORIES = [
     unlocked: true,
     estimatedTime: "3-4 hours",
     xpReward: 500,
-    color: "bg-rose-100 text-rose-700 border-rose-200",
+    color: "bg-lapis-soft text-lapis border-lapis/30",
     topics: ["Good Character", "Social Ethics", "Business Ethics", "Family Values"],
   },
 ]
@@ -357,17 +357,17 @@ export default function KnowledgeCategoriesPage() {
               <div className="text-sm text-muted-foreground">Categories Unlocked</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-1">{totalCompleted}</div>
+              <div className="text-3xl font-bold text-lapis mb-1">{totalCompleted}</div>
               <div className="text-sm text-muted-foreground">Questions Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-1">
+              <div className="text-3xl font-bold text-amethyst mb-1">
                 {Math.round((totalCompleted / totalQuestions) * 100)}%
               </div>
               <div className="text-sm text-muted-foreground">Overall Progress</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-600 mb-1">
+              <div className="text-3xl font-bold text-jade mb-1">
                 {KNOWLEDGE_CATEGORIES.filter((cat) => cat.mastery >= 80).length}
               </div>
               <div className="text-sm text-muted-foreground">Mastered Categories</div>
@@ -423,7 +423,7 @@ export default function KnowledgeCategoriesPage() {
                         {category.difficulty}
                       </Badge>
                       {category.mastery >= 80 && (
-                        <Badge className="bg-yellow-100 text-yellow-700 text-xs">
+                        <Badge className="bg-primary/10 text-primary text-xs">
                           <Crown className="h-3 w-3 mr-1" />
                           Mastered
                         </Badge>

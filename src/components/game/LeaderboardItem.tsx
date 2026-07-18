@@ -8,9 +8,9 @@ import type { LeaderboardUser } from "@/lib/types";
 
 export const LeaderboardItem = ({ user, index, isPodium = false }: { user: LeaderboardUser; index: number; isPodium?: boolean }) => {
   const podiumStyles = isPodium 
-    ? index === 0 ? "border-yellow-400 bg-yellow-50" 
-    : index === 1 ? "border-gray-300 bg-gray-50" 
-    : "border-amber-400 bg-amber-50" 
+    ? index === 0 ? "border-primary bg-primary/10" 
+    : index === 1 ? "border-muted-foreground/30 bg-muted" 
+    : "border-henna bg-henna-soft" 
     : "";
 
   return (
@@ -42,7 +42,7 @@ export const LeaderboardItem = ({ user, index, isPodium = false }: { user: Leade
       <div className="text-right">
         <div className="text-base font-bold text-primary">{user.points.toLocaleString()} pts</div>
         {user.streak && (
-          <div className="flex items-center justify-end gap-1 text-sm text-orange-600">
+          <div className="flex items-center justify-end gap-1 text-sm text-primary">
             <Flame className="h-3 w-3" />
             {user.streak} day streak
           </div>

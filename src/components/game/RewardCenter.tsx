@@ -35,36 +35,36 @@ export function RewardCenter() {
         <DailyLoginRewards coins={coins} setCoins={setCoins} />
       </div>
 
-      <Card className="border-2 border-purple-200/50 shadow-xl">
-        <CardHeader className="bg-gradient-to-r from-purple-50/50 to-pink-50/50">
-          <CardTitle className="flex items-center gap-2 text-purple-800">
+      <Card className="border-2 border-amethyst/30 shadow-xl">
+        <CardHeader className="bg-amethyst-soft">
+          <CardTitle className="flex items-center gap-2 font-headline text-amethyst">
             <Crown className="h-6 w-6" />
             Special Events
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
+            <div className="p-4 bg-amethyst-soft rounded-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="text-3xl">🌙</div>
                 <div>
-                  <h4 className="font-semibold text-purple-800">Ramadan Special</h4>
-                  <p className="text-sm text-purple-600">Double rewards during Ramadan</p>
+                  <h4 className="font-semibold text-amethyst">Ramadan Special</h4>
+                  <p className="text-sm text-amethyst/80">Double rewards during Ramadan</p>
                 </div>
               </div>
-              <Badge variant="outline" className="border-purple-300 text-purple-700">
+              <Badge variant="outline" className="border-amethyst/40 text-amethyst">
                 Coming Soon
               </Badge>
             </div>
-            <div className="p-4 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg">
+            <div className="p-4 bg-jade-soft rounded-lg">
               <div className="flex items-center gap-3 mb-3">
                 <div className="text-3xl">🕌</div>
                 <div>
-                  <h4 className="font-semibold text-emerald-800">Hajj Challenge</h4>
-                  <p className="text-sm text-emerald-600">Special pilgrimage-themed quizzes</p>
+                  <h4 className="font-semibold text-jade">Hajj Challenge</h4>
+                  <p className="text-sm text-jade/80">Special pilgrimage-themed quizzes</p>
                 </div>
               </div>
-              <Badge variant="outline" className="border-emerald-300 text-emerald-700">
+              <Badge variant="outline" className="border-jade/40 text-jade">
                 Coming Soon
               </Badge>
             </div>
