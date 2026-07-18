@@ -359,7 +359,7 @@ export default function ProfilePage() {
         open={isSettingsOpen}
         onOpenChange={setIsSettingsOpen}
         userData={userData}
-        onUserDataChange={setUserData}
+        onUserDataChange={(update) => setUserData((prev) => ({ ...prev, ...update }))}
       />
     </>
   )
