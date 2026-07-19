@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chest of Wisdom - Digital Sanctuary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "primary-fixed-dim": "#4edea3",
+                "surface-container-lowest": "#060e20",
+                "on-error-container": "#ffdad6",
+                "tertiary-container": "#c29f27",
+                "primary-container": "#10b981",
+                "outline": "#86948a",
+                "primary": "#4edea3",
+                "surface-tint": "#4edea3",
+                "on-secondary-fixed-variant": "#003ea8",
+                "surface-dim": "#0b1326",
+                "on-surface-variant": "#bbcabf",
+                "surface": "#0b1326",
+                "on-tertiary-fixed": "#241a00",
+                "background": "#0b1326",
+                "surface-container-highest": "#2d3449",
+                "on-surface": "#dae2fd",
+                "on-secondary-fixed": "#00174b",
+                "inverse-on-surface": "#283044",
+                "primary-fixed": "#6ffbbe",
+                "on-tertiary-container": "#473700",
+                "inverse-primary": "#006c49",
+                "on-secondary": "#002a78",
+                "on-primary-container": "#00422b",
+                "tertiary-fixed": "#ffe088",
+                "on-primary-fixed-variant": "#005236",
+                "surface-container-low": "#131b2e",
+                "surface-container": "#171f33",
+                "on-primary": "#003824",
+                "error": "#ffb4ab",
+                "secondary": "#b4c5ff",
+                "outline-variant": "#3c4a42",
+                "secondary-fixed-dim": "#b4c5ff",
+                "inverse-surface": "#dae2fd",
+                "on-background": "#dae2fd",
+                "secondary-container": "#0053db",
+                "on-tertiary": "#3c2f00",
+                "on-secondary-container": "#cdd7ff",
+                "on-error": "#690005",
+                "error-container": "#93000a",
+                "secondary-fixed": "#dbe1ff",
+                "surface-variant": "#2d3449",
+                "tertiary": "#e9c349",
+                "on-tertiary-fixed-variant": "#574500",
+                "surface-container-high": "#222a3d",
+                "tertiary-fixed-dim": "#e9c349",
+                "on-primary-fixed": "#002113",
+                "surface-bright": "#31394d"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "unit": "4px",
+                "md": "16px",
+                "xl": "32px",
+                "container-padding": "20px",
+                "lg": "24px",
+                "gutter": "16px",
+                "xs": "4px",
+                "sm": "8px"
+            },
+            "fontFamily": {
+                "quote-italic": ["\"Source Serif 4\""],
+                "label-caps": ["Inter"],
+                "body-md": ["Inter"],
+                "headline-md": ["Inter"],
+                "display-lg-mobile": ["\"Source Serif 4\""],
+                "display-lg": ["\"Source Serif 4\""]
+            },
+            "fontSize": {
+                "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .float-animation {
+            animation: float 4s ease-in-out infinite;
+        }
+        .glass-edge {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mashrabiya-overlay {
+            background-image: radial-gradient(circle at 2px 2px, rgba(78, 222, 163, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .emerald-glow {
+            box-shadow: 0 0 40px rgba(78, 222, 163, 0.4);
+        }
+        body {
+            background-color: #0b1326;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="text-on-surface font-body-md">
+<!-- Background Shader -->
+<!-- STITCH_SHADER_START:ANIMATION_25 class="fixed inset-0 w-full h-full z-0 opacity-40" -->
+<div class="fixed inset-0 w-full h-full z-0 opacity-40" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_25" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_25');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+varying vec2 v_texCoord;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+// Simplex 2D noise
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+float snoise(vec2 v){
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 a0 = x - floor(x + 0.5);
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+void main() {
+    vec2 uv = v_texCoord;
+    float time = u_time * 0.2;
+    
+    // Background colors from Ethereal system
+    vec3 navy = vec3(0.04, 0.07, 0.15); // #0b1326
+    vec3 emerald = vec3(0.06, 0.72, 0.50); // #10b981
+    vec3 gold = vec3(0.84, 0.69, 0.27); // #d4b145
+    
+    // Create organic, flowing energy
+    float n = snoise(uv * 2.0 + time);
+    float n2 = snoise(uv * 4.0 - time * 0.5);
+    
+    vec3 color = mix(navy, emerald * 0.15, n * 0.5 + 0.5);
+    color = mix(color, gold * 0.1, n2 * 0.5 + 0.5);
+    
+    // Add glowing "pulse" rays
+    float rays = pow(1.0 - length(uv - 0.5), 3.0);
+    color += emerald * rays * (0.1 + 0.05 * sin(u_time));
+    
+    gl_FragColor = vec4(color, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_25 -->
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-white/10 shadow-sm flex items-center justify-between px-container-padding h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95 transition-transform">menu</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Ethereal Knowledge</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95 transition-transform">account_balance_wallet</span>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="relative z-10 w-full h-screen flex flex-col items-center justify-center px-container-padding overflow-hidden">
+<!-- Subtle Mashrabiya Pattern -->
+<div class="absolute inset-0 mashrabiya-overlay pointer-events-none opacity-20"></div>
+<!-- Content Layout -->
+<div class="flex flex-col items-center gap-xl max-w-lg w-full text-center">
+<!-- Message Header -->
+<div class="space-y-sm">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-primary-fixed-dim drop-shadow-lg">
+                    You found a Chest of Wisdom!
+                </h2>
+<p class="text-on-surface-variant font-body-md opacity-80 max-w-xs mx-auto">
+                    A sacred artifact containing ancient insights. Unlock it to expand your consciousness.
+                </p>
+</div>
+<!-- Animated Chest -->
+<div class="relative w-full aspect-square max-w-[320px] md:max-w-[400px] flex items-center justify-center">
+<!-- Inner Glow behind the chest -->
+<div class="absolute w-48 h-48 bg-primary-container/20 rounded-full blur-[100px] opacity-60"></div>
+<!-- The Chest Image -->
+<div class="float-animation relative z-20">
+<img class="w-full h-auto drop-shadow-[0_20px_50px_rgba(78,222,163,0.3)] transform transition-transform duration-700 hover:scale-105 cursor-pointer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR5sOC0Twh_lHB8pzeX8IANKn6g_VqiCAp0eXQCgJvBD9r48OjX0181wdHEmfuD7rn8UQkCFf5Tof7mJwFUEjMwtUjW84Jax-s3jkCeMusq3ywPGiFKqh6cSLXCEIHCbSSgKXS9UQoQcXgavibJtrSBpRjGnZ10_3r1kiSvdwsSaYxUfBVIdmgwq_9FwwtaemxnXvsA8JrkVZ13rqdZWTLBJcWbcVK3XXv49_M0U-tmtpQeGmK6sK5zSi2rUz1kWmJtZGSzWkxUjg"/>
+</div>
+<!-- Particle Accents -->
+<div class="absolute inset-0 pointer-events-none overflow-visible">
+<div class="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-pulse blur-sm"></div>
+<div class="absolute bottom-1/3 right-1/4 w-3 h-3 bg-tertiary rounded-full animate-pulse blur-sm delay-500"></div>
+<div class="absolute top-1/2 right-10 w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-pulse blur-sm delay-1000"></div>
+</div>
+</div>
+<!-- Unlock Action -->
+<div class="flex flex-col items-center gap-md w-full">
+<button class="group relative px-xl py-md bg-primary hover:bg-primary-fixed-dim text-on-primary font-bold text-headline-md rounded-xl transition-all duration-300 active:scale-95 emerald-glow w-full sm:w-auto min-w-[240px] overflow-hidden">
+<span class="relative z-10 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        Tap to Unlock
+                    </span>
+<!-- Shine Effect -->
+<div class="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-all duration-1000 group-hover:left-full"></div>
+</button>
+<p class="font-label-caps text-label-caps text-on-tertiary-fixed-variant tracking-[0.2em] uppercase opacity-60">
+                    Sacred Energy: 100%
+                </p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Treasury Active) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-t border-white/10 shadow-lg shadow-primary/5 flex justify-around items-center px-4 py-2 pb-safe rounded-t-xl">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-label-caps text-label-caps">Sanctuary</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-caps text-label-caps">Pathways</span>
+</div>
+<!-- ACTIVE TAB: Treasury (closest to inventory/chests) -->
+<div class="flex flex-col items-center justify-center text-primary-fixed-dim bg-primary-container/20 rounded-xl px-3 py-1 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">rebase_edit</span>
+<span class="font-label-caps text-label-caps">Treasury</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps">Circle</span>
+</div>
+</nav>
+<!-- Micro-interactions Script -->
+<script>
+        document.querySelector('button').addEventListener('click', function() {
+            // Ripple effect simulation
+            this.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Interaction: Open state hint
+            const img = document.querySelector('img');
+            img.style.filter = 'brightness(1.5) drop-shadow(0 0 30px #4edea3)';
+            
+            // Logic for "Unlock" could go here
+            console.log('Unlocking the chest of wisdom...');
+        });
+    </script>
+</body></html>

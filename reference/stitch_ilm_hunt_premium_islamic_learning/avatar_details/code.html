@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Avatar Customization | ILM Hunt</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#6ffbbe",
+                    "surface-container-lowest": "#060e20",
+                    "on-tertiary-container": "#473700",
+                    "background": "#0b1326",
+                    "tertiary-fixed": "#ffe088",
+                    "surface-container-highest": "#2d3449",
+                    "outline": "#86948a",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "on-secondary-fixed": "#00174b",
+                    "primary-fixed-dim": "#4edea3",
+                    "secondary": "#b4c5ff",
+                    "on-surface": "#dae2fd",
+                    "secondary-container": "#0053db",
+                    "outline-variant": "#3c4a42",
+                    "on-error": "#690005",
+                    "on-primary-fixed": "#002113",
+                    "on-secondary-container": "#cdd7ff",
+                    "inverse-primary": "#006c49",
+                    "primary-container": "#10b981",
+                    "surface-tint": "#4edea3",
+                    "primary": "#4edea3",
+                    "on-error-container": "#ffdad6",
+                    "error": "#ffb4ab",
+                    "surface-container": "#171f33",
+                    "error-container": "#93000a",
+                    "surface-container-high": "#222a3d",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "on-primary": "#003824",
+                    "on-surface-variant": "#bbcabf",
+                    "surface-container-low": "#131b2e",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "surface": "#0b1326",
+                    "inverse-surface": "#dae2fd",
+                    "surface-bright": "#31394d",
+                    "tertiary-container": "#c29f27",
+                    "surface-dim": "#0b1326",
+                    "on-background": "#dae2fd",
+                    "on-primary-fixed-variant": "#005236",
+                    "surface-variant": "#2d3449",
+                    "inverse-on-surface": "#283044",
+                    "tertiary": "#e9c349",
+                    "on-secondary": "#002a78",
+                    "on-primary-container": "#00422b",
+                    "secondary-fixed": "#dbe1ff",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-tertiary": "#3c2f00",
+                    "on-secondary-fixed-variant": "#003ea8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "xs": "4px",
+                    "unit": "4px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "container-padding": "20px"
+            },
+            "fontFamily": {
+                    "display-lg": ["\"Source Serif 4\""],
+                    "display-lg-mobile": ["\"Source Serif 4\""],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "quote-italic": ["\"Source Serif 4\""]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mashrabiya-overlay {
+            mask-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0l20 20-20 20L0 20z' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
+            mask-size: 40px 40px;
+            opacity: 0.05;
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, rgba(11, 19, 38, 0) 70%);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .glow-button {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-button:active {
+            transform: scale(0.96);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-body-md antialiased">
+<!-- Top App Bar (Shared Component Strategy) -->
+<header class="fixed top-0 left-0 right-0 flex justify-between items-center px-container-padding py-md max-w-7xl mx-auto bg-surface/60 dark:bg-surface-dim/60 backdrop-blur-xl z-50 border-b border-white/5">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-high/50 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">ILM Hunt</h1>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/50 border border-white/5">
+<span class="text-xs font-bold text-tertiary">7 🔥</span>
+<span class="text-xs font-bold text-primary">1.2k 🪙</span>
+</div>
+</header>
+<main class="pt-24 pb-32 px-container-padding max-w-2xl mx-auto space-y-10">
+<!-- Hero Section: The Avatar -->
+<section class="relative flex flex-col items-center">
+<div class="absolute inset-0 hero-gradient -z-10"></div>
+<div class="absolute inset-0 mashrabiya-overlay -z-10"></div>
+<div class="relative w-full aspect-square flex items-center justify-center mb-8">
+<!-- Background Shader Container -->
+<div class="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full">
+
+</div>
+<!-- Main Avatar Image -->
+<div class="relative z-10 w-64 h-64 md:w-80 md:h-80 animate-float">
+<img class="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(16,185,129,0.3)]" data-alt="A highly detailed and scholarly digital character called 'The Wisdom Explorer' for a premium education app. The character is a youthful sage wearing elegant midnight blue robes with emerald green embroidery and a subtle gold-trimmed white turban. He is surrounded by a faint, ethereal green glow and floating holographic calligraphy symbols. The style is semi-realistic with soft, professional lighting and a focus on scholarly warmth and digital precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd_UZvkZrkoTxrSWydGSJR5h_gYTB_40o4_JFEnDUOqeAsUMvYteEolQ58M6PVEaNrOo465rCAS44pZG_7YrB8qftZNK9bxkDBg8sM-zGouCjJzAocU1rqp0_DgThiFa0_wKAkDymZGJuif2EphSi6pKy7EUMeuzqJf5I6e6xm4W-2aodSkGezmvvRq9qiBzCK3k7DdIgNqyOR61poL4imIcHDmVklBQbHe4XEOUctwAmpfOYJz2ieYTota39dRZ09FQAi48VW15Q"/>
+</div>
+<!-- Rarity Badge Floating -->
+<div class="absolute top-10 right-4 px-4 py-1.5 glass rounded-full flex items-center gap-2 border-primary/20">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest">EPIC</span>
+</div>
+</div>
+<div class="text-center space-y-2">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-primary">The Wisdom Explorer</h2>
+<p class="text-on-surface-variant max-w-xs mx-auto">Master of ancient scripts and seeker of hidden celestial knowledge.</p>
+</div>
+</section>
+<!-- Stats & Rarity Section -->
+<section class="grid grid-cols-2 gap-4">
+<div class="glass p-md rounded-xl space-y-3 relative overflow-hidden">
+<div class="absolute bottom-0 right-0 p-2 opacity-10">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="font-label-caps text-label-caps">BOOST</span>
+</div>
+<div>
+<span class="text-2xl font-bold text-on-surface">+15%</span>
+<p class="text-xs text-on-surface-variant">Knowledge Gain</p>
+</div>
+</div>
+<div class="glass p-md rounded-xl space-y-3 relative overflow-hidden">
+<div class="absolute bottom-0 right-0 p-2 opacity-10">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div class="flex items-center gap-2 text-tertiary">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span class="font-label-caps text-label-caps">PASSIVE</span>
+</div>
+<div>
+<span class="text-2xl font-bold text-on-surface">Enabled</span>
+<p class="text-xs text-on-surface-variant">Streak Shield</p>
+</div>
+</div>
+</section>
+<!-- Unlockable Traits/Accessories -->
+<section class="space-y-4">
+<div class="flex justify-between items-end px-1">
+<h3 class="font-headline-md text-headline-md text-on-surface">Accessories</h3>
+<span class="font-label-caps text-label-caps text-primary cursor-pointer">VIEW ALL</span>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-container-padding px-container-padding">
+<!-- Accessory 1: Equipped -->
+<div class="flex-shrink-0 w-32 glass p-sm rounded-xl border-primary/40 bg-primary-container/10 flex flex-col items-center gap-3 relative group transition-all">
+<div class="absolute top-2 right-2">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="w-20 h-20 bg-surface-container-high rounded-lg overflow-hidden border border-white/5">
+<img class="w-full h-full object-cover" data-alt="A close-up 3D render of a 'Golden Turban' accessory for an avatar. It is made of premium white silk with fine gold embroidery and a small emerald gemstone in the center. The style is sleek and digital with high-end texture work, presented on a dark navy studio background with soft emerald rim lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUA5zpUjk4WeXeh8HKCL4UazbPUHfw_qAgdnd-LiyZxT_nWe7X_qawHbOk9s864EIZp7-wB3hqHQHrRRuT-Dy77z7bZRaS6WJTlbdRG8x8mr2SO73LH2u81YNf-vwDe7oaO6FkzmnFDhII0wRFRZVlaSwyGLv3g1kLR-clmzDbBfdH050YEjlVLAHFsw7kO46lvhr-YnacptN34-WzG8Or_Tn9wUONHrNTie42G1rtm9XqxciKV4NR8IHcOQ93qUFVz_w9Ar-IOwc"/>
+</div>
+<p class="text-xs font-bold text-on-surface text-center">Golden Turban</p>
+</div>
+<!-- Accessory 2 -->
+<button class="flex-shrink-0 w-32 glass p-sm rounded-xl border-white/5 hover:border-primary/20 flex flex-col items-center gap-3 transition-all">
+<div class="w-20 h-20 bg-surface-container-high rounded-lg overflow-hidden border border-white/5">
+<img class="w-full h-full object-cover" data-alt="A floating 'Ancient Scroll' accessory for a digital avatar. The scroll is made of aged, weathered parchment with glowing emerald symbols. It is tied with a leather strap and has golden ends. The lighting is mystical and dark-mode oriented, fitting a premium scholarly aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7H9KDXE8O0Z1qbkSjXnrCaQgwDqoygwhng24xXTH5UNxStL-f5k76byBggGKeGlilT8FhxlRLwizcKEZgHz03taoKUNJpJ6sM1Zx77X6p1g2IT9aHyJKcp2jcJHykfAuUbOluF6wcm6qT280IHOA0empI8fIgQHeTUmFt3EeLBlfq3i9EcM9BYW-ESFXJAMkfH2WfaFYoKmwDd-L_o80GOyFseGuXRSN34bGwuNpRZY_8ywAr53rKZeJG1iq4Gc5iejMeUf-eLJM"/>
+</div>
+<p class="text-xs font-bold text-on-surface text-center">Ancient Scroll</p>
+</button>
+<!-- Accessory 3 -->
+<button class="flex-shrink-0 w-32 glass p-sm rounded-xl border-white/5 hover:border-primary/20 flex flex-col items-center gap-3 transition-all">
+<div class="w-20 h-20 bg-surface-container-high rounded-lg overflow-hidden border border-white/5 flex items-center justify-center relative">
+<div class="absolute inset-0 bg-primary/20 animate-pulse"></div>
+<span class="material-symbols-outlined text-primary text-4xl">flare</span>
+</div>
+<p class="text-xs font-bold text-on-surface text-center">Luminous Aura</p>
+</button>
+<!-- Locked Accessory -->
+<div class="flex-shrink-0 w-32 glass p-sm rounded-xl border-white/5 flex flex-col items-center gap-3 opacity-50 grayscale">
+<div class="w-20 h-20 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-2xl">lock</span>
+</div>
+<p class="text-xs font-bold text-on-surface text-center">Sage Robes</p>
+</div>
+</div>
+</section>
+<!-- Evolution Path -->
+<section class="space-y-6">
+<h3 class="font-headline-md text-headline-md text-on-surface px-1">Evolution Path</h3>
+<div class="glass p-lg rounded-2xl relative overflow-hidden">
+<div class="absolute inset-0 mashrabiya-overlay"></div>
+<div class="relative flex items-center justify-between">
+<!-- Path Steps -->
+<div class="flex flex-col items-center gap-2 z-10">
+<div class="w-12 h-12 rounded-full glass border-primary/40 flex items-center justify-center text-primary bg-primary-container/10">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-[10px] font-bold text-primary tracking-tighter">COMMON</span>
+</div>
+<div class="h-0.5 flex-grow bg-primary/20 relative mx-2">
+<div class="absolute inset-0 bg-primary w-full origin-left"></div>
+</div>
+<div class="flex flex-col items-center gap-2 z-10">
+<div class="w-12 h-12 rounded-full glass border-primary/40 flex items-center justify-center text-primary bg-primary-container/20">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<span class="text-[10px] font-bold text-primary tracking-tighter">EPIC</span>
+</div>
+<div class="h-0.5 flex-grow bg-surface-container-highest relative mx-2">
+<div class="absolute inset-0 bg-primary/30 w-1/3 origin-left animate-pulse"></div>
+</div>
+<div class="flex flex-col items-center gap-2 z-10">
+<div class="w-12 h-12 rounded-full glass border-white/5 flex items-center justify-center text-on-surface-variant/40">
+<span class="material-symbols-outlined">diamond</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant/40 tracking-tighter">MYTHIC</span>
+</div>
+</div>
+<div class="mt-8 p-4 bg-primary-container/5 rounded-xl border border-primary/10">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-bold text-on-surface">Next Evolution: Mystic Sage</span>
+<span class="text-xs text-primary">750/1000 XP</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[75%] shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Actions & Navigation Shell -->
+<div class="fixed bottom-0 left-0 right-0 z-50">
+<!-- Floating Action Buttons -->
+<div class="max-w-2xl mx-auto px-container-padding flex gap-4 mb-6">
+<button class="flex-1 glass py-4 rounded-xl font-bold text-on-surface hover:bg-white/5 transition-all active:scale-95">
+                Equip
+            </button>
+<button class="flex-[1.5] bg-primary py-4 rounded-xl font-bold text-on-primary glow-button flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-xl">upgrade</span>
+                Upgrade
+            </button>
+</div>
+<!-- Shared Bottom Navigation -->
+<nav class="bg-surface/60 dark:bg-surface-container-lowest/60 backdrop-blur-xl border-t border-white/10 flex justify-around items-center px-4 py-2 pb-6">
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors px-3 py-1 rounded-xl" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors px-3 py-1 rounded-xl" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-caps text-label-caps">Learning</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors px-3 py-1 rounded-xl" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-caps text-label-caps">Rankings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors px-3 py-1 rounded-xl" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-label-caps text-label-caps">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary dark:text-primary-fixed rounded-xl px-3 py-1 transition-transform duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+</div>
+<script>
+        // Simple micro-interaction for item selection
+        document.querySelectorAll('button.flex-shrink-0').forEach(button => {
+            button.addEventListener('click', function() {
+                // In a real app, this would update state
+                console.log('Selected accessory: ' + this.innerText);
+            });
+        });
+
+        // Hover effect for the upgrade button
+        const upgradeBtn = document.querySelector('.glow-button');
+        upgradeBtn.addEventListener('mousemove', (e) => {
+            const rect = upgradeBtn.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            upgradeBtn.style.setProperty('--x', x + 'px');
+            upgradeBtn.style.setProperty('--y', y + 'px');
+        });
+    </script>
+</body></html>

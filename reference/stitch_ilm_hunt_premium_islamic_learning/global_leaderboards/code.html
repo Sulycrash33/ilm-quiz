@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ILM Leaderboard - Scholarly Ranks</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(19, 27, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .podium-gradient-gold {
+            background: linear-gradient(180deg, #ffe088 0%, #c29f27 100%);
+        }
+        .podium-gradient-silver {
+            background: linear-gradient(180deg, #dbe1ff 0%, #86948a 100%);
+        }
+        .podium-gradient-bronze {
+            background: linear-gradient(180deg, #e9c349 0%, #574500 100%);
+        }
+        .constellation-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#2d3449",
+                    "outline": "#86948a",
+                    "on-primary-container": "#00422b",
+                    "background": "#0b1326",
+                    "on-secondary-fixed": "#00174b",
+                    "tertiary-container": "#c29f27",
+                    "error": "#ffb4ab",
+                    "on-tertiary-container": "#473700",
+                    "surface-container-low": "#131b2e",
+                    "surface-container-lowest": "#060e20",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "surface-tint": "#4edea3",
+                    "on-surface-variant": "#bbcabf",
+                    "on-error": "#690005",
+                    "on-background": "#dae2fd",
+                    "on-secondary-container": "#cdd7ff",
+                    "surface-container": "#171f33",
+                    "on-secondary": "#002a78",
+                    "primary": "#4edea3",
+                    "secondary-fixed": "#dbe1ff",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "tertiary-fixed": "#ffe088",
+                    "on-primary": "#003824",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "primary-fixed-dim": "#4edea3",
+                    "primary-fixed": "#6ffbbe",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#2d3449",
+                    "inverse-primary": "#006c49",
+                    "secondary-container": "#0053db",
+                    "outline-variant": "#3c4a42",
+                    "on-primary-fixed-variant": "#005236",
+                    "tertiary": "#e9c349",
+                    "on-surface": "#dae2fd",
+                    "primary-container": "#10b981",
+                    "inverse-on-surface": "#283044",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "surface-bright": "#31394d",
+                    "secondary": "#b4c5ff",
+                    "on-primary-fixed": "#002113",
+                    "surface-dim": "#0b1326",
+                    "on-tertiary": "#3c2f00",
+                    "inverse-surface": "#dae2fd",
+                    "surface": "#0b1326",
+                    "error-container": "#93000a",
+                    "surface-container-high": "#222a3d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "container-padding": "20px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "quote-italic": ["\"Source Serif 4\""],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg": ["\"Source Serif 4\""],
+                    "label-caps": ["Inter"],
+                    "display-lg-mobile": ["\"Source Serif 4\""]
+            },
+            "fontSize": {
+                    "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary/30">
+<!-- Background Layer -->
+<div class="fixed inset-0 z-[-1] constellation-bg opacity-30"></div>
+<div class="fixed inset-0 z-[-2] bg-gradient-to-b from-surface-container-lowest to-background"></div>
+
+<!-- Top App Bar -->
+<header class="bg-surface/60 backdrop-blur-xl dark:bg-surface-container-lowest/60 fixed top-0 w-full z-50 border-b border-white/10 shadow-sm">
+<div class="flex items-center justify-between px-container-padding h-16 w-full max-w-7xl mx-auto">
+<button class="text-primary hover:bg-white/5 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">ILM Leaderboard</h1>
+<button class="text-primary hover:bg-white/5 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">military_tech</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-48 px-container-padding max-w-4xl mx-auto space-y-xl">
+<!-- Tab Switcher -->
+<div class="flex justify-center mb-lg">
+<div class="inline-flex p-1 bg-surface-container rounded-full glass-panel">
+<button class="px-8 py-2 rounded-full font-label-caps text-label-caps bg-primary text-on-primary shadow-lg transition-all duration-300">
+                    GLOBAL
+                </button>
+<button class="px-8 py-2 rounded-full font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-all">
+                    SEEKERS
+                </button>
+</div>
+</div>
+<!-- Podium Section -->
+<section class="grid grid-cols-3 gap-gutter items-end pt-8 pb-12">
+<!-- 2nd Place -->
+<div class="flex flex-col items-center space-y-4">
+<div class="relative group">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-full p-1 podium-gradient-silver shadow-[0_0_20px_rgba(219,225,255,0.3)] transform transition-transform group-hover:scale-105">
+<img class="w-full h-full object-cover rounded-full border-2 border-surface" data-alt="A portrait of a scholarly man with white hair and wise eyes, wearing professional emerald-toned digital attire, cinematic lighting, digital sanctuary aesthetic, ethereal blue background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSO-y7Pqhp_g4ECiYp9cOlJuCm_18ocIjBeE2wfGBt5WVt1vSjdCVwIFPUhxUi47h0tnSwr_TbvZyNJwTlg0E06IdZeMYd3ogiv0y4BcfOYNG6gnhqczdlbNTCRSzxfmVLcu62XNYD6BXaG1S7lriLY1iZHhd-4B7alIS82uJPlXYYxYCAIMdLrrKSWvku5vmKbwT_dUo12flG6BQbjlRInfASB2wEPsmAcv93AxXMwmASi3usFe2zH-54T5396Q2ecb9dD_PC6o8"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-high border border-outline/30 px-3 py-1 rounded-full text-[10px] font-bold text-secondary flex items-center">
+<span class="material-symbols-outlined text-[12px] mr-1" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+                        RANK 2
+                    </div>
+</div>
+<div class="text-center">
+<p class="font-headline-md text-body-md font-bold text-secondary">Yusuf A.</p>
+<p class="text-[10px] text-outline uppercase tracking-widest font-bold">Sage of Seerah</p>
+<p class="text-primary font-bold mt-1">12,450 BP</p>
+</div>
+</div>
+<!-- 1st Place -->
+<div class="flex flex-col items-center space-y-6 -translate-y-4 animate-float">
+<div class="relative group">
+<div class="w-28 h-28 md:w-36 md:h-36 rounded-full p-1.5 podium-gradient-gold shadow-[0_0_40px_rgba(255,224,136,0.4)] transform transition-transform group-hover:scale-110">
+<img class="w-full h-full object-cover rounded-full border-4 border-surface" data-alt="A serene digital painting of a high-ranking female scholar wearing a modest but futuristic emerald and gold garment. The background features complex geometric Islamic patterns in thin gold lines on a deep navy field, high-end productivity app style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQxYKVPruTAr56mjlwMpAHjnHaWbxfQR2N7TB-EDlpGmpsJdSxEKOC36RrykJt4_S6GHH9dGdfyUysLW9YeSNjhm2NmCTd8404_RYOjZhhozKnFqVshFUE9sKBvf_740tXdrkUgCQ-1uxLTfioZTQXFUps59VOwublVAgIGwpVqJLnWQEY-W55OuKgWKJ4c74MMl3RZCvDxgKi_BNEBcj84R5w8wYuq2b4TcZx5Mn5YvGij4cL0YGdnNcsiy6314zr1O3tlkEm0WI"/>
+</div>
+<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-tertiary-container text-on-tertiary-container px-4 py-1.5 rounded-full text-xs font-bold shadow-xl border border-white/20 flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                        TOP SCHOLAR
+                    </div>
+</div>
+<div class="text-center">
+<p class="font-display-lg-mobile text-display-lg-mobile font-bold text-tertiary drop-shadow-md">Fatima Z.</p>
+<p class="text-xs text-outline uppercase tracking-[0.2em] font-extrabold mb-1">Grand Mufti of Code</p>
+<div class="flex items-center justify-center space-x-1">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<p class="text-primary text-xl font-black">28,902 BP</p>
+</div>
+</div>
+</div>
+<!-- 3rd Place -->
+<div class="flex flex-col items-center space-y-4">
+<div class="relative group">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-full p-1 podium-gradient-bronze shadow-[0_0_20px_rgba(233,195,73,0.3)] transform transition-transform group-hover:scale-105">
+<img class="w-full h-full object-cover rounded-full border-2 border-surface" data-alt="Close up portrait of a young male scholar with a focused expression, wearing a high-tech midnight blue robe. The scene is illuminated with a soft gold rim light, reflecting a modern digital sanctuary vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG70PeDo5me6FIibOELiwxStP4NtsLID8KIW87cIouLtPXXrnAG8QBFmKcjCe5_28rQ1vUOqM0ilrxN1ms3c_ivYcYoYS0JGQ0e2kWppiXLetFdCcAJ3ntBtdUx5XN2Nn6qQl4iLsjPelb9cOgwswW6oSHCqV6VF6zE5flXSROK0KMC541PR2u5PnZun_ME5FIUUAZLGq0sB-MnNb4ieLhULp_Yvmb5ri-Dr4LWRi_jluq3REldRNo8kaCzMZSi1q19xxOD6pTqoE"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-surface-container-high border border-outline/30 px-3 py-1 rounded-full text-[10px] font-bold text-tertiary flex items-center">
+<span class="material-symbols-outlined text-[12px] mr-1" style="font-variation-settings: 'FILL' 1;">stars</span>
+                        RANK 3
+                    </div>
+</div>
+<div class="text-center">
+<p class="font-headline-md text-body-md font-bold text-tertiary">Omar Khayyam</p>
+<p class="text-[10px] text-outline uppercase tracking-widest font-bold">Math Historian</p>
+<p class="text-primary font-bold mt-1">9,820 BP</p>
+</div>
+</div>
+</section>
+<!-- Ranking List -->
+<section class="space-y-sm">
+<div class="px-container-padding py-2 flex items-center text-outline font-label-caps text-[10px] tracking-widest">
+<div class="w-12">RANK</div>
+<div class="flex-1">SCHOLAR</div>
+<div class="w-20 text-right">BARAKAH</div>
+</div>
+<!-- List Item Template -->
+<div class="glass-panel rounded-xl p-md flex items-center hover:bg-white/5 transition-all group cursor-pointer border-l-4 border-transparent hover:border-primary">
+<div class="w-12 font-bold text-on-surface-variant group-hover:text-primary transition-colors">4</div>
+<div class="flex-1 flex items-center space-x-md">
+<div class="relative">
+<img class="w-10 h-10 rounded-full border border-white/10" data-alt="A small avatar of a person with a digital halo effect, minimalist style, emerald and navy color scheme, high fidelity digital art." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxdqIXEKZaqOJBOJiHtkHnZlIfSuc2LQEF6BaU5VvQ-Hl8TzF_vOLqj4KzqslWpr0kY4OWr14suIQvwzcnpzeCMZCp6Q6bWqR_wzksezgn6yzraV7afkPB505wlVSkbD78SxN2BKTkpnJ5cV6DSehuPRPolbgkwvUsOIoy07p38jXCngODKX5a52dNivoCB9Re4Aob5_nmu41VmwnCMSYJhTW-gGUDaaEOpTCjvuFLBJlaNRb14HwSdVNSRYSXgS6tOtt5grdiE5U"/>
+<div class="absolute -top-1 -right-1 bg-primary w-4 h-4 rounded-full border-2 border-surface flex items-center justify-center">
+<span class="text-[8px] text-on-primary font-bold">12</span>
+</div>
+</div>
+<div>
+<p class="font-bold text-on-surface">Ahmed El-Masri</p>
+<p class="text-xs text-outline">Qur'anic Linguist</p>
+</div>
+</div>
+<div class="w-24 text-right">
+<p class="font-bold text-primary">8,450</p>
+<div class="w-full bg-white/5 h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full w-[70%]"></div>
+</div>
+</div>
+</div>
+<!-- Repeat List Items -->
+<div class="glass-panel rounded-xl p-md flex items-center hover:bg-white/5 transition-all group cursor-pointer">
+<div class="w-12 font-bold text-on-surface-variant">5</div>
+<div class="flex-1 flex items-center space-x-md">
+<div class="relative">
+<img class="w-10 h-10 rounded-full border border-white/10" data-alt="A portrait avatar of a female student wearing a modern hijab, digital painting, soft lighting, library background blurred, emerald accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPNcRJ8yGji7rJ9F05Q3znXPFWA0UGn3tZX3cyNvM-Xt5XXNFakKlVHHf_2xYW7HAkDBOb1rxXRuJfCVWYXeYY_c8UQcfxS57mxYYWrN7pwZhdm9zCffd_CbGbwCTtpnPEZ6WrdWODVwURYlMOEmLvjPCxJTHbYOa4NfY8W68YuhbajsKHr_L2wNGuaHrwVr2D6OERl9IaqRzGWd9XgC57MKG7NjsE98blYywvqJ51PcZIJ6Je8Wg_VZdwJgJdhHch8sR6EPuBVY8"/>
+<div class="absolute -top-1 -right-1 bg-primary w-4 h-4 rounded-full border-2 border-surface flex items-center justify-center">
+<span class="text-[8px] text-on-primary font-bold">11</span>
+</div>
+</div>
+<div>
+<p class="font-bold text-on-surface">Zainab S.</p>
+<p class="text-xs text-outline">Hadith Explorer</p>
+</div>
+</div>
+<div class="w-24 text-right">
+<p class="font-bold text-primary">7,910</p>
+<div class="w-full bg-white/5 h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full w-[65%]"></div>
+</div>
+</div>
+</div>
+<div class="glass-panel rounded-xl p-md flex items-center hover:bg-white/5 transition-all group cursor-pointer">
+<div class="w-12 font-bold text-on-surface-variant">6</div>
+<div class="flex-1 flex items-center space-x-md">
+<div class="relative">
+<img class="w-10 h-10 rounded-full border border-white/10" data-alt="A digital profile icon of a man with spectacles, scholarly and focused, deep emerald and gold accents, glowing edges, dark navy environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL6pdGWHUtvVg-F175qLrIrE08GUOi8NWx4CINLZ9anycnxiSDjivGqwa3aETXbN-JypHdeCbPInFCIUdhvaYIFV6AF0u7rOF7Qib_hKGoSyINsTKPos2cyR_D3KmNBklj3jJ17ZtmsQ7VPjjKXjJ0Imo7nSWXJE-k3VtA89URtP_JRZo3QVkeAf7mPDb_nObhrc6IuQDpYx_GFvVKFxpCnYlbc8EaqOY3EgiMcd6A6YfTL09yOMf4f-LkDGtU5MBVNHuEP-aGAo8"/>
+<div class="absolute -top-1 -right-1 bg-primary w-4 h-4 rounded-full border-2 border-surface flex items-center justify-center">
+<span class="text-[8px] text-on-primary font-bold">10</span>
+</div>
+</div>
+<div>
+<p class="font-bold text-on-surface">Ibrahim Malik</p>
+<p class="text-xs text-outline">Fiqh Architect</p>
+</div>
+</div>
+<div class="w-24 text-right">
+<p class="font-bold text-primary">7,200</p>
+<div class="w-full bg-white/5 h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full w-[60%]"></div>
+</div>
+</div>
+</div>
+<!-- Spacer for more content -->
+<div class="py-lg flex flex-col items-center justify-center space-y-2 opacity-40">
+<div class="w-1 h-1 bg-outline rounded-full"></div>
+<div class="w-1 h-1 bg-outline rounded-full"></div>
+<div class="w-1 h-1 bg-outline rounded-full"></div>
+</div>
+</section>
+</main>
+<!-- Sticky User Rank -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] max-w-xl z-40">
+<div class="bg-primary-container p-4 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-primary/30 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<div class="bg-surface-container-lowest w-12 h-12 rounded-xl flex items-center justify-center font-black text-primary border border-primary/20">
+                    #1,245
+                </div>
+<div>
+<p class="font-bold text-on-primary-fixed text-lg">Abdullah Al-Farsi</p>
+<div class="flex items-center space-x-2">
+<span class="px-2 py-0.5 bg-on-primary-container/20 rounded-md text-[10px] font-black text-on-primary-container uppercase">Top 5%</span>
+<span class="text-xs text-on-primary-container/70">Next Rank: 12,400 BP</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<p class="text-2xl font-black text-on-primary-fixed">780</p>
+<p class="text-[10px] font-bold text-on-primary-container uppercase tracking-widest">Barakah</p>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-low/80 backdrop-blur-2xl dark:bg-surface-container-lowest/80 border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+<div class="flex justify-around items-center h-20 px-4 pb-safe">
+<a class="flex flex-col items-center justify-center text-outline hover:text-primary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1 uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline hover:text-primary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-caps text-label-caps mt-1 uppercase">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline hover:text-primary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-caps text-label-caps mt-1 uppercase">Quest</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl px-3 py-1 scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-label-caps text-label-caps mt-1 uppercase">Rank</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline hover:text-primary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps mt-1 uppercase">Profile</span>
+</a>
+</div>
+</nav>
+<script>
+        // Simple intersection observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-panel').forEach(el => {
+            el.classList.add('transition-all', 'duration-500', 'opacity-0', 'translate-y-4');
+            observer.observe(el);
+        });
+
+        // Toggle Active Tab Logic
+        const tabButtons = document.querySelectorAll('.inline-flex button');
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-lg');
+                    b.classList.add('text-on-surface-variant');
+                });
+                btn.classList.add('bg-primary', 'text-on-primary', 'shadow-lg');
+                btn.classList.remove('text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

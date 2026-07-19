@@ -1,366 +1,331 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  ArrowLeft,
-  Star,
-  Trophy,
-  Calendar,
-  MapPin,
-  Clock,
-  Target,
-  BookOpen,
-  Award,
-  TrendingUp,
-  Settings,
-  Edit3,
-  Share2,
-  Crown,
-} from "lucide-react"
-import Confetti from "react-confetti"
-import { useWindowSize } from 'react-use'
-import { SettingsDialog } from "@/components/game/SettingsDialog"
+import { useState } from "react"
+import { PremiumCard } from "@/components/ui/premium-card"
+import { PremiumButton } from "@/components/ui/premium-button"
+import { PremiumBadge } from "@/components/ui/premium-badge"
+import { PremiumAvatar } from "@/components/ui/premium-avatar"
+import { PremiumProgress } from "@/components/ui/premium-progress"
+import { PremiumStat } from "@/components/ui/premium-stat"
+import { AchievementCard } from "@/components/game/AchievementCard"
+import { ActivityFeed } from "@/components/game/ActivityFeed"
 
-const ACHIEVEMENTS = [
-  { name: "First Steps", description: "Completed first quiz", icon: "🌱", earned: true, date: "2024-01-15" },
-  { name: "Streak Master", description: "7-day learning streak", icon: "🔥", earned: true, date: "2024-01-20" },
-  { name: "Quran Scholar", description: "100 Quran questions correct", icon: "📖", earned: true, date: "2024-01-25" },
-  { name: "Community Helper", description: "Helped 10 fellow learners", icon: "🤝", earned: false, date: null },
-  { name: "Perfect Score", description: "100% accuracy in a quiz", icon: "💯", earned: true, date: "2024-01-18" },
-  { name: "Knowledge Seeker", description: "Completed 5 categories", icon: "🎯", earned: false, date: null },
+const userData = {
+  name: "Zainab Zawu",
+  email: "zainab@ilmhunt.com",
+  location: "Maiduguri, Nigeria",
+  joinDate: "Jan 2024",
+  avatar: "https://picsum.photos/seed/zainab/200",
+  rank: "Talib",
+  totalXp: 8420,
+  streak: 7,
+  globalRank: 47,
+  accuracy: 87,
+  coins: 1250,
+  level: 12,
+  xpToNextLevel: 1000,
+  currentXp: 750,
+}
+
+const achievements = [
+  { id: "1", title: "First Steps", description: "Completed first quiz", icon: "🌱", progress: 1, maxProgress: 1, reward: "+50 XP", isUnlocked: true, unlockedAt: "Jan 15, 2024" },
+  { id: "2", title: "Streak Master", description: "7-day learning streak", icon: "🔥", progress: 7, maxProgress: 7, reward: "+100 XP", isUnlocked: true, unlockedAt: "Jan 20, 2024" },
+  { id: "3", title: "Quran Scholar", description: "100 Quran questions correct", icon: "📖", progress: 100, maxProgress: 100, reward: "+500 XP", isUnlocked: true, unlockedAt: "Jan 25, 2024" },
+  { id: "4", title: "Community Helper", description: "Helped 10 fellow learners", icon: "🤝", progress: 7, maxProgress: 10, reward: "+200 XP", isUnlocked: false },
+  { id: "5", title: "Perfect Score", description: "100% accuracy in a quiz", icon: "💯", progress: 1, maxProgress: 1, reward: "+150 XP", isUnlocked: true, unlockedAt: "Jan 18, 2024" },
+  { id: "6", title: "Knowledge Seeker", description: "Completed 5 categories", icon: "🎯", progress: 3, maxProgress: 5, reward: "+300 XP", isUnlocked: false },
 ]
 
-const STATS = [
-  { label: "Total Questions", value: "1,247", icon: Target, color: "text-lapis" },
-  { label: "Correct Answers", value: "1,084", icon: Trophy, color: "text-jade" },
-  { label: "Study Time", value: "42h 15m", icon: Clock, color: "text-amethyst" },
-  { label: "Categories Mastered", value: "3/12", icon: BookOpen, color: "text-henna" },
+const activities = [
+  { id: "1", user: { name: "Ahmed", avatar: "https://picsum.photos/seed/ahmed/100" }, action: "completed", target: "Hadith Sciences quiz", timestamp: "2 hours ago", type: "quiz" as const },
+  { id: "2", user: { name: "You", avatar: "https://picsum.photos/seed/zainab/100" }, action: "earned", target: "7-day streak", timestamp: "1 day ago", type: "streak" as const },
+  { id: "3", user: { name: "Fatima", avatar: "https://picsum.photos/seed/fatima/100" }, action: "joined", target: "Quran Study Circle", timestamp: "2 days ago", type: "join" as const },
+  { id: "4", user: { name: "Omar", avatar: "https://picsum.photos/seed/omar/100" }, action: "unlocked", target: "Perfect Score badge", timestamp: "3 days ago", type: "achievement" as const },
 ]
 
-const RECENT_ACTIVITY = [
-  { action: "Completed Hadith Sciences quiz", points: "+150", time: "2 hours ago", category: "Hadith" },
-  { action: "Achieved 7-day streak", points: "+100", time: "1 day ago", category: "Achievement" },
-  { action: "Joined Quran Study Circle", points: "+50", time: "2 days ago", category: "Community" },
-  { action: "Completed Five Pillars category", points: "+300", time: "3 days ago", category: "Category" },
+const stats = [
+  { label: "Total XP", value: userData.totalXp.toLocaleString(), trend: "up" as const, trendValue: "+230 this week" },
+  { label: "Day Streak", value: userData.streak, trend: "up" as const, trendValue: "Personal best!" },
+  { label: "Global Rank", value: `#${userData.globalRank}`, trend: "up" as const, trendValue: "+5 positions" },
+  { label: "Accuracy", value: `${userData.accuracy}%`, trend: "up" as const, trendValue: "+2% this week" },
 ]
+
+type Tab = "overview" | "achievements" | "statistics" | "activity"
 
 export default function ProfilePage() {
-  const [selectedTab, setSelectedTab] = useState("overview")
-  const [showCelebration, setShowCelebration] = useState(true)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [userData, setUserData] = useState({
-    name: "Zainab Zawu",
-    email: "zainab@ilmhunt.com",
-    location: "Maiduguri, Nigeria",
-    joinDate: "Jan 2024",
-    avatar: "https://picsum.photos/seed/zainab/200",
-  })
-  const { width, height } = useWindowSize()
+  const [activeTab, setActiveTab] = useState<Tab>("overview")
 
-  useEffect(() => {
-    if (showCelebration) {
-      const timer = setTimeout(() => setShowCelebration(false), 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [showCelebration])
-
-  const handleEditProfile = () => {
-    const newName = prompt("Enter new name:", userData.name)
-    if (newName) {
-      setUserData((prev) => ({ ...prev, name: newName }))
-    }
-  }
-
-  const handleShareProfile = () => {
-    const shareUrl = window.location.href
-    navigator.clipboard.writeText(shareUrl)
-    alert("Profile link copied to clipboard!")
-  }
+  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: "overview", label: "Overview", icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" /></svg> },
+    { id: "achievements", label: "Achievements", icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" /></svg> },
+    { id: "statistics", label: "Statistics", icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg> },
+    { id: "activity", label: "Activity", icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13 9V3.5L18.5 9M6 2c-1.11 0-2 .89-2 2v16c0 1.11.89 2 2 2h12c1.11 0 2-.89 2-2V8l-6-6H6z" /></svg> },
+  ]
 
   return (
-    <>
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
-        {showCelebration && <Confetti width={width} height={height} recycle={false} numberOfPieces={200} gravity={0.1} />}
-        
-        <header className="flex items-center justify-between mb-8">
-          <Button variant="ghost" asChild>
-            <Link href="/home">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Link>
-          </Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleShareProfile}>
-              <Share2 className="h-4 w-4 mr-2" />
-              Share Profile
-            </Button>
-            <Button variant="outline" onClick={() => setIsSettingsOpen(true)}>
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </Button>
+    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between mb-8"
+      >
+        <Link href="/home">
+          <PremiumButton variant="ghost" size="sm">
+            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </PremiumButton>
+        </Link>
+        <div className="flex gap-2">
+          <PremiumButton variant="secondary" size="sm">
+            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Share
+          </PremiumButton>
+          <PremiumButton variant="secondary" size="sm">
+            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Settings
+          </PremiumButton>
+        </div>
+      </motion.div>
+
+      {/* Profile Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="glass-card p-8 mb-8"
+      >
+        <div className="flex flex-col md:flex-row items-center gap-8">
+          {/* Avatar */}
+          <div className="relative">
+            <PremiumAvatar src={userData.avatar} size="xl" ring ringColor="primary" />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, type: "spring" }}
+              className="absolute -top-2 -right-2"
+            >
+              <PremiumBadge variant="warning" size="sm">
+                LVL {userData.level}
+              </PremiumBadge>
+            </motion.div>
           </div>
-        </header>
 
-        <Card className="mb-8 border-2 border-primary/20 shadow-xl bg-gradient-to-r from-primary/5 to-accent/5 transition-all duration-300 hover:shadow-2xl">
-          <CardContent className="pt-8 pb-8">
-            <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="relative">
-                <Avatar className="h-32 w-32 border-4 border-accent">
-                  <AvatarImage src={userData.avatar} alt="User avatar" />
-                  <AvatarFallback className="text-4xl font-bold bg-secondary text-secondary-foreground">
-                    {userData.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                {showCelebration && (
-                  <div className="absolute -top-2 -right-2">
-                    <Star className="h-8 w-8 text-primary animate-pulse" />
-                  </div>
-                )}
-                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-primary text-primary-foreground px-3 py-1">
-                    <Crown className="h-3 w-3 mr-1" />
-                    Talib
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="text-center md:text-left flex-1">
-                <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
-                  <h1 className="text-3xl font-bold font-headline text-primary">{userData.name}</h1>
-                  <Button size="sm" variant="ghost" onClick={handleEditProfile}>
-                    <Edit3 className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <div className="flex items-center gap-4 justify-center md:justify-start mb-4 text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>{userData.location} 🇳🇬</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>Joined {userData.joinDate}</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">8,420</div>
-                    <div className="text-sm text-muted-foreground">Total Points</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-henna">7</div>
-                    <div className="text-sm text-muted-foreground">Day Streak</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-amethyst">47</div>
-                    <div className="text-sm text-muted-foreground">Global Rank</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-lapis">87%</div>
-                    <div className="text-sm text-muted-foreground">Accuracy</div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Progress to Hafiz</span>
-                    <span className="font-semibold">750/1000 XP</span>
-                  </div>
-                  <Progress value={75} className="h-3 bg-secondary" />
-                </div>
-              </div>
+          {/* Info */}
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
+              <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">
+                {userData.name}
+              </h1>
+              <PremiumButton variant="ghost" size="sm">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </PremiumButton>
             </div>
-          </CardContent>
-        </Card>
 
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-secondary">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="achievements">Achievements</TabsTrigger>
-            <TabsTrigger value="statistics">Statistics</TabsTrigger>
-            <TabsTrigger value="activity">Activity</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-2 border-lapis/30 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-headline text-lapis">
-                    <TrendingUp className="h-5 w-5" />
-                    Learning Progress
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {STATS.map((stat, index) => (
-                    <div key={index} className="flex items-center justify-between hover:bg-lapis-soft p-2 rounded-lg transition-colors">
-                      <div className="flex items-center gap-3">
-                        <stat.icon className={`h-5 w-5 ${stat.color}`} />
-                        <span className="text-card-foreground">{stat.label}</span>
-                      </div>
-                      <span className="font-bold text-card-foreground">{stat.value}</span>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 border-primary/30 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-headline text-primary">
-                    <Award className="h-5 w-5" />
-                    Recent Achievements
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {ACHIEVEMENTS.filter((a) => a.earned)
-                      .slice(0, 3)
-                      .map((achievement, index) => (
-                        <div key={index} className="flex items-center gap-3 p-2 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors">
-                          <span className="text-2xl">{achievement.icon}</span>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-card-foreground">{achievement.name}</h4>
-                            <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                          </div>
-                          <Badge variant="secondary" className="text-xs">
-                            {achievement.date}
-                          </Badge>
-                        </div>
-                      ))}
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="flex items-center gap-4 justify-center md:justify-start mb-4 text-on-surface-variant">
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                {userData.location}
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" />
+                </svg>
+                Joined {userData.joinDate}
+              </span>
             </div>
-          </TabsContent>
 
-          <TabsContent value="achievements" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ACHIEVEMENTS.map((achievement, index) => (
-                <Card
-                  key={index}
-                  className={`border-2 shadow-lg transition-all duration-300 hover:scale-105 ${
-                    achievement.earned
-                      ? "border-primary/30 bg-primary/5"
-                      : "border-border bg-muted/30 opacity-60"
-                  }`}
-                >
-                  <CardContent className="pt-6 text-center">
-                    <div className="text-4xl mb-3">{achievement.icon}</div>
-                    <h3 className="font-bold text-card-foreground mb-2">{achievement.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
-                    {achievement.earned ? (
-                      <Badge className="bg-jade-soft text-jade">Earned {achievement.date}</Badge>
-                    ) : (
-                      <Badge variant="outline">Not Earned</Badge>
-                    )}
-                  </CardContent>
-                </Card>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {stats.map((stat, index) => (
+                <PremiumStat key={index} {...stat} />
               ))}
             </div>
-          </TabsContent>
 
-          <TabsContent value="statistics" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-2 border-primary/20 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <CardTitle className="text-primary">Category Performance</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { name: "Holy Quran", progress: 85, questions: 156 },
-                    { name: "Hadith Sciences", progress: 72, questions: 98 },
-                    { name: "Five Pillars", progress: 100, questions: 45 },
-                    { name: "Islamic History", progress: 45, questions: 67 },
-                  ].map((category, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">{category.name}</span>
-                        <span>{category.questions} questions</span>
-                      </div>
-                      <Progress value={category.progress} className="h-2 bg-secondary" />
-                      <div className="text-xs text-muted-foreground text-right">{category.progress}% mastery</div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 border-primary/30 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <CardTitle className="font-headline text-primary">Learning Streaks</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-primary mb-2">7</div>
-                    <div className="text-sm text-muted-foreground">Current Streak</div>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 mb-4">
-                    {[...Array(7)].map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-8 rounded ${i < 7 ? "bg-primary/60 hover:bg-primary/80" : "bg-muted"} transition-colors`}
-                      />
-                    ))}
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Longest Streak</span>
-                      <span className="font-semibold">12 days</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Total Active Days</span>
-                      <span className="font-semibold">28 days</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Level Progress */}
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-on-surface-variant">Progress to Level {userData.level + 1}</span>
+                <span className="font-bold text-on-surface">{userData.currentXp}/{userData.xpToNextLevel} XP</span>
+              </div>
+              <PremiumProgress value={userData.currentXp} max={userData.xpToNextLevel} size="lg" />
             </div>
-          </TabsContent>
+          </div>
+        </div>
+      </motion.div>
 
-          <TabsContent value="activity" className="space-y-6">
-            <Card className="border-2 border-border shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {RECENT_ACTIVITY.map((activity, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 bg-background rounded-lg hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium">{activity.action}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="text-xs">
-                            {activity.category}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">{activity.time}</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-bold text-jade">{activity.points}</span>
-                      </div>
+      {/* Tabs */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex gap-2 mb-8 overflow-x-auto pb-2"
+      >
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`
+              flex items-center gap-2 px-4 py-2 rounded-lg
+              font-label-caps text-label-caps uppercase tracking-widest
+              transition-all duration-200 whitespace-nowrap
+              ${activeTab === tab.id
+                ? "bg-primary text-on-primary"
+                : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest"
+              }
+            `}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </motion.div>
+
+      {/* Tab Content */}
+      <AnimatePresence mode="wait">
+        {activeTab === "overview" && (
+          <motion.div
+            key="overview"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            <PremiumCard className="p-6">
+              <h3 className="font-headline-md text-headline-md text-primary mb-4">Learning Progress</h3>
+              <div className="space-y-4">
+                {[
+                  { name: "Holy Quran", progress: 85, questions: 156 },
+                  { name: "Hadith Sciences", progress: 72, questions: 98 },
+                  { name: "Five Pillars", progress: 100, questions: 45 },
+                  { name: "Islamic History", progress: 45, questions: 67 },
+                ].map((category, index) => (
+                  <div key={index}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-on-surface">{category.name}</span>
+                      <span className="text-on-surface-variant">{category.questions} questions</span>
                     </div>
-                  ))}
+                    <PremiumProgress value={category.progress} size="sm" />
+                  </div>
+                ))}
+              </div>
+            </PremiumCard>
+
+            <PremiumCard className="p-6">
+              <h3 className="font-headline-md text-headline-md text-primary mb-4">Recent Achievements</h3>
+              <div className="space-y-3">
+                {achievements.filter(a => a.isUnlocked).slice(0, 3).map((achievement, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 bg-surface-container-high/50 rounded-lg">
+                    <span className="text-2xl">{achievement.icon}</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-on-surface">{achievement.title}</p>
+                      <p className="text-sm text-on-surface-variant">{achievement.description}</p>
+                    </div>
+                    <PremiumBadge variant="success" size="sm">{achievement.unlockedAt}</PremiumBadge>
+                  </div>
+                ))}
+              </div>
+            </PremiumCard>
+          </motion.div>
+        )}
+
+        {activeTab === "achievements" && (
+          <motion.div
+            key="achievements"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {achievements.map((achievement, index) => (
+              <AchievementCard key={achievement.id} {...achievement} />
+            ))}
+          </motion.div>
+        )}
+
+        {activeTab === "statistics" && (
+          <motion.div
+            key="statistics"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            <PremiumCard className="p-6">
+              <h3 className="font-headline-md text-headline-md text-primary mb-4">Category Performance</h3>
+              <div className="space-y-4">
+                {[
+                  { name: "Holy Quran", progress: 85, questions: 156 },
+                  { name: "Hadith Sciences", progress: 72, questions: 98 },
+                  { name: "Five Pillars", progress: 100, questions: 45 },
+                  { name: "Islamic History", progress: 45, questions: 67 },
+                ].map((category, index) => (
+                  <div key={index}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-on-surface">{category.name}</span>
+                      <span className="text-on-surface-variant">{category.progress}% mastery</span>
+                    </div>
+                    <PremiumProgress value={category.progress} size="sm" />
+                  </div>
+                ))}
+              </div>
+            </PremiumCard>
+
+            <PremiumCard className="p-6">
+              <h3 className="font-headline-md text-headline-md text-primary mb-4">Learning Streaks</h3>
+              <div className="text-center mb-6">
+                <p className="font-bold text-5xl text-primary mb-2">{userData.streak}</p>
+                <p className="text-on-surface-variant">Current Streak</p>
+              </div>
+              <div className="grid grid-cols-7 gap-2 mb-6">
+                {[...Array(7)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: i * 0.05 }}
+                    className={`h-10 rounded-lg ${i < userData.streak ? "bg-primary/60" : "bg-surface-container-highest"}`}
+                  />
+                ))}
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-on-surface-variant">Longest Streak</span>
+                  <span className="font-bold text-on-surface">12 days</span>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-      <SettingsDialog
-        open={isSettingsOpen}
-        onOpenChange={setIsSettingsOpen}
-        userData={userData}
-        onUserDataChange={(update) => setUserData((prev) => ({ ...prev, ...update }))}
-      />
-    </>
+                <div className="flex justify-between">
+                  <span className="text-on-surface-variant">Total Active Days</span>
+                  <span className="font-bold text-on-surface">28 days</span>
+                </div>
+              </div>
+            </PremiumCard>
+          </motion.div>
+        )}
+
+        {activeTab === "activity" && (
+          <motion.div
+            key="activity"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <ActivityFeed activities={activities} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }

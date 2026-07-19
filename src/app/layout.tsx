@@ -1,40 +1,40 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Amiri, PT_Sans } from "next/font/google"
+import { Inter, Source_Serif_4 } from "next/font/google"
 import { ThemeProvider } from "@/components/ui/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
-const pt_sans = PT_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-pt-sans",
+  weight: ["400", "600", "700"],
+  variable: "--font-inter",
 })
 
-const amiri = Amiri({
-  subsets: ["arabic", "latin"],
-  weight: ["400", "700"],
-  variable: "--font-amiri",
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-source-serif",
 })
 
 export const metadata: Metadata = {
-  title: "IlmHunt - Islamic Knowledge Journey",
+  title: "ILM Hunt - Premium Islamic Learning",
   description:
-    "Embark on a scholarly journey through Islamic knowledge with gamified learning.",
+    "Embark on a premium journey through Islamic knowledge with gamified learning, achievements, and a beautiful experience.",
   keywords:
-    "Islamic education, Quran, Hadith, Islamic quiz, Islamic learning, IlmHunt",
+    "Islamic education, Quran, Hadith, Islamic quiz, Islamic learning, ILM Hunt, premium Islamic app",
   openGraph: {
-    title: "IlmHunt - Islamic Knowledge Journey",
+    title: "ILM Hunt - Premium Islamic Learning",
     description:
-      "Gamified Islamic education platform for learning Quran, Hadith, and more.",
+      "Premium gamified Islamic education platform for learning Quran, Hadith, and more.",
     url: "https://ilmhunt.com",
-    siteName: "IlmHunt",
+    siteName: "ILM Hunt",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "IlmHunt - Islamic Knowledge Journey",
+        alt: "ILM Hunt - Premium Islamic Learning",
       },
     ],
     locale: "en_US",
@@ -42,12 +42,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "IlmHunt - Islamic Knowledge Journey",
+    title: "ILM Hunt - Premium Islamic Learning",
     description:
-      "Gamified Islamic education platform for learning Quran, Hadith, and more.",
+      "Premium gamified Islamic education platform for learning Quran, Hadith, and more.",
     images: ["/og-image.png"],
   },
-  themeColor: "#006B3C", // emerald
+  themeColor: "#0b1326",
 }
 
 export default function RootLayout({
@@ -59,13 +59,13 @@ export default function RootLayout({
     <html
       lang="en"
       dir="ltr"
-      className={`${pt_sans.variable} ${amiri.variable}`}
+      className={`${inter.variable} ${sourceSerif.variable} dark`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen font-body antialiased">
+      <body className="min-h-screen font-body-md antialiased bg-background text-on-background">
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

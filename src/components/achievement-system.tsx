@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Star, Shield } from "lucide-react";
 import { ACHIEVEMENTS_DATA, DAILY_CHALLENGES_DATA, WEEKLY_CHALLENGES_DATA } from "@/lib/achievements-data";
-import { AchievementCard } from "./game/AchievementCard";
+import { AchievementCard } from "@/components/game/AchievementCard";
 import { ChallengeCard } from "./game/ChallengeCard";
 
 export function AchievementSystem() {
@@ -29,7 +29,16 @@ export function AchievementSystem() {
                     <TabsContent value="achievements">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                            {ACHIEVEMENTS_DATA.map((achievement) => (
-                                <AchievementCard key={achievement.id} achievement={achievement} />
+                                <AchievementCard
+                                    key={achievement.id}
+                                    title={achievement.title}
+                                    description={achievement.description}
+                                    icon={achievement.icon}
+                                    progress={achievement.progress}
+                                    maxProgress={achievement.target}
+                                    reward={`${achievement.reward.xp} XP`}
+                                    isUnlocked={achievement.completed}
+                                />
                             ))}
                         </div>
                     </TabsContent>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .glass-card {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .emerald-glow {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(233, 195, 73, 0.4);
+        }
+        .mashrabiya-pattern {
+            mask-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMEw0MCAyMEwyMCA0MEwwIDIweiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz48L3N2Zz4=');
+            mask-repeat: repeat;
+            opacity: 0.05;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#e9c349",
+                    "on-primary-fixed": "#002113",
+                    "surface-container-highest": "#2d3449",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-tertiary": "#3c2f00",
+                    "inverse-on-surface": "#283044",
+                    "surface-container-high": "#222a3d",
+                    "surface-container": "#171f33",
+                    "on-surface-variant": "#bbcabf",
+                    "on-primary-container": "#00422b",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "surface-variant": "#2d3449",
+                    "surface-dim": "#0b1326",
+                    "error": "#ffb4ab",
+                    "outline-variant": "#3c4a42",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#241a00",
+                    "on-background": "#dae2fd",
+                    "on-secondary": "#002a78",
+                    "inverse-primary": "#006c49",
+                    "surface-container-low": "#131b2e",
+                    "tertiary-fixed": "#ffe088",
+                    "primary-container": "#10b981",
+                    "surface": "#0b1326",
+                    "inverse-surface": "#dae2fd",
+                    "primary": "#4edea3",
+                    "tertiary-container": "#c29f27",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "on-surface": "#dae2fd",
+                    "on-primary-fixed-variant": "#005236",
+                    "on-error": "#690005",
+                    "secondary-fixed": "#dbe1ff",
+                    "secondary": "#b4c5ff",
+                    "on-tertiary-container": "#473700",
+                    "error-container": "#93000a",
+                    "background": "#0b1326",
+                    "primary-fixed": "#6ffbbe",
+                    "secondary-container": "#0053db",
+                    "on-primary": "#003824",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "on-secondary-container": "#cdd7ff",
+                    "surface-container-lowest": "#060e20",
+                    "on-secondary-fixed": "#00174b",
+                    "surface-tint": "#4edea3",
+                    "surface-bright": "#31394d",
+                    "outline": "#86948a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "md": "16px",
+                    "container-padding": "20px",
+                    "unit": "4px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg-mobile": ["\"Source Serif 4\""],
+                    "quote-italic": ["\"Source Serif 4\""],
+                    "display-lg": ["\"Source Serif 4\""],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface min-h-screen font-body-md overflow-x-hidden">
+<!-- Top AppBar Component -->
+<header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-white/10 shadow-sm flex justify-between items-center px-container-padding py-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A stylized 3D avatar of a young scholar wearing a modern emerald green thobe, illuminated by soft studio lighting against a dark navy background. The character has a friendly expression, representing a user profile for a digital learning sanctuary." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcpMg7CT0oUKy0KMhRggK4N6ZbpGiXlPsVlSOna6EvTY6ObbKUGNuLQj4zr0--bqi4PzfVtrIhhv6ViWf4Ydr85mX6iv7kYg0KxgC9aLrXOI7jFANq86C02sjLRsws8HbycuBzNbDVbpTqChkC43Twq_oVawhgsL0sAGS0lT-uHAKnv6IiTco_z1ebkYy0h-81qOw9432uXhY4vpNaWiXrch_yCA56PS_LuQpcPiyFXOJ1mqwXMFbTHkaNOVXW4b22H_WuiV7kQY0"/>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">ILM Hunt</h1>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-high rounded-full px-4 py-1.5 border border-white/5">
+<span class="text-tertiary">7 🔥</span>
+<span class="w-px h-3 bg-white/10 mx-1"></span>
+<span class="text-primary">250 🪙</span>
+</div>
+</header>
+<main class="pt-24 pb-32 px-container-padding max-w-md mx-auto relative">
+<!-- Background Ambient Shader -->
+<div class="fixed inset-0 pointer-events-none z-0">
+<div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-tertiary/5 blur-[150px] rounded-full"></div>
+</div>
+<!-- Hero Section -->
+<div class="relative z-10 text-center mb-xl">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-primary mb-1">Daily Blessings</h2>
+<div class="inline-flex items-center gap-2 px-4 py-1 rounded-full glass-card border-primary/20">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label-caps text-label-caps text-on-surface">12 Day Streak</span>
+</div>
+</div>
+<!-- Reward Grid -->
+<div class="relative z-10 grid grid-cols-3 gap-3 mb-xl">
+<!-- Day 1: Completed -->
+<div class="glass-card rounded-xl p-4 flex flex-col items-center justify-between aspect-square border-primary/40 relative overflow-hidden">
+<div class="absolute inset-0 mashrabiya-pattern"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant self-start">DAY 1</span>
+<span class="material-symbols-outlined text-primary text-3xl">monetization_on</span>
+<div class="absolute top-2 right-2">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface">+10</span>
+</div>
+<!-- Day 2: Current -->
+<div class="glass-card rounded-xl p-4 flex flex-col items-center justify-between aspect-square border-primary emerald-glow relative overflow-hidden scale-105">
+<div class="absolute inset-0 mashrabiya-pattern opacity-10"></div>
+<span class="font-label-caps text-label-caps text-primary self-start">DAY 2</span>
+<div class="animate-float">
+<span class="material-symbols-outlined text-tertiary text-4xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<button class="w-full py-1 bg-primary text-on-primary font-label-caps text-[10px] rounded-lg active:scale-95 transition-transform">CLAIM</button>
+</div>
+<!-- Day 3: Locked -->
+<div class="glass-card rounded-xl p-4 flex flex-col items-center justify-between aspect-square opacity-60 relative overflow-hidden grayscale-[0.5]">
+<span class="font-label-caps text-label-caps text-on-surface-variant self-start">DAY 3</span>
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">school</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">lock</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">+25 XP</span>
+</div>
+<!-- Day 4-6 Row -->
+<div class="glass-card rounded-xl p-4 flex flex-col items-center justify-between aspect-square opacity-60 border-white/5">
+<span class="font-label-caps text-label-caps text-on-surface-variant self-start">DAY 4</span>
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">diamond</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">+2</span>
+</div>
+<div class="glass-card rounded-xl p-4 flex flex-col items-center justify-between aspect-square opacity-60 border-white/5">
+<span class="font-label-caps text-label-caps text-on-surface-variant self-start">DAY 5</span>
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">monetization_on</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">+50</span>
+</div>
+<div class="glass-card rounded-xl p-4 flex flex-col items-center justify-between aspect-square opacity-60 border-white/5">
+<span class="font-label-caps text-label-caps text-on-surface-variant self-start">DAY 6</span>
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">auto_awesome</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">??</span>
+</div>
+<!-- Day 7: Grand Prize -->
+<div class="col-span-3 glass-card rounded-2xl p-6 flex items-center gap-6 border-tertiary/40 gold-glow relative overflow-hidden mt-2">
+<div class="absolute inset-0 mashrabiya-pattern opacity-10"></div>
+<div class="relative w-32 h-32 flex-shrink-0 animate-float">
+<img class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(233,195,73,0.5)]" src="https://lh3.googleusercontent.com/aida/AP1WRLvMb_OQ76f7JbW_g9nLMF5leMEW1mx8vkqxdx16Z5BrU3fT3urjSGUsSaEmjUurRggnUHuIqGXLoTiHXTQq_7uGCujAGLHmkfGnSqvgsE5urNyvW92MRBLhnYpsW9hSLf-rlIOD7b1Mw4YNOo6o56oUdGQhTRy3QrKmuglfOWfZW8xP2-7qw2-ThKkIVMD47Hl4TmxNZZxSoiPPygobo3heNH8tPzoRWBqLVvV3hmT_mAQPOxbLdh_CgkM"/>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-tertiary">ULTIMATE REWARD</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Chest of Wisdom</h3>
+<p class="text-on-surface-variant text-sm">Unlock to reveal legendary knowledge scrolls &amp; rare items.</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">lock</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">UNLOCKS IN 5 DAYS</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Progress Footer Section -->
+<div class="relative z-10 glass-card rounded-2xl p-xl border-white/5 mb-8">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_stories</span>
+<span class="font-label-caps text-label-caps text-on-surface">Path to Epic Reward</span>
+</div>
+<span class="font-label-caps text-label-caps text-primary">12/30 Days</span>
+</div>
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-primary-fixed-dim rounded-full shadow-[0_0_10px_rgba(16,185,129,0.4)]" style="width: 40%"></div>
+</div>
+<p class="text-on-surface-variant text-[12px] mt-4 text-center italic">18 more days to unlock the 'Scholar of the Realm' Badge</p>
+</div>
+<!-- Streak Shield Status -->
+<div class="relative z-10 flex items-center justify-between px-6 py-4 glass-card rounded-full border-tertiary/20">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-xl" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-on-surface">Streak Shield</div>
+<div class="text-[10px] text-on-surface-variant">Active Protection</div>
+</div>
+</div>
+<div class="px-3 py-1 rounded-full bg-tertiary/20 text-tertiary font-label-caps text-[10px] border border-tertiary/30">
+                1 LEFT
+            </div>
+</div>
+</main>
+<!-- Bottom Navigation Component -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container/60 backdrop-blur-xl border-t border-white/10 shadow-xl flex justify-around items-center h-20 px-2 pb-safe rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-caps text-label-caps mt-1">Learning</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-caps text-label-caps mt-1">Rankings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold bg-primary-container/20 rounded-xl px-3 py-1 transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
+<span class="font-label-caps text-label-caps mt-1">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('touchstart', () => {
+                el.style.transform = 'scale(0.95)';
+            });
+            el.addEventListener('touchend', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add a subtle particle effect for the active day
+        const currentDayCard = document.querySelector('.emerald-glow');
+        if (currentDayCard) {
+            const createParticle = () => {
+                const p = document.createElement('div');
+                p.className = 'absolute w-1 h-1 bg-primary rounded-full pointer-events-none opacity-0';
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                p.style.left = `${x}%`;
+                p.style.top = `${y}%`;
+                currentDayCard.appendChild(p);
+                
+                const anim = p.animate([
+                    { transform: 'translateY(0) scale(0)', opacity: 0 },
+                    { transform: 'translateY(-20px) scale(1)', opacity: 0.8, offset: 0.5 },
+                    { transform: 'translateY(-40px) scale(0)', opacity: 0 }
+                ], {
+                    duration: 2000 + Math.random() * 1000,
+                    easing: 'ease-out'
+                });
+
+                anim.onfinish = () => p.remove();
+            };
+
+            setInterval(createParticle, 600);
+        }
+    </script>
+</body></html>

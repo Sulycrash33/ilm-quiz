@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ILM Hunt - Avatar Pack Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#86948a",
+                    "on-primary": "#003824",
+                    "on-primary-container": "#00422b",
+                    "inverse-primary": "#006c49",
+                    "primary": "#4edea3",
+                    "surface-container-lowest": "#060e20",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "surface": "#0b1326",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "primary-fixed": "#6ffbbe",
+                    "tertiary-container": "#c29f27",
+                    "surface-tint": "#4edea3",
+                    "surface-container-high": "#222a3d",
+                    "tertiary": "#e9c349",
+                    "secondary": "#b4c5ff",
+                    "inverse-surface": "#dae2fd",
+                    "on-primary-fixed-variant": "#005236",
+                    "surface-container-low": "#131b2e",
+                    "on-tertiary": "#3c2f00",
+                    "surface-container": "#171f33",
+                    "on-surface": "#dae2fd",
+                    "on-secondary-container": "#cdd7ff",
+                    "secondary-fixed": "#dbe1ff",
+                    "on-background": "#dae2fd",
+                    "surface-variant": "#2d3449",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "on-secondary": "#002a78",
+                    "secondary-container": "#0053db",
+                    "outline-variant": "#3c4a42",
+                    "on-error-container": "#ffdad6",
+                    "background": "#0b1326",
+                    "on-tertiary-container": "#473700",
+                    "tertiary-fixed": "#ffe088",
+                    "on-secondary-fixed": "#00174b",
+                    "on-primary-fixed": "#002113",
+                    "surface-bright": "#31394d",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "surface-dim": "#0b1326",
+                    "error": "#ffb4ab",
+                    "surface-container-highest": "#2d3449",
+                    "primary-container": "#10b981",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-error": "#690005",
+                    "on-tertiary-fixed": "#241a00",
+                    "inverse-on-surface": "#283044",
+                    "error-container": "#93000a",
+                    "on-surface-variant": "#bbcabf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "sm": "8px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "gutter": "16px",
+                    "lg": "24px",
+                    "container-padding": "20px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "display-lg": ["\"Source Serif 4\""],
+                    "quote-italic": ["\"Source Serif 4\""],
+                    "headline-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "display-lg-mobile": ["\"Source Serif 4\""],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mashrabiya-mask {
+            mask-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
+            mask-size: 200px;
+            opacity: 0.05;
+        }
+        .gold-glow {
+            box-shadow: 0 0 40px rgba(233, 195, 73, 0.2);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-32">
+<!-- Ambient Background Animation -->
+<div class="fixed inset-0 pointer-events-none z-0">
+
+<div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest via-transparent to-surface-container-lowest"></div>
+<!-- Rarity Glow Overlay -->
+<div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[150%] h-[150%] rounded-full bg-tertiary/10 blur-[120px] mix-blend-screen animate-pulse"></div>
+</div>
+<!-- Top Navigation Bar (Shared Component Context) -->
+<nav class="fixed top-0 left-0 right-0 flex justify-between items-center px-container-padding py-md max-w-7xl mx-auto z-50 bg-surface/60 backdrop-blur-xl border-b border-white/5">
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant transition-colors" onclick="history.back()">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Shop</h1>
+</div>
+<div class="flex items-center gap-sm px-md py-1 bg-surface-container-high rounded-full border border-white/10">
+<span class="text-tertiary">7 🔥</span>
+<span class="text-tertiary">1.2k 🪙</span>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="relative z-10 pt-24 px-container-padding max-w-lg mx-auto">
+<!-- Hero Character Image Section -->
+<div class="relative w-full aspect-[4/5] rounded-3xl overflow-hidden glass-card gold-glow mb-lg group">
+<div class="absolute inset-0 mashrabiya-mask bg-tertiary"></div>
+<img class="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110" data-alt="A premium digital illustration of a legendary scholar character wearing intricate golden embroidered robes and holding a luminous ancient manuscript. The lighting is dramatic and cinematic, with warm gold highlights contrasting against a deep midnight blue background. The style is high-end digital art with sharp details, reflecting a digital sanctuary aesthetic of scholarly premium quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChimQVvXuVzEZN1Inguj4ijswFpYJpFqfUCtJEsp-I7vvsJC8X0p3nuLpGBslskL4ce0-NwvuGb2MVuycjLvF2uj1U-xEupzdmzd6wVgklT26Z6SwedaddcDRpLW8TO4WHu_tzte-BT1OM-1ecyoRSF_6Q25vKGOXDfVnoO5P3-iahv2V3xOUPh32THzwwXxjs7cNHiUndQEFfsR5qBiqqY8T0TQG59ik10rgL42NJBycAS9wmEdJZB5CwsSAf2itvUPc6ZG7XV4I"/>
+<!-- Rarity Badge -->
+<div class="absolute top-md right-md bg-tertiary text-on-tertiary px-md py-1 rounded-full font-label-caps text-label-caps flex items-center gap-xs shadow-xl">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                LEGENDARY PACK
+            </div>
+<!-- Bottom Gradient Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent opacity-80"></div>
+</div>
+<!-- Pack Identity -->
+<div class="text-center mb-xl">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-on-surface mb-xs">Scholars of the Golden Age</h2>
+<p class="text-on-surface-variant italic font-quote-italic">Unlock 5 Legendary Avatars</p>
+</div>
+<!-- Contents List -->
+<div class="space-y-md mb-xl">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-xs">Included in this pack</h3>
+<!-- Item 1: Al-Khwarizmi -->
+<div class="glass-card p-md rounded-2xl flex items-center justify-between border-l-4 border-l-tertiary">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a legendary mathematician avatar, Al-Khwarizmi, with a wise expression and wearing a silk turban. The digital painting style is clean and sharp with golden light glinting off a compass tool he carries." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeECXXYMoidSWQ8q2Jbd4AV1dmMQNOIz74DROn5B_dlE6PjmECTxa0Ujc0XfFvwwKb6zSWxt1f5xgseX99lq0fq4F4799HZ0aZyblwb1YR2XHJbfXxo4qTnWTLI8eUMlXyev-OKB4qZQylWzXnkaB-16EnYI4-2yUZOg6UYSOCb2f1bbgTlr4uOCmwsC_BvGxjZPIlEZQb2RZAIHRigsYbj6K6sImNaC32Mvasa5GwTLS9RjWkJ7j2I-BIzPdw7uuqdsUtsDSheOo"/>
+</div>
+<div>
+<p class="font-headline-md text-body-md text-on-surface">The Al-Khwarizmi</p>
+<span class="text-[10px] font-label-caps text-tertiary-fixed-dim uppercase">Legendary Avatar</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<!-- Item 2: Fatima al-Fihri -->
+<div class="glass-card p-md rounded-2xl flex items-center justify-between border-l-4 border-l-tertiary">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Portrait of a legendary female scholar avatar, Fatima al-Fihri, standing before a stylized library background. She wears elegant flowing robes in deep emerald and gold. The lighting is soft and intellectual." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZycSlCt0nqpeWdGUqMthq9XdbN7-bPMEDtIOliVln5PAIxCsEo1GYcuWns_4dOoKS7KybHAWvfmQmprnaFCXq98HICtwF0XWspe9zSmiGmJ-BJ0yWkGeVdgHv-OzFI2fUdXhLswgJgOd3itmMhKOp5YTDn5yG3LECgegntz9NYnEWDsUSFmlm9H34fkTw0d0MrbacUJ0hs8SPAdn_u_2xihDwcNuwB1kS3_T6Kv0Bf4jtKAeLdjJBMj3k26RwMZ8bv2P5YRMbd80"/>
+</div>
+<div>
+<p class="font-headline-md text-body-md text-on-surface">The Founder</p>
+<span class="text-[10px] font-label-caps text-tertiary-fixed-dim uppercase">Legendary Avatar</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<!-- Item 3: Golden Quill -->
+<div class="glass-card p-md rounded-2xl flex items-center justify-between border-l-4 border-l-secondary">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-2xl">edit_square</span>
+</div>
+<div>
+<p class="font-headline-md text-body-md text-on-surface">Celestial Quill</p>
+<span class="text-[10px] font-label-caps text-secondary-fixed-dim uppercase">Epic Animation</span>
+</div>
+</div>
+<div class="px-sm py-xs bg-secondary-container/30 text-secondary text-[10px] rounded-full font-bold">EPIC</div>
+</div>
+<!-- Item 4: Knowledge Aura -->
+<div class="glass-card p-md rounded-2xl flex items-center justify-between border-l-4 border-l-secondary">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-2xl">auto_awesome</span>
+</div>
+<div>
+<p class="font-headline-md text-body-md text-on-surface">Wisdom Aura</p>
+<span class="text-[10px] font-label-caps text-secondary-fixed-dim uppercase">Epic Frame</span>
+</div>
+</div>
+<div class="px-sm py-xs bg-secondary-container/30 text-secondary text-[10px] rounded-full font-bold">EPIC</div>
+</div>
+</div>
+<!-- Pack Perks Card -->
+<div class="bg-primary/10 border border-primary/20 p-lg rounded-3xl mb-xl">
+<h4 class="font-headline-md text-body-md text-primary flex items-center gap-sm mb-sm">
+<span class="material-symbols-outlined">auto_graph</span>
+                Pack Bonuses
+            </h4>
+<ul class="space-y-sm text-on-surface-variant text-sm">
+<li class="flex items-start gap-xs">
+<span class="material-symbols-outlined text-primary text-xs mt-1">check_circle</span>
+                    +15% Learning Speed boost when equipped
+                </li>
+<li class="flex items-start gap-xs">
+<span class="material-symbols-outlined text-primary text-xs mt-1">check_circle</span>
+                    Exclusive "Sage" title in leaderboards
+                </li>
+</ul>
+</div>
+</main>
+<!-- Purchase Footer Action Area -->
+<div class="fixed bottom-0 left-0 right-0 z-50 p-container-padding bg-surface/80 backdrop-blur-2xl border-t border-white/10">
+<div class="max-w-lg mx-auto">
+<button class="w-full bg-gradient-to-b from-primary to-primary-container text-on-primary font-bold py-lg rounded-2xl shadow-lg active:scale-95 transition-all duration-200 flex items-center justify-center gap-md group">
+<span class="text-headline-md">Buy for 2,500 Coins</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">shopping_bag</span>
+</button>
+<p class="text-center text-[10px] text-on-surface-variant mt-sm font-label-caps uppercase tracking-tighter">Instant unlock. Items will be added to your profile immediately.</p>
+</div>
+</div>
+<!-- Bottom Navigation (Mobile Only - Hidden for Detail Screen Focus as per rules) -->
+<!-- Suppression logic: This is a task-focused detail screen with a primary "Back" action, so the global bottom nav is hidden to prioritize purchase flow -->
+<script>
+        // Micro-interactions for button presses and subtle scroll effects
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('touchend', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple parallax for hero image
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.group img');
+            if(hero) {
+                hero.style.transform = `translateY(${scrolled * 0.15}px) scale(1.1)`;
+            }
+        });
+    </script>
+</body></html>

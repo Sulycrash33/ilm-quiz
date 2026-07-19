@@ -1,0 +1,212 @@
+"use client"
+
+import { motion } from "framer-motion"
+import { PremiumButton } from "@/components/ui/premium-button"
+import { PremiumBadge } from "@/components/ui/premium-badge"
+import { PremiumCard } from "@/components/ui/premium-card"
+import { PremiumAvatar } from "@/components/ui/premium-avatar"
+
+interface Player {
+  id: string
+  userName: string
+  avatar?: string
+  score: number
+  correctAnswers: number
+  totalAnswers: number
+  streak: number
+}
+
+interface QuizResultsProps {
+  players: Player[]
+  currentUserId: string
+  onPlayAgain: () => void
+  onLeave: () => void
+}
+
+export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: QuizResultsProps) {
+  const sortedPlayers = [...players].sort((a, b) => b.score - a.score)
+  const winner = sortedPlayers[0]
+  const currentUser = sortedPlayers.find((p) => p.id === currentUserId)
+  const currentUserRank = sortedPlayers.findIndex((p) => p.id === currentUserId) + 1
+
+  const getMedal = (rank: number) => {
+    switch (rank) {
+      case 1: return "🥇"
+      case 2: return "🥈"
+      case 3: return "🥉"
+      default: return `#${rank}`
+    }
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      {/* Winner Celebration */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center mb-8"
+      >
+        <motion.div
+          animate={{ rotate: [0, -10, 10, 0] }}
+          transition={{ duration: 0.5, repeat: 2 }}
+          className="text-6xl mb-4"
+        >
+          🏆
+        </motion.div>
+        <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary mb-2">
+          Quiz Complete!
+        </h1>
+        <p className="text-on-surface-variant">
+          {winner.userName} wins with {winner.score} points!
+        </p>
+      </motion.div>
+
+      {/* Podium */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex justify-center items-end gap-4 mb-8"
+      >
+        {/* 2nd Place */}
+        {sortedPlayers[1] && (
+          <div className="text-center">
+            <PremiumAvatar src={sortedPlayers[1].avatar} size="lg" />
+            <p className="font-bold text-on-surface mt-2 text-sm">{sortedPlayers[1].userName}</p>
+            <p className="text-xs text-on-surface-variant">{sortedPlayers[1].score} XP</p>
+            <div className="w-20 h-20 bg-gradient-to-b from-gray-300/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
+              <span className="text-3xl">🥈</span>
+            </div>
+          </div>
+        )}
+
+        {/* 1st Place */}
+        <div className="text-center">
+          <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <PremiumAvatar src={winner.avatar} size="xl" ring ringColor="primary" />
+          </motion.div>
+          <p className="font-bold text-on-surface mt-2">{winner.userName}</p>
+          <p className="text-sm text-primary font-bold">{winner.score} XP</p>
+          <div className="w-24 h-28 bg-gradient-to-b from-yellow-400/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
+            <span className="text-4xl">🥇</span>
+          </div>
+        </div>
+
+        {/* 3rd Place */}
+        {sortedPlayers[2] && (
+          <div className="text-center">
+            <PremiumAvatar src={sortedPlayers[2].avatar} size="lg" />
+            <p className="font-bold text-on-surface mt-2 text-sm">{sortedPlayers[2].userName}</p>
+            <p className="text-xs text-on-surface-variant">{sortedPlayers[2].score} XP</p>
+            <div className="w-20 h-16 bg-gradient-to-b from-amber-700/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
+              <span className="text-3xl">🥉</span>
+            </div>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Full Leaderboard */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <PremiumCard className="p-6 mb-6">
+          <h3 className="font-headline-md text-headline-md text-on-surface mb-4">
+            Final Rankings
+          </h3>
+          <div className="space-y-3">
+            {sortedPlayers.map((player, index) => (
+              <motion.div
+                key={player.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 + index * 0.05 }}
+                className={`
+                  flex items-center justify-between p-3 rounded-lg
+                  ${player.id === currentUserId
+                    ? "bg-primary/10 border border-primary/30"
+                    : "bg-surface-container-high"
+                  }
+                `}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl w-10 text-center">{getMedal(index + 1)}</span>
+                  <PremiumAvatar src={player.avatar} size="sm" />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-on-surface">{player.userName}</span>
+                      {player.id === currentUserId && (
+                        <PremiumBadge variant="secondary" size="sm">YOU</PremiumBadge>
+                      )}
+                    </div>
+                    <p className="text-xs text-on-surface-variant">
+                      {player.correctAnswers}/{player.totalAnswers} correct
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-primary">{player.score} XP</p>
+                  {player.streak >= 3 && (
+                    <p className="text-xs text-tertiary">🔥 Best streak: {player.streak}</p>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </PremiumCard>
+      </motion.div>
+
+      {/* Your Performance */}
+      {currentUser && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <PremiumCard className="p-6 mb-6">
+            <h3 className="font-headline-md text-headline-md text-on-surface mb-4">
+              Your Performance
+            </h3>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="font-bold text-3xl text-primary">{currentUserRank}</p>
+                <p className="text-sm text-on-surface-variant">Rank</p>
+              </div>
+              <div>
+                <p className="font-bold text-3xl text-tertiary">{currentUser.score}</p>
+                <p className="text-sm text-on-surface-variant">Total XP</p>
+              </div>
+              <div>
+                <p className="font-bold text-3xl text-secondary">
+                  {currentUser.totalAnswers > 0
+                    ? Math.round((currentUser.correctAnswers / currentUser.totalAnswers) * 100)
+                    : 0}%
+                </p>
+                <p className="text-sm text-on-surface-variant">Accuracy</p>
+              </div>
+            </div>
+          </PremiumCard>
+        </motion.div>
+      )}
+
+      {/* Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="flex gap-3"
+      >
+        <PremiumButton variant="secondary" fullWidth onClick={onLeave}>
+          Leave Room
+        </PremiumButton>
+        <PremiumButton variant="primary" fullWidth onClick={onPlayAgain}>
+          Play Again
+        </PremiumButton>
+      </motion.div>
+    </div>
+  )
+}

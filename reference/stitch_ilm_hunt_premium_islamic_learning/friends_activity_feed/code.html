@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ILM Hunt | Friends Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#4edea3",
+                    "on-surface": "#dae2fd",
+                    "on-secondary-fixed": "#00174b",
+                    "tertiary": "#e9c349",
+                    "on-error": "#690005",
+                    "surface-container": "#171f33",
+                    "on-background": "#dae2fd",
+                    "inverse-surface": "#dae2fd",
+                    "on-secondary": "#002a78",
+                    "surface-container-highest": "#2d3449",
+                    "on-tertiary-container": "#473700",
+                    "surface-tint": "#4edea3",
+                    "surface-dim": "#0b1326",
+                    "surface-bright": "#31394d",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "on-primary-container": "#00422b",
+                    "inverse-on-surface": "#283044",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-error-container": "#ffdad6",
+                    "surface": "#0b1326",
+                    "outline-variant": "#3c4a42",
+                    "secondary": "#b4c5ff",
+                    "surface-container-high": "#222a3d",
+                    "surface-container-lowest": "#060e20",
+                    "error": "#ffb4ab",
+                    "on-primary-fixed-variant": "#005236",
+                    "tertiary-fixed": "#ffe088",
+                    "primary-container": "#10b981",
+                    "on-tertiary": "#3c2f00",
+                    "background": "#0b1326",
+                    "on-tertiary-fixed": "#241a00",
+                    "inverse-primary": "#006c49",
+                    "outline": "#86948a",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "error-container": "#93000a",
+                    "on-primary": "#003824",
+                    "surface-variant": "#2d3449",
+                    "on-surface-variant": "#bbcabf",
+                    "tertiary-container": "#c29f27",
+                    "secondary-fixed": "#dbe1ff",
+                    "on-secondary-container": "#cdd7ff",
+                    "primary-fixed": "#6ffbbe",
+                    "on-primary-fixed": "#002113",
+                    "surface-container-low": "#131b2e",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "secondary-container": "#0053db"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "xl": "32px",
+                    "unit": "4px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "container-padding": "20px"
+            },
+            "fontFamily": {
+                    "display-lg": ["\"Source Serif 4\""],
+                    "quote-italic": ["\"Source Serif 4\""],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg-mobile": ["\"Source Serif 4\""],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mashrabiya-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5 25 25 5-25 5-5 25-5-25-25-5 25-5z' fill='%234edea3' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        .glow-emerald {
+            box-shadow: 0 0 20px rgba(78, 222, 163, 0.15);
+        }
+        .glow-gold {
+            box-shadow: 0 0 20px rgba(233, 195, 73, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/60 dark:bg-surface/60 backdrop-blur-xl border-b border-on-surface/10 shadow-sm">
+<div class="flex justify-between items-center px-gutter h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-quality profile portrait of a young scholar with a kind expression, set against a blurred library background with warm, golden lighting. The aesthetic is clean, professional, and reflects the premium Digital Sanctuary brand with soft emerald highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXfnpUy9YmwWYxt4c8LUmxU8j3c-wtrWIzX9y_B5gdjhqkPt90lnksRSXa_SQaDyUe46FDvq4O52aPR7xgYfsmkfObcARBoxBazxsZcW5kWgg-933vZTtMkGK-rKU4Uqcyie9cJO4fCo4L7nl6BYQarux5FsWMSP4bpbaxzZKtBQHIIEP8Xpbx5m8CaqoQGMEXzP4J-GWgRUTNB2mv3nbx9tTPYcZopFnJQQ9N0_Qus3ZxC6TfCTAsvmfgc_xwQLeOPtxXMbgmJ8M"/>
+</div>
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tight md:font-display-lg md:text-display-lg">ILM Hunt</h1>
+</div>
+<button class="text-primary hover:bg-surface-bright/20 transition-colors p-sm rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-gutter max-w-2xl mx-auto space-y-xl mashrabiya-pattern min-h-screen">
+<!-- Study Circle Section -->
+<section class="space-y-md">
+<div class="flex justify-between items-end px-xs">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface">Study Circles</h2>
+<span class="font-label-caps text-label-caps text-tertiary">3 Active Challenges</span>
+</div>
+<div class="glass-card rounded-xl p-lg space-y-md relative overflow-hidden glow-emerald">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-md font-bold text-primary">Ramadan Prep: Fiqh of Fasting</h3>
+<p class="text-on-surface-variant text-sm">7 Members Active • 4 Days Left</p>
+</div>
+<div class="flex -space-x-3">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up avatar of a smiling young student in a modern educational setting, soft lighting, part of a diverse group of learners in a high-end app interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBilMZWJ32YRaKrN1efuha7g-bDV9h7YHKDgZh4J1pPt7BO2B-LkT0OSuMStzCQf0UNLzQpt5N4WfrAAO1m2xI5C5R4mt6piYUzaUvmgJ3Z69tmp3UVMZzZluwXLg5zXLqmZXqZclC3skN5Ugwdgm8MrQ2EaIILDF0amdtkfqjlMmcAiaZ9I8mhk7YDZsAjQpkshHKtADfn18NgLBPxvatPh30el9mI_AnL71hd7vvTVvrCV3gVlr-xVwxQCn3BdIQ04sHb8si7tHI"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Profile icon of a female scholar wearing a neutral hijab, soft focus library in the background, elegant and scholarly aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk2_fwpN-xWe9BfEbKYkmSeTp3rrVF1VnW4vaPna0QGWKc4uexVvGkG8EOZDsy1Y0jVDL3-3X6rwLO4BXEyyPAvm3dajLjdO5ozfizueCA9cGF1C-RK8QB--6M7IA_L0JkBWJqJSuFpA6TyUeC_LQDkaZYBt9Mu3z4LqZhSYPu7Z0rtxtG6P8rypiKGDYxgd9nVpSJkf8BePX6iVjmFiJbi8auZqI7ErfCTjGLNF8wghDiOCCZBP5BUDcgfZ0PRzE4CrDuvtgz-fo"/>
+</div>
+<div class="bg-primary-container text-on-primary-container text-[10px] w-8 h-8 rounded-full border-2 border-surface-container flex items-center justify-center font-bold">+5</div>
+</div>
+</div>
+<div class="space-y-xs">
+<div class="flex justify-between text-xs font-label-caps uppercase tracking-wider text-on-surface-variant">
+<span>Group Progress</span>
+<span class="text-primary">68%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary shadow-[0_0_10px_#4edea3]" style="width: 68%"></div>
+</div>
+</div>
+<button class="w-full py-sm bg-primary/10 border border-primary/20 text-primary font-bold rounded-lg hover:bg-primary/20 transition-all active:scale-95">
+                    Enter Circle
+                </button>
+</div>
+</section>
+<!-- Feed List -->
+<section class="space-y-lg">
+<div class="flex items-center gap-sm px-xs">
+<span class="material-symbols-outlined text-primary" data-icon="rss_feed">rss_feed</span>
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface">Friends Feed</h2>
+</div>
+<!-- Card 1: Ahmad -->
+<div class="glass-card rounded-xl p-lg space-y-md relative glow-gold border-tertiary/20">
+<div class="flex gap-md">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-tertiary">
+<img class="w-full h-full object-cover" data-alt="Avatar of a cheerful young man with a slight beard, wearing a modest professional outfit, bright and clean photography style with emerald and gold accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDq1AtLfk1nTT6Txkv246THFedO7PpIhHAGM6AIOhQLknK7l_ru_dfo_FCs2Tee2ZypMyUfCuCJNt42oBdTYFI8wQ_YY6Rq4HQnTUulzX3VlFzopZ2MZlYarbTGV0VyzaLY_7aQkC1ZU5Ct-6uP7Qz6dOSjAOEtayOV0fNtk36GWlDOhEClgHAb9I3TYjUZl9l-WN9M2-ITYHVPJb_bjZlf1QzVD3lvlDIco4XoYtWluoLrLGQ5-g8ocUwSw_k2Tve1BKu134xk-04"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-tertiary text-on-tertiary rounded-full p-0.5 scale-75">
+<span class="material-symbols-outlined text-xs" data-icon="workspace_premium" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-semibold">Ahmad reached a <span class="text-tertiary">50-day streak!</span></p>
+<p class="text-on-surface-variant text-sm">Consistent dedication to Daily Qur'an Recitation.</p>
+<p class="text-[10px] text-outline-variant mt-1">2 HOURS AGO</p>
+</div>
+</div>
+<div class="flex gap-sm pt-xs">
+<button class="flex items-center gap-xs px-md py-xs rounded-full bg-surface-container-high hover:bg-primary/10 hover:text-primary transition-all active:scale-90 group">
+<span class="material-symbols-outlined text-sm group-hover:scale-125 transition-transform" data-icon="thumb_up">thumb_up</span>
+<span class="text-xs font-bold uppercase tracking-tighter">Clap</span>
+<span class="text-xs ml-1 text-on-surface-variant">12</span>
+</button>
+<button class="flex items-center gap-xs px-md py-xs rounded-full bg-surface-container-high hover:bg-tertiary/10 hover:text-tertiary transition-all active:scale-90 group">
+<span class="material-symbols-outlined text-sm group-hover:rotate-12 transition-transform" data-icon="celebration">celebration</span>
+<span class="text-xs font-bold uppercase tracking-tighter">Congrats</span>
+<span class="text-xs ml-1 text-on-surface-variant">8</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Sara -->
+<div class="glass-card rounded-xl p-lg space-y-md border-primary/20">
+<div class="flex gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary ring-4 ring-primary/10">
+<img class="w-full h-full object-cover" data-alt="High-quality portrait of a female student with a smart expression, wearing a stylish teal hijab, studio lighting with a dark navy background, elegant UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8ydHe2iwA_Qa4dhswhkCKjvfVNWNw_Ow8qpQYKfqP52BRmmsNScESmuXmVcFQaea7dvA7eSiVALVUsIAnxvRluEWHmC95k_T-ZZW6tRrwG2lBk67jFhyxm7We7wqwV-OkeDTpQRiAOz9_DPdr0t2diQg8TvxdIwJ0Nc0be73TV9Vc1rCbt6lFfxw1m0nLO1WYAGUBXze5I43UQzfyEHksPgyE71DAXDRki02uJ_pk_29-w0JJghE9ok9i6okoR0v3A8P1Lux6DmY"/>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-semibold">Sara unlocked the <span class="text-primary">Legendary Scholar</span> avatar</p>
+<p class="text-on-surface-variant text-sm">Achieved after mastering 5 distinct knowledge trees.</p>
+<p class="text-[10px] text-outline-variant mt-1">5 HOURS AGO</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest/50 rounded-lg p-md border border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="auto_stories" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<div>
+<span class="text-xs font-label-caps text-on-surface-variant block">NEW AVATAR UNLOCKED</span>
+<span class="text-on-surface font-bold">The Keeper of Wisdom</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-tertiary" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div class="flex gap-sm pt-xs">
+<button class="flex items-center gap-xs px-md py-xs rounded-full bg-surface-container-high hover:bg-primary/10 hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined text-sm" data-icon="thumb_up">thumb_up</span>
+<span class="text-xs font-bold uppercase">Clap</span>
+<span class="text-xs ml-1 text-on-surface-variant">45</span>
+</button>
+<button class="flex items-center gap-xs px-md py-xs rounded-full bg-surface-container-high hover:bg-tertiary/10 hover:text-tertiary transition-all active:scale-90">
+<span class="material-symbols-outlined text-sm" data-icon="celebration">celebration</span>
+<span class="text-xs font-bold uppercase">Congrats</span>
+<span class="text-xs ml-1 text-on-surface-variant">32</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Yusuf -->
+<div class="glass-card rounded-xl p-lg space-y-md border-white/5">
+<div class="flex gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-on-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Close-up of a young male student, focused and smiling slightly, wearing a modern white thobe, lighting is soft and focused on the face, high-end digital sanctuary branding style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnBGsifcP51dRCNBp8PHkDiTGO86jhWkb6_tVCFASWZaBRy3G9e-srUsMXTxThyl3Y2TE2AYPfW-Hrpt_cGoCKHwEBzNCBi5dFMOONx7CMJKqx681mvniLsn9_0oXd87wlpO3lWun6if-L7kn19hRDvxIlbpXonYiPnKAwIEq8oEO6UoJDcSoMwpZxSCLpM9-zyChRK729aZM0aqd-uvWrB2wEHsU1ykf7ZkNE9-5eSZ8i-ka0etRRTXkdMTZt0Wi1QKhSFZjT7QE"/>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-semibold">Yusuf completed the <span class="text-primary">Seerah module</span></p>
+<p class="text-on-surface-variant text-sm">"The Early Years" course completed with 98% accuracy.</p>
+<p class="text-[10px] text-outline-variant mt-1">YESTERDAY</p>
+</div>
+</div>
+<div class="flex gap-sm pt-xs">
+<button class="flex items-center gap-xs px-md py-xs rounded-full bg-surface-container-high hover:bg-primary/10 hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined text-sm" data-icon="thumb_up">thumb_up</span>
+<span class="text-xs font-bold uppercase">Clap</span>
+<span class="text-xs ml-1 text-on-surface-variant">24</span>
+</button>
+<button class="flex items-center gap-xs px-md py-xs rounded-full bg-surface-container-high hover:bg-tertiary/10 hover:text-tertiary transition-all active:scale-90">
+<span class="material-symbols-outlined text-sm" data-icon="celebration">celebration</span>
+<span class="text-xs font-bold uppercase">Congrats</span>
+<span class="text-xs ml-1 text-on-surface-variant">15</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Suggested Friends Horizontal Scroll -->
+<section class="space-y-md pt-lg">
+<h2 class="font-headline-md text-body-md font-bold text-on-surface px-xs">Expand Your Circle</h2>
+<div class="flex gap-md overflow-x-auto pb-md no-scrollbar snap-x">
+<!-- Suggestion 1 -->
+<div class="min-w-[160px] glass-card rounded-xl p-md flex flex-col items-center text-center space-y-sm snap-start">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30">
+<img class="w-full h-full object-cover" data-alt="Modern headshot of a female educator in a soft grey hijab, warm lighting, blurred scholarly background, premium aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4cUodf121zeMYlFXLVpKcFlpRtXnBIbf4YlFqHmTADe5KfmMhSHkSI-Qn-a3hw9iaM__bQ6DUQUhPfLkqKD3TKooCpxURKO_ZvkhMGEAgCmgiTm-gM3EKzb6CNB8zGe7idXo2-LqgKHpuiC-YghdcUC_HdBb75Pp8I9HykttiEBW7Sv4YmuTfBJxgmIz9zbrrUN2cD13KxliPT0EyuxBMqhb2WZkx8Zp9VPFWngePC4n1PL0gv-W6nlmzoSChxhIYvYUOkFuxA3M"/>
+</div>
+<div>
+<p class="text-on-surface font-bold text-sm">Zainab K.</p>
+<p class="text-[10px] text-on-surface-variant">Mutual friend with Ahmad</p>
+</div>
+<button class="w-full py-1.5 bg-primary text-on-primary font-bold rounded-lg text-xs hover:brightness-110 transition-all active:scale-95">Follow</button>
+</div>
+<!-- Suggestion 2 -->
+<div class="min-w-[160px] glass-card rounded-xl p-md flex flex-col items-center text-center space-y-sm snap-start">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young male student wearing glasses, looking scholarly and engaged, soft lighting, part of the Digital Sanctuary UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpdCXUvjQXhA2oSdBzAwggkfU_RJ-aEVxefGyVJnzlgKnmpqqVVUS3L-NpRnwzuR1iVnt9CWSyHFi_UhavlqDw29kGx0tz6PqVLs5XrGxMNkwN642il20A1kuhwYMjXwCVWuoKDBc7D_QIaYqfhrX6Sj2pQinyI2gZj9q_6BKjCUjiaMTFQGzmgexjenGpk_ONVHp9Qj_5ioOsB2caj9GL1GjCbD3dhApovMMHVKn7F2r2tyzhf3ZApMM_SstLY3zNYqzqm3THuxQ"/>
+</div>
+<div>
+<p class="text-on-surface font-bold text-sm">Omar R.</p>
+<p class="text-[10px] text-on-surface-variant">Top student in Fiqh</p>
+</div>
+<button class="w-full py-1.5 bg-primary text-on-primary font-bold rounded-lg text-xs hover:brightness-110 transition-all active:scale-95">Follow</button>
+</div>
+<!-- Suggestion 3 -->
+<div class="min-w-[160px] glass-card rounded-xl p-md flex flex-col items-center text-center space-y-sm snap-start">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30">
+<img class="w-full h-full object-cover" data-alt="Cheerful female student with a bright expression, high-end studio lighting, clean background, modern Islamic educational app style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByBhdY04-CJDtE-5ZKDaLDHtWkFlB-QfeFKV7ZEuKiI0Y7qDsFgzIzIDqv3SQ-7gNVqAGH921GEHmeWYq-DmgYvfJQAND6rTdd6GnxtjWZEw9cVociUOU_Rgs2W2EPDg7A1HITCJkZW_F-f4BeZo0czBWoKB4S_UHAo74mIaUtLJI_NV3jBluegaHwUk2G2-wrcA_gbXeZaAsExkQ-VQXTD8IclrwKJoC74Ovh4lQhBRQd6P8k1gN3-c176h84nXdan-H9ojAN0k8"/>
+</div>
+<div>
+<p class="text-on-surface font-bold text-sm">Fatima S.</p>
+<p class="text-[10px] text-on-surface-variant">Same Study Circle</p>
+</div>
+<button class="w-full py-1.5 bg-primary text-on-primary font-bold rounded-lg text-xs hover:brightness-110 transition-all active:scale-95">Follow</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full rounded-t-xl z-50 bg-surface-container/80 dark:bg-surface-container/80 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
+<div class="flex justify-around items-center h-20 pb-safe w-full px-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="rss_feed">rss_feed</span>
+<span class="font-label-caps text-label-caps mt-1">Feed</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-caps text-label-caps mt-1">Friends</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="diversity_3">diversity_3</span>
+<span class="font-label-caps text-label-caps mt-1">Study</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-caps text-label-caps mt-1">Learn</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</div>
+</nav>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.95)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simple scroll reveal for cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+            observer.observe(card);
+        });
+    </script>
+</body></html>

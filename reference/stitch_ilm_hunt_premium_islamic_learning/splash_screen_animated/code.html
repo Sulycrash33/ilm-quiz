@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ILM Hunt - Splash Screen</title>
+<!-- Google Fonts: Inter for UI, Source Serif 4 for elegance -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-tertiary-container": "#473700",
+                "secondary-container": "#0053db",
+                "outline-variant": "#3c4a42",
+                "on-error-container": "#ffdad6",
+                "background": "#0b1326",
+                "tertiary-fixed": "#ffe088",
+                "on-secondary-fixed": "#00174b",
+                "on-primary-fixed": "#002113",
+                "secondary-fixed": "#dbe1ff",
+                "on-background": "#dae2fd",
+                "on-secondary-fixed-variant": "#003ea8",
+                "surface-variant": "#2d3449",
+                "on-secondary": "#002a78",
+                "on-tertiary-fixed": "#241a00",
+                "inverse-on-surface": "#283044",
+                "on-surface-variant": "#bbcabf",
+                "error-container": "#93000a",
+                "surface-bright": "#31394d",
+                "on-tertiary-fixed-variant": "#574500",
+                "surface-container-highest": "#2d3449",
+                "primary-container": "#10b981",
+                "primary-fixed-dim": "#4edea3",
+                "on-error": "#690005",
+                "surface-dim": "#0b1326",
+                "error": "#ffb4ab",
+                "surface-container-lowest": "#060e20",
+                "tertiary-fixed-dim": "#e9c349",
+                "on-primary-container": "#00422b",
+                "inverse-primary": "#006c49",
+                "on-primary": "#003824",
+                "outline": "#86948a",
+                "primary": "#4edea3",
+                "on-tertiary": "#3c2f00",
+                "surface-container-low": "#131b2e",
+                "on-surface": "#dae2fd",
+                "on-secondary-container": "#cdd7ff",
+                "surface-container": "#171f33",
+                "surface-tint": "#4edea3",
+                "surface-container-high": "#222a3d",
+                "tertiary-container": "#c29f27",
+                "secondary": "#b4c5ff",
+                "tertiary": "#e9c349",
+                "surface": "#0b1326",
+                "secondary-fixed-dim": "#b4c5ff",
+                "primary-fixed": "#6ffbbe",
+                "on-primary-fixed-variant": "#005236",
+                "inverse-surface": "#dae2fd"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "lg": "24px",
+                "container-padding": "20px",
+                "unit": "4px",
+                "sm": "8px",
+                "xs": "4px",
+                "md": "16px",
+                "xl": "32px",
+                "gutter": "16px"
+            },
+            "fontFamily": {
+                "display-lg-mobile": ["\"Source Serif 4\""],
+                "label-caps": ["Inter"],
+                "quote-italic": ["\"Source Serif 4\""],
+                "headline-md": ["Inter"],
+                "display-lg": ["\"Source Serif 4\""],
+                "body-md": ["Inter"]
+            },
+            "fontSize": {
+                "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0b1326;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .breathe-animation {
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        .mashrabiya-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%234edea3' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        .glass-shadow {
+            box-shadow: 0 10px 40px -10px rgba(0, 83, 219, 0.3);
+        }
+
+        @keyframes fill-progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .animate-progress {
+            animation: fill-progress 3s linear forwards;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-on-background selection:bg-primary selection:text-on-primary font-body-md">
+<!-- WebGL Background Shader -->
+<canvas class="fixed inset-0 w-full h-full z-0" id="shader-canvas"></canvas>
+<!-- Contrast Overlay -->
+<div class="fixed inset-0 z-0 bg-background/20 pointer-events-none"></div>
+<!-- Atmospheric Mesh Overlay -->
+<div class="fixed inset-0 z-0 mashrabiya-overlay pointer-events-none"></div>
+<!-- Main Content Shell -->
+<main class="relative z-10 w-full max-w-lg px-container-padding flex flex-col items-center justify-center min-h-screen space-y-12">
+<!-- Center Logo & Branding Block -->
+<div class="relative flex flex-col items-center">
+<!-- Logo Surface with Breathe Animation -->
+<div class="breathe-animation relative bg-surface-container/40 backdrop-blur-2xl p-lg rounded-3xl border border-white/10 glass-shadow flex flex-col items-center space-y-md">
+<img alt="ILM Hunt Logo" class="w-48 h-48 md:w-56 md:h-56 object-contain rounded-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv6RhQdcIpfOa8yAsDUjO_aDz4O934Gzt11iIX0DCzTHyMyatpxWZIyLytKsWM286-PBXf2ulI0FL1PdMQDVwBadnwTXRKLrOLaeQafxvRPy5HxqmEgXMNCnlYj5IaCGHY3x20_afi5oOSzcV3cYzbi1Db8m31-r4Kqdt_87R9NtIu9SBJYKjEmvR3U3rDgY4q-gkxdJC0_lvJnvAGmMZPkGtNzwueacA-F1iDGCgrfsnwccr_a-EdfB-CYVrI-bCeFDzHa2WhLjw"/>
+<div class="text-center pt-xs">
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tight">ILM Hunt</h1>
+<div class="flex items-center justify-center gap-xs mt-xs text-on-surface-variant/70">
+<span class="material-symbols-outlined text-[14px]">auto_stories</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest">Digital Sanctuary</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Progress Indicator -->
+<div class="flex flex-col items-center space-y-sm">
+<div class="relative w-48 h-1 bg-surface-variant/30 rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary shadow-[0_0_10px_rgba(78,222,163,0.5)] rounded-full animate-progress"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant/70">Purifying the intent...</p>
+</div>
+<!-- Footer Quote Block -->
+<div class="fixed bottom-12 left-0 right-0 px-container-padding text-center">
+<div class="max-w-md mx-auto space-y-xs">
+<span class="material-symbols-outlined text-tertiary-fixed-dim/40 block mb-sm">format_quote</span>
+<blockquote class="font-quote-italic text-quote-italic text-on-surface/90 italic leading-relaxed">
+                "Seek knowledge from the cradle to the grave."
+            </blockquote>
+<div class="w-8 h-px bg-primary/20 mx-auto mt-md"></div>
+</div>
+</div>
+</main>
+<script>
+    // WebGL Shader Integration
+    const canvas = document.getElementById('shader-canvas');
+    const gl = canvas.getContext('webgl');
+
+    if (gl) {
+        const vertexShaderSource = `
+            attribute vec2 a_position;
+            varying vec2 v_texCoord;
+            void main() {
+                v_texCoord = a_position * 0.5 + 0.5;
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+
+        const fragmentShaderSource = `
+            precision highp float;
+            varying vec2 v_texCoord;
+            uniform float u_time;
+            uniform vec2 u_resolution;
+
+            void main() {
+                vec2 uv = v_texCoord;
+                
+                // Create a flowing, ethereal background
+                float color1 = sin(uv.x * 3.0 + u_time * 0.5) * 0.5 + 0.5;
+                float color2 = cos(uv.y * 3.0 - u_time * 0.3) * 0.5 + 0.5;
+                
+                vec3 emerald = vec3(0.06, 0.72, 0.50); // #10b981
+                vec3 navy = vec3(0.04, 0.07, 0.15);    // #0b1326
+                vec3 blue = vec3(0.12, 0.22, 0.30);    // Dark Blue
+                
+                vec3 finalColor = mix(navy, emerald * 0.2, color1);
+                finalColor = mix(finalColor, blue * 0.3, color2);
+                
+                // Add subtle grain/noise
+                float noise = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+                finalColor += noise * 0.02;
+                
+                gl_FragColor = vec4(finalColor, 1.0);
+            }
+        `;
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
+        }
+
+        const program = gl.createProgram();
+        gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vertexShaderSource));
+        gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource));
+        gl.linkProgram(program);
+        gl.useProgram(program);
+
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+        const positionLocation = gl.getAttribLocation(program, "a_position");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        const timeLocation = gl.getUniformLocation(program, "u_time");
+        const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+
+        function render(time) {
+            time *= 0.001;
+            
+            if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+
+            gl.uniform1f(timeLocation, time);
+            gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            requestAnimationFrame(render);
+        }
+        requestAnimationFrame(render);
+    }
+</script>
+</body></html>

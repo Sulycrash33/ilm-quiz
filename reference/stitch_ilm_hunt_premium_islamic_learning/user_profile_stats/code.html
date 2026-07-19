@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed": "#241a00",
+            "background": "#0b1326",
+            "on-surface": "#dae2fd",
+            "on-secondary-fixed": "#00174b",
+            "surface-container-highest": "#2d3449",
+            "surface": "#0b1326",
+            "surface-dim": "#0b1326",
+            "on-surface-variant": "#bbcabf",
+            "on-secondary-fixed-variant": "#003ea8",
+            "outline": "#86948a",
+            "surface-tint": "#4edea3",
+            "primary": "#4edea3",
+            "surface-container-lowest": "#060e20",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#4edea3",
+            "tertiary-container": "#c29f27",
+            "primary-container": "#10b981",
+            "surface-bright": "#31394d",
+            "tertiary-fixed-dim": "#e9c349",
+            "on-primary-fixed": "#002113",
+            "tertiary": "#e9c349",
+            "surface-container-high": "#222a3d",
+            "on-tertiary-fixed-variant": "#574500",
+            "error-container": "#93000a",
+            "surface-variant": "#2d3449",
+            "secondary-fixed": "#dbe1ff",
+            "on-background": "#dae2fd",
+            "secondary-container": "#0053db",
+            "on-tertiary": "#3c2f00",
+            "on-secondary-container": "#cdd7ff",
+            "on-error": "#690005",
+            "surface-container-low": "#131b2e",
+            "surface-container": "#171f33",
+            "on-primary": "#003824",
+            "error": "#ffb4ab",
+            "tertiary-fixed": "#ffe088",
+            "on-primary-fixed-variant": "#005236",
+            "secondary-fixed-dim": "#b4c5ff",
+            "inverse-surface": "#dae2fd",
+            "secondary": "#b4c5ff",
+            "outline-variant": "#3c4a42",
+            "on-secondary": "#002a78",
+            "on-primary-container": "#00422b",
+            "primary-fixed": "#6ffbbe",
+            "inverse-on-surface": "#283044",
+            "on-tertiary-container": "#473700",
+            "inverse-primary": "#006c49"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "16px",
+            "lg": "24px",
+            "xs": "4px",
+            "sm": "8px",
+            "unit": "4px",
+            "md": "16px",
+            "container-padding": "20px",
+            "xl": "32px"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "display-lg-mobile": ["\"Source Serif 4\""],
+            "display-lg": ["\"Source Serif 4\""],
+            "quote-italic": ["\"Source Serif 4\""],
+            "label-caps": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+            "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+            "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+            "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #0b1326;
+      color: #dae2fd;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .glass-card {
+      background: rgba(23, 31, 51, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .mashrabiya-overlay {
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%234edea3' fill-opacity='0.05'/%3E%3C/svg%3E");
+    }
+
+    .emerald-glow {
+      box-shadow: 0 0 25px rgba(78, 222, 163, 0.4);
+    }
+
+    .gold-shimmer {
+      background: linear-gradient(135deg, #ffe088 0%, #e9c349 50%, #c29f27 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .heatmap-cell {
+      aspect-ratio: 1/1;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .heatmap-cell.active-1 { background: rgba(78, 222, 163, 0.2); }
+    .heatmap-cell.active-2 { background: rgba(78, 222, 163, 0.5); }
+    .heatmap-cell.active-3 { background: rgba(78, 222, 163, 0.9); }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md overflow-x-hidden pb-24">
+<!-- TOP APP BAR -->
+<header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-white/10 shadow-sm flex justify-between items-center px-container-padding py-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/50">
+<img class="w-full h-full object-cover" data-alt="A professional high-resolution avatar of a young scholar apprentice wearing traditional scholarly robes with modern digital aesthetic, set against a glowing emerald green backdrop. The lighting is ethereal and soft, emphasizing a sense of wisdom and spiritual growth. The character has a calm, focused expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPJv-zW6WnntJU-bkw_6O9raAvc68GBisAqYOcyAjziZvvbzJwFOGym9-QoVRMVo6qPgnFjbzHlyUWOHRLdgffBILNJHJPFNcHtEEtHHvchKNYqjUPDF0vKl6yk-hq_4xObmJpSeqG-mAbcE-vrQgYQueUPyeaPvJ6efe2kynTkEI5ZbgYr7QxQkghqJSAuqyDTrPVCzfxV_w_LuEXqx0lo1X-kY9XbzgqrBg-kf4UNgl-5zkZI0iazGNYBFt5f5SKWN5lg8inPxQ"/>
+</div>
+<span class="font-headline-md text-headline-md font-bold text-primary">ILM Hunt</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-surface-container rounded-full px-3 py-1 text-primary">
+<span class="text-label-caps font-label-caps">7 🔥 250 🪙</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform">settings</button>
+</div>
+</header>
+<!-- MAIN CONTENT CANVAS -->
+<main class="mt-24 px-container-padding max-w-screen-xl mx-auto space-y-xl">
+<!-- PROFILE HEADER SECTION -->
+<section class="relative flex flex-col items-center py-xl overflow-hidden">
+<div class="absolute inset-0 mashrabiya-overlay -z-10"></div>
+<!-- Avatar with Glowing Frame -->
+<div class="relative mb-6">
+<div class="w-32 h-32 rounded-full emerald-glow p-1 bg-gradient-to-tr from-primary to-tertiary">
+<div class="w-full h-full rounded-full border-4 border-background overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A detailed digital painting of Ahmad Khalid, a young Seer of the Sacred character for a learning app. He wears elegant midnight blue robes with intricate gold embroidery and has a scholarly, enlightened expression. The background is a soft, deep emerald gradient with floating geometric sparks." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOgWl2FL6YaKYUgIcbuFfVJI4EVlvQQXLXsnKVjWa3DBSCWtvXzSh-MOic6yHLd_TrqUTncFpHjQwVjEEaAvVN-AusU90LzE0sXSn6JJnjz4IwEntmhlOm1V5MPiuvcl2Mdy8X9SKJJKX-LbOAaF0-dBEboNOdvWWUcci0ohZjJT7MUnKYvJe1jHR6xyFkodtT21bvWB9hHgMsLX3ydLefRc1A3OFFNBBAIN1Su55-Ik8DnrcHSnBju9SepEjZgLvtYUgpyYUamlM"/>
+</div>
+</div>
+<div class="absolute -bottom-2 right-0 bg-tertiary text-on-tertiary-fixed font-bold px-3 py-1 rounded-full text-xs shadow-lg border border-white/20">
+          Lv. 14
+        </div>
+</div>
+<div class="text-center space-y-1">
+<h1 class="font-headline-md text-headline-md text-on-surface">Ahmad Khalid</h1>
+<p class="font-label-caps text-label-caps text-primary uppercase tracking-widest">Seer of the Sacred</p>
+</div>
+<!-- Spiritual Rank Badge -->
+<div class="mt-8 flex flex-col items-center glass-card p-6 rounded-2xl border-primary/20 bg-gradient-to-b from-surface-container-high/40 to-background/40">
+<div class="relative">
+<span class="material-symbols-outlined text-6xl gold-shimmer" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<div class="absolute inset-0 bg-tertiary/10 blur-xl rounded-full"></div>
+</div>
+<h2 class="mt-4 font-headline-md text-headline-md gold-shimmer">Seeker of Truth</h2>
+<span class="mt-1 text-label-caps font-label-caps text-on-surface-variant bg-surface-variant px-3 py-1 rounded-full">98TH PERCENTILE</span>
+</div>
+</section>
+<!-- STATS GRID -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Total Barakah -->
+<div class="glass-card p-md rounded-2xl flex flex-col items-center text-center group hover:scale-[1.02] transition-transform duration-300">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl" style="font-variation-settings: 'FILL' 1;">diamond</span>
+<div class="text-headline-md font-headline-md">12,450</div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">BARAKAH</div>
+</div>
+<!-- Knowledge Mastered -->
+<div class="glass-card p-md rounded-2xl flex flex-col items-center text-center group hover:scale-[1.02] transition-transform duration-300">
+<span class="material-symbols-outlined text-primary mb-2 text-3xl" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+<div class="text-headline-md font-headline-md">5 Trees</div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">MASTERED</div>
+</div>
+<!-- Current Streak -->
+<div class="glass-card p-md rounded-2xl flex flex-col items-center text-center group hover:scale-[1.02] transition-transform duration-300">
+<span class="material-symbols-outlined text-tertiary mb-2 text-3xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<div class="text-headline-md font-headline-md">45 Days</div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">STREAK</div>
+</div>
+<!-- Study Hours -->
+<div class="glass-card p-md rounded-2xl flex flex-col items-center text-center group hover:scale-[1.02] transition-transform duration-300">
+<span class="material-symbols-outlined text-on-surface-variant mb-2 text-3xl" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<div class="text-headline-md font-headline-md">128h</div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">STUDY TIME</div>
+</div>
+</section>
+<!-- DETAILED PROGRESS -->
+<section class="grid md:grid-cols-2 gap-lg">
+<!-- Knowledge Breakdown -->
+<div class="glass-card p-lg rounded-3xl space-y-md">
+<h3 class="font-headline-md text-headline-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_graph</span>
+          Knowledge Breakdown
+        </h3>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-semibold text-on-surface">Seerah</span>
+<span class="text-primary font-bold">90%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full emerald-glow" style="width: 90%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-semibold text-on-surface">Fiqh</span>
+<span class="text-tertiary font-bold">65%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full shadow-[0_0_10px_rgba(233,195,73,0.3)]" style="width: 65%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-semibold text-on-surface">Arabic</span>
+<span class="text-on-surface-variant font-bold">40%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-on-surface-variant/50 rounded-full" style="width: 40%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Consistency Heatmap -->
+<div class="glass-card p-lg rounded-3xl space-y-md">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+            Consistency
+          </h3>
+<span class="text-xs text-on-surface-variant font-label-caps">LAST 30 DAYS</span>
+</div>
+<div class="grid grid-cols-7 gap-1.5 pt-2">
+<!-- Placeholder cells for a month view -->
+<script>
+            for(let i=0; i<35; i++){
+              const intensity = Math.floor(Math.random() * 4);
+              document.write(`<div class="heatmap-cell ${intensity > 0 ? 'active-' + intensity : ''}"></div>`);
+            }
+          </script>
+</div>
+<div class="flex justify-between items-center text-[10px] text-on-surface-variant font-label-caps px-1">
+<span>LESS ACTIVE</span>
+<div class="flex gap-1">
+<div class="w-2 h-2 rounded-sm bg-white/5"></div>
+<div class="w-2 h-2 rounded-sm active-1"></div>
+<div class="w-2 h-2 rounded-sm active-2"></div>
+<div class="w-2 h-2 rounded-sm active-3"></div>
+</div>
+<span>HIGH FOCUS</span>
+</div>
+</div>
+</section>
+<!-- ARTIFACTS SHOWCASE -->
+<section class="space-y-md">
+<div class="flex justify-between items-end">
+<h3 class="font-headline-md text-headline-md">Active Artifacts</h3>
+<button class="text-primary font-label-caps text-label-caps hover:underline">VIEW VAULT</button>
+</div>
+<div class="flex overflow-x-auto gap-4 pb-4 no-scrollbar -mx-container-padding px-container-padding">
+<!-- Artifact 1 -->
+<div class="flex-shrink-0 w-44 glass-card p-4 rounded-2xl text-center space-y-3 group cursor-pointer hover:bg-surface-variant/40 transition-all">
+<div class="relative w-24 h-24 mx-auto">
+<div class="absolute inset-0 bg-tertiary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-full h-full glass-card rounded-xl flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="A magical ancient scroll glowing with golden light, titled Legendary Seerah Scroll. The paper is weathered and shows faint Arabic calligraphy. Ethereal golden particles float around it in a dark museum-style display." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkVKyyfv8t3_nk9Dc3woAZIClCFfWO3na1gQuGNnIK6BdSIFzW9m4dPt91d2m98EsBdbopALC8xxv5odxIIVBoGlvPl23uK6kvnEXmn3p4cCivYUDc-bDoWKkxX38AImQFy1snEJR8xrdqKJ6aJCiDoNv9AslRtjS9HuF80DmRC39qdB80rkNuDFGUvcz4XE-sUambxD-Od7Rp5Gu2uS5Wo3ErfYC2TJGtz3qx4OGE3RDrSfs7_15Hs4xwILDpJmxZk8fKkOuv9fg"/>
+</div>
+</div>
+<div class="space-y-1">
+<div class="text-body-md font-bold text-on-surface leading-tight">Legendary Seerah Scroll</div>
+<div class="text-[10px] font-label-caps text-tertiary uppercase">+15% XP GAIN</div>
+</div>
+</div>
+<!-- Artifact 2 -->
+<div class="flex-shrink-0 w-44 glass-card p-4 rounded-2xl text-center space-y-3 group cursor-pointer hover:bg-surface-variant/40 transition-all">
+<div class="relative w-24 h-24 mx-auto">
+<div class="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-full h-full glass-card rounded-xl flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="A premium emerald-infused Miswak stick, glowing with a soft green light. It is presented on a velvet cushion within a glass display. The wood grain is visible and polished, reflecting digital sanctuary lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ8yW4m0he7hSHhQKsxB3wjkrILFYXfutvaWCj32_IsUNWpaN7GWTUU7gJFhRlKSp_GDWX5rCDZybIfILsLcr6ekXhLoU5CKiGENN75YknLjY884jDCH3R42xlBXvAsPrtjfuRyDTIb63j8yMq-88hmro-I01SmJCMiRwFjBXufeS8kd8JJVugbKm0CdQ5AOSHaq394XRE92NDs0E6YrdVaZDbbz5TwVhRAgthIBijfCKsRjb4YwpZmquuqqOBh0tQ6xWiqRct1is"/>
+</div>
+</div>
+<div class="space-y-1">
+<div class="text-body-md font-bold text-on-surface leading-tight">Emerald Miswak</div>
+<div class="text-[10px] font-label-caps text-primary uppercase">+5 Focus Recovery</div>
+</div>
+</div>
+<!-- Artifact 3 (Locked/Empty Slot) -->
+<div class="flex-shrink-0 w-44 border-2 border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center space-y-2 opacity-50">
+<span class="material-symbols-outlined text-4xl">add_circle</span>
+<div class="text-label-caps font-label-caps">EMPTY SLOT</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BOTTOM NAV BAR -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container/60 backdrop-blur-xl border-t border-white/10 shadow-xl flex justify-around items-center h-20 px-2 pb-safe">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-caps font-label-caps">Home</span>
+</a>
+<!-- Learning -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-label-caps font-label-caps">Learning</span>
+</a>
+<!-- Rankings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-label-caps font-label-caps">Rankings</span>
+</a>
+<!-- Shop -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="text-label-caps font-label-caps">Shop</span>
+</a>
+<!-- Profile (Active) -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim font-bold bg-primary-container/20 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-label-caps font-label-caps">Profile</span>
+</a>
+</nav>
+<script>
+    // Micro-interaction for clicking artifact cards
+    document.querySelectorAll('.cursor-pointer').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.add('scale-95');
+        setTimeout(() => card.classList.remove('scale-95'), 150);
+      });
+    });
+
+    // Simple scroll reveal for cards
+    const observerOptions = {
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-10');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.glass-card').forEach(card => {
+      card.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+      observer.observe(card);
+    });
+  </script>
+</body></html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Purchase Successful | ILM Hunt</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#86948a",
+                    "on-primary": "#003824",
+                    "on-primary-container": "#00422b",
+                    "inverse-primary": "#006c49",
+                    "primary": "#4edea3",
+                    "surface-container-lowest": "#060e20",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "surface": "#0b1326",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "primary-fixed": "#6ffbbe",
+                    "tertiary-container": "#c29f27",
+                    "surface-tint": "#4edea3",
+                    "surface-container-high": "#222a3d",
+                    "tertiary": "#e9c349",
+                    "secondary": "#b4c5ff",
+                    "inverse-surface": "#dae2fd",
+                    "on-primary-fixed-variant": "#005236",
+                    "surface-container-low": "#131b2e",
+                    "on-tertiary": "#3c2f00",
+                    "surface-container": "#171f33",
+                    "on-surface": "#dae2fd",
+                    "on-secondary-container": "#cdd7ff",
+                    "secondary-fixed": "#dbe1ff",
+                    "on-background": "#dae2fd",
+                    "surface-variant": "#2d3449",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "on-secondary": "#002a78",
+                    "secondary-container": "#0053db",
+                    "outline-variant": "#3c4a42",
+                    "on-error-container": "#ffdad6",
+                    "background": "#0b1326",
+                    "on-tertiary-container": "#473700",
+                    "tertiary-fixed": "#ffe088",
+                    "on-secondary-fixed": "#00174b",
+                    "on-primary-fixed": "#002113",
+                    "surface-bright": "#31394d",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "surface-dim": "#0b1326",
+                    "error": "#ffb4ab",
+                    "surface-container-highest": "#2d3449",
+                    "primary-container": "#10b981",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-error": "#690005",
+                    "on-tertiary-fixed": "#241a00",
+                    "inverse-on-surface": "#283044",
+                    "error-container": "#93000a",
+                    "on-surface-variant": "#bbcabf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "sm": "8px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "gutter": "16px",
+                    "lg": "24px",
+                    "container-padding": "20px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "display-lg": ["\"Source Serif 4\""],
+                    "quote-italic": ["\"Source Serif 4\""],
+                    "headline-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "display-lg-mobile": ["\"Source Serif 4\""],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(19, 27, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mashrabiya-mask {
+            mask-image: radial-gradient(circle at center, transparent 0%, black 100%);
+            opacity: 0.05;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            z-index: 10;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        .animate-check {
+            animation: check-scale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes check-scale {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .glow-emerald {
+            box-shadow: 0 0 40px rgba(78, 222, 163, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center font-body-md text-body-md px-container-padding relative overflow-hidden">
+<!-- Background Shader Layer -->
+
+<!-- Canvas for particles -->
+<div class="absolute inset-0 pointer-events-none" id="confetti-container"></div>
+<!-- Main Success Card -->
+<main class="relative z-20 w-full max-w-lg">
+<div class="glass-panel p-xl rounded-xl flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+<!-- Success Icon -->
+<div class="w-24 h-24 mb-lg rounded-full bg-primary-container/20 flex items-center justify-center animate-check glow-emerald relative">
+<div class="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping opacity-20"></div>
+<span class="material-symbols-outlined text-[48px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Headlines -->
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-on-surface mb-xs">
+                Purchase Successful!
+            </h1>
+<p class="text-on-surface-variant mb-xl max-w-sm">
+                The library expands. Your new item has been added to your collection and is ready to use.
+            </p>
+<!-- Item Preview Card -->
+<div class="w-full glass-panel bg-surface-container-high/40 p-lg rounded-xl mb-xl relative group overflow-hidden">
+<!-- Decorative Geometric Background -->
+<div class="absolute inset-0 mashrabiya-mask pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png')"></div>
+<div class="flex items-center gap-lg relative z-10">
+<div class="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-white/10 bg-surface-container shadow-inner">
+<img class="w-full h-full object-cover" data-alt="A premium digital artwork of a Streak Shield item for a gamified learning app. It is a glowing, translucent emerald crystalline shield with gold filigree edges, floating against a dark midnight blue background with soft particle effects. The style is clean, modern, and highly polished, reflecting a digital sanctuary aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGkSAKH_ge0qtFJropFSGWQnkwJVclNrlClb_yHolw0xDA2aXxaTaRCFM9PCuZfdCuMPnHkHn7rrkiUUi8Mwrwbn27TAVo02JuhR4SynrAT2CyOCFkmGpEI3NQl9xVSwKZ-4srEBE6AN4x3zS4JIClaAwSWC3bM2YZi1nGJHEkmkSLyqqc7A6CjC0hIxtkU8BjmSKdqYJytjUvbKlVbrOk5U_zVzWqyT0QbNxihz8KMtBQCLQhqPYCLoBeFB1KbE5xC5GstqxSfeY"/>
+</div>
+<div class="text-left">
+<div class="flex items-center gap-sm mb-xs">
+<span class="font-label-caps text-label-caps px-sm py-1 bg-tertiary/20 text-tertiary rounded-full border border-tertiary/20 uppercase">Legendary</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Streak Shield</h3>
+<p class="text-on-surface-variant text-sm mt-xs">Prevents streak loss for 24 hours. A divine safeguard for your consistency.</p>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full flex flex-col gap-md">
+<button class="w-full py-md bg-gradient-to-b from-primary to-primary-container text-on-primary font-bold rounded-xl shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    Equip Now
+                </button>
+<button class="w-full py-md bg-white/5 hover:bg-white/10 text-on-surface font-semibold rounded-xl border border-white/10 active:scale-[0.98] transition-all">
+                    Continue Shopping
+                </button>
+</div>
+<!-- Receipt Info -->
+<div class="mt-lg pt-lg border-t border-white/5 w-full flex justify-between items-center px-sm">
+<div class="text-left">
+<p class="text-[10px] font-label-caps text-on-surface-variant/50 uppercase tracking-widest">Order Ref</p>
+<p class="font-mono text-xs text-on-surface-variant">#ILM-8294-XQ</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-label-caps text-on-surface-variant/50 uppercase tracking-widest">Total Paid</p>
+<p class="font-bold text-tertiary">1.2k 🪙</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Script for Confetti Effect -->
+<script>
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#4edea3', '#e9c349', '#b4c5ff', '#ffffff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const left = Math.random() * 100;
+                const size = Math.random() * 8 + 4;
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 2;
+                
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${left}vw`;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.animation = `fall ${duration}s linear ${delay}s infinite`;
+                confetti.style.boxShadow = `0 0 10px ${color}88`;
+                
+                container.appendChild(confetti);
+            }
+        }
+
+        // Initialize confetti
+        window.addEventListener('DOMContentLoaded', createConfetti);
+
+        // Subtle parallax effect on the card
+        document.addEventListener('mousemove', (e) => {
+            const card = document.querySelector('main');
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 45;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 45;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+    </script>
+</body></html>

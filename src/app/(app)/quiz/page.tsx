@@ -1,74 +1,182 @@
-import Link from "next/link";
-import { getCategoriesWithProgress } from "@/lib/quiz-service";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { BookOpen } from "lucide-react";
+"use client"
 
-export default async function KnowledgeCategoriesPage() {
-  const categories = await getCategoriesWithProgress();
-  const totalPublished = categories.reduce((s, c) => s + c.publishedCount, 0);
-  const totalAnswered = categories.reduce((s, c) => s + c.answeredCount, 0);
+import { motion } from "framer-motion"
+import Link from "next/link"
+import { getCategoriesWithProgress } from "@/lib/quiz-service"
+import { PremiumCard } from "@/components/ui/premium-card"
+import { PremiumProgress } from "@/components/ui/premium-progress"
+import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useEffect, useState } from "react"
+
+interface Category {
+  id: string
+  name: string
+  slug: string
+  icon?: string
+  description?: string
+  publishedCount: number
+  answeredCount: number
+}
+
+export default function KnowledgeCategoriesPage() {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getCategoriesWithProgress().then((cats) => {
+      setCategories(cats as Category[])
+      setLoading(false)
+    })
+  }, [])
+
+  const totalPublished = categories.reduce((s, c) => s + c.publishedCount, 0)
+  const totalAnswered = categories.reduce((s, c) => s + c.answeredCount, 0)
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold font-headline text-primary mb-2">Knowledge Categories</h1>
-        <p className="text-muted-foreground">
-          {categories.length} categories · {totalPublished} questions available · {totalAnswered} answered
+    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-8"
+      >
+        <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary mb-2">
+          Knowledge Categories
+        </h1>
+        <p className="text-on-surface-variant">
+          {categories.length} categories · {totalPublished} questions available ·{" "}
+          {totalAnswered} answered
         </p>
-      </div>
+      </motion.div>
 
-      {categories.length === 0 ? (
-        <p className="text-center text-muted-foreground">No categories yet.</p>
+      {/* Stats Overview */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="glass-card p-6 mb-8"
+      >
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <p className="font-bold text-3xl text-primary">{categories.length}</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">
+              CATEGORIES
+            </p>
+          </div>
+          <div>
+            <p className="font-bold text-3xl text-secondary">{totalPublished}</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">
+              QUESTIONS
+            </p>
+          </div>
+          <div>
+            <p className="font-bold text-3xl text-tertiary">{totalAnswered}</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">
+              COMPLETED
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Categories Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="glass-card p-6 animate-pulse">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-surface-container-highest rounded-xl" />
+                <div className="flex-1">
+                  <div className="h-4 bg-surface-container-highest rounded w-2/3" />
+                  <div className="h-3 bg-surface-container-highest rounded w-1/2 mt-2" />
+                </div>
+              </div>
+              <div className="h-2 bg-surface-container-highest rounded-full" />
+            </div>
+          ))}
+        </div>
+      ) : categories.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-12"
+        >
+          <span className="text-6xl mb-4 block">📚</span>
+          <p className="text-on-surface-variant">No categories yet.</p>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((c) => {
-            const pct = c.publishedCount > 0 ? Math.round((c.answeredCount / c.publishedCount) * 100) : 0;
-            const hasQuestions = c.publishedCount > 0;
+          {categories.map((category, index) => {
+            const pct =
+              category.publishedCount > 0
+                ? Math.round(
+                    (category.answeredCount / category.publishedCount) * 100
+                  )
+                : 0
+            const hasQuestions = category.publishedCount > 0
 
-            const inner = (
-              <Card
-                className={`h-full border-2 shadow-lg transition-all duration-300 ${
-                  hasQuestions ? "hover:shadow-xl hover:scale-[1.02] cursor-pointer" : "opacity-60"
-                }`}
+            return (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
               >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl" aria-hidden="true">{c.icon ?? "📚"}</span>
-                    <CardTitle className="text-lg leading-tight">{c.name}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {c.description && (
-                    <p className="text-sm text-muted-foreground leading-relaxed">{c.description}</p>
-                  )}
-                  {hasQuestions ? (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span className="font-semibold">{c.answeredCount}/{c.publishedCount}</span>
+                {hasQuestions ? (
+                  <Link href={`/quiz/${category.slug}`}>
+                    <PremiumCard
+                      hover
+                      className="p-6 h-full"
+                    >
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center">
+                          <span className="text-2xl">{category.icon || "📚"}</span>
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-on-surface">
+                            {category.name}
+                          </h3>
+                          {category.description && (
+                            <p className="text-sm text-on-surface-variant line-clamp-1">
+                              {category.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <Progress value={pct} className="h-2" />
+                      <PremiumProgress
+                        value={category.answeredCount}
+                        max={category.publishedCount}
+                        showLabel
+                        label={`${category.answeredCount}/${category.publishedCount}`}
+                      />
+                    </PremiumCard>
+                  </Link>
+                ) : (
+                  <PremiumCard hover={false} className="p-6 h-full opacity-60">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center">
+                        <span className="text-2xl">{category.icon || "📚"}</span>
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-on-surface">
+                          {category.name}
+                        </h3>
+                        {category.description && (
+                          <p className="text-sm text-on-surface-variant line-clamp-1">
+                            {category.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  ) : (
-                    <Badge variant="outline">
-                      <BookOpen className="h-3 w-3 mr-1" />
-                      No questions yet
-                    </Badge>
-                  )}
-                </CardContent>
-              </Card>
-            );
-
-            return hasQuestions ? (
-              <Link key={c.id} href={`/quiz/${c.slug}`}>{inner}</Link>
-            ) : (
-              <div key={c.id}>{inner}</div>
-            );
+                    <PremiumBadge variant="secondary" size="sm">
+                      Coming Soon
+                    </PremiumBadge>
+                  </PremiumCard>
+                )}
+              </motion.div>
+            )
           })}
         </div>
       )}
     </div>
-  );
+  )
 }

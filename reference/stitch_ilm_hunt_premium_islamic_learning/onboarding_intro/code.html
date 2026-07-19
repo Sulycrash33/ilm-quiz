@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ILM Hunt - Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#473700",
+                        "secondary-container": "#0053db",
+                        "outline-variant": "#3c4a42",
+                        "on-error-container": "#ffdad6",
+                        "background": "#0b1326",
+                        "tertiary-fixed": "#ffe088",
+                        "on-secondary-fixed": "#00174b",
+                        "on-primary-fixed": "#002113",
+                        "secondary-fixed": "#dbe1ff",
+                        "on-background": "#dae2fd",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "surface-variant": "#2d3449",
+                        "on-secondary": "#002a78",
+                        "on-tertiary-fixed": "#241a00",
+                        "inverse-on-surface": "#283044",
+                        "on-surface-variant": "#bbcabf",
+                        "error-container": "#93000a",
+                        "surface-bright": "#31394d",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "surface-container-highest": "#2d3449",
+                        "primary-container": "#10b981",
+                        "primary-fixed-dim": "#4edea3",
+                        "on-error": "#690005",
+                        "surface-dim": "#0b1326",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#060e20",
+                        "tertiary-fixed-dim": "#e9c349",
+                        "on-primary-container": "#00422b",
+                        "inverse-primary": "#006c49",
+                        "on-primary": "#003824",
+                        "outline": "#86948a",
+                        "primary": "#4edea3",
+                        "on-tertiary": "#3c2f00",
+                        "surface-container-low": "#131b2e",
+                        "on-surface": "#dae2fd",
+                        "on-secondary-container": "#cdd7ff",
+                        "surface-container": "#171f33",
+                        "surface-tint": "#4edea3",
+                        "surface-container-high": "#222a3d",
+                        "tertiary-container": "#c29f27",
+                        "secondary": "#b4c5ff",
+                        "tertiary": "#e9c349",
+                        "surface": "#0b1326",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "primary-fixed": "#6ffbbe",
+                        "on-primary-fixed-variant": "#005236",
+                        "inverse-surface": "#dae2fd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "container-padding": "20px",
+                        "unit": "4px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["\"Source Serif 4\""],
+                        "label-caps": ["Inter"],
+                        "quote-italic": ["\"Source Serif 4\""],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["\"Source Serif 4\""],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-surface {
+            background: rgba(45, 52, 73, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mashrabiya-overlay {
+            background-image: radial-gradient(#10b981 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+
+        .premium-glow {
+            box-shadow: 0 0 40px -10px rgba(78, 222, 163, 0.3);
+        }
+
+        .btn-gloss {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gloss::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: gloss-shimmer 4s infinite linear;
+        }
+
+        @keyframes gloss-shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md overflow-x-hidden">
+<!-- Background Decoration -->
+<div class="fixed inset-0 z-0 pointer-events-none">
+<div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-tertiary/5 blur-[120px] rounded-full"></div>
+<div class="absolute inset-0 mashrabiya-overlay"></div>
+</div>
+<!-- Onboarding Container -->
+<main class="relative z-10 flex-1 flex flex-col max-w-lg mx-auto w-full px-container-padding pt-xl pb-32">
+<!-- Header Branding (Suppressed Nav for Onboarding) -->
+<div class="flex justify-center mb-xl">
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tight">ILM Hunt</h1>
+</div>
+<!-- Illustration Section -->
+<div class="flex-1 flex flex-col items-center justify-center space-y-xl">
+<div class="relative w-full aspect-square max-w-[280px] float-animation">
+<!-- Glowing Geometric Star Illustration Placeholder -->
+<div class="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-110"></div>
+<div class="glass-surface w-full h-full rounded-[40px] flex items-center justify-center overflow-hidden premium-glow border-primary/20">
+<img class="w-full h-full object-cover p-6" data-alt="A premium 3D digital illustration of a glowing eight-pointed geometric Islamic star illuminating a winding dark stone path. The star radiates a soft Emerald green and Gold light, cutting through a midnight navy mist. The aesthetic is high-end, scholarly, and serene, reminiscent of a luxury productivity app interface with ultra-thin gold linework and deep shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPrB7uHcSFydERoAaGfO4kwHBHer_BrOGNgzvlbmyLYFFlF79m9KNuVJawjCF4ExLHllzLkQbShy_3C9Er_HvGYDjf1eDIbMZw8cld73mcFY-ZTSa4KRuOxE_L6hY3nQ277q3XZarM6ZAmejkwzG3EYTS5Pfrk9AODbuKAe_eUFOkeDxeY4Bo1fe25p2kexriRkd8ia-dxhabsl-kUXahFoGear0iMPCuN7Haf4Tef0tHafm9cciER7hOB5PXXGs5IXPx6fi2yxJg"/>
+<!-- Icon Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[80px] text-primary opacity-90" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+</div>
+</div>
+<!-- Content Card -->
+<div class="glass-surface w-full rounded-xl p-lg space-y-md text-center transform transition-all duration-700 translate-y-0 opacity-100">
+<h2 class="font-display-lg-mobile text-display-lg-mobile leading-tight text-on-surface">
+                    Spiritual Growth, <span class="text-primary italic">Gamified.</span>
+</h2>
+<p class="font-body-md text-on-surface-variant leading-relaxed">
+                    Master Quran, Hadith, and Seerah through addictive, bite-sized quests designed for the modern seeker.
+                </p>
+<!-- Bounties/Features Bento Layout within card -->
+<div class="grid grid-cols-2 gap-sm pt-md">
+<div class="bg-surface-container-high/40 rounded-lg p-md text-left flex items-center space-x-sm">
+<span class="material-symbols-outlined text-primary text-md">verified_user</span>
+<span class="text-xs font-label-caps opacity-80 uppercase tracking-widest">Seerah</span>
+</div>
+<div class="bg-surface-container-high/40 rounded-lg p-md text-left flex items-center space-x-sm">
+<span class="material-symbols-outlined text-tertiary text-md">military_tech</span>
+<span class="text-xs font-label-caps opacity-80 uppercase tracking-widest">Ranked</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Bar (Fixed) -->
+<footer class="fixed bottom-0 left-0 right-0 z-50 glass-surface border-t border-white/5 py-lg px-container-padding rounded-t-xl">
+<div class="max-w-lg mx-auto w-full flex flex-col space-y-lg">
+<!-- Progress Dots -->
+<div class="flex justify-center space-x-2">
+<div class="h-1.5 w-8 rounded-full bg-primary shadow-[0_0_10px_rgba(78,222,163,0.5)]"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-on-surface-variant/30"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-on-surface-variant/30"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-on-surface-variant/30"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-on-surface-variant/30"></div>
+</div>
+<!-- Primary CTA -->
+<button class="w-full bg-primary-container text-on-primary-container font-headline-md text-headline-md py-md rounded-xl btn-gloss flex items-center justify-center space-x-2 active:scale-95 transition-transform duration-200 premium-glow">
+<span>Next</span>
+<span class="material-symbols-outlined text-md">arrow_forward</span>
+</button>
+<!-- Secondary/Skip -->
+<button class="text-on-surface-variant/70 font-label-caps text-label-caps tracking-widest hover:text-on-surface transition-colors">
+                SKIP INTRO
+            </button>
+</div>
+</footer>
+<script>
+        // Micro-interaction: Subtle parallax on mouse/tilt
+        document.addEventListener('mousemove', (e) => {
+            const illustration = document.querySelector('.float-animation');
+            if (illustration) {
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+                illustration.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg) translateY(-10px)`;
+            }
+        });
+
+        // Simple button active state handle
+        const primaryBtn = document.querySelector('button');
+        primaryBtn.addEventListener('touchstart', () => {
+            primaryBtn.classList.add('opacity-90');
+        });
+        primaryBtn.addEventListener('touchend', () => {
+            primaryBtn.classList.remove('opacity-90');
+        });
+    </script>
+</body></html>

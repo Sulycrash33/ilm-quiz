@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+      --glass-bg: rgba(23, 31, 51, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body {
+      background-color: #0b1326;
+      color: #dae2fd;
+      -webkit-font-smoothing: antialiased;
+    }
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+    }
+    .mashrabiya-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5 25 25 5-25 5-5 25-5-25-25-5 25-5z' fill='%234edea3' fill-opacity='0.03'/%3E%3C/svg%3E");
+    }
+    .hexagon {
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    }
+    .gold-glow { box-shadow: 0 0 20px rgba(233, 195, 73, 0.3); }
+    .emerald-glow { box-shadow: 0 0 20px rgba(78, 222, 163, 0.3); }
+    
+    ::-webkit-scrollbar { height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(78, 222, 163, 0.2); border-radius: 10px; }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-container": "#00422b",
+            "surface-container-high": "#222a3d",
+            "surface-container": "#171f33",
+            "on-surface-variant": "#bbcabf",
+            "inverse-on-surface": "#283044",
+            "primary-fixed-dim": "#4edea3",
+            "on-tertiary": "#3c2f00",
+            "tertiary": "#e9c349",
+            "on-primary-fixed": "#002113",
+            "surface-container-highest": "#2d3449",
+            "inverse-primary": "#006c49",
+            "on-secondary": "#002a78",
+            "outline-variant": "#3c4a42",
+            "on-error-container": "#ffdad6",
+            "on-tertiary-fixed": "#241a00",
+            "on-background": "#dae2fd",
+            "surface-variant": "#2d3449",
+            "surface-dim": "#0b1326",
+            "error": "#ffb4ab",
+            "on-secondary-fixed-variant": "#003ea8",
+            "tertiary-fixed-dim": "#e9c349",
+            "on-primary-fixed-variant": "#005236",
+            "on-error": "#690005",
+            "secondary-fixed": "#dbe1ff",
+            "secondary": "#b4c5ff",
+            "secondary-fixed-dim": "#b4c5ff",
+            "on-surface": "#dae2fd",
+            "tertiary-container": "#c29f27",
+            "surface": "#0b1326",
+            "inverse-surface": "#dae2fd",
+            "primary": "#4edea3",
+            "primary-container": "#10b981",
+            "surface-container-low": "#131b2e",
+            "tertiary-fixed": "#ffe088",
+            "surface-tint": "#4edea3",
+            "surface-bright": "#31394d",
+            "outline": "#86948a",
+            "on-secondary-fixed": "#00174b",
+            "surface-container-lowest": "#060e20",
+            "on-secondary-container": "#cdd7ff",
+            "on-tertiary-fixed-variant": "#574500",
+            "secondary-container": "#0053db",
+            "on-primary": "#003824",
+            "primary-fixed": "#6ffbbe",
+            "on-tertiary-container": "#473700",
+            "error-container": "#93000a",
+            "background": "#0b1326"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "container-padding": "20px",
+            "unit": "4px",
+            "gutter": "16px",
+            "xs": "4px",
+            "lg": "24px",
+            "sm": "8px",
+            "xl": "32px",
+            "md": "16px"
+          },
+          "fontFamily": {
+            "quote-italic": ["\"Source Serif 4\""],
+            "display-lg": ["\"Source Serif 4\""],
+            "label-caps": ["Inter"],
+            "headline-md": ["Inter"],
+            "display-lg-mobile": ["\"Source Serif 4\""],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+            "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+            "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="mashrabiya-pattern min-h-screen pb-24">
+<!-- TOP APP BAR -->
+<header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl dark:bg-surface/60 border-b border-white/10 shadow-sm flex justify-between items-center px-container-padding py-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-quality profile avatar of a scholarly character in traditional modest attire, rendered in a modern digital painting style with soft teal and navy lighting. The background is a blurred library with ancient manuscripts, fitting a premium dark-mode aesthetic with Emerald Green highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZr0EEQ9RDkrVHjg6Xjn-v9lgXDjG5OKQDqKanxIhnm_ZeXzeslW_DCJJ0PZRSB9PU6FmYmf3QIIjl-FTQA_b3uIwW8d9LJGY0vvla0xaxHZC4xDKC-xJzn2UcES449yh2EVUpnTnvcc20M3URxCu4IwLfe8V6hu9RRp7oZsAtgGQ-4yuajah1R1z6CgdpEY1s1rLIGH_CDvAzC7UQKegfXQw3vD1_OfzqoSZ2AY3dc6sFosEses1dEdfKoMhUYka10Z2oWI5fupE"/>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary">ILM Hunt</h1>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-highest px-3 py-1 rounded-full">
+<span class="text-primary font-bold text-sm">7 🔥</span>
+<span class="text-tertiary font-bold text-sm">250 🪙</span>
+</div>
+</header>
+<main class="pt-24 px-container-padding">
+<!-- HEADER SECTION -->
+<section class="mb-xl">
+<div class="flex flex-col gap-1">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-on-surface">Achievements</h2>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">1,250 Achievement Points</span>
+</div>
+</div>
+</section>
+<!-- SECTION 1: MILESTONE TROPHIES -->
+<section class="mb-xl">
+<div class="flex justify-between items-end mb-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">Milestone Trophies</h3>
+<button class="text-primary font-label-caps text-label-caps hover:opacity-80 transition-opacity">VIEW ALL</button>
+</div>
+<div class="flex overflow-x-auto gap-md pb-4 snap-x no-scrollbar">
+<!-- Trophy 1: Gold -->
+<div class="snap-center min-w-[280px] glass-card rounded-2xl p-lg flex flex-col items-center relative overflow-hidden group active:scale-95 transition-transform">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-tertiary/10 rounded-full blur-3xl"></div>
+<div class="w-32 h-40 relative mb-md">
+<img class="w-full h-full object-contain drop-shadow-2xl" data-alt="A 3D rendered gold trophy with intricate geometric Islamic patterns engraved on the surface. The trophy sits on an emerald green glowing base with floating particles of light. Professional studio lighting, dark navy background, cinematic gold material reflections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDa2rOLG2E4fQ4rfQxt-0eamhtIV14A38jJO6Hqlc-8Ddh5sO_5ig50MGIQ5cvlRjLeQBGxg60qFO2UopLff79ek2c9ujHiFy6RHA6L1OuEAUQvrjdIseR9mNhulAjW1nnP3hD6tWUpFFuCFRIzEwdNhRPfgMyTQbNBqYkgqv5SYlBrIJauG04tOadO-Cjhoq8MJ9T2ddSi2jjS2A2JFlgiKjMdunjxL7FyLUXEj5v6VT4jCkmE1-2_yD9VVx8u1H3Xqc1l5ls3clA"/>
+</div>
+<span class="font-label-caps text-label-caps text-tertiary mb-1">ELITE ACHIEVEMENT</span>
+<h4 class="font-headline-md text-headline-md text-on-surface text-center mb-1">100 Day Streak</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-center text-sm">Consistent daily learning for over 3 months.</p>
+<div class="mt-lg w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[85%] gold-glow"></div>
+</div>
+</div>
+<!-- Trophy 2: Emerald/Master -->
+<div class="snap-center min-w-[280px] glass-card rounded-2xl p-lg flex flex-col items-center relative overflow-hidden group active:scale-95 transition-transform">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="w-32 h-40 relative mb-md">
+<img class="w-full h-full object-contain drop-shadow-2xl" data-alt="A 3D rendered emerald-encrusted book trophy sitting on a floating crystal base. The book cover features a golden Arabic calligraphy motif. The lighting is ethereal with soft green glows and floating dust particles in a dark, high-end sanctuary environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfktPGq1X7t5Ucj8F9MH-d1G76DZCJtHvMsVuAk6dFS4OmmOuvgKGiCOb9AjBFzo8aatp11pPExzoLxgVCu87drnVCMgvqKR4a0QwP9D5_Q-pSE4UgurFeirNrEj285sPVopD9w30YSCN0DW1-iXDQ-UnFxCX8CPBUxRttLhQhdvzfbdVXdB3bYRTF0CBegQvCzjgz0wXsA0u6HdUEIfToPUiJkWJnuqeHIgSUw4MxDCAgQPNdarx43VdT_3wioEB6HQ_0ngzvT_4"/>
+</div>
+<span class="font-label-caps text-label-caps text-primary mb-1">KNOWLEDGE TITAN</span>
+<h4 class="font-headline-md text-headline-md text-on-surface text-center mb-1">Quran Master</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-center text-sm">Complete all 114 Surah history modules.</p>
+<div class="mt-lg w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[40%] emerald-glow"></div>
+</div>
+</div>
+<!-- Trophy 3: Silver -->
+<div class="snap-center min-w-[280px] glass-card rounded-2xl p-lg flex flex-col items-center relative overflow-hidden group active:scale-95 transition-transform opacity-70">
+<div class="w-32 h-40 relative mb-md grayscale">
+<img class="w-full h-full object-contain drop-shadow-2xl" data-alt="A 3D rendered silver crescent moon trophy with a hanging lantern. The style is minimalist and high-end, featuring brushed silver textures and a deep blue glowing base. Dark sanctuary aesthetic with glassmorphic depth effects." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTbnpK7J6CyEQPMxJ9RY6TkRXuWIZnE1dVPtEsIetMAQNqTsDzvr2WeigTVIlJf0LIcOqCYxXLHTXz4_LFAJpTwFOaOysJRTXjWXwwFaV-cOyTJVQDEkeg6lYh_OKNws2v7SrSvXJ94v-RyV6SpU3AFhm2pFVpXh4lLqdyzY-ASkdbsaYvtsu7iOC3C0E6caIU0SlrElPaKmRYvVy5d8qN-zt3blilBz3TZc3-jWnR5w5wzExUh-itDUzse2KFjKsIM7w5jKfjo5Q"/>
+</div>
+<span class="font-label-caps text-label-caps text-outline mb-1">UPCOMING</span>
+<h4 class="font-headline-md text-headline-md text-on-surface text-center mb-1">Ramadan Seeker</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-center text-sm">Master all Ramadan special lessons.</p>
+<div class="mt-lg w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-outline h-full w-[10%]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: COLLECTION BADGES -->
+<section class="mb-xl">
+<div class="flex justify-between items-end mb-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">Collection Badges</h3>
+<div class="flex gap-2">
+<span class="bg-surface-container-highest text-[10px] px-2 py-0.5 rounded-full text-on-surface-variant font-bold">ALL</span>
+<span class="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">OWNED</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-y-lg gap-x-md">
+<!-- Active Badge 1 -->
+<div class="flex flex-col items-center group">
+<div class="hexagon w-20 h-24 bg-gradient-to-br from-primary to-primary-container p-0.5 emerald-glow mb-2 active:scale-90 transition-transform">
+<div class="hexagon w-full h-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">history_edu</span>
+</div>
+</div>
+<span class="font-label-caps text-[10px] text-primary">EPIC</span>
+<span class="text-on-surface font-bold text-[11px] text-center">Seerah I</span>
+</div>
+<!-- Active Badge 2 -->
+<div class="flex flex-col items-center group">
+<div class="hexagon w-20 h-24 bg-gradient-to-br from-tertiary to-tertiary-container p-0.5 gold-glow mb-2 active:scale-90 transition-transform">
+<div class="hexagon w-full h-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-3xl">auto_stories</span>
+</div>
+</div>
+<span class="font-label-caps text-[10px] text-tertiary">RARE</span>
+<span class="text-on-surface font-bold text-[11px] text-center">Hadith Intro</span>
+</div>
+<!-- Locked Badge 1 -->
+<div class="flex flex-col items-center opacity-50">
+<div class="hexagon w-20 h-24 bg-surface-container p-0.5 mb-2">
+<div class="hexagon w-full h-full bg-surface-container flex items-center justify-center relative">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">translate</span>
+<div class="absolute inset-0 flex items-center justify-center bg-black/40">
+<span class="material-symbols-outlined text-white text-lg">lock</span>
+</div>
+</div>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">COMMON</span>
+<span class="text-on-surface-variant font-bold text-[11px] text-center">Arabic Gram.</span>
+</div>
+<!-- Active Badge 3 -->
+<div class="flex flex-col items-center group">
+<div class="hexagon w-20 h-24 bg-gradient-to-br from-secondary to-secondary-container p-0.5 mb-2 active:scale-90 transition-transform">
+<div class="hexagon w-full h-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-3xl">menu_book</span>
+</div>
+</div>
+<span class="font-label-caps text-[10px] text-secondary">COMMON</span>
+<span class="text-on-surface font-bold text-[11px] text-center">Fiqh Basic</span>
+</div>
+<!-- Locked Badge 2 -->
+<div class="flex flex-col items-center opacity-50">
+<div class="hexagon w-20 h-24 bg-surface-container p-0.5 mb-2">
+<div class="hexagon w-full h-full bg-surface-container flex items-center justify-center relative">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">palette</span>
+<div class="absolute inset-0 flex items-center justify-center bg-black/40">
+<span class="material-symbols-outlined text-white text-lg">lock</span>
+</div>
+</div>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">RARE</span>
+<span class="text-on-surface-variant font-bold text-[11px] text-center">Art &amp; Geo</span>
+</div>
+<!-- Locked Badge 3 -->
+<div class="flex flex-col items-center opacity-50">
+<div class="hexagon w-20 h-24 bg-surface-container p-0.5 mb-2">
+<div class="hexagon w-full h-full bg-surface-container flex items-center justify-center relative">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">architecture</span>
+<div class="absolute inset-0 flex items-center justify-center bg-black/40">
+<span class="material-symbols-outlined text-white text-lg">lock</span>
+</div>
+</div>
+</div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">EPIC</span>
+<span class="text-on-surface-variant font-bold text-[11px] text-center">Masjid Arc.</span>
+</div>
+</div>
+</section>
+<!-- SECTION 3: SECRET ACHIEVEMENTS -->
+<section class="mb-xl bg-surface-container-low/40 rounded-3xl p-lg border border-white/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-6xl">help_outline</span>
+</div>
+<div class="flex items-center gap-3 mb-lg">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">lock_open</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Secret Achievements</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-xs">Unlock by completing hidden challenges</p>
+</div>
+</div>
+<div class="space-y-md">
+<!-- Secret 1 -->
+<div class="glass-card rounded-2xl p-md flex items-center gap-md group cursor-pointer hover:bg-white/5 transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center blur-[3px]">
+<span class="material-symbols-outlined text-primary/40">ac_unit</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-on-surface tracking-widest">??? ??? ???</h4>
+<p class="text-xs text-on-surface-variant/60">Search deep within the archives at midnight.</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-20">help</span>
+</div>
+<!-- Secret 2 -->
+<div class="glass-card rounded-2xl p-md flex items-center gap-md group cursor-pointer hover:bg-white/5 transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center blur-[4px]">
+<span class="material-symbols-outlined text-tertiary/40">compost</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-on-surface tracking-widest">??? ???</h4>
+<p class="text-xs text-on-surface-variant/60">Achieve a perfect score on a master quiz.</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-20">help</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BOTTOM NAV BAR -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container/60 backdrop-blur-xl dark:bg-surface-container/60 border-t border-white/10 shadow-xl flex justify-around items-center h-20 px-2 pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-caps text-label-caps">Learning</span>
+</a>
+<a class="flex flex-col items-center justify-center flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim font-bold bg-primary-container/20 rounded-xl px-3 py-1 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-label-caps text-label-caps">Rankings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-label-caps text-label-caps">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-variant/30 transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a>
+</nav>
+<script>
+    // Micro-interactions
+    document.querySelectorAll('.glass-card, .hexagon').forEach(el => {
+      el.addEventListener('touchstart', () => {
+        el.style.transform = 'scale(0.98)';
+      });
+      el.addEventListener('touchend', () => {
+        el.style.transform = 'scale(1)';
+      });
+    });
+
+    // Simple fade in on load
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        document.body.style.transition = 'opacity 0.6s ease-in-out';
+        document.body.style.opacity = '1';
+      }, 100);
+    });
+  </script>
+</body></html>

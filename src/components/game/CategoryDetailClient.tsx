@@ -49,10 +49,13 @@ export function CategoryDetailClient({ category, questions }: CategoryDetailClie
     }), [category.topics]);
 
   if (showQuiz) {
+    const validQuestions = questions.filter(
+      (q): q is Question & { options: string[] } => q.options !== undefined && q.options.length > 0
+    );
     return (
         <div className="container mx-auto px-4 py-6 max-w-4xl">
-            <QuizView 
-                questions={questions}
+            <QuizView
+                questions={validQuestions as any}
                 categoryTitle={category.name}
                 onExit={handleQuizExit}
             />

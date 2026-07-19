@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Study Circle - ILM Hunt</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Source+Serif+4:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#4edea3",
+                    "on-surface": "#dae2fd",
+                    "on-secondary-fixed": "#00174b",
+                    "tertiary": "#e9c349",
+                    "on-error": "#690005",
+                    "surface-container": "#171f33",
+                    "on-background": "#dae2fd",
+                    "inverse-surface": "#dae2fd",
+                    "on-secondary": "#002a78",
+                    "surface-container-highest": "#2d3449",
+                    "on-tertiary-container": "#473700",
+                    "surface-tint": "#4edea3",
+                    "surface-dim": "#0b1326",
+                    "surface-bright": "#31394d",
+                    "tertiary-fixed-dim": "#e9c349",
+                    "on-primary-container": "#00422b",
+                    "inverse-on-surface": "#283044",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-error-container": "#ffdad6",
+                    "surface": "#0b1326",
+                    "outline-variant": "#3c4a42",
+                    "secondary": "#b4c5ff",
+                    "surface-container-high": "#222a3d",
+                    "surface-container-lowest": "#060e20",
+                    "error": "#ffb4ab",
+                    "on-primary-fixed-variant": "#005236",
+                    "tertiary-fixed": "#ffe088",
+                    "primary-container": "#10b981",
+                    "on-tertiary": "#3c2f00",
+                    "background": "#0b1326",
+                    "on-tertiary-fixed": "#241a00",
+                    "inverse-primary": "#006c49",
+                    "outline": "#86948a",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "error-container": "#93000a",
+                    "on-primary": "#003824",
+                    "surface-variant": "#2d3449",
+                    "on-surface-variant": "#bbcabf",
+                    "tertiary-container": "#c29f27",
+                    "secondary-fixed": "#dbe1ff",
+                    "on-secondary-container": "#cdd7ff",
+                    "primary-fixed": "#6ffbbe",
+                    "on-primary-fixed": "#002113",
+                    "surface-container-low": "#131b2e",
+                    "on-tertiary-fixed-variant": "#574500",
+                    "secondary-container": "#0053db"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "xl": "32px",
+                    "unit": "4px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "container-padding": "20px"
+            },
+            "fontFamily": {
+                    "display-lg": ["\"Source Serif 4\""],
+                    "quote-italic": ["\"Source Serif 4\""],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg-mobile": ["\"Source Serif 4\""],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "quote-italic": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mashrabiya-pattern {
+            mask-image: radial-gradient(circle, transparent 20%, black 20%), linear-gradient(45deg, black 25%, transparent 25%);
+            mask-size: 10px 10px;
+            opacity: 0.05;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4edea3;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary/30 min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl border-b border-on-surface/10 shadow-sm">
+<div class="flex justify-between items-center px-gutter h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full border-2 border-primary/30 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-quality studio portrait of a young student with a scholarly and focused expression, set against a dark, professional background with soft green rim lighting that matches a premium digital sanctuary aesthetic. The lighting is moody and cinematic, emphasizing high-end productivity and intellectual pursuit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgfVBW6su5nMX2oKxImrdVhRKO6vImqbmuHy0RXDdeJt_GB31vqUZ9ATTzHs87rVXLJoydQfJBv5Jy73NM-O2U2lPyvhbsXnDa_6EprYhOM94TRh6tdwUqzC8aM6rqHdFErEI_TKSk-WA9_f6ke7B0-IskIDnpG58pJv-UaQ_IqL8TasxkhVuN6JTu46nKwPbSCr-5de3GtfcG9KztR191Mbk5zLm62qyiarhzx7kYJF9ztsOfZHDQQPBDU7JiWFoiyCxUeWDbJos"/>
+</div>
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tight">ILM Hunt</h1>
+</div>
+<button class="material-symbols-outlined text-primary hover:bg-surface-bright/20 transition-colors p-2 rounded-full active:scale-95 duration-200">
+                notifications
+            </button>
+</div>
+</header>
+<main class="pt-20 px-container-padding max-w-7xl mx-auto space-y-xl">
+<!-- Group Hero Banner -->
+<section class="relative h-64 md:h-80 rounded-xl overflow-hidden shadow-xl group">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A majestic and serene view of an ancient library at night, with warm golden lanterns illuminating massive bookshelves filled with ornate leather-bound texts. A soft emerald glow emanates from a central study table where a glowing digital interface is open. The atmosphere is quiet, scholarly, and deeply spiritual, blending historical tradition with futuristic digital elements in a midnight blue and emerald green palette." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAS1BeNjtuTbmkYAfyyT20Kbpbd8jxRQZpMzohewsSBBRyDIQ5n0_tU3582GCS7oxA_Fe2-fLByAPsB25chb0w1u_H5_UDvm3zjamIlNQ8NbEUqLBb4U4jCzpq2tZw21jr_CuRbQPgvGfvfK09AkvGY5Dmm7KU5NmqUNLDu9O1EgxDukltczu41d7WaMsu93qJrxOqoiC9HXcNZzDqwXP20zqSWFikNnjWmNlbu405PlUi1LOJO-Xu_7dgQ7QV1qCmov4bG3BrNGRU')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-lg w-full">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<span class="bg-primary/20 text-primary px-3 py-1 rounded-full font-label-caps text-label-caps mb-sm inline-block">STUDY CIRCLE</span>
+<h2 class="font-display-lg-mobile text-display-lg-mobile md:text-display-lg text-on-surface">The Quran Explorers</h2>
+<p class="text-on-surface-variant font-body-md max-w-lg">Deep diving into the linguistic wonders and historical contexts of the Final Revelation. Join our daily reflection sessions.</p>
+</div>
+<div class="flex -space-x-3 overflow-hidden">
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background object-cover" data-alt="A profile avatar of a diverse student, realistic digital painting style, emerald green background tones, soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD6Z52EMi8uxPE-hu6NwRRpmU8XrjKYTpPGWgbsBh-bDB52lOLFpHum2LAGDCnyOWYDKu25etCOfwwqDh42SPh8I6b89RWhxTR8Vhl7wYBCzTResTpgUAFguVj-6B61kBk5gyjmuujZRfkp0RA4AopqXFSNjLfp62bCs_0Aomn8EdUhY_mHsIY9jDjkP-_eYA4H6r_RMGrLtrsYFuLFq9kR_qsVnn8LULRlxWVbrouvvPu_UhyAa_AV1quBop3sGDM4aNw1AmWGrc"/>
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background object-cover" data-alt="A profile avatar of a young professional in a library setting, dark aesthetic, soft rim lighting, premium digital art." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzT4IeoXYgHjz3LTWavW_b7PP6Y1cztG88m0zwJwcVN7lL64PvZOYXMXNL7S1rqj3sZiUURmQ3HzQYj88w17D_V_3-R0_K_9OCYO1UXqdLplFfwTanTK-ubVs5rgLl3y01t_rZ6aYEZAtQWAu7HX6pyt5Usq15Kzjvoj8dXmBaYayoc5aqAJ3VXCOWZ9IagsnNEQGe3GbIJoX5J9GoIWDxnUM71TjUnlhr8VMWo-9DX0UmempcXk8tPK4UcE9Hk_h6b-nBZAObloI"/>
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background object-cover" data-alt="A profile avatar of an older scholar, gentle expression, warm gold highlights, cinematic portraiture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7FUtWvt4Oz2LVu95bU4vN4Hw-LfABiqdTdOOpabejLv02_qBEAx1xspv0QyGwr9rdf9k83CAxB5VnXt8E3emXrFPrVlKww-irmU1A7E3iVSQH3lGZ0IPxs1cz1119UNt8nlt3ErP-apPv8iWXGCsbtzHCD4LSa_J1dJxXdH8VykV3-V2iJQ4Hb8VCmQ1gqj1NiQo_hXzme2hOofdjKzT8vOoDlvUhbTSIXCEuQI9lH-8axcmPLnDaLQu-ZieZQhh08Fp3KX2d64k"/>
+<div class="h-10 w-10 rounded-full ring-2 ring-background bg-surface-container-highest flex items-center justify-center text-xs font-bold text-primary">+17</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Left Column: Challenge & Members -->
+<div class="md:col-span-8 space-y-lg">
+<!-- Group Challenge Card -->
+<div class="glass-card rounded-xl p-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-9xl">military_tech</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-lg">
+<div>
+<h3 class="font-headline-md text-headline-md text-tertiary">Daily Goal: Surah Al-Kahf</h3>
+<p class="text-on-surface-variant">Reflection on the first 10 verses.</p>
+</div>
+<div class="text-right">
+<span class="text-display-lg-mobile font-display-lg-mobile text-primary">15<span class="text-on-surface-variant text-body-md">/20</span></span>
+<p class="text-label-caps font-label-caps text-on-surface-variant">COMPLETED TODAY</p>
+</div>
+</div>
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden mb-md">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container w-[75%] transition-all duration-1000 shadow-[0_0_10px_#4edea3]"></div>
+</div>
+<div class="flex items-center gap-md">
+<button class="flex-1 bg-primary text-on-primary font-bold py-3 rounded-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">check_circle</span>
+                                Mark as Complete
+                            </button>
+<button class="px-gutter py-3 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-variant/30 transition-all">
+                                View Leaderboard
+                            </button>
+</div>
+</div>
+</div>
+<!-- Discussion Preview -->
+<div class="glass-card rounded-xl flex flex-col h-[400px]">
+<div class="p-md border-b border-white/5 flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">forum</span>
+                            Circle Discussion
+                        </h3>
+<span class="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">4 New</span>
+</div>
+<div class="flex-1 overflow-y-auto p-md space-y-md custom-scrollbar">
+<!-- Message -->
+<div class="flex gap-md">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Small avatar of a group member, dark mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6Lxh2Vld8o5GeQ1fQViFdIWHIC8i418MSUPcuZcYL1XHsaPN9SOSPRPRSVsiY33vy8HAksZnSWaK_z9WBz-4JS4jgs5dL3moWU2GBTcxvHhnMGht6DXvGuj22f66RpDCD-O3CHQ4ZiBN6h1OWX_dNR9jAVtUP-IwO3THpzvOzHDkZzHSEKwHmxMCEVAWKzr3UgzlHm_pAhTifwgMI-R6-CFRXqM4e4EtLlTzzseioRuZRd4k6GFbDy9NfPMc8c2nxyj3OJNCgcrg"/>
+</div>
+<div class="bg-surface-container-high p-md rounded-tr-xl rounded-br-xl rounded-bl-xl max-w-[80%]">
+<p class="text-xs font-bold text-tertiary mb-1">Ahmad Khalid</p>
+<p class="text-body-md text-on-surface">The linguistic connection between 'Al-Kahf' and the concept of divine protection is truly profound. Has anyone looked into the root word for 'Raqim'?</p>
+<span class="text-[10px] text-on-surface-variant mt-2 block">10:42 AM</span>
+</div>
+</div>
+<!-- Message -->
+<div class="flex gap-md flex-row-reverse">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Small avatar of the user, emerald green highlight portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCE4G9LOsvQvfktv1JJG_-QSINVu9hUJcixYTB1a46VO7YduCUBzD6bX-B_WcaW53QbXtNmBCGGhAtWhaXSh4fW1fg7Xonv-NpvWlWUHoG6c153gTv1exYpGxUZbnrSK6UkkHQH8kNw13zwdTpyp9FcSn4SYr-d9cd3wQfQl3MD_DbLIgBiKTKPpVljGJoS1He0KTuaHMP2XPrin4vsDv7NzLMWYLZa8-l_u1b3ylhPhsm8qsnJiuluy82PikOfstfVQl1Ek13sNk"/>
+</div>
+<div class="bg-primary-container p-md rounded-tl-xl rounded-br-xl rounded-bl-xl max-w-[80%]">
+<p class="text-xs font-bold text-on-primary-container mb-1">You</p>
+<p class="text-body-md text-on-primary-container">I've been studying that! It's often translated as 'Inscription'. I'll share some notes in the Knowledge Tree later today.</p>
+<span class="text-[10px] text-on-primary-container/70 mt-2 block">10:45 AM</span>
+</div>
+</div>
+<!-- Message -->
+<div class="flex gap-md">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Small avatar of another group member, scholar theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsUkCQDz4UuBArUM7ysB3MFlzsQLF4V7iSFG212XouChegsrQTHLKy5q0p44FD92tGoT9ECCMZoMYFItlUvvRJShuwxCxzJ4uZ3h6I6Gi-W5iNNmxl_bekw6J_swqN2sBOHHsGMQSl-Tw69eoAny4GRtpNbRWGgEm7WMwBs9L1QOCfKq5sNvEJT7lTVJHe8BD0uvz_2rgGUrfKtsDw9BnqUze1n5hAy7Vyou674V8JT7SJTE1IEb6E_ciMu2Najfjzlcgo0umREFM"/>
+</div>
+<div class="bg-surface-container-high p-md rounded-tr-xl rounded-br-xl rounded-bl-xl max-w-[80%]">
+<p class="text-xs font-bold text-secondary mb-1">Sarah M.</p>
+<p class="text-body-md text-on-surface">Would love to see those notes. Jazakallah Khayr for the initiative!</p>
+<span class="text-[10px] text-on-surface-variant mt-2 block">11:02 AM</span>
+</div>
+</div>
+</div>
+<div class="p-md bg-surface-container-low/50">
+<div class="flex items-center gap-sm bg-surface-container rounded-full px-4 py-2 border border-outline-variant/30">
+<input class="bg-transparent border-none focus:ring-0 text-sm flex-1 text-on-surface" placeholder="Type a message..." type="text"/>
+<button class="material-symbols-outlined text-primary">send</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Member List & Stats -->
+<div class="md:col-span-4 space-y-lg">
+<!-- Group Stats Card -->
+<div class="glass-card rounded-xl p-lg space-y-md">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">COMMUNITY IMPACT</h3>
+<div class="grid grid-cols-2 gap-md">
+<div class="text-center">
+<p class="text-headline-md font-headline-md text-primary">1.2k</p>
+<p class="text-xs text-on-surface-variant">Verses Read</p>
+</div>
+<div class="text-center">
+<p class="text-headline-md font-headline-md text-tertiary">45</p>
+<p class="text-xs text-on-surface-variant">Day Streak</p>
+</div>
+</div>
+</div>
+<!-- Active Members -->
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="p-md border-b border-white/5 flex justify-between items-center">
+<h3 class="font-label-caps text-label-caps text-on-surface">MEMBERS (20)</h3>
+<span class="material-symbols-outlined text-sm text-on-surface-variant">person_add</span>
+</div>
+<div class="p-md space-y-md">
+<!-- Member Item -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close-up avatar portrait of a group member." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDU90BW2ZKHnE_NqngtbL6F58QTtNRETwuQi9bLSX9Gql7rghiVjejpXisV5j0xSDiKXZofpikHOBiskSiBhj568ubY-lu2x3jRcaPGyz7nR1XZOSz5Ykaz_G9iY0bdsKo7gHT4h2TGWDkpAOQC_vUTQOQH-nPwJ4rCjKbFcgMV4qHM1a_Pm3-ubiUdEalVDIDz3uKuv13x9H2bCoqFpMQQ33OLF0ZXlS-5zN4sBKzNL97Hlow-o1x2tw5UdP6icH87NjNgCks8ts"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-primary border-2 border-surface rounded-full"></div>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Ahmad Khalid</p>
+<p class="text-[10px] text-on-surface-variant">Leader • Lvl 12</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<!-- Member Item -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close-up avatar portrait of a group member." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANoRbmkfec5lYKNMkImGZXoLqHuSy3kYcpQ5WAqgiVlfjPKBpM_33zvqEQJ_9rCCM7pa0so4ZIgxZrKRg7cXC-XllMANbMbPyXln0NacGMWaUXkUSCA8DHDyqrs6x2ukRBEcHerNMnuNA9a3UWHM_vebQ50Kl1kCUEuPoiIC7HO23cqH6KjTkzlJiFMadxrShuAq2S-xF8FnU-0l9D9aWK4BOG1A0yGIjmy1-J_QUtPEnkBMJrkGJFGd5SUkz1dz-MTqFVbYdlnPw"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-primary border-2 border-surface rounded-full"></div>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Zainab R.</p>
+<p class="text-[10px] text-on-surface-variant">Scholar • Lvl 8</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-xl">workspace_premium</span>
+</div>
+<!-- Member Item -->
+<div class="flex items-center justify-between opacity-60">
+<div class="flex items-center gap-md">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close-up avatar portrait of a group member." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNSI5lhNL7KIpviS6kgS23py52N4qYOSCMYZes8gWqsfMFM3tkKyzc4ZA16c1XxW2748lY2hGitQvoTnqJLbhxxoTgopFrY9jM65bMSxf_4AcL9yaHAMfE-fLjVIR427ZhDF4Ki5I5cI21pdzXt8TNKj-OqWRmK-O0UIVuTSy1uKIKR99rge0cDH7-wcdXvyZ4_XSniMx2E54eGhdG5SCbDf8ggB_paiIpkdeNM74YANRimHMoAi2Kmjv17gO5jK4hVdiaJ_gyl20"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-on-surface-variant/30 border-2 border-surface rounded-full"></div>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Omar Faruq</p>
+<p class="text-[10px] text-on-surface-variant">Seeker • Lvl 4</p>
+</div>
+</div>
+</div>
+<button class="w-full py-2 text-xs font-bold text-primary hover:underline transition-all">View All Members</button>
+</div>
+</div>
+<!-- Recommended Resources -->
+<div class="bg-tertiary-container/10 border border-tertiary/20 rounded-xl p-md">
+<h3 class="font-label-caps text-label-caps text-tertiary mb-sm">STUDY TOOLBOX</h3>
+<ul class="space-y-sm">
+<li class="flex items-center gap-sm text-sm text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-sm">auto_stories</span>
+                            Contextual Tafsir (Ibn Kathir)
+                        </li>
+<li class="flex items-center gap-sm text-sm text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-sm">translate</span>
+                            Linguistic Analysis Module
+                        </li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full rounded-t-xl z-50 bg-surface-container/80 backdrop-blur-2xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
+<div class="flex justify-around items-center h-20 pb-safe w-full px-2 max-w-7xl mx-auto">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">rss_feed</span>
+<span class="font-label-caps text-label-caps mt-1">Feed</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">diversity_3</span>
+<span class="font-label-caps text-label-caps mt-1">Study</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps mt-1">Friends</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-caps text-label-caps mt-1">Learn</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps mt-1">Profile</span>
+</a>
+</div>
+</nav>
+<script>
+        // Micro-interactions: Progress bar animation on load
+        window.addEventListener('load', () => {
+            const progressBar = document.querySelector('.bg-gradient-to-r');
+            progressBar.style.width = '0%';
+            setTimeout(() => {
+                progressBar.style.width = '75%';
+            }, 500);
+        });
+
+        // Simple Chat Focus Effect
+        const chatInput = document.querySelector('input');
+        const chatContainer = chatInput.closest('.glass-card');
+        
+        chatInput.addEventListener('focus', () => {
+            chatContainer.style.borderColor = 'rgba(78, 222, 163, 0.5)';
+            chatContainer.style.boxShadow = '0 0 20px rgba(78, 222, 163, 0.1)';
+        });
+
+        chatInput.addEventListener('blur', () => {
+            chatContainer.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            chatContainer.style.boxShadow = 'none';
+        });
+    </script>
+</body></html>

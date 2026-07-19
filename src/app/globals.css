@@ -2,97 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'PT Sans', sans-serif;
-}
-
+/* Premium Islamic Design System - Global Styles */
 @layer base {
   :root {
-    --background: 45 30% 98%;
-    --foreground: 45 10% 20%;
-    --card: 45 30% 98%;
-    --card-foreground: 45 10% 20%;
-    --popover: 45 30% 98%;
-    --popover-foreground: 45 10% 20%;
-    --primary: 45 76% 47%;
-    --primary-foreground: 45 40% 10%;
-    --secondary: 45 50% 90%;
-    --secondary-foreground: 45 76% 27%;
-    --muted: 45 20% 90%;
-    --muted-foreground: 45 10% 45%;
-    --accent: 45 80% 60%;
-    --accent-foreground: 45 100% 15%;
-    --destructive: 350 73% 44%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 45 20% 85%;
-    --input: 45 20% 85%;
-    --ring: 45 76% 47%;
-    /* Jade: geometric tilework green. Used for "easy"/positive/correct states. */
-    --jade: 168 45% 30%;
-    --jade-foreground: 0 0% 98%;
-    --jade-soft: 168 40% 92%;
-    /* Henna/rust: traditional dye tone. Used for "hard"/advanced states. */
-    --henna: 14 55% 40%;
-    --henna-foreground: 0 0% 98%;
-    --henna-soft: 14 55% 93%;
-    /* Lapis: manuscript-illumination blue. Used for "rare" tier states. */
-    --lapis: 217 60% 35%;
-    --lapis-foreground: 0 0% 98%;
-    --lapis-soft: 217 55% 93%;
-    /* Amethyst: Tyrian-purple, historically the rarest illumination dye. "epic" tier. */
-    --amethyst: 271 40% 38%;
-    --amethyst-foreground: 0 0% 98%;
-    --amethyst-soft: 271 40% 93%;
+    --background: #0b1326;
+    --foreground: #dae2fd;
+    --card: #171f33;
+    --card-foreground: #dae2fd;
+    --popover: #171f33;
+    --popover-foreground: #dae2fd;
+    --primary: #4edea3;
+    --primary-foreground: #003824;
+    --secondary: #b4c5ff;
+    --secondary-foreground: #00174b;
+    --muted: #222a3d;
+    --muted-foreground: #bbcabf;
+    --accent: #e9c349;
+    --accent-foreground: #3c2f00;
+    --destructive: #93000a;
+    --destructive-foreground: #ffdad6;
+    --border: #2d3449;
+    --input: #2d3449;
+    --ring: #4edea3;
     --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-  .dark {
-    --background: 45 5% 10%;
-    --foreground: 45 10% 80%;
-    --card: 45 5% 12%;
-    --card-foreground: 45 10% 80%;
-    --popover: 45 5% 10%;
-    --popover-foreground: 45 10% 80%;
-    --primary: 45 70% 50%;
-    --primary-foreground: 45 30% 95%;
-    --secondary: 45 15% 20%;
-    --secondary-foreground: 45 70% 90%;
-    --muted: 45 10% 15%;
-    --muted-foreground: 45 10% 55%;
-    --accent: 45 75% 55%;
-    --accent-foreground: 45 10% 5%;
-    --destructive: 350 73% 44%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 45 10% 25%;
-    --input: 45 10% 25%;
-    --ring: 45 70% 60%;
-    --jade: 168 40% 55%;
-    --jade-foreground: 168 40% 8%;
-    --jade-soft: 168 30% 18%;
-    --henna: 14 60% 60%;
-    --henna-foreground: 14 60% 10%;
-    --henna-soft: 14 40% 20%;
-    --lapis: 217 55% 62%;
-    --lapis-foreground: 217 55% 10%;
-    --lapis-soft: 217 35% 20%;
-    --amethyst: 271 35% 62%;
-    --amethyst-foreground: 271 35% 10%;
-    --amethyst-soft: 271 25% 20%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Islamic Design Tokens */
+    --surface: #0b1326;
+    --surface-container: #171f33;
+    --surface-container-high: #222a3d;
+    --surface-container-highest: #2d3449;
+    --surface-container-low: #131b2e;
+    --surface-container-lowest: #060e20;
+    --surface-variant: #2d3449;
+    --surface-dim: #0b1326;
+    --surface-bright: #31394d;
+    --surface-tint: #4edea3;
+    
+    --primary-container: #10b981;
+    --primary-fixed: #6ffbbe;
+    --primary-fixed-dim: #4edea3;
+    --on-primary: #003824;
+    --on-primary-container: #00422b;
+    --on-primary-fixed: #002113;
+    --on-primary-fixed-variant: #005236;
+    
+    --secondary-container: #0053db;
+    --secondary-fixed: #dbe1ff;
+    --secondary-fixed-dim: #b4c5ff;
+    --on-secondary: #002a78;
+    --on-secondary-container: #cdd7ff;
+    --on-secondary-fixed: #00174b;
+    --on-secondary-fixed-variant: #003ea8;
+    
+    --tertiary: #e9c349;
+    --tertiary-container: #c29f27;
+    --tertiary-fixed: #ffe088;
+    --tertiary-fixed-dim: #e9c349;
+    --on-tertiary: #3c2f00;
+    --on-tertiary-container: #473700;
+    --on-tertiary-fixed: #241a00;
+    --on-tertiary-fixed-variant: #574500;
+    
+    --error: #ffb4ab;
+    --error-container: #93000a;
+    --on-error: #690005;
+    --on-error-container: #ffdad6;
+    
+    --outline: #86948a;
+    --outline-variant: #3c4a42;
+    
+    --on-surface: #dae2fd;
+    --on-surface-variant: #bbcabf;
+    --on-background: #dae2fd;
+    --on-inverse-surface: #283044;
+    --inverse-surface: #dae2fd;
+    --inverse-primary: #006c49;
   }
 }
 
@@ -101,15 +85,147 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-on-background;
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    min-height: max(884px, 100dvh);
   }
 }
 
+/* Glassmorphism Effects */
+@layer components {
+  .glass-card {
+    background: rgba(23, 31, 51, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+  }
+
+  .glass-card-hover {
+    background: rgba(23, 31, 51, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+  }
+
+  .glass-card-hover:hover {
+    background: rgba(23, 31, 51, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px -10px rgba(78, 222, 163, 0.2);
+  }
+
+  /* Islamic Pattern Overlay */
+  .mashrabiya-pattern {
+    mask-image: linear-gradient(to bottom, black, transparent);
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23ffffff' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  .mashrabiya-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%234edea3' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+  }
+
+  /* Progress Ring Animation */
+  .progress-ring-circle {
+    transition: stroke-dashoffset 0.8s ease-in-out;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+
+  /* Premium Button Styles */
+  .btn-primary {
+    @apply bg-primary text-on-primary px-6 py-3 rounded-lg font-bold text-sm shadow-sm;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    @apply opacity-90;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.95);
+  }
+
+  .btn-secondary {
+    @apply bg-surface-container-high text-on-surface px-6 py-3 rounded-lg font-bold text-sm border border-white/5;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-surface-container-highest;
+  }
+
+  /* Card Interactions */
+  .interactive-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+
+  .interactive-card:active {
+    transform: scale(0.98);
+  }
+
+  /* Pulse Animation */
+  .pulse-effect {
+    animation: pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.95); opacity: 0.1; }
+    50% { transform: scale(1.05); opacity: 0.4; }
+    100% { transform: scale(0.95); opacity: 0.1; }
+  }
+
+  /* Loading Animation */
+  .loading-bar {
+    animation: loading 2s ease-in-out infinite;
+  }
+
+  @keyframes loading {
+    0% { left: -30%; width: 30%; }
+    50% { left: 40%; width: 50%; }
+    100% { left: 100%; width: 30%; }
+  }
+
+  /* Float Animation */
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Glow Effect */
+  .glow-effect {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(78, 222, 163, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(78, 222, 163, 0.6); }
+  }
+
+  /* Haptic Feedback Simulation */
+  .haptic-feedback {
+    transition: transform 0.1s ease;
+  }
+
+  .haptic-feedback:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Star Particle Animation */
 .star-particle {
   position: absolute;
   width: 8px;
   height: 8px;
-  background-color: hsl(var(--accent));
+  background-color: var(--accent);
   border-radius: 50%;
   animation: star-fall 1s ease-out forwards;
   opacity: 0;
@@ -124,4 +240,28 @@ body {
     opacity: 0;
     transform: translateY(100px) scale(0.5);
   }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-container-lowest);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-variant);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
+}
+
+/* Selection Color */
+::selection {
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
