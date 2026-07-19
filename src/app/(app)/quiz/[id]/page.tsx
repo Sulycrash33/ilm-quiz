@@ -1,30 +1,27 @@
-
 import { notFound } from "next/navigation";
-import { CATEGORY_DETAILS, QUESTIONS } from "@/lib/constants";
-import type { CategoryDetails } from "@/lib/types";
-import { CategoryDetailClient } from "@/components/game/CategoryDetailClient";
+import { getCategoryBySlug, getPublishedQuizQuestions } from "@/lib/quiz-service";
+import { QuizRunner } from "@/components/game/QuizRunner";
 
 interface CategoryDetailPageProps {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 }
 
 export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
   const { id } = await params;
-  const category: CategoryDetails | undefined = CATEGORY_DETAILS[id];
 
+  const category = await getCategoryBySlug(id);
   if (!category) {
     notFound();
   }
 
-  const questions = QUESTIONS[id] || [];
+  const questions = await getPublishedQuizQuestions(id);
 
-  return <CategoryDetailClient category={category} questions={questions} />;
-}
-
-export async function generateStaticParams() {
-  return Object.keys(CATEGORY_DETAILS).map((id) => ({
-    id,
-  }));
+  return (
+    <QuizRunner
+      categoryName={category.name}
+      categoryDescription={category.description}
+      categoryIcon={category.icon}
+      questions={questions}
+    />
+  );
 }

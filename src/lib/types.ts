@@ -30,6 +30,30 @@ export interface Question {
   timeLimit?: number;
 }
 
+/**
+ * A question as sent to the browser for a live quiz. Deliberately OMITS the
+ * correct answer, explanation, and citation — those are only revealed by the
+ * `submitAnswer` server action AFTER the player commits to a choice, so the
+ * answer key can never be read from the client (devtools, network tab, etc.).
+ */
+export interface QuizQuestion {
+  id: string;
+  text: string;
+  options: string[];
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  points: number;
+  timeLimit: number;
+}
+
+/** Result returned by the server after grading a single answer. */
+export interface GradeResult {
+  correct: boolean;
+  correctIndex: number;
+  explanation: string;
+  citation: string;
+  xpEarned: number;
+}
+
 // Achievement System Types
 export interface Reward {
   coins: number;
