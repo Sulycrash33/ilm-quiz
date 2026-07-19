@@ -1,13 +1,9 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // NOTE: build errors are no longer ignored. TypeScript and ESLint issues
+  // must be fixed rather than shipped to production. Run `npm run typecheck`
+  // and `npm run lint` locally before pushing.
   images: {
     remotePatterns: [
       {
