@@ -12,12 +12,12 @@ import { Button } from "@/components/ui/button";
 import { getAIHint } from "@/app/actions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MosqueIcon } from "../icons/MosqueIcon";
-import type { Question } from "@/lib/types";
+import type { QuizQuestion } from "@/lib/types";
 
 interface AskTheImamDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  question: Question;
+  question: QuizQuestion;
 }
 
 export function AskTheImamDialog({ open, onOpenChange, question }: AskTheImamDialogProps) {
@@ -42,11 +42,10 @@ export function AskTheImamDialog({ open, onOpenChange, question }: AskTheImamDia
       };
       fetchHint();
     } else if (!open) {
-      // Reset state when dialog is closed
       setTimeout(() => {
-          setHint(null);
-          setError(null);
-          setIsLoading(false);
+        setHint(null);
+        setError(null);
+        setIsLoading(false);
       }, 300);
     }
   }, [open, question, hint, error]);
@@ -73,7 +72,7 @@ export function AskTheImamDialog({ open, onOpenChange, question }: AskTheImamDia
           )}
           {hint && (
             <div className="p-4 bg-secondary rounded-lg">
-                <p className="text-secondary-foreground">{hint}</p>
+              <p className="text-secondary-foreground">{hint}</p>
             </div>
           )}
           {error && <p className="text-destructive">{error}</p>}
