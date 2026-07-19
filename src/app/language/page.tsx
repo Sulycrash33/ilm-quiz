@@ -7,11 +7,11 @@ import { IslamicBackground } from '@/components/layout/IslamicBackground';
 import { MosqueIcon } from '@/components/icons/MosqueIcon';
 
 const languages = [
-  { name: 'English', href: '/onboarding/age', dir: 'ltr', code: 'gb' },
   { name: 'Hausa', href: '/onboarding/age', dir: 'ltr', code: 'ng' },
-  { name: 'العربية', href: '/onboarding/age', dir: 'rtl', font: "'Amiri', serif", code: 'sa' },
+  { name: 'English', href: '/onboarding/age', dir: 'ltr', code: 'gb' },
   { name: 'Français', href: '/onboarding/age', dir: 'ltr', code: 'fr' },
-  { name: 'Kiswahili', href: '/onboarding/age', dir: 'ltr', code: 'tz' },
+  { name: 'العربية', href: '/onboarding/age', dir: 'rtl', font: "'Amiri', serif", code: 'sa' },
+  { name: 'Bahasa Melayu', href: '/onboarding/age', dir: 'ltr', code: 'my' },
 ];
 
 export default function LanguageSelectionPage() {
