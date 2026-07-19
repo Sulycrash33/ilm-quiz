@@ -148,6 +148,15 @@ export function QuizView({ questions, categoryTitle, onExit }: QuizViewProps) {
       setStreak(prev => prev + 1);
       setShowParticles(true);
       setTimeout(() => setShowParticles(false), 1000);
+      // Real rank progression from real play. NOTE: we deliberately do not
+      // also insert into `attempts` here - the local QUESTIONS content
+      // (constants.ts, string IDs like "an1") has no relationship to the
+      // real `questions` table (UUID-keyed, FK-constrained), so an attempts
+      // row can't be logged until the content pipeline unifies these. See
+      // the categories-taxonomy note for the same underlying issue.
+      if (profile) {
+        updateProfile({ totalXp: profile.totalXp + pointsEarned });
+      }
     } else {
       setLives(prev => Math.max(0, prev - 1));
       setStreak(0);
