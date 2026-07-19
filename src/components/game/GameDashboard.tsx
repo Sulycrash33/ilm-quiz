@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 
 import { DailyHadith } from "@/components/game/DailyHadith";
@@ -13,8 +12,11 @@ import { DailyProgressCard } from "@/components/game/DailyProgressCard";
 import { PrayerTimesCard } from "./PrayerTimesCard";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { DailyLoginRewards } from "./DailyLoginRewards";
-import { Gift, Target } from "lucide-react";
-
+import { Target } from "lucide-react";
+import { useProfile } from "@/hooks/use-profile";
+import { useTodayStats } from "@/hooks/use-today-stats";
+import { DAILY_REWARDS } from "@/lib/achievements-data";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -22,12 +24,20 @@ const cardVariants = {
 };
 
 export function GameDashboard() {
-  const [userPoints, setUserPoints] = useState(750);
-  const [streak, setStreak] = useState(7);
-  const [coins, setCoins] = useState(1250);
-  const [questionsToday] = useState(13);
-  const [accuracy] = useState(87);
-  const [dailyProgress] = useState(65);
+  const { profile, loading, updateProfile } = useProfile();
+  const { questionsToday, accuracy } = useTodayStats();
+
+  const dailyStreak = (profile?.streakCount ?? 0) + 1; // next claimable day
+
+  const handleClaim = (day: number) => {
+    if (day !== dailyStreak || !profile) return;
+    const reward = DAILY_REWARDS[day - 1];
+    const newStreak = Math.min(dailyStreak + 1, 8);
+    updateProfile({
+      streakCount: newStreak - 1,
+      coins: profile.coins + reward.coins,
+    });
+  };
 
   return (
     <motion.div
@@ -37,7 +47,13 @@ export function GameDashboard() {
       variants={cardVariants}
     >
       <motion.div className="text-center mb-8" variants={cardVariants}>
-        <h1 className="text-3xl font-bold text-primary mb-2">Assalamu Alaikum, Zainab!</h1>
+        {loading ? (
+          <Skeleton className="h-9 w-72 mx-auto mb-2" />
+        ) : (
+          <h1 className="text-3xl font-bold font-headline text-primary mb-2">
+            Assalamu Alaikum{profile?.displayName ? `, ${profile.displayName}` : ""}!
+          </h1>
+        )}
         <p className="text-muted-foreground text-lg">Ready to expand your Islamic knowledge today?</p>
       </motion.div>
 
@@ -51,15 +67,15 @@ export function GameDashboard() {
       </div>
       
       <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" variants={cardVariants}>
-        <RankBadge currentPoints={userPoints} />
-        <StreakCounter streak={streak} />
-        <UserStats coins={coins} />
+        <RankBadge currentPoints={profile?.totalXp ?? 0} />
+        <StreakCounter streak={profile?.streakCount ?? 0} />
+        <UserStats coins={profile?.coins ?? 0} />
       </motion.div>
 
       <motion.div variants={cardVariants} className="mb-8">
         <Card className="border-2 border-primary/20 shadow-xl bg-gradient-to-br from-primary/5 to-accent/5">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary">
+                <CardTitle className="flex items-center gap-2 font-headline text-primary">
                     <Target className="h-6 w-6" />
                     Today's Missions
                 </CardTitle>
@@ -68,9 +84,8 @@ export function GameDashboard() {
                 <DailyProgressCard
                     questionsToday={questionsToday}
                     accuracy={accuracy}
-                    dailyProgress={dailyProgress}
                 />
-                 <DailyLoginRewards coins={coins} setCoins={setCoins} />
+                 <DailyLoginRewards dailyStreak={dailyStreak} onClaim={handleClaim} />
             </CardContent>
         </Card>
       </motion.div>

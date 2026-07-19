@@ -1,40 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Gift } from "lucide-react"
-import type { DailyReward } from "@/lib/types"
 import { DAILY_REWARDS } from "@/lib/achievements-data"
-import { useProfile } from "@/hooks/use-profile"
 
 interface DailyLoginRewardsProps {
-  coins: number;
-  setCoins: React.Dispatch<React.SetStateAction<number>>;
+  /** 1-indexed: which day's reward is currently claimable. */
+  dailyStreak: number;
+  onClaim: (day: number) => void;
 }
 
-export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
-  const { profile, updateProfile } = useProfile();
-  const [dailyStreak, setDailyStreak] = useState(3);
-
-  // Seed from the real, cross-device profile once it loads.
-  useEffect(() => {
-    if (profile) {
-      setDailyStreak(profile.streakCount || 3);
-    }
-  }, [profile]);
-
-  const claimDailyReward = (day: number) => {
-    if (day === dailyStreak) {
-      const reward = DAILY_REWARDS[day - 1]
-      const newStreak = Math.min(dailyStreak + 1, 8);
-      setCoins((prev) => prev + reward.coins)
-      setDailyStreak(newStreak)
-      updateProfile({ streakCount: newStreak, coins: coins + reward.coins });
-    }
-  }
-
+export function DailyLoginRewards({ dailyStreak, onClaim }: DailyLoginRewardsProps) {
   return (
     <Card className="border-2 border-accent/50 shadow-xl">
       <CardHeader className="bg-gradient-to-r from-accent/10 to-accent/20">
@@ -45,7 +23,7 @@ export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
       </CardHeader>
       <CardContent className="pt-6 space-y-4">
         <div className="text-center mb-4">
-          <div className="text-2xl font-bold text-primary">{dailyStreak-1} Day Streak</div>
+          <div className="text-2xl font-bold text-primary">{dailyStreak - 1} Day Streak</div>
           <p className="text-sm text-muted-foreground">Keep logging in to maintain your streak!</p>
         </div>
         <div className="space-y-3">
@@ -90,7 +68,7 @@ export function DailyLoginRewards({ coins, setCoins }: DailyLoginRewardsProps) {
                   {isToday && (
                     <Button
                       size="sm"
-                      onClick={() => claimDailyReward(day)}
+                      onClick={() => onClaim(day)}
                       aria-label={`Claim reward for day ${day}`}
                     >
                       Claim

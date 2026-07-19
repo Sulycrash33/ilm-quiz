@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export interface ProfileGameState {
   id: string;
+  displayName: string | null;
   coins: number;
   highScore: number;
   streakCount: number;
@@ -43,13 +44,14 @@ export function useProfile() {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, coins, high_score, streak_count, last_spin_at, total_xp")
+      .select("id, display_name, coins, high_score, streak_count, last_spin_at, total_xp")
       .eq("id", user.id)
       .single();
 
     if (!error && data) {
       setProfile({
         id: data.id,
+        displayName: data.display_name,
         coins: data.coins,
         highScore: data.high_score,
         streakCount: data.streak_count,

@@ -7,15 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Crown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useProfile } from "@/hooks/use-profile"
+import { DAILY_REWARDS } from "@/lib/achievements-data"
 
 export function RewardCenter() {
   const { profile, updateProfile } = useProfile();
   const [coins, setCoins] = useState(1250);
+  const [dailyStreak, setDailyStreak] = useState(1);
 
   // Seed from the real, cross-device profile once it loads.
   useEffect(() => {
     if (profile) {
       setCoins(profile.coins);
+      // streak_count tracks completed days; the claimable day is the next one.
+      setDailyStreak((profile.streakCount || 0) + 1);
     }
   }, [profile]);
 
@@ -26,13 +30,22 @@ export function RewardCenter() {
     updateProfile({ coins });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coins]);
-  
+
+  const handleClaim = (day: number) => {
+    if (day !== dailyStreak) return;
+    const reward = DAILY_REWARDS[day - 1];
+    const newStreak = Math.min(dailyStreak + 1, 8);
+    const newCoins = coins + reward.coins;
+    setCoins(newCoins);
+    setDailyStreak(newStreak);
+    updateProfile({ streakCount: newStreak - 1, coins: newCoins });
+  };
 
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <SpinWheel coins={coins} setCoins={setCoins} />
-        <DailyLoginRewards coins={coins} setCoins={setCoins} />
+        <DailyLoginRewards dailyStreak={dailyStreak} onClaim={handleClaim} />
       </div>
 
       <Card className="border-2 border-amethyst/30 shadow-xl">
