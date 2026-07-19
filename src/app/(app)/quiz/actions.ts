@@ -4,24 +4,16 @@ import { createClient } from '@/lib/supabase/server';
 import type { GradeResult } from '@/lib/types';
 import { pointsForDifficulty, streakMultiplier } from '@/lib/gamification';
 
-interface SubmitOptions {
-  usedHint?: boolean;
-  responseTimeMs?: number;
-}
+interface SubmitOptions { usedHint?: boolean; responseTimeMs?: number; }
 
-/**
- * The only place where quiz rewards are decided. The browser submits a choice,
- * but never decides XP, coins, streak multipliers, or the answer key.
- */
+/** Server-authoritative grading and reward calculation. */
 export async function submitAnswer(
   questionId: string,
   choiceIndex: number,
   opts: SubmitOptions = {},
 ): Promise<GradeResult & { streakMultiplier: number }> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('You must be signed in to answer.');
   if (!Number.isInteger(choiceIndex) || choiceIndex < 0) throw new Error('Invalid answer.');
 
@@ -30,22 +22,32 @@ export async function submitAnswer(
     .select('id, choices, correct_choice_index, explanation, citation_reference, difficulty, review_status')
     .eq('id', questionId)
     .single();
-
   if (error || !q) throw new Error('Question not found.');
   if (q.review_status !== 'published') throw new Error('This question is not available.');
   if (choiceIndex >= ((q.choices ?? []) as unknown[]).length) throw new Error('Invalid answer.');
 
+  const { data: recentAttempts } = await supabase
+    .from('attempts')
+    .select('is_correct')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
+  let currentStreak = 0;
+  for (const attempt of recentAttempts ?? []) {
+    if (!attempt.is_correct) break;
+    currentStreak += 1;
+  }
+
   const correct = choiceIndex === q.correct_choice_index;
+  const multiplier = correct ? streakMultiplier(currentStreak) : 1;
+  const baseXp = correct ? pointsForDifficulty(q.difficulty as string) : 0;
+  const xpEarned = baseXp * multiplier;
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('coins, total_xp, high_score')
     .eq('id', user.id)
     .single();
-
-  const currentStreak = 0;
-  const multiplier = correct ? streakMultiplier(currentStreak) : 1;
-  const baseXp = correct ? pointsForDifficulty(q.difficulty as string) : 0;
-  const xpEarned = baseXp * multiplier;
 
   const { error: attemptError } = await supabase.from('attempts').insert({
     user_id: user.id,
@@ -80,18 +82,14 @@ export async function submitAnswer(
 
 export async function fiftyFifty(questionId: string): Promise<number[]> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('You must be signed in.');
-
   const { data: q, error } = await supabase
     .from('questions')
     .select('correct_choice_index, choices, review_status')
     .eq('id', questionId)
     .single();
   if (error || !q || q.review_status !== 'published') throw new Error('Question not found.');
-
   const total = ((q.choices ?? []) as string[]).length;
   const wrong: number[] = [];
   for (let i = 0; i < total; i += 1) if (i !== q.correct_choice_index) wrong.push(i);
