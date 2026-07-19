@@ -21,6 +21,12 @@ export default function WelcomePage() {
         <Button asChild size="lg" className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-6 text-lg font-bold shadow-lg transition-transform hover:scale-105">
           <Link href="/language">Begin Your Quest</Link>
         </Button>
+        <p className="text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-primary hover:underline">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );

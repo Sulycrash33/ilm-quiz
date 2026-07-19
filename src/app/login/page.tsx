@@ -12,6 +12,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { IslamicBackground } from "@/components/layout/IslamicBackground";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getOnboardingSelections, clearOnboardingSelections } from "@/lib/onboarding-storage";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -40,6 +41,20 @@ export default function LoginPage() {
       });
       return;
     }
+
+    // Covers the case where signup required email confirmation: the
+    // onboarding selections were still waiting in sessionStorage.
+    const selections = getOnboardingSelections();
+    if (data.user && (selections.ageRange || selections.avatarUrl)) {
+      await supabase
+        .from("profiles")
+        .update({
+          ...(selections.ageRange ? { age_range: selections.ageRange } : {}),
+          ...(selections.avatarUrl ? { avatar_id: selections.avatarUrl } : {}),
+        })
+        .eq("id", data.user.id);
+    }
+    clearOnboardingSelections();
 
     router.push("/home");
     router.refresh();

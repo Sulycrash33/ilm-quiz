@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { IslamicBackground } from "@/components/layout/IslamicBackground"
 import { Progress } from "@/components/ui/progress"
+import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 
 const ageRanges = [
   { range: "Under 13", description: "Young learner" },
@@ -21,8 +22,7 @@ export default function AgeSelectionPage() {
   const router = useRouter()
 
   const handleSelect = (ageRange: string) => {
-    // In a real app, you'd save this to state management or a cookie
-    console.log("Selected age range:", ageRange)
+    saveOnboardingSelection({ ageRange })
     router.push("/onboarding/avatar")
   }
 

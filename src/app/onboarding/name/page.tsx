@@ -10,15 +10,18 @@ import { Label } from "@/components/ui/label"
 import { ArrowLeft, Check } from "lucide-react"
 import { IslamicBackground } from "@/components/layout/IslamicBackground"
 import { Progress } from "@/components/ui/progress"
+import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 
 export default function NameSelectionPage() {
   const router = useRouter()
   const [name, setName] = useState("")
 
-  const handleContinue = () => {
-    // In a real app, you'd save this to state management or a cookie
-    console.log("Selected name:", name)
-    router.push("/home") // Go to dashboard after onboarding
+  const handleContinue = (guestFallback = false) => {
+    saveOnboardingSelection({ name: name.trim() || (guestFallback ? "Guest Learner" : name) })
+    // No account exists yet at this point - onboarding data has nowhere to
+    // live until signup. Hand off to account creation instead of /home,
+    // which real auth now correctly blocks for anonymous visitors.
+    router.push("/signup")
   }
 
   return (
@@ -55,7 +58,7 @@ export default function NameSelectionPage() {
             <Button
               size="lg"
               className="w-full h-12"
-              onClick={handleContinue}
+              onClick={() => handleContinue()}
               disabled={!name.trim()}
             >
               Finish Setup <Check className="h-5 w-5 ml-2" />
@@ -63,7 +66,7 @@ export default function NameSelectionPage() {
           </CardContent>
         </Card>
          <div className="text-center mt-6">
-            <Button variant="link" onClick={handleContinue}>
+            <Button variant="link" onClick={() => handleContinue(true)}>
                 Continue with a guest name
             </Button>
         </div>

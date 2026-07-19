@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { IslamicBackground } from "@/components/layout/IslamicBackground";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getOnboardingSelections, clearOnboardingSelections } from "@/lib/onboarding-storage";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -21,6 +22,13 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // If the person came through onboarding (age -> avatar -> name), prefill
+  // the name they already chose instead of asking again.
+  useEffect(() => {
+    const selections = getOnboardingSelections();
+    if (selections.name) setUsername(selections.name);
+  }, []);
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
@@ -66,6 +74,20 @@ export default function SignupPage() {
       router.push("/login");
       return;
     }
+
+    // Apply the age/avatar chosen during onboarding to the real profile
+    // row now that an account actually exists to attach it to.
+    const selections = getOnboardingSelections();
+    if (data.user && (selections.ageRange || selections.avatarUrl)) {
+      await supabase
+        .from("profiles")
+        .update({
+          ...(selections.ageRange ? { age_range: selections.ageRange } : {}),
+          ...(selections.avatarUrl ? { avatar_id: selections.avatarUrl } : {}),
+        })
+        .eq("id", data.user.id);
+    }
+    clearOnboardingSelections();
 
     router.push("/home");
     router.refresh();

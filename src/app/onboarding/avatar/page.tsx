@@ -10,6 +10,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 import { IslamicBackground } from "@/components/layout/IslamicBackground"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 
 const avatars = {
   female: [
@@ -40,8 +41,7 @@ export default function AvatarSelectionPage() {
 
   const handleSelect = (avatarSrc: string) => {
     setSelectedAvatar(avatarSrc)
-    // In a real app, you'd save this to state management or a cookie
-    console.log("Selected avatar:", avatarSrc)
+    saveOnboardingSelection({ avatarUrl: avatarSrc })
     setTimeout(() => router.push("/onboarding/name"), 300)
   }
 
