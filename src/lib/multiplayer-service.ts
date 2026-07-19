@@ -5,12 +5,64 @@ import type {
   QuizRoom,
   QuizRoomPlayer,
   QuizRoomQuestion,
+  QuizRoomDB,
+  QuizRoomPlayerDB,
+  QuizRoomQuestionDB,
   CreateRoomInput,
   JoinRoomInput,
   SubmitAnswerInput,
 } from "./multiplayer-types"
 
-const supabase = createClient()
+// Transform functions from DB to App types
+function transformRoom(db: QuizRoomDB): QuizRoom {
+  return {
+    id: db.id,
+    code: db.code,
+    hostId: db.host_id,
+    hostName: db.host_name,
+    status: db.status,
+    category: db.category,
+    difficulty: db.difficulty,
+    maxPlayers: db.max_players,
+    currentPlayers: db.current_players,
+    questionCount: db.question_count,
+    currentQuestion: db.current_question,
+    createdAt: db.created_at,
+    startsAt: db.starts_at,
+    finishedAt: db.finished_at,
+  }
+}
+
+function transformPlayer(db: QuizRoomPlayerDB): QuizRoomPlayer {
+  return {
+    id: db.id,
+    roomId: db.room_id,
+    userId: db.user_id,
+    userName: db.user_name,
+    avatarUrl: db.avatar_url,
+    score: db.score,
+    correctAnswers: db.correct_answers,
+    totalAnswers: db.total_answers,
+    streak: db.streak,
+    isReady: db.is_ready,
+    isHost: db.is_host,
+    joinedAt: db.joined_at,
+  }
+}
+
+function transformQuestion(db: QuizRoomQuestionDB): QuizRoomQuestion {
+  return {
+    id: db.id,
+    roomId: db.room_id,
+    questionId: db.question_id,
+    questionText: db.question_text,
+    choices: Array.isArray(db.choices) ? (db.choices as string[]) : (Object.values(db.choices) as string[]),
+    correctIndex: db.correct_index,
+    timeLimit: db.time_limit,
+    orderNum: db.order_num,
+    startedAt: db.started_at,
+  }
+}
 
 // Generate a unique 6-character room code
 function generateRoomCode(): string {
@@ -23,7 +75,12 @@ function generateRoomCode(): string {
 }
 
 // Create a new quiz room
-export async function createRoom(input: CreateRoomInput, hostId: string, hostName: string) {
+export async function createRoom(
+  input: CreateRoomInput,
+  hostId: string,
+  hostName: string
+): Promise<QuizRoom> {
+  const supabase = createClient()
   const roomCode = generateRoomCode()
 
   const { data: room, error: roomError } = await supabase
@@ -43,7 +100,10 @@ export async function createRoom(input: CreateRoomInput, hostId: string, hostNam
     .select()
     .single()
 
-  if (roomError) throw roomError
+  if (roomError) {
+    console.error("Error creating room:", roomError)
+    throw new Error("Failed to create room")
+  }
 
   // Add host as first player
   const { error: playerError } = await supabase
@@ -60,13 +120,22 @@ export async function createRoom(input: CreateRoomInput, hostId: string, hostNam
       is_host: true,
     })
 
-  if (playerError) throw playerError
+  if (playerError) {
+    console.error("Error adding host:", playerError)
+    throw new Error("Failed to add host to room")
+  }
 
-  return room
+  return transformRoom(room as QuizRoomDB)
 }
 
 // Join an existing room
-export async function joinRoom(input: JoinRoomInput, userId: string, userName: string) {
+export async function joinRoom(
+  input: JoinRoomInput,
+  userId: string,
+  userName: string
+): Promise<QuizRoom> {
+  const supabase = createClient()
+
   // Find room by code
   const { data: room, error: roomError } = await supabase
     .from("quiz_rooms")
@@ -110,7 +179,10 @@ export async function joinRoom(input: JoinRoomInput, userId: string, userName: s
       is_host: false,
     })
 
-  if (playerError) throw playerError
+  if (playerError) {
+    console.error("Error adding player:", playerError)
+    throw new Error("Failed to join room")
+  }
 
   // Update player count
   await supabase
@@ -118,11 +190,13 @@ export async function joinRoom(input: JoinRoomInput, userId: string, userName: s
     .update({ current_players: room.current_players + 1 })
     .eq("id", room.id)
 
-  return room
+  return transformRoom(room as QuizRoomDB)
 }
 
 // Start the quiz (host only)
-export async function startQuiz(roomId: string) {
+export async function startQuiz(roomId: string): Promise<void> {
+  const supabase = createClient()
+
   // Get room details
   const { data: room, error: roomError } = await supabase
     .from("quiz_rooms")
@@ -146,7 +220,7 @@ export async function startQuiz(roomId: string) {
   }
 
   // Shuffle and insert questions
-  const shuffled = questions.sort(() => Math.random() - 0.5)
+  const shuffled = [...questions].sort(() => Math.random() - 0.5)
   const roomQuestions = shuffled.map((q, i) => ({
     room_id: roomId,
     question_id: q.id,
@@ -154,17 +228,20 @@ export async function startQuiz(roomId: string) {
     choices: q.choices,
     correct_index: q.correct_choice_index,
     time_limit: 30,
-    order: i + 1,
+    order_num: i + 1,
   }))
 
   const { error: insertError } = await supabase
     .from("quiz_room_questions")
     .insert(roomQuestions)
 
-  if (insertError) throw insertError
+  if (insertError) {
+    console.error("Error inserting questions:", insertError)
+    throw new Error("Failed to insert questions")
+  }
 
-  // Update room status
-  const startsAt = new Date(Date.now() + 5000).toISOString() // 5 second countdown
+  // Update room status with countdown
+  const startsAt = new Date(Date.now() + 5000).toISOString()
   await supabase
     .from("quiz_rooms")
     .update({
@@ -176,17 +253,35 @@ export async function startQuiz(roomId: string) {
 }
 
 // Submit an answer
-export async function submitAnswer(input: SubmitAnswerInput, userId: string) {
+export async function submitAnswer(
+  input: SubmitAnswerInput,
+  userId: string
+): Promise<{ isCorrect: boolean; pointsEarned: number }> {
+  const supabase = createClient()
+
   // Get the question
   const { data: question, error: qError } = await supabase
     .from("quiz_room_questions")
-    .select("correct_index")
+    .select("id, correct_index")
     .eq("id", input.questionId)
     .single()
 
   if (qError || !question) throw new Error("Question not found")
 
   const isCorrect = input.selectedIndex === question.correct_index
+
+  // Check if already answered
+  const { data: existing } = await supabase
+    .from("quiz_room_answers")
+    .select("id")
+    .eq("room_id", input.roomId)
+    .eq("question_id", input.questionId)
+    .eq("user_id", userId)
+    .single()
+
+  if (existing) {
+    throw new Error("Already answered this question")
+  }
 
   // Insert answer
   const { error: answerError } = await supabase
@@ -200,7 +295,13 @@ export async function submitAnswer(input: SubmitAnswerInput, userId: string) {
       time_taken: input.timeTaken,
     })
 
-  if (answerError) throw answerError
+  if (answerError) {
+    console.error("Error submitting answer:", answerError)
+    throw new Error("Failed to submit answer")
+  }
+
+  // Calculate points
+  const pointsEarned = isCorrect ? Math.max(100 - input.timeTaken * 2, 10) : 0
 
   // Update player score
   const { data: player } = await supabase
@@ -211,7 +312,6 @@ export async function submitAnswer(input: SubmitAnswerInput, userId: string) {
     .single()
 
   if (player) {
-    const pointsEarned = isCorrect ? Math.max(100 - input.timeTaken * 2, 10) : 0
     const newStreak = isCorrect ? player.streak + 1 : 0
     const streakBonus = newStreak >= 3 ? (newStreak - 2) * 25 : 0
 
@@ -227,11 +327,13 @@ export async function submitAnswer(input: SubmitAnswerInput, userId: string) {
       .eq("user_id", userId)
   }
 
-  return { isCorrect, pointsEarned: isCorrect ? Math.max(100 - input.timeTaken * 2, 10) : 0 }
+  return { isCorrect, pointsEarned }
 }
 
 // Move to next question
-export async function nextQuestion(roomId: string) {
+export async function nextQuestion(roomId: string): Promise<boolean> {
+  const supabase = createClient()
+
   const { data: room } = await supabase
     .from("quiz_rooms")
     .select("current_question, question_count")
@@ -244,42 +346,58 @@ export async function nextQuestion(roomId: string) {
     // Quiz finished
     await supabase
       .from("quiz_rooms")
-      .update({ status: "finished" })
+      .update({
+        status: "finished",
+        finished_at: new Date().toISOString(),
+      })
       .eq("id", roomId)
+    return true
   } else {
     await supabase
       .from("quiz_rooms")
       .update({ current_question: room.current_question + 1 })
       .eq("id", roomId)
+    return false
   }
 }
 
 // Get room state
 export async function getRoomState(roomId: string) {
-  const { data: room } = await supabase
+  const supabase = createClient()
+
+  const { data: roomDB } = await supabase
     .from("quiz_rooms")
     .select("*")
     .eq("id", roomId)
     .single()
 
-  const { data: players } = await supabase
+  const { data: playersDB } = await supabase
     .from("quiz_room_players")
     .select("*")
     .eq("room_id", roomId)
     .order("score", { ascending: false })
 
-  const { data: currentQuestion } = await supabase
+  const { data: questionDB } = await supabase
     .from("quiz_room_questions")
     .select("*")
     .eq("room_id", roomId)
-    .eq("order", room?.current_question || 1)
+    .eq("order_num", roomDB?.current_question || 1)
     .single()
 
-  return { room, players: players || [], currentQuestion }
+  return {
+    room: roomDB ? transformRoom(roomDB as QuizRoomDB) : null,
+    players: (playersDB || []).map((p) => transformPlayer(p as QuizRoomPlayerDB)),
+    currentQuestion: questionDB ? transformQuestion(questionDB as QuizRoomQuestionDB) : null,
+  }
 }
 
-// Subscribe to room updates
-export function subscribeToRoom(roomId: string, callback: (payload: any) => void) {
+// Subscribe to room updates (real-time)
+export function subscribeToRoom(
+  roomId: string,
+  callback: (table: string, payload: any) => void
+) {
+  const supabase = createClient()
+
   const channel = supabase
     .channel(`room:${roomId}`)
     .on(
@@ -290,7 +408,7 @@ export function subscribeToRoom(roomId: string, callback: (payload: any) => void
         table: "quiz_rooms",
         filter: `id=eq.${roomId}`,
       },
-      callback
+      (payload) => callback("quiz_rooms", payload)
     )
     .on(
       "postgres_changes",
@@ -300,7 +418,7 @@ export function subscribeToRoom(roomId: string, callback: (payload: any) => void
         table: "quiz_room_players",
         filter: `room_id=eq.${roomId}`,
       },
-      callback
+      (payload) => callback("quiz_room_players", payload)
     )
     .on(
       "postgres_changes",
@@ -310,7 +428,17 @@ export function subscribeToRoom(roomId: string, callback: (payload: any) => void
         table: "quiz_room_answers",
         filter: `room_id=eq.${roomId}`,
       },
-      callback
+      (payload) => callback("quiz_room_answers", payload)
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "quiz_room_questions",
+        filter: `room_id=eq.${roomId}`,
+      },
+      (payload) => callback("quiz_room_questions", payload)
     )
     .subscribe()
 
@@ -320,7 +448,9 @@ export function subscribeToRoom(roomId: string, callback: (payload: any) => void
 }
 
 // Leave room
-export async function leaveRoom(roomId: string, userId: string) {
+export async function leaveRoom(roomId: string, userId: string): Promise<void> {
+  const supabase = createClient()
+
   await supabase
     .from("quiz_room_players")
     .delete()
@@ -329,7 +459,7 @@ export async function leaveRoom(roomId: string, userId: string) {
 
   const { data: room } = await supabase
     .from("quiz_rooms")
-    .select("current_players")
+    .select("current_players, host_id")
     .eq("id", roomId)
     .single()
 
@@ -342,6 +472,63 @@ export async function leaveRoom(roomId: string, userId: string) {
         .from("quiz_rooms")
         .update({ current_players: room.current_players - 1 })
         .eq("id", roomId)
+
+      // If host left, assign new host
+      if (room.host_id === userId) {
+        const { data: nextHost } = await supabase
+          .from("quiz_room_players")
+          .select("user_id")
+          .eq("room_id", roomId)
+          .order("joined_at", { ascending: true })
+          .limit(1)
+          .single()
+
+        if (nextHost) {
+          await supabase
+            .from("quiz_rooms")
+            .update({ host_id: nextHost.user_id })
+            .eq("id", roomId)
+
+          await supabase
+            .from("quiz_room_players")
+            .update({ is_host: true })
+            .eq("room_id", roomId)
+            .eq("user_id", nextHost.user_id)
+        }
+      }
     }
   }
+}
+
+// Toggle ready status
+export async function toggleReady(roomId: string, userId: string): Promise<void> {
+  const supabase = createClient()
+
+  const { data: player } = await supabase
+    .from("quiz_room_players")
+    .select("is_ready")
+    .eq("room_id", roomId)
+    .eq("user_id", userId)
+    .single()
+
+  if (player) {
+    await supabase
+      .from("quiz_room_players")
+      .update({ is_ready: !player.is_ready })
+      .eq("room_id", roomId)
+      .eq("user_id", userId)
+  }
+}
+
+// Get current user's room (if any)
+export async function getCurrentRoom(userId: string) {
+  const supabase = createClient()
+
+  const { data: player } = await supabase
+    .from("quiz_room_players")
+    .select("room_id, quiz_rooms(*)")
+    .eq("user_id", userId)
+    .single()
+
+  return player?.quiz_rooms || null
 }

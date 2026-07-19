@@ -1,70 +1,119 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { IslamicBackground } from '@/components/layout/IslamicBackground';
-import { MosqueIcon } from '@/components/icons/MosqueIcon';
+"use client"
+
+import Link from "next/link"
+import Image from "next/image"
+import { PremiumButton } from "@/components/ui/premium-button"
+import { PremiumCard } from "@/components/ui/premium-card"
+import { motion } from "framer-motion"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 const languages = [
-  { name: 'Hausa', href: '/onboarding/age', dir: 'ltr', code: 'ng' },
-  { name: 'English', href: '/onboarding/age', dir: 'ltr', code: 'gb' },
-  { name: 'Français', href: '/onboarding/age', dir: 'ltr', code: 'fr' },
-  { name: 'العربية', href: '/onboarding/age', dir: 'rtl', font: "'Amiri', serif", code: 'sa' },
-  { name: 'Bahasa Melayu', href: '/onboarding/age', dir: 'ltr', code: 'my' },
-];
+  { name: "English", code: "en", flag: "gb", dir: "ltr" },
+  { name: "Hausa", code: "ha", flag: "ng", dir: "ltr" },
+  { name: "Français", code: "fr", flag: "fr", dir: "ltr" },
+  { name: "العربية", code: "ar", flag: "sa", dir: "rtl", font: "'Amiri', serif" },
+  { name: "Bahasa Melayu", code: "ms", flag: "my", dir: "ltr" },
+  { name: "Bahasa Indonesia", code: "id", flag: "id", dir: "ltr" },
+]
 
 export default function LanguageSelectionPage() {
+  const { setLocale, t } = useLanguage()
+
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <IslamicBackground />
-      <div className="absolute top-4 left-4 z-20">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/">
-            <ArrowLeft className="h-6 w-6" />
-            <span className="sr-only">Back</span>
-          </Link>
-        </Button>
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute top-1/2 -left-24 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
+        <div className="absolute inset-0 mashrabiya-overlay pointer-events-none" />
       </div>
+
       <div className="z-10 w-full max-w-md">
-        <Card className="w-full bg-card/80 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <MosqueIcon className="h-10 w-10 text-primary" />
-            </div>
-            <CardTitle className="text-3xl font-bold font-headline">
-              Select a Language
-            </CardTitle>
-            <CardDescription>Choose your preferred language to continue.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-3">
-            {languages.map((lang) => (
-              <Button
-                key={lang.name}
-                asChild
-                size="lg"
-                variant="outline"
-                className={`h-16 transform text-lg transition-transform hover:scale-105 hover:bg-muted/80 ${lang.font ? "font-amiri" : ""}`}
-              >
-                <Link href={lang.href} dir={lang.dir} className="flex w-full items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="relative h-6 w-8 overflow-hidden rounded-sm">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center border-2 border-primary/30">
+            <svg className="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
+            </svg>
+          </div>
+          <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary mb-2">
+            {t("welcome")}
+          </h1>
+          <p className="text-on-surface-variant">
+            Choose your preferred language
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <PremiumCard className="p-6">
+            <div className="space-y-3">
+              {languages.map((lang, index) => (
+                <motion.div
+                  key={lang.code}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
+                >
+                  <Link
+                    href="/onboarding/age"
+                    onClick={() => setLocale(lang.code as any)}
+                    dir={lang.dir}
+                    className={`flex items-center justify-between p-4 rounded-xl border transition-all hover:bg-surface-container-high hover:border-primary/30 ${
+                      lang.font || ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="relative h-8 w-12 overflow-hidden rounded-md">
                         <Image
-                            src={`https://flagcdn.com/${lang.code}.svg`}
-                            alt={`${lang.name} flag`}
-                            layout="fill"
-                            objectFit="cover"
+                          src={`https://flagcdn.com/${lang.flag}.svg`}
+                          alt={`${lang.name} flag`}
+                          fill
+                          className="object-cover"
                         />
+                      </div>
+                      <span className="font-bold text-on-surface text-lg">{lang.name}</span>
                     </div>
-                    <span>{lang.name}</span>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground" />
-                </Link>
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
+                    <svg
+                      className="w-5 h-5 text-on-surface-variant"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </PremiumCard>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center mt-6"
+        >
+          <p className="text-sm text-on-surface-variant/50">
+            Malay & Indonesian have the largest Muslim populations in the world
+          </p>
+          <p className="text-sm text-on-surface-variant/50">
+            with over 200 million Muslims combined
+          </p>
+        </motion.div>
       </div>
     </div>
-  );
+  )
 }
