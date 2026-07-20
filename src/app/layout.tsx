@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter, Source_Serif_4 } from "next/font/google"
 import { ThemeProvider } from "@/components/ui/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { LanguageProvider } from "@/contexts/LanguageContext"
 import "./globals.css"
 
 const inter = Inter({
@@ -69,8 +70,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <LanguageProvider>
+            {children}
+            <Toaster />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
