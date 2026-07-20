@@ -1,4 +1,4 @@
-
+﻿
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -27,7 +27,7 @@ const gameModes = [
         title: "Revision Mode",
         description: "Practice questions you've previously answered incorrectly to master difficult topics.",
         icon: RefreshCcw,
-        color: "border-lapis/20 bg-lapis/5 text-lapis",
+        color: "border-blue-400/20 bg-blue-400/5 text-blue-400",
         buttonText: "Start Revising",
         href: "/quiz",
     },

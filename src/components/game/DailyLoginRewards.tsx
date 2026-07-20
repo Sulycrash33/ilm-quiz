@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -37,7 +37,7 @@ export function DailyLoginRewards({ dailyStreak, onClaim }: DailyLoginRewardsPro
                 key={day}
                 className={`
                   flex items-center justify-between p-4 rounded-lg border-2 transition-all duration-200
-                  ${isClaimed ? "bg-jade-soft border-jade/30" : ""}
+                  ${isClaimed ? "bg-emerald-400/10 border-emerald-400/30" : ""}
                   ${isToday ? "bg-secondary border-primary/50 shadow-md" : ""}
                   ${isLocked ? "bg-muted/50 border-border opacity-60" : ""}
                 `}
@@ -48,12 +48,12 @@ export function DailyLoginRewards({ dailyStreak, onClaim }: DailyLoginRewardsPro
                   <div
                     className={`
                       w-10 h-10 rounded-full flex items-center justify-center font-bold
-                      ${isClaimed ? "bg-jade text-jade-foreground" : ""}
+                      ${isClaimed ? "bg-emerald-400 text-emerald-400-foreground" : ""}
                       ${isToday ? "bg-primary text-primary-foreground" : ""}
                       ${isLocked ? "bg-muted text-muted-foreground" : ""}
                     `}
                   >
-                    {isClaimed ? "✓" : day}
+                    {isClaimed ? "âœ“" : day}
                   </div>
                   <div>
                     <div className="font-semibold">Day {day}</div>
@@ -64,7 +64,7 @@ export function DailyLoginRewards({ dailyStreak, onClaim }: DailyLoginRewardsPro
                   </div>
                 </div>
                 <div>
-                  {isClaimed && <Badge className="bg-jade-soft text-jade">Claimed</Badge>}
+                  {isClaimed && <Badge className="bg-emerald-400/10 text-emerald-400">Claimed</Badge>}
                   {isToday && (
                     <Button
                       size="sm"

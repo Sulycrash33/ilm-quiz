@@ -1,4 +1,4 @@
--- Migration 0003: Multiplayer Quiz Rooms
+﻿-- Migration 0003: Multiplayer Quiz Rooms
 -- Adds tables for real-time multiplayer quiz functionality
 
 -- 1. Quiz Rooms
@@ -36,7 +36,7 @@ create table if not exists public.quiz_room_players (
   unique(room_id, user_id)
 );
 
--- 3. Quiz Room Questions
+-- 3. Quiz Room Questions (without correct_index exposed to clients)
 create table if not exists public.quiz_room_questions (
   id uuid default gen_random_uuid() primary key,
   room_id uuid references public.quiz_rooms(id) on delete cascade not null,
@@ -74,12 +74,19 @@ create index if not exists idx_quiz_room_answers_question on public.quiz_room_an
 
 -- 6. RLS Policies
 
--- Quiz Rooms: anyone can read waiting rooms, only host can update
+-- Quiz Rooms: room participants can view, authenticated users can create
 alter table public.quiz_rooms enable row level security;
 
-create policy "Anyone can view waiting rooms"
+create policy "Room participants can view rooms"
   on public.quiz_rooms for select
-  using (true);
+  using (
+    exists (
+      select 1 from public.quiz_room_players
+      where quiz_room_players.room_id = id
+        and quiz_room_players.user_id = auth.uid()
+    )
+    or status = 'waiting'
+  );
 
 create policy "Authenticated users can create rooms"
   on public.quiz_rooms for insert
@@ -93,12 +100,18 @@ create policy "Host can delete room"
   on public.quiz_rooms for delete
   using (auth.uid() = host_id);
 
--- Quiz Room Players: anyone in the room can read, authenticated users can join
+-- Quiz Room Players: room participants can view, authenticated users can join
 alter table public.quiz_room_players enable row level security;
 
-create policy "Anyone can view room players"
+create policy "Room participants can view players"
   on public.quiz_room_players for select
-  using (true);
+  using (
+    exists (
+      select 1 from public.quiz_room_players as p
+      where p.room_id = quiz_room_players.room_id
+        and p.user_id = auth.uid()
+    )
+  );
 
 create policy "Authenticated users can join rooms"
   on public.quiz_room_players for insert
@@ -112,12 +125,18 @@ create policy "Users can leave rooms"
   on public.quiz_room_players for delete
   using (auth.uid() = user_id);
 
--- Quiz Room Questions: anyone in the room can read
+-- Quiz Room Questions: room participants can view (correct_index hidden by view)
 alter table public.quiz_room_questions enable row level security;
 
-create policy "Anyone can view room questions"
+create policy "Room participants can view questions"
   on public.quiz_room_questions for select
-  using (true);
+  using (
+    exists (
+      select 1 from public.quiz_room_players
+      where quiz_room_players.room_id = quiz_room_questions.room_id
+        and quiz_room_players.user_id = auth.uid()
+    )
+  );
 
 create policy "Host can insert questions"
   on public.quiz_room_questions for insert
@@ -129,12 +148,18 @@ create policy "Host can insert questions"
     )
   );
 
--- Quiz Room Answers: anyone in the room can read, users can submit own answers
+-- Quiz Room Answers: room participants can view, users can submit own answers
 alter table public.quiz_room_answers enable row level security;
 
-create policy "Anyone can view room answers"
+create policy "Room participants can view answers"
   on public.quiz_room_answers for select
-  using (true);
+  using (
+    exists (
+      select 1 from public.quiz_room_players
+      where quiz_room_players.room_id = quiz_room_answers.room_id
+        and quiz_room_players.user_id = auth.uid()
+    )
+  );
 
 create policy "Users can submit own answers"
   on public.quiz_room_answers for insert
@@ -163,3 +188,16 @@ begin
     and created_at < now() - interval '30 minutes';
 end;
 $$;
+
+-- 9. View to hide correct_index from clients
+create or replace view public.quiz_room_questions_safe as
+select
+  id,
+  room_id,
+  question_id,
+  question_text,
+  choices,
+  time_limit,
+  order_num,
+  started_at
+from public.quiz_room_questions;

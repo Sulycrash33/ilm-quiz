@@ -1,10 +1,18 @@
-'use server';
+﻿'use server';
 
 import { createClient } from '@/lib/supabase/server';
 import type { GradeResult } from '@/lib/types';
 import { pointsForDifficulty, streakMultiplier } from '@/lib/gamification';
 
-interface SubmitOptions { usedHint?: boolean; responseTimeMs?: number; }
+interface SubmitOptions { usedHint?: boolean; responseTimeMs?: number; doublePoints?: boolean; lifelineUsed?: string; }
+
+const LIFELINE_COSTS: Record<string, number> = {
+  'fifty-fifty': 50,
+  'ask-imam': 75,
+  'skip': 25,
+  'double-points': 100,
+  'time-boost': 30,
+};
 
 /** Server-authoritative grading and reward calculation. */
 export async function submitAnswer(
@@ -41,13 +49,22 @@ export async function submitAnswer(
   const correct = choiceIndex === q.correct_choice_index;
   const multiplier = correct ? streakMultiplier(currentStreak) : 1;
   const baseXp = correct ? pointsForDifficulty(q.difficulty as string) : 0;
-  const xpEarned = baseXp * multiplier;
+  const xpEarned = baseXp * multiplier * (opts.doublePoints ? 2 : 1);
 
   const { data: profile } = await supabase
     .from('profiles')
     .select('coins, total_xp, high_score')
     .eq('id', user.id)
     .single();
+
+  // Deduct lifeline cost server-side
+  let lifelineCost = 0;
+  if (opts.lifelineUsed && LIFELINE_COSTS[opts.lifelineUsed]) {
+    lifelineCost = LIFELINE_COSTS[opts.lifelineUsed];
+    if (profile && Number(profile.coins ?? 0) < lifelineCost) {
+      throw new Error('Insufficient coins for this lifeline.');
+    }
+  }
 
   const { error: attemptError } = await supabase.from('attempts').insert({
     user_id: user.id,
@@ -60,7 +77,7 @@ export async function submitAnswer(
   if (attemptError) throw new Error('Could not save your attempt. Please try again.');
 
   if (profile) {
-    const nextCoins = Number(profile.coins ?? 0) + xpEarned;
+    const nextCoins = Number(profile.coins ?? 0) + xpEarned - lifelineCost;
     const nextXp = Number(profile.total_xp ?? 0) + xpEarned;
     const nextHighScore = Math.max(Number(profile.high_score ?? 0), nextXp);
     const { error: profileError } = await supabase

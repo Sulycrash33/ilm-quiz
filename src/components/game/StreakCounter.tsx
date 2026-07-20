@@ -1,4 +1,4 @@
-import { Flame, Shield } from "lucide-react";
+﻿import { Flame, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
@@ -24,7 +24,7 @@ export function StreakCounter({ streak }: StreakCounterProps) {
               <p className="text-sm text-muted-foreground">Day Streak</p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-jade-soft text-jade">
+          <Badge variant="secondary" className="bg-emerald-400/10 text-emerald-400">
             <Shield className="h-3 w-3 mr-1" aria-hidden="true" />
             Protected
           </Badge>

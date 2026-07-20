@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
@@ -10,7 +10,7 @@ import { StreakCounter } from "@/components/game/StreakCounter"
 import { UserStats } from "@/components/game/UserStats"
 import { DailyProgressCard } from "@/components/game/DailyProgressCard"
 import { DailyLoginRewards } from "@/components/game/DailyLoginRewards"
-import { KnowledgeCategories } from "@/components/game/KnowledgeCategories"
+
 import { useProfile } from "@/hooks/use-profile"
 import { useTodayStats } from "@/hooks/use-today-stats"
 import { DAILY_REWARDS } from "@/lib/achievements-data"
@@ -152,7 +152,7 @@ export default function HomePage() {
                   <h2 className="font-headline-md text-headline-md text-on-surface mt-1">
                     Life of the Prophet (pbuh)
                   </h2>
-                  <p className="text-on-surface-variant text-sm mt-1">Lesson 4 of 12 • 15 mins remaining</p>
+                  <p className="text-on-surface-variant text-sm mt-1">Lesson 4 of 12 â€¢ 15 mins remaining</p>
                 </div>
                 <svg className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />

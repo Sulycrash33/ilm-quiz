@@ -1,4 +1,4 @@
-export type Locale = "en" | "ha" | "fr" | "ar" | "ms" | "id"
+﻿export type Locale = "en" | "ha" | "fr" | "ar" | "ms" | "id"
 
 export interface Translations {
   // Common
@@ -934,6 +934,16 @@ const idTranslations: Translations = {
   orContinueWith: "Atau lanjutkan dengan",
 }
 
+@
+/**
+ * Translation status:
+ * - en (English): Complete
+ * - ms (Bahasa Malaysia): Complete
+ * - id (Bahasa Indonesia): Complete
+ * - ha (Hausa): Falls back to English - needs translation
+ * - fr (French): Falls back to English - needs translation
+ * - ar (Arabic): Falls back to English - needs translation + RTL support
+ */
 export const translations: Record<Locale, Translations> = {
   en: enTranslations,
   ha: enTranslations, // Will be translated later

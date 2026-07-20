@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
@@ -38,8 +38,8 @@ export function GenerateForm({ categories }: { categories: Category[] }) {
         setMessage({
           type: 'ok',
           text: autoPublish
-            ? `Published ${result.draftedCount} question(s) directly — live for players now.`
-            : `Drafted ${result.draftedCount} question(s) — review them below before they can be published.`,
+            ? `Published ${result.draftedCount} question(s) directly â€” live for players now.`
+            : `Drafted ${result.draftedCount} question(s) â€” review them below before they can be published.`,
         });
       } else {
         setMessage({ type: 'error', text: result.error });
@@ -104,15 +104,15 @@ export function GenerateForm({ categories }: { categories: Category[] }) {
       <div className="flex items-start gap-2">
         <Checkbox id="autoPublish" checked={autoPublish} onCheckedChange={c => setAutoPublish(c === true)} className="mt-0.5" />
         <label htmlFor="autoPublish" className="text-sm leading-tight">
-          Auto-publish (skip manual review) — <span className="text-muted-foreground">faster, but a bad AI citation goes live immediately instead of getting caught first.</span>
+          Auto-publish (skip manual review) â€” <span className="text-muted-foreground">faster, but a bad AI citation goes live immediately instead of getting caught first.</span>
         </label>
       </div>
       <Button type="submit" disabled={isPending || !categoryId}>
         {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-        {isPending ? (autoPublish ? 'Drafting & publishing…' : 'Drafting…') : (autoPublish ? 'Draft & publish' : 'Draft candidates')}
+        {isPending ? (autoPublish ? 'Drafting & publishingâ€¦' : 'Draftingâ€¦') : (autoPublish ? 'Draft & publish' : 'Draft candidates')}
       </Button>
       {message && (
-        <p className={`text-sm ${message.type === 'ok' ? 'text-jade' : 'text-destructive'}`}>
+        <p className={`text-sm ${message.type === 'ok' ? 'text-emerald-400' : 'text-destructive'}`}>
           {message.text}
         </p>
       )}

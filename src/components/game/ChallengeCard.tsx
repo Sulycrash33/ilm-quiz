@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import type { Challenge } from "@/lib/types";
@@ -11,18 +11,18 @@ export const ChallengeCard: React.FC<{ challenge: Challenge; type: 'daily' | 'we
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={`border-2 rounded-lg p-4 shadow-lg hover:shadow-xl transition-all duration-300 ${
-            type === 'daily' ? 'border-lapis/30' : 'border-amethyst/30'
+            type === 'daily' ? 'border-blue-400/30' : 'border-purple-400/30'
         }`}
         whileHover={{ scale: 1.02 }}
     >
         <div className="flex items-center gap-3">
             <div className="text-4xl">{challenge.icon}</div>
             <div>
-                <h3 className={`text-lg font-semibold font-headline ${type === 'daily' ? 'text-lapis' : 'text-amethyst'}`}>
+                <h3 className={`text-lg font-semibold font-headline ${type === 'daily' ? 'text-blue-400' : 'text-purple-400'}`}>
                     {challenge.title}
                 </h3>
                 <span className={`inline-flex items-center px-2 py-1 rounded text-xs border ${
-                    type === 'daily' ? 'border-lapis/40 text-lapis' : 'border-amethyst/40 text-amethyst'
+                    type === 'daily' ? 'border-blue-400/40 text-blue-400' : 'border-purple-400/40 text-purple-400'
                 }`}>
                     <Calendar className="h-3 w-3 mr-1" /> {challenge.timeLeft}
                 </span>
@@ -53,7 +53,7 @@ export const ChallengeCard: React.FC<{ challenge: Challenge; type: 'daily' | 'we
             <Button
                 size="sm"
                 className={`text-white ${
-                    type === 'daily' ? 'bg-lapis hover:bg-lapis/90' : 'bg-amethyst hover:bg-amethyst/90'
+                    type === 'daily' ? 'bg-blue-400 hover:bg-blue-400/90' : 'bg-purple-400 hover:bg-purple-400/90'
                 }`}
             >
                 Start Challenge

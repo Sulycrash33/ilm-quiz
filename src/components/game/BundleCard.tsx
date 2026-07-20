@@ -1,4 +1,4 @@
-
+﻿
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -55,7 +55,7 @@ export function BundleCard({ bundle, userCoins, handlePurchase }: BundleCardProp
             <div className="text-sm text-muted-foreground line-through">Regular: {bundle.originalPrice}</div>
           </div>
           <div className="text-right">
-            <div className="text-lg font-bold text-jade">Save {savings}!</div>
+            <div className="text-lg font-bold text-emerald-400">Save {savings}!</div>
             <div className="text-sm text-muted-foreground">{discount}% off</div>
           </div>
         </div>

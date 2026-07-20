@@ -1,4 +1,4 @@
-
+﻿
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -35,19 +35,19 @@ export function StoreItemCard({ item, userCoins, handlePurchase, addToCart, them
       icon: <Zap className="h-4 w-4 mr-2" />,
     },
     powerup: {
-      badgeColor: "bg-lapis-soft text-lapis",
+      badgeColor: "bg-blue-400/10 text-blue-400",
       border: item.popular
-        ? "border-lapis/30 bg-lapis-soft"
+        ? "border-blue-400/30 bg-blue-400/10"
         : "border-border",
-      buttonColor: "bg-lapis hover:bg-lapis/90",
+      buttonColor: "bg-blue-400 hover:bg-blue-400/90",
       icon: <Sparkles className="h-4 w-4 mr-2" />,
     },
     cosmetic: {
-      badgeColor: "bg-amethyst-soft text-amethyst",
+      badgeColor: "bg-purple-400/10 text-purple-400",
       border: item.popular
-        ? "border-amethyst/30 bg-amethyst-soft"
+        ? "border-purple-400/30 bg-purple-400/10"
         : "border-border",
-      buttonColor: "bg-amethyst hover:bg-amethyst/90",
+      buttonColor: "bg-purple-400 hover:bg-purple-400/90",
       icon: <Heart className="h-4 w-4 mr-2" />,
     },
   }
@@ -80,7 +80,7 @@ export function StoreItemCard({ item, userCoins, handlePurchase, addToCart, them
             <span className="font-bold text-card-foreground">{item.price}</span>
           </div>
           {item.inStock ? (
-            <Badge className="bg-jade-soft text-jade">Available</Badge>
+            <Badge className="bg-emerald-400/10 text-emerald-400">Available</Badge>
           ) : (
             <Badge variant="secondary">Out of Stock</Badge>
           )}

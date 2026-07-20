@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,7 @@ export const LeaderboardItem = ({ user, index, isPodium = false }: { user: Leade
   const podiumStyles = isPodium 
     ? index === 0 ? "border-primary bg-primary/10" 
     : index === 1 ? "border-muted-foreground/30 bg-muted" 
-    : "border-henna bg-henna-soft" 
+    : "border-amber-500 bg-amber-500/10" 
     : "";
 
   return (

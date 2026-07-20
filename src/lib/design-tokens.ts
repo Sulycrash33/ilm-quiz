@@ -1,12 +1,9 @@
-/**
+﻿/**
  * Centralized semantic color mappings.
  *
- * These are grounded in the palette of historical Islamic manuscript
- * illumination: gold leaf, lapis lazuli (blue), malachite/jade (green), and
- * Tyrian purple (the rarest, most prestigious dye available to scribes) -
- * rather than arbitrary Tailwind defaults. Use these instead of hardcoding
- * text-yellow-500 / bg-green-100 / etc. directly in components, so a tier's
- * color means the same thing everywhere in the app.
+ * Uses the Premium design system tokens (Material-3 inspired) for consistent
+ * theming across all components. Colors are mapped to the Tailwind config
+ * definitions for emerald, blue, purple, and amber.
  */
 
 export type AchievementRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
@@ -21,19 +18,19 @@ export const RARITY_STYLES: Record<
     border: "border-border",
   },
   uncommon: {
-    text: "text-jade",
-    bg: "bg-jade-soft",
-    border: "border-jade/30",
+    text: "text-emerald-400",
+    bg: "bg-emerald-400/10",
+    border: "border-emerald-400/30",
   },
   rare: {
-    text: "text-lapis",
-    bg: "bg-lapis-soft",
-    border: "border-lapis/30",
+    text: "text-blue-400",
+    bg: "bg-blue-400/10",
+    border: "border-blue-400/30",
   },
   epic: {
-    text: "text-amethyst",
-    bg: "bg-amethyst-soft",
-    border: "border-amethyst/30",
+    text: "text-purple-400",
+    bg: "bg-purple-400/10",
+    border: "border-purple-400/30",
   },
   legendary: {
     text: "text-primary",
@@ -49,9 +46,9 @@ export const DIFFICULTY_STYLES: Record<
   { text: string; bg: string; border: string }
 > = {
   easy: {
-    text: "text-jade",
-    bg: "bg-jade-soft",
-    border: "border-jade/30",
+    text: "text-emerald-400",
+    bg: "bg-emerald-400/10",
+    border: "border-emerald-400/30",
   },
   medium: {
     text: "text-primary",
@@ -59,15 +56,15 @@ export const DIFFICULTY_STYLES: Record<
     border: "border-primary/30",
   },
   hard: {
-    text: "text-henna",
-    bg: "bg-henna-soft",
-    border: "border-henna/30",
+    text: "text-amber-500",
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/30",
   },
 };
 
-/** Streak intensity - warmer as the streak grows, echoes henna/gold/primary. */
+/** Streak intensity - warmer as the streak grows. */
 export function getStreakStyle(streak: number): string {
-  if (streak > 30) return "text-henna";
+  if (streak > 30) return "text-amber-500";
   if (streak > 7) return "text-primary";
   if (streak > 0) return "text-accent";
   return "text-muted-foreground";
