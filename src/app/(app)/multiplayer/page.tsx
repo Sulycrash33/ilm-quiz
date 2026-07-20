@@ -74,41 +74,53 @@ export default function MultiplayerPage() {
     })
   }, [])
 
+  // Keep the latest fetched questions around so the room-status callback
+  // (which fires independently of the questions callback) can look up the
+  // active question without an extra round trip.
+  const questionsRef = useRef<QuizRoomQuestion[]>([])
+  const viewStateRef = useRef<ViewState>("home")
+  useEffect(() => {
+    viewStateRef.current = viewState
+  }, [viewState])
+
+  const applyActiveQuestion = useCallback((updatedRoom: QuizRoom) => {
+    if (updatedRoom.status !== "in_progress") return
+    const active = questionsRef.current.find((q) => q.orderNum === updatedRoom.currentQuestion)
+    if (!active) return
+    setCurrentQuestion(active)
+    setQuestionNumber(updatedRoom.currentQuestion)
+    setTotalQuestions(updatedRoom.questionCount)
+    setTimeRemaining(active.timeLimit)
+    setHasAnswered(false)
+  }, [])
+
   // Subscribe to room updates
   useEffect(() => {
     if (!roomId) return
 
-    const unsubscribe = subscribeToRoom(roomId, (table, payload) => {
-      console.log("Room update:", table, payload)
+    const unsubscribe = subscribeToRoom(roomId, {
+      onRoomChange: (updatedRoom) => {
+        setRoom(updatedRoom)
 
-      // Refresh room state on any change
-      getRoomState(roomId).then((state) => {
-        if (state.room) {
-          setRoom(state.room)
-          setPlayers(state.players)
-
-          // Check if quiz started
-          if (state.room.status === "starting" && viewState === "lobby") {
-            setViewState("countdown")
-            startCountdown()
-          }
-
-          // Check if quiz finished
-          if (state.room.status === "finished" && viewState === "quiz") {
-            setShowResults(true)
-            setViewState("results")
-          }
-
-          // Update current question
-          if (state.currentQuestion && state.room.status === "in_progress") {
-            setCurrentQuestion(state.currentQuestion)
-            setQuestionNumber(state.room.currentQuestion)
-            setTotalQuestions(state.room.questionCount)
-            setTimeRemaining(state.currentQuestion.timeLimit)
-            setHasAnswered(false)
-          }
+        if (updatedRoom.status === "starting" && viewStateRef.current === "lobby") {
+          setViewState("countdown")
+          startCountdown()
         }
-      })
+
+        if (updatedRoom.status === "finished") {
+          setShowResults(true)
+          setViewState("results")
+        }
+
+        applyActiveQuestion(updatedRoom)
+      },
+      onPlayerChange: (updatedPlayers) => {
+        setPlayers(updatedPlayers)
+      },
+      onQuestionChange: (updatedQuestions) => {
+        questionsRef.current = updatedQuestions
+        if (room) applyActiveQuestion(room)
+      },
     })
 
     unsubscribeRef.current = unsubscribe
@@ -116,7 +128,7 @@ export default function MultiplayerPage() {
     return () => {
       unsubscribe()
     }
-  }, [roomId, viewState])
+  }, [roomId, applyActiveQuestion])
 
   const startCountdown = useCallback(() => {
     setCountdown(3)
@@ -125,12 +137,20 @@ export default function MultiplayerPage() {
         if (prev <= 1) {
           clearInterval(timer)
           setViewState("quiz")
+          // Safety net: if the realtime INSERT for quiz_room_questions was
+          // missed (backgrounded tab, dropped socket, etc.), fetch directly.
+          if (roomId) {
+            getRoomState(roomId).then((state) => {
+              questionsRef.current = state.questions
+              applyActiveQuestion(state.room)
+            })
+          }
           return 0
         }
         return prev - 1
       })
     }, 1000)
-  }, [])
+  }, [roomId, applyActiveQuestion])
 
   const handleCreateRoom = async (config: { category: string; difficulty: "easy" | "medium" | "hard"; maxPlayers: number; questionCount: number }) => {
     if (!currentUserId || !currentUserName) {

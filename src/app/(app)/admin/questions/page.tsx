@@ -21,10 +21,18 @@ export default async function QuestionsPage() {
   }
 
   // Fetch real questions
-  const { data: questions } = await supabase
+  const { data: rawQuestions } = await supabase
     .from('questions')
     .select('id, question_text, difficulty, review_status, choices, correct_choice_index, explanation, created_at, categories(name)')
     .order('created_at', { ascending: false })
 
-  return <QuestionsPageClient questions={questions ?? []} />
+  // Supabase's untyped client infers embedded foreign-key relations as
+  // arrays even though `category_id` is a to-one relation - normalize to a
+  // single object (or null) to match what QuestionsPageClient expects.
+  const questions = (rawQuestions ?? []).map((q) => ({
+    ...q,
+    categories: Array.isArray(q.categories) ? (q.categories[0] ?? null) : q.categories,
+  }))
+
+  return <QuestionsPageClient questions={questions} />
 }

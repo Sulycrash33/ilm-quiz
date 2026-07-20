@@ -1,7 +1,7 @@
 ﻿"use client"
 
 import { createClient } from "@/lib/supabase/client"
-import { startMultiplayerQuiz } from "@/app/(app)/multiplayer/actions"
+import { startMultiplayerQuiz, advanceQuestion } from "@/app/(app)/multiplayer/actions"
 import { submitMultiplayerAnswer } from "@/app/(app)/multiplayer/answer-actions"
 import type {
   QuizRoom,
@@ -132,7 +132,7 @@ export async function joinRoom(
   const { data: room, error: roomError } = await supabase
     .from("quiz_rooms")
     .select("*")
-    .eq("code", input.code.toUpperCase())
+    .eq("code", input.roomCode.toUpperCase())
     .single()
 
   if (roomError || !room) throw new Error("Room not found")
@@ -176,6 +176,11 @@ export async function startQuiz(roomId: string): Promise<void> {
   await startMultiplayerQuiz(roomId)
 }
 
+// Advance to the next question, or finish the quiz (host only) - uses server action
+export async function nextQuestion(roomId: string): Promise<boolean> {
+  return advanceQuestion(roomId)
+}
+
 // Submit an answer - uses server action
 export async function submitAnswer(
   input: SubmitAnswerInput,
@@ -206,9 +211,11 @@ export async function getRoomState(roomId: string): Promise<{
     .eq("room_id", roomId)
     .order("joined_at")
 
+  // IMPORTANT: read through quiz_room_questions_safe, never the base table -
+  // the base table's correct_index column must never reach the browser.
   const { data: questions } = await supabase
-    .from("quiz_room_questions")
-    .select("*")
+    .from("quiz_room_questions_safe")
+    .select("id, room_id, question_id, question_text, choices, time_limit, order_num, started_at")
     .eq("room_id", roomId)
     .order("order_num")
 
@@ -253,6 +260,21 @@ export function subscribeToRoom(
             .eq("room_id", roomId)
             .order("joined_at")
           callbacks.onPlayerChange((data || []).map(transformPlayer))
+        }
+      }
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "quiz_room_questions", filter: `room_id=eq.${roomId}` },
+      async () => {
+        if (callbacks.onQuestionChange) {
+          // Re-fetch through the safe view - never read correct_index here.
+          const { data } = await supabase
+            .from("quiz_room_questions_safe")
+            .select("id, room_id, question_id, question_text, choices, time_limit, order_num, started_at")
+            .eq("room_id", roomId)
+            .order("order_num")
+          callbacks.onQuestionChange((data || []).map(transformQuestion))
         }
       }
     )

@@ -97,7 +97,7 @@ export function UsersPageClient({ users }: UsersPageClientProps) {
                       <p className="font-bold text-primary">{user.total_xp ?? 0} XP</p>
                       <p className="text-sm text-on-surface-variant">{user.streak_count ?? 0} day streak</p>
                     </div>
-                    <PremiumBadge variant={user.role === "admin" ? "default" : "secondary"}>
+                    <PremiumBadge variant={user.role === "admin" ? "primary" : "secondary"}>
                       {user.role}
                     </PremiumBadge>
                   </div>

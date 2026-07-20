@@ -31,13 +31,16 @@ export interface QuizRoomPlayerDB {
   joined_at: string
 }
 
+// correct_index is optional here because rows read through
+// `quiz_room_questions_safe` never include it - only the trusted server
+// action in answer-actions.ts reads it, directly from the base table.
 export interface QuizRoomQuestionDB {
   id: string
   room_id: string
   question_id: string
   question_text: string
   choices: string[] | Record<string, unknown>
-  correct_index: number
+  correct_index?: number
   time_limit: number
   order_num: number
   started_at?: string
@@ -87,13 +90,18 @@ export interface QuizRoomPlayer {
   joinedAt: string
 }
 
+// Client-facing shape. correctIndex is intentionally OPTIONAL - it must never
+// be populated from a client-side fetch. Reads that power the UI (getRoomState,
+// realtime refreshes) come from `quiz_room_questions_safe`, which does not
+// expose this column at all. See
+// supabase/migrations/0004_lock_down_room_question_answers.sql.
 export interface QuizRoomQuestion {
   id: string
   roomId: string
   questionId: string
   questionText: string
   choices: string[]
-  correctIndex: number
+  correctIndex?: number
   timeLimit: number
   orderNum: number
   startedAt?: string
