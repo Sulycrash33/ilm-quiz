@@ -934,7 +934,6 @@ const idTranslations: Translations = {
   orContinueWith: "Atau lanjutkan dengan",
 }
 
-@
 /**
  * Translation status:
  * - en (English): Complete
