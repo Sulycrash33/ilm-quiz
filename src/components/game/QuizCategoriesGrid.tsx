@@ -5,14 +5,16 @@ import Link from "next/link"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { PremiumProgress } from "@/components/ui/premium-progress"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useLanguage } from "@/contexts/LanguageContext"
 import type { QuizCategory } from "@/lib/quiz-service"
 
 export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] }) {
+  const { t, dir } = useLanguage()
   const totalPublished = categories.reduce((s, c) => s + c.publishedCount, 0)
   const totalAnswered = categories.reduce((s, c) => s + c.answeredCount, 0)
 
   return (
-    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -20,11 +22,11 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
         className="text-center mb-8"
       >
         <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary mb-2">
-          Knowledge Categories
+          {t("knowledgeCategories")}
         </h1>
         <p className="text-on-surface-variant">
-          {categories.length} categories · {totalPublished} questions available ·{" "}
-          {totalAnswered} answered
+          {categories.length} {t("categories").toLowerCase()} · {totalPublished} {t("questionsAvailable")} ·{" "}
+          {totalAnswered} {t("questionsAnswered")}
         </p>
       </motion.div>
 
@@ -39,19 +41,19 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
           <div>
             <p className="font-bold text-3xl text-primary">{categories.length}</p>
             <p className="font-label-caps text-label-caps text-on-surface-variant">
-              CATEGORIES
+              {t("categories").toUpperCase()}
             </p>
           </div>
           <div>
             <p className="font-bold text-3xl text-secondary">{totalPublished}</p>
             <p className="font-label-caps text-label-caps text-on-surface-variant">
-              QUESTIONS
+              {t("questions").toUpperCase()}
             </p>
           </div>
           <div>
             <p className="font-bold text-3xl text-tertiary">{totalAnswered}</p>
             <p className="font-label-caps text-label-caps text-on-surface-variant">
-              COMPLETED
+              {t("completedLabel").toUpperCase()}
             </p>
           </div>
         </div>
@@ -65,7 +67,7 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
           className="text-center py-12"
         >
           <span className="text-6xl mb-4 block">📚</span>
-          <p className="text-on-surface-variant">No categories yet.</p>
+          <p className="text-on-surface-variant">{t("comingSoon")}</p>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -126,7 +128,7 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
                       </div>
                     </div>
                     <PremiumBadge variant="secondary" size="sm">
-                      Coming Soon
+                      {t("comingSoon")}
                     </PremiumBadge>
                   </PremiumCard>
                 )}

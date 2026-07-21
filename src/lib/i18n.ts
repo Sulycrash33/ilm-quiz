@@ -34,6 +34,7 @@ export interface Translations {
   lessonOf: string
   minsRemaining: string
   complete: string
+  completedLabel: string
   prayerTimes: string
   dailyMission: string
   continueButton: string
@@ -52,6 +53,29 @@ export interface Translations {
   score: string
   accuracy: string
   tryAgain: string
+  questionsBeingPrepared: string
+  backToCategories: string
+  xpThisRound: string
+  coinsWord: string
+  bestTotal: string
+  playAgain: string
+  couldNotLoadQuestion: string
+  exitQuiz: string
+  streakWord: string
+  roundXp: string
+  whyItsRight: string
+  sourceLabel: string
+  streakBonus: string
+  lifelineFiftyFifty: string
+  lifelineFiftyFiftyDesc: string
+  lifelineAskImam: string
+  lifelineAskImamDesc: string
+  lifelineSkip: string
+  lifelineSkipDesc: string
+  lifelineDoublePoints: string
+  lifelineDoublePointsDesc: string
+  lifelineTimeBoost: string
+  lifelineTimeBoostDesc: string
 
   // Categories
   knowledgeCategories: string
@@ -267,6 +291,7 @@ const enTranslations: Translations = {
   lessonOf: "Lesson {current} of {total}",
   minsRemaining: "{mins} mins remaining",
   complete: "{percent}% complete",
+  completedLabel: "Completed",
   prayerTimes: "Prayer Times",
   dailyMission: "Daily Mission",
   continueButton: "CONTINUE",
@@ -285,6 +310,29 @@ const enTranslations: Translations = {
   score: "Score",
   accuracy: "Accuracy",
   tryAgain: "Try Again",
+  questionsBeingPrepared: "Questions for the \u201c{category}\u201d category are being prepared.",
+  backToCategories: "Back to Categories",
+  xpThisRound: "XP this round",
+  coinsWord: "Coins",
+  bestTotal: "Best total",
+  playAgain: "Play again",
+  couldNotLoadQuestion: "Could not load question",
+  exitQuiz: "Exit Quiz",
+  streakWord: "streak",
+  roundXp: "Round XP",
+  whyItsRight: "Why it's right",
+  sourceLabel: "Source",
+  streakBonus: "{multiplier}\u00d7 streak bonus",
+  lifelineFiftyFifty: "50/50",
+  lifelineFiftyFiftyDesc: "Remove two wrong answers",
+  lifelineAskImam: "Ask Imam",
+  lifelineAskImamDesc: "Get a helpful hint",
+  lifelineSkip: "Skip",
+  lifelineSkipDesc: "Skip to next question",
+  lifelineDoublePoints: "2x Points",
+  lifelineDoublePointsDesc: "Double points for this question",
+  lifelineTimeBoost: "Time+",
+  lifelineTimeBoostDesc: "Add 15 seconds",
 
   // Categories
   knowledgeCategories: "Knowledge Categories",
@@ -501,6 +549,7 @@ const msTranslations: Translations = {
   lessonOf: "Pelajaran {current} daripada {total}",
   minsRemaining: "{mins} minit lagi",
   complete: "{percent}% selesai",
+  completedLabel: "Selesai",
   prayerTimes: "Waktu Solat",
   dailyMission: "Misi Harian",
   continueButton: "TERUSKAN",
@@ -519,6 +568,29 @@ const msTranslations: Translations = {
   score: "Skor",
   accuracy: "Ketepatan",
   tryAgain: "Cuba Lagi",
+  questionsBeingPrepared: "Soalan untuk kategori \u201c{category}\u201d sedang disediakan.",
+  backToCategories: "Kembali ke Kategori",
+  xpThisRound: "XP pusingan ini",
+  coinsWord: "Syiling",
+  bestTotal: "Jumlah terbaik",
+  playAgain: "Main semula",
+  couldNotLoadQuestion: "Tidak dapat memuatkan soalan",
+  exitQuiz: "Keluar Kuiz",
+  streakWord: "rentetan",
+  roundXp: "XP Pusingan",
+  whyItsRight: "Kenapa ia betul",
+  sourceLabel: "Sumber",
+  streakBonus: "Bonus rentetan {multiplier}\u00d7",
+  lifelineFiftyFifty: "50/50",
+  lifelineFiftyFiftyDesc: "Buang dua jawapan salah",
+  lifelineAskImam: "Tanya Imam",
+  lifelineAskImamDesc: "Dapatkan petunjuk",
+  lifelineSkip: "Langkau",
+  lifelineSkipDesc: "Langkau ke soalan seterusnya",
+  lifelineDoublePoints: "Mata 2x",
+  lifelineDoublePointsDesc: "Gandakan mata untuk soalan ini",
+  lifelineTimeBoost: "Masa+",
+  lifelineTimeBoostDesc: "Tambah 15 saat",
 
   // Categories
   knowledgeCategories: "Kategori Ilmu",
@@ -735,6 +807,7 @@ const idTranslations: Translations = {
   lessonOf: "Pelajaran {current} dari {total}",
   minsRemaining: "{mins} menit lagi",
   complete: "{percent}% selesai",
+  completedLabel: "Selesai",
   prayerTimes: "Waktu Sholat",
   dailyMission: "Misi Harian",
   continueButton: "LANJUTKAN",
@@ -753,6 +826,29 @@ const idTranslations: Translations = {
   score: "Skor",
   accuracy: "Akurasi",
   tryAgain: "Coba Lagi",
+  questionsBeingPrepared: "Pertanyaan untuk kategori \u201c{category}\u201d sedang disiapkan.",
+  backToCategories: "Kembali ke Kategori",
+  xpThisRound: "XP putaran ini",
+  coinsWord: "Koin",
+  bestTotal: "Total terbaik",
+  playAgain: "Main lagi",
+  couldNotLoadQuestion: "Tidak dapat memuat pertanyaan",
+  exitQuiz: "Keluar Kuis",
+  streakWord: "beruntun",
+  roundXp: "XP Putaran",
+  whyItsRight: "Mengapa ini benar",
+  sourceLabel: "Sumber",
+  streakBonus: "Bonus beruntun {multiplier}\u00d7",
+  lifelineFiftyFifty: "50/50",
+  lifelineFiftyFiftyDesc: "Hapus dua jawaban salah",
+  lifelineAskImam: "Tanya Imam",
+  lifelineAskImamDesc: "Dapatkan petunjuk",
+  lifelineSkip: "Lewati",
+  lifelineSkipDesc: "Lewati ke pertanyaan berikutnya",
+  lifelineDoublePoints: "Poin 2x",
+  lifelineDoublePointsDesc: "Gandakan poin untuk pertanyaan ini",
+  lifelineTimeBoost: "Waktu+",
+  lifelineTimeBoostDesc: "Tambah 15 detik",
 
   // Categories
   knowledgeCategories: "Kategori Ilmu",
@@ -969,6 +1065,7 @@ const haTranslations: Translations = {
   lessonOf: "Darasi {current} na {total}",
   minsRemaining: "Sauran mintuna {mins}",
   complete: "An kammala kashi {percent}%",
+  completedLabel: "An Kammala",
   prayerTimes: "Lokutan Sallah",
   dailyMission: "Manufar Yau",
   continueButton: "CI GABA",
@@ -987,6 +1084,29 @@ const haTranslations: Translations = {
   score: "Maki",
   accuracy: "Daidaito",
   tryAgain: "Sake Gwadawa",
+  questionsBeingPrepared: "Ana shirya tambayoyi don rukunin \u201c{category}\u201d.",
+  backToCategories: "Koma zuwa Rukunoni",
+  xpThisRound: "XP na wannan zagaye",
+  coinsWord: "Tsabar Kudi",
+  bestTotal: "Jimlar Mafi Kyau",
+  playAgain: "Sake Wasa",
+  couldNotLoadQuestion: "Ba a iya loda tambaya ba",
+  exitQuiz: "Fita Jarabawa",
+  streakWord: "jere",
+  roundXp: "XP na Zagaye",
+  whyItsRight: "Me ya sa daidai ne",
+  sourceLabel: "Tushe",
+  streakBonus: "Karin jere {multiplier}\u00d7",
+  lifelineFiftyFifty: "50/50",
+  lifelineFiftyFiftyDesc: "Cire amsoshi biyu marasa daidai",
+  lifelineAskImam: "Tambayi Limami",
+  lifelineAskImamDesc: "Samu shawara",
+  lifelineSkip: "Tsallake",
+  lifelineSkipDesc: "Tsallake zuwa tambaya ta gaba",
+  lifelineDoublePoints: "Ninki Maki 2",
+  lifelineDoublePointsDesc: "Ninka maki don wannan tambaya",
+  lifelineTimeBoost: "Karin Lokaci",
+  lifelineTimeBoostDesc: "Kara dakika 15",
 
   // Categories
   knowledgeCategories: "Rukunin Ilimi",
@@ -1203,6 +1323,7 @@ const frTranslations: Translations = {
   lessonOf: "Leçon {current} sur {total}",
   minsRemaining: "{mins} min restantes",
   complete: "{percent} % terminé",
+  completedLabel: "Terminé",
   prayerTimes: "Heures de prière",
   dailyMission: "Mission quotidienne",
   continueButton: "CONTINUER",
@@ -1221,6 +1342,29 @@ const frTranslations: Translations = {
   score: "Score",
   accuracy: "Précision",
   tryAgain: "Réessayer",
+  questionsBeingPrepared: "Les questions de la cat\u00e9gorie \u00ab\u00a0{category}\u00a0\u00bb sont en pr\u00e9paration.",
+  backToCategories: "Retour aux cat\u00e9gories",
+  xpThisRound: "XP de cette manche",
+  coinsWord: "Pi\u00e8ces",
+  bestTotal: "Meilleur total",
+  playAgain: "Rejouer",
+  couldNotLoadQuestion: "Impossible de charger la question",
+  exitQuiz: "Quitter le quiz",
+  streakWord: "s\u00e9rie",
+  roundXp: "XP de la manche",
+  whyItsRight: "Pourquoi c'est correct",
+  sourceLabel: "Source",
+  streakBonus: "Bonus de s\u00e9rie {multiplier}\u00d7",
+  lifelineFiftyFifty: "50/50",
+  lifelineFiftyFiftyDesc: "Retirer deux mauvaises r\u00e9ponses",
+  lifelineAskImam: "Demander \u00e0 l'imam",
+  lifelineAskImamDesc: "Obtenir un indice utile",
+  lifelineSkip: "Passer",
+  lifelineSkipDesc: "Passer \u00e0 la question suivante",
+  lifelineDoublePoints: "Points x2",
+  lifelineDoublePointsDesc: "Doubler les points pour cette question",
+  lifelineTimeBoost: "Temps+",
+  lifelineTimeBoostDesc: "Ajouter 15 secondes",
 
   // Categories
   knowledgeCategories: "Catégories de connaissances",
@@ -1437,6 +1581,7 @@ const arTranslations: Translations = {
   lessonOf: "الدرس {current} من {total}",
   minsRemaining: "بقي {mins} دقيقة",
   complete: "اكتمل بنسبة {percent}%",
+  completedLabel: "مكتمل",
   prayerTimes: "مواقيت الصلاة",
   dailyMission: "المهمة اليومية",
   continueButton: "متابعة",
@@ -1455,6 +1600,29 @@ const arTranslations: Translations = {
   score: "النتيجة",
   accuracy: "الدقة",
   tryAgain: "حاول مرة أخرى",
+  questionsBeingPrepared: "يتم إعداد أسئلة فئة \u201c{category}\u201d.",
+  backToCategories: "العودة إلى الفئات",
+  xpThisRound: "نقاط الخبرة لهذه الجولة",
+  coinsWord: "العملات",
+  bestTotal: "أفضل مجموع",
+  playAgain: "العب مرة أخرى",
+  couldNotLoadQuestion: "تعذّر تحميل السؤال",
+  exitQuiz: "الخروج من الاختبار",
+  streakWord: "سلسلة",
+  roundXp: "نقاط خبرة الجولة",
+  whyItsRight: "لماذا هذا صحيح",
+  sourceLabel: "المصدر",
+  streakBonus: "مكافأة سلسلة {multiplier}\u00d7",
+  lifelineFiftyFifty: "50/50",
+  lifelineFiftyFiftyDesc: "إزالة إجابتين خاطئتين",
+  lifelineAskImam: "اسأل الإمام",
+  lifelineAskImamDesc: "احصل على تلميح مفيد",
+  lifelineSkip: "تخطي",
+  lifelineSkipDesc: "الانتقال إلى السؤال التالي",
+  lifelineDoublePoints: "مضاعفة النقاط",
+  lifelineDoublePointsDesc: "مضاعفة النقاط لهذا السؤال",
+  lifelineTimeBoost: "وقت إضافي",
+  lifelineTimeBoostDesc: "أضف 15 ثانية",
 
   // Categories
   knowledgeCategories: "فئات المعرفة",

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Play, BookOpen } from "lucide-react";
 import type { QuizQuestion } from "@/lib/types";
 import { QuizView } from "./QuizView";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface QuizRunnerProps {
   categoryName: string;
@@ -17,22 +18,23 @@ interface QuizRunnerProps {
 
 export function QuizRunner({ categoryName, categoryDescription, categoryIcon, questions }: QuizRunnerProps) {
   const [started, setStarted] = useState(false);
+  const { t, dir } = useLanguage();
 
   if (started) {
     return (
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
+      <div dir={dir} className="container mx-auto px-4 py-6 max-w-4xl">
         <QuizView questions={questions} categoryTitle={categoryName} onExit={() => setStarted(false)} />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-3xl">
+    <div dir={dir} className="container mx-auto px-4 py-6 max-w-3xl">
       <header className="mb-8 flex items-center justify-between">
         <Button asChild variant="ghost">
           <Link href="/quiz">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Categories
+            {t("backToCategories")}
           </Link>
         </Button>
       </header>
@@ -48,18 +50,17 @@ export function QuizRunner({ categoryName, categoryDescription, categoryIcon, qu
             <div className="py-8 space-y-3">
               <BookOpen className="h-10 w-10 text-muted-foreground mx-auto" />
               <p className="text-muted-foreground">
-                No published questions in this category yet. Once a reviewer approves some in the
-                content queue, they'll appear here.
+                {t("questionsBeingPrepared", { category: categoryName })}
               </p>
             </div>
           ) : (
             <>
               <p className="text-muted-foreground">
-                {questions.length} question{questions.length === 1 ? "" : "s"} ready.
+                {questions.length} {t("questions").toLowerCase()}
               </p>
               <Button size="lg" onClick={() => setStarted(true)}>
                 <Play className="h-5 w-5 mr-2" />
-                Start Quiz
+                {t("startQuiz")}
               </Button>
             </>
           )}
