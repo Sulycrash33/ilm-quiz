@@ -275,21 +275,9 @@ export default function MultiplayerPage() {
     if (!roomId || !isHost) return
 
     try {
-      // Reset player scores
       const supabase = createClient()
-      await supabase
-        .from("quiz_room_players")
-        .update({ score: 0, correct_answers: 0, total_answers: 0, streak: 0, is_ready: false })
-        .eq("room_id", roomId)
-
-      // Reset room status
-      await supabase
-        .from("quiz_rooms")
-        .update({ status: "waiting", current_question: 0 })
-        .eq("id", roomId)
-
-      // Delete old questions
-      await supabase.from("quiz_room_questions").delete().eq("room_id", roomId)
+      const { error } = await supabase.rpc("restart_room_rpc", { p_room_id: roomId })
+      if (error) throw error
 
       setShowResults(false)
       setViewState("lobby")

@@ -121,6 +121,10 @@ export async function createRoom(
 }
 
 // Join an existing room
+// Join a room by code - delegated to a SECURITY DEFINER function so the
+// player-count increment (which the joining player has no RLS permission
+// to do directly) and the "room is full" check happen atomically and
+// correctly. See supabase/migrations.
 export async function joinRoom(
   input: JoinRoomInput,
   userId: string,
@@ -128,45 +132,18 @@ export async function joinRoom(
 ): Promise<QuizRoom> {
   const supabase = createClient()
 
-  // Find room by code
+  const { data: roomId, error } = await supabase.rpc("join_room_rpc", {
+    p_room_code: input.roomCode.toUpperCase(),
+    p_user_name: userName,
+  })
+  if (error) throw new Error(error.message || "Failed to join room")
+
   const { data: room, error: roomError } = await supabase
     .from("quiz_rooms")
     .select("*")
-    .eq("code", input.roomCode.toUpperCase())
+    .eq("id", roomId)
     .single()
-
   if (roomError || !room) throw new Error("Room not found")
-
-  // Check if room is joinable
-  if (room.status !== "waiting") throw new Error("Room is not accepting players")
-  if (room.current_players >= room.max_players) throw new Error("Room is full")
-
-  // Check if already in room
-  const { data: existingPlayer } = await supabase
-    .from("quiz_room_players")
-    .select("id")
-    .eq("room_id", room.id)
-    .eq("user_id", userId)
-    .single()
-
-  if (existingPlayer) throw new Error("Already in this room")
-
-  // Add player
-  const { error: playerError } = await supabase
-    .from("quiz_room_players")
-    .insert({
-      room_id: room.id,
-      user_id: userId,
-      user_name: userName,
-    })
-
-  if (playerError) throw new Error("Failed to join room")
-
-  // Update player count
-  await supabase
-    .from("quiz_rooms")
-    .update({ current_players: room.current_players + 1 })
-    .eq("id", room.id)
 
   return transformRoom(room as QuizRoomDB)
 }
@@ -292,68 +269,12 @@ export function subscribeToRoom(
   }
 }
 
-// Leave room
-export async function leaveRoom(roomId: string, userId: string): Promise<void> {
+// Leave room - delegated to a SECURITY DEFINER function so host-transfer
+// (which needs to reassign quiz_rooms.host_id to someone else) works
+// correctly and can't be spoofed. See supabase/migrations.
+export async function leaveRoom(roomId: string, _userId: string): Promise<void> {
   const supabase = createClient()
-
-  // Get current player
-  const { data: player } = await supabase
-    .from("quiz_room_players")
-    .select("*")
-    .eq("room_id", roomId)
-    .eq("user_id", userId)
-    .single()
-
-  if (!player) return
-
-  // Delete player
-  await supabase
-    .from("quiz_room_players")
-    .delete()
-    .eq("room_id", roomId)
-    .eq("user_id", userId)
-
-  // Update player count
-  const { data: room } = await supabase
-    .from("quiz_rooms")
-    .select("current_players, host_id")
-    .eq("id", roomId)
-    .single()
-
-  if (room) {
-    await supabase
-      .from("quiz_rooms")
-      .update({ current_players: Math.max(0, room.current_players - 1) })
-      .eq("id", roomId)
-
-    // If host left, assign new host or delete room
-    if (room.host_id === userId) {
-      const { data: remainingPlayers } = await supabase
-        .from("quiz_room_players")
-        .select("user_id")
-        .eq("room_id", roomId)
-        .order("joined_at")
-        .limit(1)
-
-      if (remainingPlayers && remainingPlayers.length > 0) {
-        await supabase
-          .from("quiz_rooms")
-          .update({ host_id: remainingPlayers[0].user_id })
-          .eq("id", roomId)
-
-        await supabase
-          .from("quiz_room_players")
-          .update({ is_host: true })
-          .eq("room_id", roomId)
-          .eq("user_id", remainingPlayers[0].user_id)
-      } else {
-        await supabase
-          .from("quiz_rooms")
-          .delete()
-          .eq("id", roomId)
-      }
-    }
-  }
+  await supabase.rpc("leave_room_rpc", { p_room_id: roomId })
 }
 
 // Toggle ready status
