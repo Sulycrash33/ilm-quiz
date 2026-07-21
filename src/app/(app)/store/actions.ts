@@ -3,11 +3,10 @@
 import { createClient } from "@/lib/supabase/server"
 
 /**
- * Spends real coins from the signed-in user's balance. This genuinely
- * persists to `profiles.coins` - there is currently no separate inventory
- * table, so a successful purchase means the coins are really spent, but
- * nothing is unlocked/owned yet beyond that. Fails honestly if the user
- * doesn't have enough coins, instead of letting the balance go negative.
+ * Spends real coins from the signed-in user's balance via a SECURITY
+ * DEFINER Postgres function - the balance itself can no longer be updated
+ * directly from a client call (see supabase/migrations), so this is the
+ * only path that can actually change it.
  */
 export async function purchaseStoreItem(price: number): Promise<{ success: boolean; newBalance?: number; error?: string }> {
   const supabase = await createClient()
@@ -16,22 +15,12 @@ export async function purchaseStoreItem(price: number): Promise<{ success: boole
   } = await supabase.auth.getUser()
   if (!user) return { success: false, error: "You must be signed in." }
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("coins")
-    .eq("id", user.id)
-    .single()
+  const { data, error } = await supabase.rpc("purchase_store_item_rpc", { p_price: price })
+  if (error) return { success: false, error: error.message || "Purchase failed." }
 
-  if (profileError || !profile) return { success: false, error: "Could not load your balance." }
-  if (profile.coins < price) return { success: false, error: "Not enough coins." }
+  const row = Array.isArray(data) ? data[0] : data
+  if (!row) return { success: false, error: "Purchase failed." }
+  if (!row.success) return { success: false, error: row.error ?? "Purchase failed." }
 
-  const newBalance = profile.coins - price
-  const { error: updateError } = await supabase
-    .from("profiles")
-    .update({ coins: newBalance })
-    .eq("id", user.id)
-
-  if (updateError) return { success: false, error: "Purchase failed. Please try again." }
-
-  return { success: true, newBalance }
+  return { success: true, newBalance: row.new_balance }
 }

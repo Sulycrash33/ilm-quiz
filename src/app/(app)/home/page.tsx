@@ -9,11 +9,9 @@ import { DailyHadith } from "@/components/game/DailyHadith"
 import { StreakCounter } from "@/components/game/StreakCounter"
 import { UserStats } from "@/components/game/UserStats"
 import { DailyProgressCard } from "@/components/game/DailyProgressCard"
-import { DailyLoginRewards } from "@/components/game/DailyLoginRewards"
 
 import { useProfile } from "@/hooks/use-profile"
 import { useTodayStats } from "@/hooks/use-today-stats"
-import { DAILY_REWARDS } from "@/lib/achievements-data"
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -21,9 +19,8 @@ const cardVariants = {
 }
 
 export default function HomePage() {
-  const { profile, loading, updateProfile } = useProfile()
+  const { profile, loading } = useProfile()
   const { questionsToday, accuracy } = useTodayStats()
-  const dailyStreak = Math.min((profile?.streakCount ?? 0) + 1, DAILY_REWARDS.length)
   const [currentTime, setCurrentTime] = useState("")
 
   useEffect(() => {
@@ -35,16 +32,6 @@ export default function HomePage() {
     const interval = setInterval(updateTime, 60000)
     return () => clearInterval(interval)
   }, [])
-
-  const handleClaim = (day: number) => {
-    if (day !== dailyStreak || !profile) return
-    const reward = DAILY_REWARDS[day - 1]
-    updateProfile({
-      streakCount: day,
-      coins: profile.coins + reward.coins,
-      totalXp: profile.totalXp + reward.xp,
-    })
-  }
 
   const dailyProgress = Math.min((questionsToday / 10) * 100, 100)
 
@@ -234,7 +221,35 @@ export default function HomePage() {
 
         {/* Additional Content */}
         <motion.div variants={cardVariants} initial="hidden" animate="visible">
-          <DailyLoginRewards dailyStreak={dailyStreak} onClaim={handleClaim} />
+          <Link href="/rewards" className="glass-card p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
+            <div>
+              <h3 className="font-bold text-on-surface">Daily Rewards</h3>
+              <p className="text-sm text-on-surface-variant">Claim today&apos;s login reward, spin, or open a chest</p>
+            </div>
+            <svg className="w-5 h-5 text-on-surface-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </motion.div>
+
+        {/* Explore - the only entry point to these pages besides typing the URL */}
+        <motion.div variants={cardVariants} initial="hidden" animate="visible" className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          <Link href="/achievements" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
+            <span className="text-2xl">🏆</span>
+            <span className="text-sm font-bold text-on-surface">Achievements</span>
+          </Link>
+          <Link href="/challenges" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
+            <span className="text-2xl">⚡</span>
+            <span className="text-sm font-bold text-on-surface">Game Modes</span>
+          </Link>
+          <Link href="/community" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
+            <span className="text-2xl">👥</span>
+            <span className="text-sm font-bold text-on-surface">Community</span>
+          </Link>
+          <Link href="/multiplayer" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
+            <span className="text-2xl">🎮</span>
+            <span className="text-sm font-bold text-on-surface">Multiplayer</span>
+          </Link>
         </motion.div>
       </main>
 

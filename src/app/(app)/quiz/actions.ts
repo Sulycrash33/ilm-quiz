@@ -2,19 +2,13 @@
 
 import { createClient } from '@/lib/supabase/server';
 import type { GradeResult } from '@/lib/types';
-import { pointsForDifficulty, streakMultiplier } from '@/lib/gamification';
 
 interface SubmitOptions { usedHint?: boolean; responseTimeMs?: number; doublePoints?: boolean; lifelineUsed?: string; }
 
-const LIFELINE_COSTS: Record<string, number> = {
-  'fifty-fifty': 50,
-  'ask-imam': 75,
-  'skip': 25,
-  'double-points': 100,
-  'time-boost': 30,
-};
-
-/** Server-authoritative grading and reward calculation. */
+/** Server-authoritative grading and reward calculation - delegated to a
+ * SECURITY DEFINER Postgres function (submit_quiz_answer) so the actual
+ * coin/XP mutation can't be replayed or forged by a direct client call;
+ * see supabase/migrations for details. */
 export async function submitAnswer(
   questionId: string,
   choiceIndex: number,
@@ -25,75 +19,26 @@ export async function submitAnswer(
   if (!user) throw new Error('You must be signed in to answer.');
   if (!Number.isInteger(choiceIndex) || choiceIndex < 0) throw new Error('Invalid answer.');
 
-  const { data: q, error } = await supabase
-    .from('questions')
-    .select('id, choices, correct_choice_index, explanation, citation_reference, difficulty, review_status')
-    .eq('id', questionId)
-    .single();
-  if (error || !q) throw new Error('Question not found.');
-  if (q.review_status !== 'published') throw new Error('This question is not available.');
-  if (choiceIndex >= ((q.choices ?? []) as unknown[]).length) throw new Error('Invalid answer.');
-
-  const { data: recentAttempts } = await supabase
-    .from('attempts')
-    .select('is_correct')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(20);
-  let currentStreak = 0;
-  for (const attempt of recentAttempts ?? []) {
-    if (!attempt.is_correct) break;
-    currentStreak += 1;
-  }
-
-  const correct = choiceIndex === q.correct_choice_index;
-  const multiplier = correct ? streakMultiplier(currentStreak) : 1;
-  const baseXp = correct ? pointsForDifficulty(q.difficulty as string) : 0;
-  const xpEarned = baseXp * multiplier * (opts.doublePoints ? 2 : 1);
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('coins, total_xp, high_score')
-    .eq('id', user.id)
-    .single();
-
-  // Deduct lifeline cost server-side
-  let lifelineCost = 0;
-  if (opts.lifelineUsed && LIFELINE_COSTS[opts.lifelineUsed]) {
-    lifelineCost = LIFELINE_COSTS[opts.lifelineUsed];
-    if (profile && Number(profile.coins ?? 0) < lifelineCost) {
-      throw new Error('Insufficient coins for this lifeline.');
-    }
-  }
-
-  const { error: attemptError } = await supabase.from('attempts').insert({
-    user_id: user.id,
-    question_id: q.id,
-    is_correct: correct,
-    xp_earned: xpEarned,
-    response_time_ms: opts.responseTimeMs ?? null,
-    used_ask_the_imam_hint: opts.usedHint ?? false,
+  const { data, error } = await supabase.rpc('submit_quiz_answer', {
+    p_question_id: questionId,
+    p_choice_index: choiceIndex,
+    p_used_hint: opts.usedHint ?? false,
+    p_response_time_ms: opts.responseTimeMs ?? null,
+    p_double_points: opts.doublePoints ?? false,
+    p_lifeline_used: opts.lifelineUsed ?? null,
   });
-  if (attemptError) throw new Error('Could not save your attempt. Please try again.');
 
-  if (profile) {
-    const nextCoins = Number(profile.coins ?? 0) + xpEarned - lifelineCost;
-    const nextXp = Number(profile.total_xp ?? 0) + xpEarned;
-    const nextHighScore = Math.max(Number(profile.high_score ?? 0), nextXp);
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ coins: nextCoins, total_xp: nextXp, high_score: nextHighScore })
-      .eq('id', user.id);
-    if (profileError) throw new Error('Answer saved, but reward sync failed. Refresh before playing again.');
-  }
+  if (error) throw new Error(error.message || 'Could not submit your answer.');
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) throw new Error('Could not submit your answer.');
 
   return {
-    correct,
-    correctIndex: q.correct_choice_index as number,
-    explanation: (q.explanation as string) ?? '',
-    citation: (q.citation_reference as string) ?? '',
-    xpEarned,
-    streakMultiplier: multiplier,
+    correct: row.correct,
+    correctIndex: row.correct_index,
+    explanation: row.explanation ?? '',
+    citation: row.citation ?? '',
+    xpEarned: row.xp_earned,
+    streakMultiplier: row.streak_multiplier,
   };
 }
 
