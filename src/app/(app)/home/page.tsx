@@ -12,6 +12,7 @@ import { DailyProgressCard } from "@/components/game/DailyProgressCard"
 
 import { useProfile } from "@/hooks/use-profile"
 import { useTodayStats } from "@/hooks/use-today-stats"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -21,6 +22,7 @@ const cardVariants = {
 export default function HomePage() {
   const { profile, loading } = useProfile()
   const { questionsToday, accuracy } = useTodayStats()
+  const { t, dir } = useLanguage()
   const [currentTime, setCurrentTime] = useState("")
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function HomePage() {
   const dailyProgress = Math.min((questionsToday / 10) * 100, 100)
 
   return (
-    <div className="relative min-h-screen bg-background pb-32">
+    <div dir={dir} className="relative min-h-screen bg-background pb-32">
       {/* Background Accents */}
       <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
@@ -60,7 +62,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="hidden sm:block">
-              <p className="font-label-caps text-label-caps text-on-surface-variant/70">WELCOME BACK</p>
+              <p className="font-label-caps text-label-caps text-on-surface-variant/70">{t("welcomeBack").toUpperCase()}</p>
               <h1 className="font-headline-md text-headline-md text-primary -mt-1">ILM Hunt</h1>
             </div>
           </div>
@@ -97,7 +99,7 @@ export default function HomePage() {
               <span className="font-display-lg-mobile text-display-lg-mobile text-primary">
                 {Math.round(dailyProgress)}%
               </span>
-              <p className="font-label-caps text-label-caps text-on-surface-variant">TODAY</p>
+              <p className="font-label-caps text-label-caps text-on-surface-variant">{t("todayProgress").toUpperCase()}</p>
             </div>
           </div>
           <div className="flex gap-12 mt-4">
@@ -108,7 +110,7 @@ export default function HomePage() {
                 </svg>
                 <span className="font-bold text-headline-md text-on-surface">{profile?.totalXp ?? 0}</span>
               </div>
-              <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">XP Gained</p>
+              <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">{t("xpGained")}</p>
             </div>
             <div className="text-center">
               <div className="flex items-center gap-1 justify-center mb-1">
@@ -117,7 +119,7 @@ export default function HomePage() {
                 </svg>
                 <span className="font-bold text-headline-md text-on-surface">{accuracy}%</span>
               </div>
-              <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">Focus Level</p>
+              <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">{t("focusLevel")}</p>
             </div>
           </div>
         </motion.section>
@@ -135,11 +137,11 @@ export default function HomePage() {
             <div className="relative z-10">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest">In Progress</span>
+                  <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest">{t("inProgress")}</span>
                   <h2 className="font-headline-md text-headline-md text-on-surface mt-1">
                     Life of the Prophet (pbuh)
                   </h2>
-                  <p className="text-on-surface-variant text-sm mt-1">Lesson 4 of 12 â€¢ 15 mins remaining</p>
+                  <p className="text-on-surface-variant text-sm mt-1">{t("lessonOf", { current: 4, total: 12 })} • {t("minsRemaining", { mins: 15 })}</p>
                 </div>
                 <svg className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
@@ -147,7 +149,7 @@ export default function HomePage() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-medium text-on-surface-variant">
-                  <span>60% complete</span>
+                  <span>{t("complete", { percent: 60 })}</span>
                 </div>
                 <div className="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-primary to-primary-fixed-dim w-[60%] rounded-full shadow-[0_0_8px_rgba(78,222,163,0.3)]" />
@@ -168,7 +170,7 @@ export default function HomePage() {
                 <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
                 </svg>
-                <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Prayer Times</h3>
+                <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{t("prayerTimes")}</h3>
               </div>
               <div className="flex flex-col">
                 <span className="font-headline-md text-headline-md text-on-surface">Dhuhr</span>
@@ -213,7 +215,7 @@ export default function HomePage() {
                 href="/quiz"
                 className="btn-primary px-6 py-2 rounded-lg font-bold text-sm"
               >
-                CONTINUE
+                {t("continueButton")}
               </Link>
             </div>
           </motion.div>
@@ -223,8 +225,8 @@ export default function HomePage() {
         <motion.div variants={cardVariants} initial="hidden" animate="visible">
           <Link href="/rewards" className="glass-card p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
             <div>
-              <h3 className="font-bold text-on-surface">Daily Rewards</h3>
-              <p className="text-sm text-on-surface-variant">Claim today&apos;s login reward, spin, or open a chest</p>
+              <h3 className="font-bold text-on-surface">{t("dailyLoginRewards")}</h3>
+              <p className="text-sm text-on-surface-variant">{t("claimRewards")}</p>
             </div>
             <svg className="w-5 h-5 text-on-surface-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -236,19 +238,19 @@ export default function HomePage() {
         <motion.div variants={cardVariants} initial="hidden" animate="visible" className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
           <Link href="/achievements" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
             <span className="text-2xl">🏆</span>
-            <span className="text-sm font-bold text-on-surface">Achievements</span>
+            <span className="text-sm font-bold text-on-surface">{t("achievements")}</span>
           </Link>
           <Link href="/challenges" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
             <span className="text-2xl">⚡</span>
-            <span className="text-sm font-bold text-on-surface">Game Modes</span>
+            <span className="text-sm font-bold text-on-surface">{t("challenges")}</span>
           </Link>
           <Link href="/community" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
             <span className="text-2xl">👥</span>
-            <span className="text-sm font-bold text-on-surface">Community</span>
+            <span className="text-sm font-bold text-on-surface">{t("communityHub")}</span>
           </Link>
           <Link href="/multiplayer" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
             <span className="text-2xl">🎮</span>
-            <span className="text-sm font-bold text-on-surface">Multiplayer</span>
+            <span className="text-sm font-bold text-on-surface">{t("multiplayerQuiz")}</span>
           </Link>
         </motion.div>
       </main>
@@ -259,31 +261,31 @@ export default function HomePage() {
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
           </svg>
-          <span className="font-label-caps text-label-caps mt-1">Home</span>
+          <span className="font-label-caps text-label-caps mt-1">{t("home")}</span>
         </Link>
         <Link href="/quiz" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" />
           </svg>
-          <span className="font-label-caps text-label-caps mt-1">Learning</span>
+          <span className="font-label-caps text-label-caps mt-1">{t("learning")}</span>
         </Link>
         <Link href="/leaderboard" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z" />
           </svg>
-          <span className="font-label-caps text-label-caps mt-1">Rankings</span>
+          <span className="font-label-caps text-label-caps mt-1">{t("rankings")}</span>
         </Link>
         <Link href="/store" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.78 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z" />
           </svg>
-          <span className="font-label-caps text-label-caps mt-1">Shop</span>
+          <span className="font-label-caps text-label-caps mt-1">{t("shop")}</span>
         </Link>
         <Link href="/profile" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
           </svg>
-          <span className="font-label-caps text-label-caps mt-1">Profile</span>
+          <span className="font-label-caps text-label-caps mt-1">{t("profile")}</span>
         </Link>
       </nav>
     </div>

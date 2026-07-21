@@ -6,6 +6,8 @@ import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { motion } from "framer-motion"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { saveOnboardingSelection } from "@/lib/onboarding-storage"
+import type { Locale } from "@/lib/i18n"
 
 const languages = [
   { name: "English", code: "en", flag: "gb", dir: "ltr" },
@@ -63,7 +65,10 @@ export default function LanguageSelectionPage() {
                 >
                   <Link
                     href="/onboarding/age"
-                    onClick={() => setLocale(lang.code as any)}
+                    onClick={() => {
+                      setLocale(lang.code as Locale)
+                      saveOnboardingSelection({ preferredLanguage: lang.code })
+                    }}
                     dir={lang.dir}
                     className={`flex items-center justify-between p-4 rounded-xl border transition-all hover:bg-surface-container-high hover:border-primary/30 ${
                       lang.font || ""

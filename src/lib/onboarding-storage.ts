@@ -13,6 +13,7 @@ export interface OnboardingSelections {
   ageRange?: string;
   avatarUrl?: string;
   name?: string;
+  preferredLanguage?: string;
 }
 
 export function saveOnboardingSelection(patch: Partial<OnboardingSelections>) {

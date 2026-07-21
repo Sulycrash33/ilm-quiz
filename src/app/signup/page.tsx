@@ -78,12 +78,13 @@ export default function SignupPage() {
     // Apply the age/avatar chosen during onboarding to the real profile
     // row now that an account actually exists to attach it to.
     const selections = getOnboardingSelections();
-    if (data.user && (selections.ageRange || selections.avatarUrl)) {
+    if (data.user && (selections.ageRange || selections.avatarUrl || selections.preferredLanguage)) {
       await supabase
         .from("profiles")
         .update({
           ...(selections.ageRange ? { age_range: selections.ageRange } : {}),
           ...(selections.avatarUrl ? { avatar_id: selections.avatarUrl } : {}),
+          ...(selections.preferredLanguage ? { preferred_language: selections.preferredLanguage } : {}),
         })
         .eq("id", data.user.id);
     }
