@@ -8,6 +8,7 @@ import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { AchievementCard } from "@/components/game/AchievementCard"
 import { PremiumProgress } from "@/components/ui/premium-progress"
+import { useLanguage } from "@/contexts/LanguageContext"
 import type { AchievementView } from "@/lib/profile-stats"
 
 type Tab = "achievements" | "challenges"
@@ -28,23 +29,24 @@ export function AchievementsPageClient({
   todayChallenge: TodayChallenge | null
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("achievements")
+  const { t, dir } = useLanguage()
 
   const unlockedCount = achievements.filter((a) => a.unlocked).length
 
   return (
-    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <Link href="/home">
           <PremiumButton variant="ghost" size="sm">
             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            {t("back")}
           </PremiumButton>
         </Link>
         <div className="text-center">
-          <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">Achievements & Challenges</h1>
-          <p className="text-on-surface-variant">Track your progress and earn rewards</p>
+          <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">{t("achievementsAndChallenges")}</h1>
+          <p className="text-on-surface-variant">{t("trackProgress")}</p>
         </div>
         <div className="w-20" />
       </motion.div>
@@ -53,15 +55,15 @@ export function AchievementsPageClient({
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
             <p className="font-bold text-3xl text-primary">{unlockedCount}/{achievements.length}</p>
-            <p className="font-label-caps text-label-caps text-on-surface-variant">UNLOCKED</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">{t("unlockedLabel")}</p>
           </div>
           <div>
             <p className="font-bold text-3xl text-secondary">{todayChallenge ? 1 : 0}</p>
-            <p className="font-label-caps text-label-caps text-on-surface-variant">ACTIVE CHALLENGES</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">{t("activeChallenges")}</p>
           </div>
         </div>
         <div className="mt-4">
-          <PremiumProgress value={unlockedCount} max={Math.max(achievements.length, 1)} showLabel label="Overall Progress" />
+          <PremiumProgress value={unlockedCount} max={Math.max(achievements.length, 1)} showLabel label={t("overallProgress")} />
         </div>
       </motion.div>
 
@@ -75,7 +77,7 @@ export function AchievementsPageClient({
             }`}
           >
             {tab === "achievements" ? "🏆" : "⚡"}
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {tab === "achievements" ? t("achievements") : t("challenges")}
           </button>
         ))}
       </motion.div>
@@ -83,7 +85,7 @@ export function AchievementsPageClient({
       {activeTab === "achievements" ? (
         achievements.length === 0 ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-8 text-center">
-            <p className="text-on-surface-variant">No achievements have been set up yet - check back soon.</p>
+            <p className="text-on-surface-variant">{t("noAchievementsYet")}</p>
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -107,7 +109,7 @@ export function AchievementsPageClient({
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           {!todayChallenge ? (
             <div className="glass-card p-8 text-center">
-              <p className="text-on-surface-variant">No daily challenge is available today - check back soon.</p>
+              <p className="text-on-surface-variant">{t("noDailyChallengeToday")}</p>
             </div>
           ) : (
             <PremiumCard className="p-6">
@@ -117,22 +119,22 @@ export function AchievementsPageClient({
                     <span className="text-3xl">📅</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-on-surface text-lg">Today&apos;s Challenge</h3>
-                    <p className="text-on-surface-variant">{todayChallenge.questionCount} questions · {todayChallenge.categoryName}</p>
+                    <h3 className="font-bold text-on-surface text-lg">{t("todaysChallenge")}</h3>
+                    <p className="text-on-surface-variant">{todayChallenge.questionCount} {t("questions").toLowerCase()} · {todayChallenge.categoryName}</p>
                   </div>
                 </div>
-                {todayChallenge.completed && <PremiumBadge variant="success" size="sm">Completed</PremiumBadge>}
+                {todayChallenge.completed && <PremiumBadge variant="success" size="sm">{t("completedLabel")}</PremiumBadge>}
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
                   </svg>
-                  <span className="font-bold text-tertiary">+{todayChallenge.rewardCoins} coins, +{todayChallenge.rewardXp} XP</span>
+                  <span className="font-bold text-tertiary">+{todayChallenge.rewardCoins} {t("coinsWord").toLowerCase()}, +{todayChallenge.rewardXp} XP</span>
                 </div>
                 {!todayChallenge.completed && (
                   <Link href="/quiz">
-                    <PremiumButton variant="primary" size="sm">Start Challenge</PremiumButton>
+                    <PremiumButton variant="primary" size="sm">{t("startChallenge")}</PremiumButton>
                   </Link>
                 )}
               </div>

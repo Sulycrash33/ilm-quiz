@@ -6,47 +6,59 @@ import { useState } from "react"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { ShopItem } from "@/components/game/ShopItem"
 import { purchaseStoreItem } from "@/app/(app)/store/actions"
+import { useLanguage } from "@/contexts/LanguageContext"
+import type { Translations } from "@/lib/i18n"
 
 type StoreTab = "lifelines" | "powerups" | "cosmetics" | "bundles"
 
-const storeItems = {
+interface StoreItemDef {
+  id: string
+  nameKey: keyof Translations
+  descKey: keyof Translations
+  price: number
+  icon: string
+  category: "avatar" | "theme" | "power-up" | "badge"
+}
+
+const storeItems: Record<StoreTab, StoreItemDef[]> = {
   lifelines: [
-    { id: "1", name: "50/50", description: "Remove two wrong answers", price: 100, icon: "🎯", category: "power-up" as const },
-    { id: "2", name: "Hint", description: "Get a helpful hint", price: 50, icon: "💡", category: "power-up" as const },
-    { id: "3", name: "Skip", description: "Skip to next question", price: 75, icon: "⏭️", category: "power-up" as const },
-    { id: "4", name: "Double XP", description: "2x XP for next quiz", price: 200, icon: "⚡", category: "power-up" as const },
+    { id: "1", nameKey: "storeItem1Name", descKey: "storeItem1Desc", price: 100, icon: "🎯", category: "power-up" },
+    { id: "2", nameKey: "storeItem2Name", descKey: "storeItem2Desc", price: 50, icon: "💡", category: "power-up" },
+    { id: "3", nameKey: "storeItem3Name", descKey: "storeItem3Desc", price: 75, icon: "⏭️", category: "power-up" },
+    { id: "4", nameKey: "storeItem4Name", descKey: "storeItem4Desc", price: 200, icon: "⚡", category: "power-up" },
   ],
   powerups: [
-    { id: "5", name: "Time Freeze", description: "Stop the timer for 30s", price: 150, icon: "❄️", category: "power-up" as const },
-    { id: "6", name: "Score Multiplier", description: "3x score for one question", price: 250, icon: "🔥", category: "power-up" as const },
-    { id: "7", name: "Second Chance", description: "Retry a wrong answer", price: 125, icon: "🔄", category: "power-up" as const },
-    { id: "8", name: "Wisdom Boost", description: "Extra time for thinking", price: 100, icon: "🧠", category: "power-up" as const },
+    { id: "5", nameKey: "storeItem5Name", descKey: "storeItem5Desc", price: 150, icon: "❄️", category: "power-up" },
+    { id: "6", nameKey: "storeItem6Name", descKey: "storeItem6Desc", price: 250, icon: "🔥", category: "power-up" },
+    { id: "7", nameKey: "storeItem7Name", descKey: "storeItem7Desc", price: 125, icon: "🔄", category: "power-up" },
+    { id: "8", nameKey: "storeItem8Name", descKey: "storeItem8Desc", price: 100, icon: "🧠", category: "power-up" },
   ],
   cosmetics: [
-    { id: "9", name: "Golden Avatar Frame", description: "Exclusive golden border", price: 500, icon: "🖼️", category: "avatar" as const },
-    { id: "10", name: "Celestial Theme", description: "Premium app theme", price: 750, icon: "✨", category: "theme" as const },
-    { id: "11", name: "Scholar Badge", description: "Special profile badge", price: 300, icon: "🎓", category: "badge" as const },
-    { id: "12", name: "Star Particles", description: "Custom answer effects", price: 400, icon: "⭐", category: "avatar" as const },
+    { id: "9", nameKey: "storeItem9Name", descKey: "storeItem9Desc", price: 500, icon: "🖼️", category: "avatar" },
+    { id: "10", nameKey: "storeItem10Name", descKey: "storeItem10Desc", price: 750, icon: "✨", category: "theme" },
+    { id: "11", nameKey: "storeItem11Name", descKey: "storeItem11Desc", price: 300, icon: "🎓", category: "badge" },
+    { id: "12", nameKey: "storeItem12Name", descKey: "storeItem12Desc", price: 400, icon: "⭐", category: "avatar" },
   ],
   bundles: [
-    { id: "13", name: "Starter Pack", description: "500 coins + 3 lifelines", price: 400, icon: "📦", category: "power-up" as const },
-    { id: "14", name: "Scholar Bundle", description: "1000 coins + all power-ups", price: 800, icon: "📚", category: "power-up" as const },
-    { id: "15", name: "Premium Collection", description: "All cosmetics + 2000 coins", price: 1500, icon: "👑", category: "avatar" as const },
-    { id: "16", name: "Ultimate Pack", description: "Everything in the store", price: 3000, icon: "💎", category: "theme" as const },
+    { id: "13", nameKey: "storeItem13Name", descKey: "storeItem13Desc", price: 400, icon: "📦", category: "power-up" },
+    { id: "14", nameKey: "storeItem14Name", descKey: "storeItem14Desc", price: 800, icon: "📚", category: "power-up" },
+    { id: "15", nameKey: "storeItem15Name", descKey: "storeItem15Desc", price: 1500, icon: "👑", category: "avatar" },
+    { id: "16", nameKey: "storeItem16Name", descKey: "storeItem16Desc", price: 3000, icon: "💎", category: "theme" },
   ],
 }
 
 export function StorePageClient({ initialCoins }: { initialCoins: number }) {
+  const { t, dir } = useLanguage()
   const [activeTab, setActiveTab] = useState<StoreTab>("lifelines")
   const [coins, setCoins] = useState(initialCoins)
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
   const tabs: { id: StoreTab; label: string; icon: React.ReactNode }[] = [
-    { id: "lifelines", label: "Lifelines", icon: <span className="text-lg">🎯</span> },
-    { id: "powerups", label: "Power-ups", icon: <span className="text-lg">⚡</span> },
-    { id: "cosmetics", label: "Cosmetics", icon: <span className="text-lg">✨</span> },
-    { id: "bundles", label: "Bundles", icon: <span className="text-lg">📦</span> },
+    { id: "lifelines", label: t("lifelines"), icon: <span className="text-lg">🎯</span> },
+    { id: "powerups", label: t("powerups"), icon: <span className="text-lg">⚡</span> },
+    { id: "cosmetics", label: t("cosmetics"), icon: <span className="text-lg">✨</span> },
+    { id: "bundles", label: t("bundles"), icon: <span className="text-lg">📦</span> },
   ]
 
   const handlePurchase = async (id: string, price: number, name: string) => {
@@ -56,14 +68,14 @@ export function StorePageClient({ initialCoins }: { initialCoins: number }) {
     setPendingId(null)
     if (result.success && result.newBalance !== undefined) {
       setCoins(result.newBalance)
-      setMessage(`${name} purchased for ${price} coins.`)
+      setMessage(t("purchasedMsg", { name, price }))
     } else {
-      setMessage(result.error ?? "Purchase failed.")
+      setMessage(result.error ?? t("purchaseFailedMsg"))
     }
   }
 
   return (
-    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <Link href="/home">
@@ -71,12 +83,12 @@ export function StorePageClient({ initialCoins }: { initialCoins: number }) {
             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            {t("back")}
           </PremiumButton>
         </Link>
         <div className="text-center">
-          <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">ILM Store</h1>
-          <p className="text-on-surface-variant">Enhance your learning journey</p>
+          <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">{t("ilmStore")}</h1>
+          <p className="text-on-surface-variant">{t("enhanceLearning")}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-tertiary/10 px-4 py-2 rounded-full border border-tertiary/30">
@@ -114,15 +126,22 @@ export function StorePageClient({ initialCoins }: { initialCoins: number }) {
         <motion.div key={activeTab} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {storeItems[activeTab].map((item, index) => (
             <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
-              <ShopItem {...item} onPurchase={() => handlePurchase(item.id, item.price, item.name)} />
-              {pendingId === item.id && <p className="text-xs text-on-surface-variant text-center mt-1">Processing...</p>}
+              <ShopItem
+                name={t(item.nameKey)}
+                description={t(item.descKey)}
+                price={item.price}
+                icon={item.icon}
+                category={item.category}
+                onPurchase={() => handlePurchase(item.id, item.price, t(item.nameKey))}
+              />
+              {pendingId === item.id && <p className="text-xs text-on-surface-variant text-center mt-1">{t("processingLabel")}</p>}
             </motion.div>
           ))}
         </motion.div>
       </AnimatePresence>
 
       <p className="text-xs text-on-surface-variant text-center mt-8">
-        Purchases spend your real coin balance. Item effects (like actually applying a lifeline in-quiz) aren&apos;t wired up yet - coming soon.
+        {t("storeFootnote")}
       </p>
     </div>
   )

@@ -6,6 +6,7 @@ import { useState } from "react"
 import { LeaderboardCard } from "@/components/game/LeaderboardCard"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface Entry {
   rank: number
@@ -30,23 +31,24 @@ export function LeaderboardPageClient({
   myWeeklyRank: Entry | null
 }) {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("allTime")
+  const { t, dir } = useLanguage()
   const entries = timeFrame === "allTime" ? allTime : weekly
   const myRank = timeFrame === "allTime" ? myAllTimeRank : myWeeklyRank
   const podium = entries.slice(0, 3)
 
   return (
-    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
         <Link href="/home">
           <PremiumButton variant="ghost" size="sm" className="mb-4">
             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Dashboard
+            {t("backToDashboard")}
           </PremiumButton>
         </Link>
-        <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">Community Leaderboard</h1>
-        <p className="text-on-surface-variant mt-2">See who is leading the quest for knowledge</p>
+        <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">{t("communityLeaderboard")}</h1>
+        <p className="text-on-surface-variant mt-2">{t("seeWhoIsLeading")}</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex justify-center gap-2 mb-8">
@@ -58,7 +60,7 @@ export function LeaderboardPageClient({
               timeFrame === frame ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest"
             }`}
           >
-            {frame === "allTime" ? "All Time" : "This Week"}
+            {frame === "allTime" ? t("allTimeShort") : t("thisWeekShort")}
           </button>
         ))}
       </motion.div>
@@ -66,9 +68,7 @@ export function LeaderboardPageClient({
       {entries.length === 0 ? (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-8 text-center">
           <p className="text-on-surface-variant">
-            {timeFrame === "weekly"
-              ? "No XP recorded for this week yet - rankings will appear as players earn XP."
-              : "No players yet - be the first to answer a question and appear on the leaderboard."}
+            {timeFrame === "weekly" ? t("noWeeklyXpYet") : t("noPlayersYet")}
           </p>
         </motion.div>
       ) : (
@@ -111,7 +111,7 @@ export function LeaderboardPageClient({
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <LeaderboardCard
               entries={entries.map((e) => ({ rank: e.rank, name: e.name, xp: e.xp, streak: e.streak, isCurrentUser: e.isCurrentUser }))}
-              title={timeFrame === "allTime" ? "All-Time Rankings" : "This Week's Rankings"}
+              title={timeFrame === "allTime" ? t("allTimeRankings") : t("weeklyRankings")}
             />
           </motion.div>
         </>
@@ -125,8 +125,8 @@ export function LeaderboardPageClient({
                 <span className="text-xl font-bold text-primary">{myRank.rank}</span>
               </div>
               <div>
-                <p className="font-bold text-on-surface">Your Ranking</p>
-                <p className="text-sm text-on-surface-variant">Keep learning to climb higher!</p>
+                <p className="font-bold text-on-surface">{t("yourRanking")}</p>
+                <p className="text-sm text-on-surface-variant">{t("keepLearning")}</p>
               </div>
             </div>
             <div className="text-right">

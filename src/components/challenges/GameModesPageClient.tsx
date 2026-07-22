@@ -5,56 +5,70 @@ import Link from "next/link"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useLanguage } from "@/contexts/LanguageContext"
+import type { Translations } from "@/lib/i18n"
 
-const gameModes = [
+interface GameMode {
+  id: string
+  nameKey: keyof Translations
+  descKey: keyof Translations
+  icon: string
+  color: "primary" | "tertiary" | "secondary" | "warning"
+  difficultyKey: keyof Translations
+  xpMultiplier: string
+  available: boolean
+  href?: string
+}
+
+const gameModes: GameMode[] = [
   {
     id: "classic",
-    name: "Classic Quiz",
-    description: "Test your knowledge with standard multiple-choice questions",
+    nameKey: "modeClassicName",
+    descKey: "modeClassicDesc",
     icon: "📝",
-    color: "primary" as const,
-    difficulty: "All Levels",
+    color: "primary",
+    difficultyKey: "difficultyAllLevels",
     xpMultiplier: "1x",
     available: true,
     href: "/quiz",
   },
   {
     id: "timed",
-    name: "Speed Round",
-    description: "Answer as many questions as you can before time runs out",
+    nameKey: "modeSpeedName",
+    descKey: "modeSpeedDesc",
     icon: "⚡",
-    color: "tertiary" as const,
-    difficulty: "Intermediate",
+    color: "tertiary",
+    difficultyKey: "difficultyIntermediate",
     xpMultiplier: "1.5x",
     available: false,
   },
   {
     id: "survival",
-    name: "Survival Mode",
-    description: "Keep going until you get 3 wrong answers",
+    nameKey: "modeSurvivalName",
+    descKey: "modeSurvivalDesc",
     icon: "🏆",
-    color: "secondary" as const,
-    difficulty: "Advanced",
+    color: "secondary",
+    difficultyKey: "difficultyAdvanced",
     xpMultiplier: "2x",
     available: false,
   },
   {
     id: "practice",
-    name: "Practice Mode",
-    description: "Learn at your own pace with no pressure",
+    nameKey: "modePracticeName",
+    descKey: "modePracticeDesc",
     icon: "🎯",
-    color: "primary" as const,
-    difficulty: "Beginner",
+    color: "primary",
+    difficultyKey: "difficultyBeginner",
     xpMultiplier: "0.5x",
     available: false,
   },
   {
     id: "tournament",
-    name: "Tournament",
-    description: "Compete with other learners in real-time",
+    nameKey: "modeTournamentName",
+    descKey: "modeTournamentDesc",
     icon: "👑",
-    color: "warning" as const,
-    difficulty: "Expert",
+    color: "warning",
+    difficultyKey: "difficultyExpert",
     xpMultiplier: "5x",
     available: true,
     href: "/multiplayer",
@@ -72,20 +86,22 @@ export function GameModesPageClient({
   totalXp: number
   todayChallenge: { rewardCoins: number; rewardXp: number; completed: boolean } | null
 }) {
+  const { t, dir } = useLanguage()
+
   return (
-    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <Link href="/home">
           <PremiumButton variant="ghost" size="sm">
             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            {t("back")}
           </PremiumButton>
         </Link>
         <div className="text-center">
-          <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">Game Modes</h1>
-          <p className="text-on-surface-variant">Choose your path to knowledge</p>
+          <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">{t("gameModesTitle")}</h1>
+          <p className="text-on-surface-variant">{t("choosePathToKnowledge")}</p>
         </div>
         <div className="w-20" />
       </motion.div>
@@ -95,35 +111,35 @@ export function GameModesPageClient({
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-secondary/10 to-tertiary/10" />
         <div className="absolute top-0 right-0 w-64 h-64 mashrabiya-pattern rotate-12 opacity-30" />
         <div className="relative z-10">
-          <PremiumBadge variant="warning" size="md" className="mb-4">TODAY&apos;S SPECIAL</PremiumBadge>
-          <h2 className="font-headline-md text-headline-md text-on-surface mb-2">Daily Challenge</h2>
+          <PremiumBadge variant="warning" size="md" className="mb-4">{t("todaySpecialBadge")}</PremiumBadge>
+          <h2 className="font-headline-md text-headline-md text-on-surface mb-2">{t("dailyChallengeTitle")}</h2>
           {todayChallenge ? (
             <>
               <p className="text-on-surface-variant mb-4">
-                {todayChallenge.completed ? "You've already completed today's challenge - come back tomorrow!" : "Complete today's special challenge for bonus rewards."}
+                {todayChallenge.completed ? t("challengeCompletedMsg") : t("challengeIncompleteMsg")}
               </p>
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
                   </svg>
-                  <span className="font-bold text-tertiary">+{todayChallenge.rewardCoins} coins, +{todayChallenge.rewardXp} XP</span>
+                  <span className="font-bold text-tertiary">+{todayChallenge.rewardCoins} {t("coinsWord").toLowerCase()}, +{todayChallenge.rewardXp} XP</span>
                 </div>
               </div>
               {!todayChallenge.completed && (
                 <Link href="/quiz">
-                  <PremiumButton variant="primary" size="lg">Start Daily Challenge</PremiumButton>
+                  <PremiumButton variant="primary" size="lg">{t("startDailyChallenge")}</PremiumButton>
                 </Link>
               )}
             </>
           ) : (
-            <p className="text-on-surface-variant mb-4">No challenge is available today - check back soon.</p>
+            <p className="text-on-surface-variant mb-4">{t("noDailyChallengeToday")}</p>
           )}
         </div>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <h2 className="font-headline-md text-headline-md text-on-surface mb-6">All Game Modes</h2>
+        <h2 className="font-headline-md text-headline-md text-on-surface mb-6">{t("allGameModesTitle")}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {gameModes.map((mode, index) => (
             <motion.div key={mode.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
@@ -132,10 +148,10 @@ export function GameModesPageClient({
                   <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center">
                     <span className="text-3xl">{mode.icon}</span>
                   </div>
-                  <PremiumBadge variant={mode.color} size="sm">{mode.difficulty}</PremiumBadge>
+                  <PremiumBadge variant={mode.color} size="sm">{t(mode.difficultyKey)}</PremiumBadge>
                 </div>
-                <h3 className="font-bold text-on-surface text-lg mb-2">{mode.name}</h3>
-                <p className="text-on-surface-variant mb-4">{mode.description}</p>
+                <h3 className="font-bold text-on-surface text-lg mb-2">{t(mode.nameKey)}</h3>
+                <p className="text-on-surface-variant mb-4">{t(mode.descKey)}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
@@ -145,10 +161,10 @@ export function GameModesPageClient({
                   </div>
                   {mode.available && mode.href ? (
                     <Link href={mode.href}>
-                      <PremiumButton variant="primary" size="sm">Play</PremiumButton>
+                      <PremiumButton variant="primary" size="sm">{t("playButton")}</PremiumButton>
                     </Link>
                   ) : (
-                    <PremiumButton variant="secondary" size="sm" disabled>Coming Soon</PremiumButton>
+                    <PremiumButton variant="secondary" size="sm" disabled>{t("comingSoon")}</PremiumButton>
                   )}
                 </div>
               </PremiumCard>
@@ -159,19 +175,19 @@ export function GameModesPageClient({
 
       {/* Your Stats - real data */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-12 glass-card p-6">
-        <h3 className="font-headline-md text-headline-md text-on-surface mb-6">Your Stats</h3>
+        <h3 className="font-headline-md text-headline-md text-on-surface mb-6">{t("yourStatsTitle")}</h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <p className="font-bold text-3xl text-primary">{totalAttempts.toLocaleString()}</p>
-            <p className="font-label-caps text-label-caps text-on-surface-variant">QUESTIONS</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">{t("questions").toUpperCase()}</p>
           </div>
           <div className="text-center">
             <p className="font-bold text-3xl text-secondary">{totalAttempts > 0 ? `${accuracyPct}%` : "—"}</p>
-            <p className="font-label-caps text-label-caps text-on-surface-variant">ACCURACY</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">{t("accuracy").toUpperCase()}</p>
           </div>
           <div className="text-center">
             <p className="font-bold text-3xl text-primary-fixed">{totalXp.toLocaleString()}</p>
-            <p className="font-label-caps text-label-caps text-on-surface-variant">TOTAL XP</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">{t("totalXp").toUpperCase()}</p>
           </div>
         </div>
       </motion.div>

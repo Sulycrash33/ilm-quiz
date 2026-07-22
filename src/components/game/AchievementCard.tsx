@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface AchievementCardProps {
   title: string
@@ -24,6 +25,7 @@ export function AchievementCard({
   isUnlocked,
   unlockedAt,
 }: AchievementCardProps) {
+  const { t } = useLanguage()
   const percentage = Math.min((progress / maxProgress) * 100, 100)
 
   return (
@@ -61,7 +63,7 @@ export function AchievementCard({
           </motion.div>
           {isUnlocked && (
             <PremiumBadge variant="success" size="sm">
-              UNLOCKED
+              {t("unlockedLabel")}
             </PremiumBadge>
           )}
         </div>
@@ -74,7 +76,7 @@ export function AchievementCard({
         {!isUnlocked && (
           <div className="mb-4">
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-on-surface-variant">Progress</span>
+              <span className="text-on-surface-variant">{t("progress")}</span>
               <span className="text-on-surface">{progress}/{maxProgress}</span>
             </div>
             <div className="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">

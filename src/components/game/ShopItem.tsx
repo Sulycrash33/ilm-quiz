@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface ShopItemProps {
   name: string
@@ -23,12 +24,19 @@ export function ShopItem({
   isOwned = false,
   onPurchase,
 }: ShopItemProps) {
+  const { t } = useLanguage()
   const categoryColors = {
     avatar: "primary",
     theme: "secondary",
     "power-up": "tertiary",
     badge: "warning",
   } as const
+  const categoryLabels: Record<typeof category, string> = {
+    avatar: t("catAvatar"),
+    theme: t("catTheme"),
+    "power-up": t("catPowerUp"),
+    badge: t("catBadge"),
+  }
 
   return (
     <motion.div
@@ -50,7 +58,7 @@ export function ShopItem({
         {/* Info */}
         <div className="text-center mb-4">
           <PremiumBadge variant={categoryColors[category]} size="sm" className="mb-2">
-            {category.toUpperCase()}
+            {categoryLabels[category]}
           </PremiumBadge>
           <h4 className="font-bold text-on-surface mb-1">{name}</h4>
           <p className="text-sm text-on-surface-variant line-clamp-2">
@@ -72,7 +80,7 @@ export function ShopItem({
             onClick={onPurchase}
             disabled={isOwned}
           >
-            {isOwned ? "Owned" : "Buy"}
+            {isOwned ? t("owned") : t("buy")}
           </PremiumButton>
         </div>
       </div>

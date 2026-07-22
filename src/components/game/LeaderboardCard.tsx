@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface LeaderboardEntry {
   rank: number
@@ -24,6 +25,7 @@ export function LeaderboardCard({
   title = "Global Leaderboard",
   showStreak = true,
 }: LeaderboardCardProps) {
+  const { t } = useLanguage()
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
@@ -58,7 +60,7 @@ export function LeaderboardCard({
         <h3 className="font-headline-md text-headline-md text-on-surface">
           {title}
         </h3>
-        <PremiumBadge variant="tertiary">LIVE</PremiumBadge>
+        <PremiumBadge variant="tertiary">{t("liveBadge")}</PremiumBadge>
       </div>
 
       <div className="space-y-3">
@@ -85,7 +87,7 @@ export function LeaderboardCard({
                   {showStreak && (
                     <p className="text-sm text-on-surface-variant flex items-center gap-1">
                       <span className="text-tertiary">🔥</span>
-                      {entry.streak} day streak
+                      {entry.streak} {t("dayStreakSuffix")}
                     </p>
                   )}
                 </div>
@@ -94,7 +96,7 @@ export function LeaderboardCard({
                 <p className="font-bold text-primary">{entry.xp.toLocaleString()} XP</p>
                 {entry.rank <= 3 && (
                   <PremiumBadge variant={entry.rank === 1 ? "warning" : "primary"} size="sm">
-                    {entry.rank === 1 ? "CHAMPION" : entry.rank === 2 ? "RUNNER UP" : "3RD PLACE"}
+                    {entry.rank === 1 ? t("championBadge") : entry.rank === 2 ? t("runnerUpBadge") : t("thirdPlaceBadge")}
                   </PremiumBadge>
                 )}
               </div>
