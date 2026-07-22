@@ -23,19 +23,23 @@ import {
 } from "@/lib/multiplayer-service"
 import type { QuizRoom, QuizRoomPlayer, QuizRoomQuestion } from "@/lib/multiplayer-types"
 import { createClient } from "@/lib/supabase/client"
+import { useLanguage } from "@/contexts/LanguageContext"
+import type { Translations } from "@/lib/i18n"
 
-const categories = [
-  { id: "holy-quran", name: "Quran", icon: "📖" },
-  { id: "hadith-sciences", name: "Hadith", icon: "📜" },
-  { id: "five-pillars", name: "Five Pillars", icon: "🕌" },
-  { id: "islamic-history", name: "History", icon: "🏛️" },
-  { id: "arabic-language", name: "Arabic", icon: "🔤" },
-  { id: "fiqh", name: "Fiqh", icon: "⚖️" },
+const categoryDefs: { id: string; nameKey: keyof Translations; icon: string }[] = [
+  { id: "holy-quran", nameKey: "catQuran", icon: "📖" },
+  { id: "hadith-sciences", nameKey: "catHadith", icon: "📜" },
+  { id: "five-pillars", nameKey: "catFivePillars", icon: "🕌" },
+  { id: "islamic-history", nameKey: "catHistory", icon: "🏛️" },
+  { id: "arabic-language", nameKey: "catArabic", icon: "🔤" },
+  { id: "fiqh", nameKey: "catFiqh", icon: "⚖️" },
 ]
 
 type ViewState = "home" | "creating" | "joining" | "lobby" | "countdown" | "quiz" | "results"
 
 export default function MultiplayerPage() {
+  const { t, dir } = useLanguage()
+  const categories = categoryDefs.map((c) => ({ id: c.id, name: t(c.nameKey), icon: c.icon }))
   const [viewState, setViewState] = useState<ViewState>("home")
   const [roomCode, setRoomCode] = useState("")
   const [joinCode, setJoinCode] = useState("")
@@ -52,6 +56,7 @@ export default function MultiplayerPage() {
   const [countdown, setCountdown] = useState(3)
   const [timeRemaining, setTimeRemaining] = useState(30)
   const [hasAnswered, setHasAnswered] = useState(false)
+  const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(null)
 
   const unsubscribeRef = useRef<(() => void) | null>(null)
 
@@ -92,6 +97,7 @@ export default function MultiplayerPage() {
     setTotalQuestions(updatedRoom.questionCount)
     setTimeRemaining(active.timeLimit)
     setHasAnswered(false)
+    setLastAnswerCorrect(null)
   }, [])
 
   // Subscribe to room updates
@@ -154,7 +160,7 @@ export default function MultiplayerPage() {
 
   const handleCreateRoom = async (config: { category: string; difficulty: "easy" | "medium" | "hard"; maxPlayers: number; questionCount: number }) => {
     if (!currentUserId || !currentUserName) {
-      alert("Please wait while we load your profile...")
+      alert(t("loadingProfileWait"))
       return
     }
 
@@ -172,7 +178,7 @@ export default function MultiplayerPage() {
       setPlayers(state.players)
     } catch (error) {
       console.error("Error creating room:", error)
-      alert("Failed to create room. Please try again.")
+      alert(t("failedCreateRoom"))
     }
   }
 
@@ -192,7 +198,7 @@ export default function MultiplayerPage() {
       setPlayers(state.players)
     } catch (error) {
       console.error("Error joining room:", error)
-      alert(error instanceof Error ? error.message : "Failed to join room. Please try again.")
+      alert(error instanceof Error ? error.message : t("failedJoinRoom"))
     }
   }
 
@@ -203,7 +209,7 @@ export default function MultiplayerPage() {
       await startQuiz(roomId)
     } catch (error) {
       console.error("Error starting quiz:", error)
-      alert("Failed to start quiz. Please try again.")
+      alert(t("failedStartQuiz"))
     }
   }
 
@@ -212,7 +218,7 @@ export default function MultiplayerPage() {
 
     try {
       setHasAnswered(true)
-      await submitAnswer(
+      const result = await submitAnswer(
         {
           roomId,
           questionId: currentQuestion.id,
@@ -221,6 +227,7 @@ export default function MultiplayerPage() {
         },
         currentUserId!
       )
+      setLastAnswerCorrect(result.isCorrect)
     } catch (error) {
       console.error("Error submitting answer:", error)
       setHasAnswered(false)
@@ -287,7 +294,7 @@ export default function MultiplayerPage() {
   }
 
   return (
-    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -299,14 +306,14 @@ export default function MultiplayerPage() {
             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            {t("back")}
           </PremiumButton>
         </Link>
         <div className="text-center">
           <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary">
-            Multiplayer Quiz
+            {t("multiplayerQuiz")}
           </h1>
-          <p className="text-on-surface-variant">Compete with friends in real-time</p>
+          <p className="text-on-surface-variant">{t("competeWithFriends")}</p>
         </div>
         <div className="w-20" />
       </motion.div>
@@ -327,19 +334,19 @@ export default function MultiplayerPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-bold text-on-surface text-lg">Create Room</h3>
-                <p className="text-on-surface-variant">Host a quiz for your friends</p>
+                <h3 className="font-bold text-on-surface text-lg">{t("createRoom")}</h3>
+                <p className="text-on-surface-variant">{t("hostQuiz")}</p>
               </div>
             </div>
           </PremiumCard>
 
           {/* Join Room */}
           <PremiumCard className="p-6">
-            <h3 className="font-bold text-on-surface text-lg mb-4">Join Room</h3>
+            <h3 className="font-bold text-on-surface text-lg mb-4">{t("joinRoom")}</h3>
             <div className="flex gap-2">
               <input
                 type="text"
-                placeholder="Enter room code"
+                placeholder={t("enterRoomCode")}
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                 className="flex-1 px-4 py-3 bg-surface-container-high rounded-lg border border-white/5 text-on-surface font-mono text-center text-lg tracking-widest placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary uppercase"
@@ -350,30 +357,30 @@ export default function MultiplayerPage() {
                 onClick={handleJoinRoom}
                 disabled={joinCode.length < 6 || !currentUserId}
               >
-                Join
+                {t("joinLabel")}
               </PremiumButton>
             </div>
           </PremiumCard>
 
           {/* Instructions */}
           <PremiumCard className="p-6">
-            <h3 className="font-bold text-on-surface text-lg mb-4">How to Play</h3>
+            <h3 className="font-bold text-on-surface text-lg mb-4">{t("howToPlay")}</h3>
             <div className="space-y-3 text-on-surface-variant">
               <div className="flex items-start gap-3">
                 <span className="text-primary font-bold">1.</span>
-                <p>Create a room or join with a code from a friend</p>
+                <p>{t("step1CreateOrJoin")}</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-primary font-bold">2.</span>
-                <p>Wait for all players to ready up</p>
+                <p>{t("step2WaitReady")}</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-primary font-bold">3.</span>
-                <p>Answer questions as fast as you can for bonus points</p>
+                <p>{t("step3AnswerFast")}</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-primary font-bold">4.</span>
-                <p>Build streaks for extra points!</p>
+                <p>{t("step4BuildStreaks")}</p>
               </div>
             </div>
           </PremiumCard>
@@ -431,7 +438,7 @@ export default function MultiplayerPage() {
             transition={{ delay: 0.3 }}
             className="text-2xl text-on-surface-variant"
           >
-            Get ready...
+            {t("getReady")}
           </motion.p>
         </motion.div>
       )}
@@ -460,6 +467,7 @@ export default function MultiplayerPage() {
           onNextQuestion={handleNextQuestion}
           isHost={isHost}
           showResults={showResults}
+          lastAnswerCorrect={lastAnswerCorrect}
         />
       )}
 

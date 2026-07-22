@@ -5,6 +5,7 @@ import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface Player {
   id: string
@@ -24,6 +25,7 @@ interface QuizResultsProps {
 }
 
 export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: QuizResultsProps) {
+  const { t } = useLanguage()
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score)
   const winner = sortedPlayers[0]
   const currentUser = sortedPlayers.find((p) => p.id === currentUserId)
@@ -54,10 +56,10 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
           🏆
         </motion.div>
         <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary mb-2">
-          Quiz Complete!
+          {t("quizComplete")}
         </h1>
         <p className="text-on-surface-variant">
-          {winner.userName} wins with {winner.score} points!
+          {t("winsWithMsg", { name: winner.userName, score: winner.score })}
         </p>
       </motion.div>
 
@@ -116,7 +118,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
       >
         <PremiumCard className="p-6 mb-6">
           <h3 className="font-headline-md text-headline-md text-on-surface mb-4">
-            Final Rankings
+            {t("finalRankingsTitle")}
           </h3>
           <div className="space-y-3">
             {sortedPlayers.map((player, index) => (
@@ -140,18 +142,18 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-on-surface">{player.userName}</span>
                       {player.id === currentUserId && (
-                        <PremiumBadge variant="secondary" size="sm">YOU</PremiumBadge>
+                        <PremiumBadge variant="secondary" size="sm">{t("youBadge")}</PremiumBadge>
                       )}
                     </div>
                     <p className="text-xs text-on-surface-variant">
-                      {player.correctAnswers}/{player.totalAnswers} correct
+                      {player.correctAnswers}/{player.totalAnswers} {t("correctSuffix")}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-primary">{player.score} XP</p>
                   {player.streak >= 3 && (
-                    <p className="text-xs text-tertiary">🔥 Best streak: {player.streak}</p>
+                    <p className="text-xs text-tertiary">🔥 {t("bestStreakLabel", { streak: player.streak })}</p>
                   )}
                 </div>
               </motion.div>
@@ -169,16 +171,16 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
         >
           <PremiumCard className="p-6 mb-6">
             <h3 className="font-headline-md text-headline-md text-on-surface mb-4">
-              Your Performance
+              {t("yourPerformanceTitle")}
             </h3>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="font-bold text-3xl text-primary">{currentUserRank}</p>
-                <p className="text-sm text-on-surface-variant">Rank</p>
+                <p className="text-sm text-on-surface-variant">{t("rankWord")}</p>
               </div>
               <div>
                 <p className="font-bold text-3xl text-tertiary">{currentUser.score}</p>
-                <p className="text-sm text-on-surface-variant">Total XP</p>
+                <p className="text-sm text-on-surface-variant">{t("totalXp")}</p>
               </div>
               <div>
                 <p className="font-bold text-3xl text-secondary">
@@ -186,7 +188,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
                     ? Math.round((currentUser.correctAnswers / currentUser.totalAnswers) * 100)
                     : 0}%
                 </p>
-                <p className="text-sm text-on-surface-variant">Accuracy</p>
+                <p className="text-sm text-on-surface-variant">{t("accuracy")}</p>
               </div>
             </div>
           </PremiumCard>
@@ -201,10 +203,10 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
         className="flex gap-3"
       >
         <PremiumButton variant="secondary" fullWidth onClick={onLeave}>
-          Leave Room
+          {t("leaveRoom")}
         </PremiumButton>
         <PremiumButton variant="primary" fullWidth onClick={onPlayAgain}>
-          Play Again
+          {t("playAgain")}
         </PremiumButton>
       </motion.div>
     </div>

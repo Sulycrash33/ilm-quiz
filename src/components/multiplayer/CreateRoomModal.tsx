@@ -5,6 +5,7 @@ import { useState } from "react"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { PremiumCard } from "@/components/ui/premium-card"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface CreateRoomModalProps {
   isOpen: boolean
@@ -19,6 +20,8 @@ interface CreateRoomModalProps {
 }
 
 export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: CreateRoomModalProps) {
+  const { t } = useLanguage()
+  const difficultyLabels: Record<"easy" | "medium" | "hard", string> = { easy: t("easy"), medium: t("medium"), hard: t("hard") }
   const [category, setCategory] = useState(categories[0]?.id || "")
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium")
   const [maxPlayers, setMaxPlayers] = useState(4)
@@ -41,12 +44,12 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
         className="relative w-full max-w-md glass-card p-6"
       >
         <h2 className="font-headline-md text-headline-md text-on-surface mb-6">
-          Create Quiz Room
+          {t("createQuizRoomTitle")}
         </h2>
 
         {/* Category Selection */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-on-surface mb-2">Category</label>
+          <label className="block text-sm font-medium text-on-surface mb-2">{t("categoryLabel")}</label>
           <div className="grid grid-cols-3 gap-2">
             {categories.map((cat) => (
               <button
@@ -67,7 +70,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
 
         {/* Difficulty */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-on-surface mb-2">Difficulty</label>
+          <label className="block text-sm font-medium text-on-surface mb-2">{t("difficultyLabel")}</label>
           <div className="grid grid-cols-3 gap-2">
             {(["easy", "medium", "hard"] as const).map((d) => (
               <button
@@ -83,7 +86,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
                     : "bg-surface-container-high border-white/5 text-on-surface-variant hover:bg-surface-container-highest"
                 }`}
               >
-                {d}
+                {difficultyLabels[d]}
               </button>
             ))}
           </div>
@@ -91,7 +94,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
 
         {/* Max Players */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-on-surface mb-2">Max Players</label>
+          <label className="block text-sm font-medium text-on-surface mb-2">{t("maxPlayersLabel")}</label>
           <div className="flex gap-2">
             {[2, 4, 6, 8].map((num) => (
               <button
@@ -111,7 +114,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
 
         {/* Question Count */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-on-surface mb-2">Questions</label>
+          <label className="block text-sm font-medium text-on-surface mb-2">{t("questions")}</label>
           <div className="flex gap-2">
             {[5, 10, 15, 20].map((num) => (
               <button
@@ -132,7 +135,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
         {/* Actions */}
         <div className="flex gap-3">
           <PremiumButton variant="secondary" fullWidth onClick={onClose}>
-            Cancel
+            {t("cancel")}
           </PremiumButton>
           <PremiumButton
             variant="primary"
@@ -141,7 +144,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
               onCreateRoom({ category, difficulty, maxPlayers, questionCount })
             }
           >
-            Create Room
+            {t("createRoom")}
           </PremiumButton>
         </div>
       </motion.div>

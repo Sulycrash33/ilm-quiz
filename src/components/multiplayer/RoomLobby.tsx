@@ -5,6 +5,7 @@ import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { PremiumCard } from "@/components/ui/premium-card"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface Player {
   id: string
@@ -36,6 +37,7 @@ export function RoomLobby({
   onToggleReady,
   isReady,
 }: RoomLobbyProps) {
+  const { t } = useLanguage()
   const allReady = players.every((p) => p.isReady || p.isHost)
 
   return (
@@ -46,7 +48,7 @@ export function RoomLobby({
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <p className="text-on-surface-variant mb-2">Room Code</p>
+        <p className="text-on-surface-variant mb-2">{t("roomCode")}</p>
         <div className="inline-flex items-center gap-3 bg-surface-container-high px-6 py-3 rounded-xl border border-white/10">
           <span className="font-mono text-3xl font-bold text-primary tracking-widest">
             {roomCode}
@@ -61,7 +63,7 @@ export function RoomLobby({
           </button>
         </div>
         <p className="text-sm text-on-surface-variant mt-2">
-          Share this code with friends to join
+          {t("shareCode")}
         </p>
       </motion.div>
 
@@ -74,10 +76,10 @@ export function RoomLobby({
         <PremiumCard className="p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-headline-md text-headline-md text-on-surface">
-              Players ({players.length})
+              {t("players")} ({players.length})
             </h3>
             <PremiumBadge variant="primary" size="sm">
-              WAITING
+              {t("waitingBadge")}
             </PremiumBadge>
           </div>
           <div className="space-y-3">
@@ -99,19 +101,19 @@ export function RoomLobby({
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-on-surface">{player.userName}</span>
                       {player.isHost && (
-                        <PremiumBadge variant="warning" size="sm">HOST</PremiumBadge>
+                        <PremiumBadge variant="warning" size="sm">{t("hostBadge")}</PremiumBadge>
                       )}
                       {player.id === currentUserId && (
-                        <PremiumBadge variant="secondary" size="sm">YOU</PremiumBadge>
+                        <PremiumBadge variant="secondary" size="sm">{t("youBadge")}</PremiumBadge>
                       )}
                     </div>
                   </div>
                 </div>
                 <div>
                   {player.isReady || player.isHost ? (
-                    <PremiumBadge variant="success" size="sm">READY</PremiumBadge>
+                    <PremiumBadge variant="success" size="sm">{t("readyBadge")}</PremiumBadge>
                   ) : (
-                    <PremiumBadge variant="secondary" size="sm">NOT READY</PremiumBadge>
+                    <PremiumBadge variant="secondary" size="sm">{t("notReadyBadge")}</PremiumBadge>
                   )}
                 </div>
               </motion.div>
@@ -128,7 +130,7 @@ export function RoomLobby({
         className="flex gap-3"
       >
         <PremiumButton variant="secondary" fullWidth onClick={onLeave}>
-          Leave Room
+          {t("leaveRoom")}
         </PremiumButton>
         {!isHost && (
           <PremiumButton
@@ -136,7 +138,7 @@ export function RoomLobby({
             fullWidth
             onClick={onToggleReady}
           >
-            {isReady ? "Not Ready" : "Ready Up"}
+            {isReady ? t("notReady") : t("readyUp")}
           </PremiumButton>
         )}
         {isHost && (
@@ -146,7 +148,7 @@ export function RoomLobby({
             onClick={onStart}
             disabled={!allReady || players.length < 2}
           >
-            {players.length < 2 ? "Need 2+ Players" : "Start Quiz"}
+            {players.length < 2 ? t("needPlayers") : t("startQuizButton")}
           </PremiumButton>
         )}
       </motion.div>

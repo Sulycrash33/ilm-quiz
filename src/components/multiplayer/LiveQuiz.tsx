@@ -6,6 +6,7 @@ import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { PremiumProgress } from "@/components/ui/premium-progress"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface Question {
   id: string
@@ -33,6 +34,9 @@ interface LiveQuizProps {
   onNextQuestion: () => void
   isHost: boolean
   showResults: boolean
+  /** Real graded result for the answer just submitted - server-authoritative,
+   * so this component never has to guess (or fake) which choice is correct. */
+  lastAnswerCorrect: boolean | null
 }
 
 export function LiveQuiz({
@@ -46,17 +50,17 @@ export function LiveQuiz({
   onNextQuestion,
   isHost,
   showResults,
+  lastAnswerCorrect,
 }: LiveQuizProps) {
+  const { t } = useLanguage()
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null)
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
   const [hasAnswered, setHasAnswered] = useState(false)
-  const [showCorrect, setShowCorrect] = useState(false)
 
   useEffect(() => {
     setSelectedChoice(null)
     setTimeRemaining(timeLimit)
     setHasAnswered(false)
-    setShowCorrect(false)
   }, [question.id, timeLimit])
 
   useEffect(() => {
@@ -67,7 +71,6 @@ export function LiveQuiz({
         if (prev <= 1) {
           clearInterval(timer)
           setHasAnswered(true)
-          setShowCorrect(true)
           return 0
         }
         return prev - 1
@@ -82,7 +85,6 @@ export function LiveQuiz({
       if (hasAnswered) return
       setSelectedChoice(index)
       setHasAnswered(true)
-      setShowCorrect(true)
       onAnswer(index, timeLimit - timeRemaining)
     },
     [hasAnswered, timeLimit, timeRemaining, onAnswer]
@@ -96,7 +98,7 @@ export function LiveQuiz({
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <PremiumBadge variant="primary" size="md">
-            Question {questionNumber}/{totalQuestions}
+            {t("questionNumber", { current: questionNumber, total: totalQuestions })}
           </PremiumBadge>
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
@@ -108,7 +110,7 @@ export function LiveQuiz({
           </div>
         </div>
         <PremiumBadge variant="warning" size="md">
-          LIVE
+          {t("liveBadge")}
         </PremiumBadge>
       </div>
 
@@ -137,7 +139,13 @@ export function LiveQuiz({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {question.choices.map((choice, index) => {
                 const isSelected = selectedChoice === index
-                const isCorrect = showCorrect && index === 0 // Assuming correct index is 0 for demo
+                // We only know whether the SELECTED choice was correct (from
+                // the server's graded result) - we deliberately never learn
+                // which other option was correct, since that would leak the
+                // answer key to the client. So only the chosen option gets a
+                // correct/wrong treatment; unselected options just dim.
+                const selectedWasCorrect = isSelected && hasAnswered && lastAnswerCorrect === true
+                const selectedWasWrong = isSelected && hasAnswered && lastAnswerCorrect === false
 
                 return (
                   <motion.button
@@ -148,23 +156,27 @@ export function LiveQuiz({
                     disabled={hasAnswered}
                     className={`
                       p-4 rounded-xl border text-left transition-all
-                      ${isSelected
-                        ? "bg-primary/20 border-primary"
-                        : isCorrect && showCorrect
+                      ${selectedWasCorrect
                         ? "bg-green-500/20 border-green-500"
+                        : selectedWasWrong
+                        ? "bg-red-500/20 border-red-500"
+                        : isSelected
+                        ? "bg-primary/20 border-primary"
                         : "bg-surface-container-high border-white/5 hover:bg-surface-container-highest"
                       }
-                      ${hasAnswered && !isSelected && !isCorrect ? "opacity-50" : ""}
+                      ${hasAnswered && !isSelected ? "opacity-50" : ""}
                     `}
                   >
                     <div className="flex items-center gap-3">
                       <div
                         className={`
                           w-8 h-8 rounded-full flex items-center justify-center font-bold
-                          ${isSelected
-                            ? "bg-primary text-on-primary"
-                            : isCorrect && showCorrect
+                          ${selectedWasCorrect
                             ? "bg-green-500 text-white"
+                            : selectedWasWrong
+                            ? "bg-red-500 text-white"
+                            : isSelected
+                            ? "bg-primary text-on-primary"
                             : "bg-surface-container-highest text-on-surface-variant"
                           }
                         `}
@@ -186,7 +198,7 @@ export function LiveQuiz({
               animate={{ opacity: 1, y: 0 }}
             >
               <PremiumButton variant="primary" fullWidth onClick={onNextQuestion}>
-                {questionNumber >= totalQuestions ? "See Results" : "Next Question"}
+                {questionNumber >= totalQuestions ? t("seeResultsButton") : t("nextQuestionButton")}
               </PremiumButton>
             </motion.div>
           )}
@@ -196,7 +208,7 @@ export function LiveQuiz({
         <div>
           <PremiumCard className="p-4">
             <h3 className="font-label-caps text-label-caps text-on-surface-variant mb-3">
-              LIVE LEADERBOARD
+              {t("liveLeaderboard")}
             </h3>
             <div className="space-y-2">
               {sortedPlayers.map((player, index) => (
