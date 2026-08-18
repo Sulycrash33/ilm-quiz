@@ -2,57 +2,45 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { ShopItem } from "@/components/game/ShopItem"
-import { purchaseStoreItem } from "@/app/(app)/store/actions"
+import { purchaseStoreItem, type StoreCatalogueItem } from "@/app/(app)/store/actions"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Translations } from "@/lib/i18n"
 
 type StoreTab = "lifelines" | "powerups" | "cosmetics" | "bundles"
 
-interface StoreItemDef {
-  id: string
-  nameKey: keyof Translations
-  descKey: keyof Translations
-  price: number
-  icon: string
-  category: "avatar" | "theme" | "power-up" | "badge"
+/**
+ * The catalogue is no longer hardcoded here.
+ *
+ * There used to be an inline `storeItems` map in this file AND a second one in
+ * src/data/store-items.ts, and they disagreed: item "1" was 100 coins here and
+ * 50 there. Worse, the price rendered here was the price sent to the server to
+ * deduct. Both are fixed by reading the catalogue from `store_items` on the
+ * server (see migration 0006) and sending only an item id when buying.
+ */
+interface StorePageClientProps {
+  initialCoins: number
+  catalogue: StoreCatalogueItem[]
 }
 
-const storeItems: Record<StoreTab, StoreItemDef[]> = {
-  lifelines: [
-    { id: "1", nameKey: "storeItem1Name", descKey: "storeItem1Desc", price: 100, icon: "🎯", category: "power-up" },
-    { id: "2", nameKey: "storeItem2Name", descKey: "storeItem2Desc", price: 50, icon: "💡", category: "power-up" },
-    { id: "3", nameKey: "storeItem3Name", descKey: "storeItem3Desc", price: 75, icon: "⏭️", category: "power-up" },
-    { id: "4", nameKey: "storeItem4Name", descKey: "storeItem4Desc", price: 200, icon: "⚡", category: "power-up" },
-  ],
-  powerups: [
-    { id: "5", nameKey: "storeItem5Name", descKey: "storeItem5Desc", price: 150, icon: "❄️", category: "power-up" },
-    { id: "6", nameKey: "storeItem6Name", descKey: "storeItem6Desc", price: 250, icon: "🔥", category: "power-up" },
-    { id: "7", nameKey: "storeItem7Name", descKey: "storeItem7Desc", price: 125, icon: "🔄", category: "power-up" },
-    { id: "8", nameKey: "storeItem8Name", descKey: "storeItem8Desc", price: 100, icon: "🧠", category: "power-up" },
-  ],
-  cosmetics: [
-    { id: "9", nameKey: "storeItem9Name", descKey: "storeItem9Desc", price: 500, icon: "🖼️", category: "avatar" },
-    { id: "10", nameKey: "storeItem10Name", descKey: "storeItem10Desc", price: 750, icon: "✨", category: "theme" },
-    { id: "11", nameKey: "storeItem11Name", descKey: "storeItem11Desc", price: 300, icon: "🎓", category: "badge" },
-    { id: "12", nameKey: "storeItem12Name", descKey: "storeItem12Desc", price: 400, icon: "⭐", category: "avatar" },
-  ],
-  bundles: [
-    { id: "13", nameKey: "storeItem13Name", descKey: "storeItem13Desc", price: 400, icon: "📦", category: "power-up" },
-    { id: "14", nameKey: "storeItem14Name", descKey: "storeItem14Desc", price: 800, icon: "📚", category: "power-up" },
-    { id: "15", nameKey: "storeItem15Name", descKey: "storeItem15Desc", price: 1500, icon: "👑", category: "avatar" },
-    { id: "16", nameKey: "storeItem16Name", descKey: "storeItem16Desc", price: 3000, icon: "💎", category: "theme" },
-  ],
-}
-
-export function StorePageClient({ initialCoins }: { initialCoins: number }) {
+export function StorePageClient({ initialCoins, catalogue }: StorePageClientProps) {
   const { t, dir } = useLanguage()
   const [activeTab, setActiveTab] = useState<StoreTab>("lifelines")
   const [coins, setCoins] = useState(initialCoins)
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  // Owned counts start from the server and are bumped locally on a successful
+  // purchase, so an item flips to "Owned" without a round trip.
+  const [owned, setOwned] = useState<Record<string, number>>(() =>
+    Object.fromEntries(catalogue.map((i) => [i.id, i.owned])),
+  )
+
+  const visibleItems = useMemo(
+    () => catalogue.filter((item) => item.tab === activeTab),
+    [catalogue, activeTab],
+  )
 
   const tabs: { id: StoreTab; label: string; icon: React.ReactNode }[] = [
     { id: "lifelines", label: t("lifelines"), icon: <span className="text-lg">🎯</span> },
@@ -61,15 +49,20 @@ export function StorePageClient({ initialCoins }: { initialCoins: number }) {
     { id: "bundles", label: t("bundles"), icon: <span className="text-lg">📦</span> },
   ]
 
-  const handlePurchase = async (id: string, price: number, name: string) => {
+  const handlePurchase = async (id: string, name: string) => {
     setPendingId(id)
     setMessage(null)
-    const result = await purchaseStoreItem(price)
+    // Only the id goes to the server. It decides the price.
+    const result = await purchaseStoreItem(id)
     setPendingId(null)
+
     if (result.success && result.newBalance !== undefined) {
       setCoins(result.newBalance)
-      setMessage(t("purchasedMsg", { name, price }))
+      setOwned((prev) => ({ ...prev, [id]: result.quantity ?? (prev[id] ?? 0) + 1 }))
+      // Report the price the server charged, not the one this page displayed.
+      setMessage(t("purchasedMsg", { name, price: result.price ?? 0 }))
     } else {
+      if (result.newBalance !== undefined) setCoins(result.newBalance)
       setMessage(result.error ?? t("purchaseFailedMsg"))
     }
   }
@@ -124,19 +117,30 @@ export function StorePageClient({ initialCoins }: { initialCoins: number }) {
 
       <AnimatePresence mode="wait">
         <motion.div key={activeTab} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {storeItems[activeTab].map((item, index) => (
+          {visibleItems.map((item, index) => {
+            const isOwned = !item.consumable && (owned[item.id] ?? 0) > 0
+            return (
             <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
               <ShopItem
-                name={t(item.nameKey)}
-                description={t(item.descKey)}
+                name={t(item.nameKey as keyof Translations)}
+                description={t(item.descKey as keyof Translations)}
                 price={item.price}
                 icon={item.icon}
                 category={item.category}
-                onPurchase={() => handlePurchase(item.id, item.price, t(item.nameKey))}
+                isOwned={isOwned}
+                onPurchase={
+                  isOwned || !item.inStock
+                    ? undefined
+                    : () => handlePurchase(item.id, t(item.nameKey as keyof Translations))
+                }
               />
               {pendingId === item.id && <p className="text-xs text-on-surface-variant text-center mt-1">{t("processingLabel")}</p>}
+              {item.consumable && (owned[item.id] ?? 0) > 0 && (
+                <p className="text-xs text-tertiary text-center mt-1">×{owned[item.id]}</p>
+              )}
             </motion.div>
-          ))}
+            )
+          })}
         </motion.div>
       </AnimatePresence>
 
