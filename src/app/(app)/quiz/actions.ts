@@ -61,3 +61,125 @@ export async function fiftyFifty(questionId: string): Promise<number[]> {
   }
   return wrong.slice(0, 2);
 }
+
+/** Lifelines, as the dock renders them. `cost` always comes from the database
+ * (`lifeline_prices`) — the display copy lives in the i18n bundle keyed by id. */
+export interface LifelinePrice {
+  id: string;
+  cost: number;
+  sortOrder: number;
+}
+
+/**
+ * Fallback prices, used only when `lifeline_prices` isn't reachable (most
+ * likely: migration 0005 hasn't been applied to this environment yet). They
+ * mirror the migration's seed values so the dock still renders sensible
+ * numbers. Note this is display-only — `spendLifeline` never falls back, so a
+ * missing table means lifelines can't be bought, not that they become free.
+ */
+const FALLBACK_LIFELINE_PRICES: LifelinePrice[] = [
+  { id: 'fifty-fifty', cost: 50, sortOrder: 1 },
+  { id: 'ask-imam', cost: 75, sortOrder: 2 },
+  { id: 'skip', cost: 25, sortOrder: 3 },
+  { id: 'double-points', cost: 100, sortOrder: 4 },
+  { id: 'time-boost', cost: 30, sortOrder: 5 },
+];
+
+export async function getLifelinePrices(): Promise<LifelinePrice[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('lifeline_prices')
+    .select('id, cost, sort_order')
+    .eq('enabled', true)
+    .order('sort_order');
+
+  if (error || !data || data.length === 0) return FALLBACK_LIFELINE_PRICES;
+
+  return data.map((row: { id: string; cost: number; sort_order: number }) => ({
+    id: row.id,
+    cost: row.cost,
+    sortOrder: row.sort_order,
+  }));
+}
+
+export interface SpendResult {
+  success: boolean;
+  error?: string;
+  newBalance?: number;
+  cost?: number;
+}
+
+/**
+ * Charges the signed-in seeker for one lifeline.
+ *
+ * This closes a real hole: lifelines used to be free unless the player then
+ * committed to an answer, because the only thing that ever reached the server
+ * was `p_lifeline_used` on `submitAnswer`. Skip and Time Boost never got that
+ * far. The price is decided by the database, never sent from here.
+ *
+ * Fails closed on purpose. If the RPC is missing or errors, the caller must
+ * treat the lifeline as unavailable — granting the effect anyway would put the
+ * free-lifeline bug straight back.
+ */
+export async function spendLifeline(lifelineId: string): Promise<SpendResult> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: 'You must be signed in.' };
+
+  const { data, error } = await supabase.rpc('spend_lifeline_rpc', { p_lifeline_id: lifelineId });
+  if (error) return { success: false, error: error.message || 'Could not use that lifeline.' };
+
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) return { success: false, error: 'Could not use that lifeline.' };
+  if (!row.success) {
+    return { success: false, error: row.error ?? 'Not enough coins.', newBalance: row.new_balance ?? undefined };
+  }
+
+  return { success: true, newBalance: row.new_balance, cost: row.cost };
+}
+
+export interface HuntRunRecord {
+  categoryId: string | null;
+  status: 'won' | 'lost';
+  stages: number;
+  correct: number;
+  wrong: number;
+  timedOut: number;
+  bestCombo: number;
+  livesLeft: number;
+  lifelinesUsed: number;
+  xpEarned: number;
+  speedScore: number;
+}
+
+/**
+ * Files a finished run in the journal.
+ *
+ * Everything here is self-reported by the client, which is why `hunt_runs` is
+ * display-only and grants nothing — see the table comment in migration 0005.
+ * The authoritative record of what was answered is `attempts`, written by
+ * `submit_quiz_answer`. Best-effort: a failure to record must never block the
+ * summary screen, because the XP is already banked by then.
+ */
+export async function recordHuntRun(run: HuntRunRecord): Promise<{ recorded: boolean }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { recorded: false };
+
+  const { error } = await supabase.from('hunt_runs').insert({
+    user_id: user.id,
+    category_id: run.categoryId,
+    status: run.status,
+    stages: run.stages,
+    correct: run.correct,
+    wrong: run.wrong,
+    timed_out: run.timedOut,
+    best_combo: run.bestCombo,
+    lives_left: run.livesLeft,
+    lifelines_used: run.lifelinesUsed,
+    xp_earned: run.xpEarned,
+    speed_score: run.speedScore,
+  });
+
+  return { recorded: !error };
+}

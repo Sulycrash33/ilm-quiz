@@ -1,0 +1,87 @@
+"use client";
+
+import { Coins } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Translations } from "@/lib/i18n";
+import type { LifelinePrice } from "@/app/(app)/quiz/actions";
+
+interface LifelineDockProps {
+  prices: LifelinePrice[];
+  coins: number;
+  used: string[];
+  /** Blocks the dock while an answer is being graded or the reveal is showing. */
+  locked: boolean;
+  /** The lifeline currently being charged, if any. */
+  pending: string | null;
+  onUse: (id: string) => void;
+}
+
+/** Display metadata per lifeline. The cost is NOT here — it comes from the
+ * database via `getLifelinePrices`, so the price shown is the price charged. */
+const LIFELINE_META: Record<string, { icon: string; nameKey: keyof Translations; descKey: keyof Translations }> = {
+  "fifty-fifty": { icon: "⚡", nameKey: "lifelineFiftyFifty", descKey: "lifelineFiftyFiftyDesc" },
+  "ask-imam": { icon: "🧠", nameKey: "lifelineAskImam", descKey: "lifelineAskImamDesc" },
+  skip: { icon: "⏭️", nameKey: "lifelineSkip", descKey: "lifelineSkipDesc" },
+  "double-points": { icon: "💎", nameKey: "lifelineDoublePoints", descKey: "lifelineDoublePointsDesc" },
+  "time-boost": { icon: "⏰", nameKey: "lifelineTimeBoost", descKey: "lifelineTimeBoostDesc" },
+};
+
+export function LifelineDock({ prices, coins, used, locked, pending, onUse }: LifelineDockProps) {
+  const { t } = useLanguage();
+
+  return (
+    <section aria-label={t("lifelines")} className="space-y-3">
+      <h3 className="text-label-caps uppercase tracking-wider text-on-surface-variant">
+        {t("lifelines")}
+      </h3>
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
+        {prices.map((lifeline) => {
+          const meta = LIFELINE_META[lifeline.id];
+          if (!meta) return null;
+
+          const isUsed = used.includes(lifeline.id);
+          const affordable = coins >= lifeline.cost;
+          const isPending = pending === lifeline.id;
+          const disabled = isUsed || !affordable || locked || pending !== null;
+
+          return (
+            <button
+              key={lifeline.id}
+              type="button"
+              disabled={disabled}
+              onClick={() => onUse(lifeline.id)}
+              title={t(meta.descKey)}
+              aria-label={`${t(meta.nameKey)} — ${lifeline.cost} ${t("coinsWord")}`}
+              className={cn(
+                "flex flex-col items-center gap-1 rounded-xl border p-3 transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                disabled
+                  ? "border-outline-variant/40 bg-surface-container opacity-45"
+                  : "border-tertiary/30 bg-surface-container hover:border-tertiary hover:bg-surface-container-high",
+                isPending && "animate-pulse",
+              )}
+            >
+              <span className="text-xl" aria-hidden="true">
+                {meta.icon}
+              </span>
+              <span className="text-center text-xs font-medium leading-tight text-on-surface">
+                {t(meta.nameKey)}
+              </span>
+              <span
+                className={cn(
+                  "flex items-center gap-1 text-xs tabular-nums",
+                  affordable ? "text-tertiary" : "text-error",
+                )}
+              >
+                <Coins className="h-3 w-3" aria-hidden="true" />
+                {lifeline.cost}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}

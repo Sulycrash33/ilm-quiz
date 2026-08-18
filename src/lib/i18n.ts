@@ -77,6 +77,26 @@ export interface Translations {
   lifelineTimeBoost: string
   lifelineTimeBoostDesc: string
 
+  // The Hunt (run loop)
+  huntStage: string
+  comboLabel: string
+  comboX: string
+  livesLabel: string
+  paceLabel: string
+  runScoreLabel: string
+  bestComboLabel: string
+  answeredLabel: string
+  timesUp: string
+  notEnoughCoins: string
+  lifelineUnavailable: string
+  flawlessRun: string
+  outOfLives: string
+  huntComplete: string
+  beginHunt: string
+  questionHunt: string
+  xpToRank: string
+  maxRankReached: string
+
   // Categories
   knowledgeCategories: string
   categories: string
@@ -497,6 +517,26 @@ const enTranslations: Translations = {
   lifelineDoublePointsDesc: "Double points for this question",
   lifelineTimeBoost: "Time+",
   lifelineTimeBoostDesc: "Add 15 seconds",
+
+  // The Hunt (run loop)
+  huntStage: "Stage {current} of {total}",
+  comboLabel: "Combo",
+  comboX: "{multiplier}× combo",
+  livesLabel: "Lives",
+  paceLabel: "Pace",
+  runScoreLabel: "Run score",
+  bestComboLabel: "Best combo",
+  answeredLabel: "Answered",
+  timesUp: "Time's up",
+  notEnoughCoins: "Not enough coins",
+  lifelineUnavailable: "That lifeline isn't available right now",
+  flawlessRun: "Flawless hunt",
+  outOfLives: "Out of lives",
+  huntComplete: "Hunt complete",
+  beginHunt: "Begin the hunt",
+  questionHunt: "{count}-question hunt",
+  xpToRank: "{xp} XP to {rank}",
+  maxRankReached: "Highest rank reached",
 
   // Categories
   knowledgeCategories: "Knowledge Categories",
@@ -920,6 +960,26 @@ const msTranslations: Translations = {
   lifelineTimeBoost: "Masa+",
   lifelineTimeBoostDesc: "Tambah 15 saat",
 
+  // The Hunt (run loop)
+  huntStage: "Peringkat {current} daripada {total}",
+  comboLabel: "Kombo",
+  comboX: "Kombo {multiplier}×",
+  livesLabel: "Nyawa",
+  paceLabel: "Kepantasan",
+  runScoreLabel: "Skor pusingan",
+  bestComboLabel: "Kombo terbaik",
+  answeredLabel: "Dijawab",
+  timesUp: "Masa tamat",
+  notEnoughCoins: "Syiling tidak mencukupi",
+  lifelineUnavailable: "Bantuan itu tidak tersedia sekarang",
+  flawlessRun: "Perburuan sempurna",
+  outOfLives: "Nyawa habis",
+  huntComplete: "Perburuan selesai",
+  beginHunt: "Mula memburu",
+  questionHunt: "Perburuan {count} soalan",
+  xpToRank: "{xp} XP ke {rank}",
+  maxRankReached: "Pangkat tertinggi dicapai",
+
   // Categories
   knowledgeCategories: "Kategori Ilmu",
   categories: "Kategori",
@@ -1341,6 +1401,26 @@ const idTranslations: Translations = {
   lifelineDoublePointsDesc: "Gandakan poin untuk pertanyaan ini",
   lifelineTimeBoost: "Waktu+",
   lifelineTimeBoostDesc: "Tambah 15 detik",
+
+  // The Hunt (run loop)
+  huntStage: "Tahap {current} dari {total}",
+  comboLabel: "Kombo",
+  comboX: "Kombo {multiplier}×",
+  livesLabel: "Nyawa",
+  paceLabel: "Kecepatan",
+  runScoreLabel: "Skor ronde",
+  bestComboLabel: "Kombo terbaik",
+  answeredLabel: "Dijawab",
+  timesUp: "Waktu habis",
+  notEnoughCoins: "Koin tidak cukup",
+  lifelineUnavailable: "Bantuan itu tidak tersedia saat ini",
+  flawlessRun: "Perburuan sempurna",
+  outOfLives: "Nyawa habis",
+  huntComplete: "Perburuan selesai",
+  beginHunt: "Mulai berburu",
+  questionHunt: "Perburuan {count} soal",
+  xpToRank: "{xp} XP menuju {rank}",
+  maxRankReached: "Peringkat tertinggi tercapai",
 
   // Categories
   knowledgeCategories: "Kategori Ilmu",
@@ -1764,6 +1844,26 @@ const haTranslations: Translations = {
   lifelineTimeBoost: "Karin Lokaci",
   lifelineTimeBoostDesc: "Kara dakika 15",
 
+  // The Hunt (run loop)
+  huntStage: "Mataki {current} daga {total}",
+  comboLabel: "Haɗi",
+  comboX: "Haɗi {multiplier}×",
+  livesLabel: "Rayuwa",
+  paceLabel: "Gudu",
+  runScoreLabel: "Makin zagaye",
+  bestComboLabel: "Haɗi mafi kyau",
+  answeredLabel: "An amsa",
+  timesUp: "Lokaci ya ƙare",
+  notEnoughCoins: "Tsabar kuɗi bai isa ba",
+  lifelineUnavailable: "Wannan taimako ba ya samuwa yanzu",
+  flawlessRun: "Farauta marar kuskure",
+  outOfLives: "Rayuwa ta ƙare",
+  huntComplete: "An kammala farauta",
+  beginHunt: "Fara farauta",
+  questionHunt: "Farautar tambayoyi {count}",
+  xpToRank: "{xp} XP zuwa {rank}",
+  maxRankReached: "An kai matsayi mafi girma",
+
   // Categories
   knowledgeCategories: "Rukunin Ilimi",
   categories: "Rukunoni",
@@ -2186,6 +2286,26 @@ const frTranslations: Translations = {
   lifelineTimeBoost: "Temps+",
   lifelineTimeBoostDesc: "Ajouter 15 secondes",
 
+  // The Hunt (run loop)
+  huntStage: "Étape {current} sur {total}",
+  comboLabel: "Combo",
+  comboX: "Combo {multiplier}×",
+  livesLabel: "Vies",
+  paceLabel: "Rythme",
+  runScoreLabel: "Score de la manche",
+  bestComboLabel: "Meilleur combo",
+  answeredLabel: "Répondu",
+  timesUp: "Temps écoulé",
+  notEnoughCoins: "Pas assez de pièces",
+  lifelineUnavailable: "Cette aide n'est pas disponible pour le moment",
+  flawlessRun: "Chasse parfaite",
+  outOfLives: "Plus de vies",
+  huntComplete: "Chasse terminée",
+  beginHunt: "Commencer la chasse",
+  questionHunt: "Chasse de {count} questions",
+  xpToRank: "{xp} XP jusqu'à {rank}",
+  maxRankReached: "Rang le plus élevé atteint",
+
   // Categories
   knowledgeCategories: "Catégories de connaissances",
   categories: "Catégories",
@@ -2607,6 +2727,26 @@ const arTranslations: Translations = {
   lifelineDoublePointsDesc: "مضاعفة النقاط لهذا السؤال",
   lifelineTimeBoost: "وقت إضافي",
   lifelineTimeBoostDesc: "أضف 15 ثانية",
+
+  // The Hunt (run loop)
+  huntStage: "المرحلة {current} من {total}",
+  comboLabel: "سلسلة",
+  comboX: "سلسلة {multiplier}×",
+  livesLabel: "المحاولات",
+  paceLabel: "السرعة",
+  runScoreLabel: "نتيجة الجولة",
+  bestComboLabel: "أفضل سلسلة",
+  answeredLabel: "تمت الإجابة",
+  timesUp: "انتهى الوقت",
+  notEnoughCoins: "لا توجد عملات كافية",
+  lifelineUnavailable: "هذه المساعدة غير متاحة الآن",
+  flawlessRun: "رحلة بلا خطأ",
+  outOfLives: "انتهت المحاولات",
+  huntComplete: "اكتملت الرحلة",
+  beginHunt: "ابدأ الرحلة",
+  questionHunt: "رحلة من {count} أسئلة",
+  xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
+  maxRankReached: "تم بلوغ أعلى رتبة",
 
   // Categories
   knowledgeCategories: "فئات المعرفة",
