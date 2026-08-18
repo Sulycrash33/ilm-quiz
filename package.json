@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:engine": "tsx scripts/check-hunt-engine.ts"
+    "test:engine": "tsx scripts/check-hunt-engine.ts",
+    "seed:build": "tsx scripts/seed-content/emit.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
