@@ -3,34 +3,29 @@ import type { SVGProps } from "react"
 /**
  * The avatar set.
  *
- * WHY THIS IS A REWRITE
- * The first version drew each avatar independently, so nothing lined up: heads
- * sat at different heights, one had nine units of bare neck between the jaw and
- * the collar, and the beards came out of an arithmetic expression rather than a
- * drawn shape. That is what made them look unfinished.
+ * ON FACES
+ * An earlier version of this file was faceless, on the reasoning that views
+ * among Muslims differ on depicting animate beings and that facial features are
+ * where the disagreement sits. That judgement was overruled by the person whose
+ * app this is, with a reference sheet of faced avatars — so these have faces.
+ * The faceless variants are one commit back in history if they are ever wanted
+ * again; nothing else in the app depends on which way this goes.
  *
- * This is built the way avatar systems that work are built — as layers over one
- * canonical base. Every avatar uses the same circle, the same shoulder line,
- * the same neck and the same head at the same coordinates; only the garment and
- * the headwear change. Consistency across the set is the thing that reads as
- * "properly made", far more than detail in any single one.
+ * HOW IT IS BUILT
+ * Layers over one canonical base, not sixteen independent drawings. Every
+ * avatar shares the same circle, the same shoulder line, the same neck and the
+ * same head at the same coordinates. Only garment, headwear, features and
+ * accessories change. That shared geometry is what makes a set read as a set.
  *
- * PROPORTIONS
- * 100x100 canvas. Head centred at (50,42), 32 wide and 38 tall, which puts it
- * at a little under 60% of the circle and leaves real padding at the crown —
- * the standard head-and-shoulders bust framing, and the reason these still read
- * at 32px in a comment thread.
+ * Head is 31x36 on a 100x100 canvas, centred at (50,44) — a little under 60% of
+ * the circle, the standard bust framing, and the reason these still read at
+ * 32px in a comment thread.
  *
- * WHY THEY HAVE NO FACES
- * Deliberate. Views among Muslims differ on depicting animate beings, and
- * facial features are where most of the disagreement sits. Faceless works for
- * everyone: someone who avoids such images is not asked to pick one, and nobody
- * else loses anything, because all the character here is in the dress. It is
- * also better design — no eyes to sit slightly wrong at small sizes.
- *
- * The range runs deliberately wide, contemporary through fully covered, in both
- * directions. A Kano teenager and a Gulf grandmother should both find
- * themselves in the same grid without either being the odd one out.
+ * Every curve is a cubic. Not one SVG arc appears in this file, deliberately:
+ * an arc whose chord equals twice its radius is degenerate, browsers close the
+ * subpath with a straight line, and that mistake cost four separate rounds of
+ * debugging across this component and the brand mark. One of them rendered as
+ * two dark blobs at the temples that looked like sideburns.
  */
 
 export type AvatarGender = "female" | "male"
@@ -38,305 +33,372 @@ export type AvatarGender = "female" | "male"
 export interface AvatarDefinition {
   id: string
   gender: AvatarGender
-  label: string
+  /** The character's name — what the picker shows. */
+  name: string
+  /** What they are wearing. Used as the tile's title and for screen readers. */
+  style: string
 }
 
-/* Skin tones span a real range on purpose: this app is Hausa-first and reaches
-   Malaysia and Indonesia, so a single default would be wrong for most of the
-   people using it. */
 const SKIN = {
-  light: "#efd0ae",
-  warm: "#d9a97a",
-  tan: "#b8814f",
-  deep: "#8a5630",
-  rich: "#5f3a20",
+  light: "#f2d3b3",
+  warm: "#e0b088",
+  tan: "#c08d5c",
+  deep: "#96603a",
+  rich: "#6d4326",
 } as const
 
 const FIELD = "#1b2540"
+const LIP = "#c1706b"
+const HAIRDARK = "#231508"
 
 /* ------------------------------------------------------------------ base -- */
 
-/** Background, garment, neck. Everything else is drawn on top of this. */
-function Base({ garment, skin }: { garment: string; skin: string }) {
+function Shoulders({ garment, collar }: { garment: string; collar?: string }) {
   return (
     <>
-      <circle cx="50" cy="50" r="50" fill={FIELD} />
-      {/* Shoulders. One curve, used by every avatar, so the whole set shares a
-          horizon line. */}
-      <path d="M10 100c0-19 18-30 40-30s40 11 40 30z" fill={garment} />
-      {/* Neck, with a shadow where the jaw meets it — the only shading in the
-          set, and enough to stop the head reading as a sticker. */}
-      <path d="M43 56h14v18H43z" fill={skin} />
-      <path d="M43 56h14v7H43z" fill="rgba(0,0,0,0.18)" />
+      <path d="M9 100c0-20 18-31 41-31s41 11 41 31z" fill={garment} />
+      {collar && <path d="M41 71c3 6 6 9 9 9s6-3 9-9c4 2 7 4 9 6-5 5-11 8-18 8s-13-3-18-8c2-2 5-4 9-6z" fill={collar} />}
     </>
   )
 }
 
-/** The head, ears optional (a scarf covers them). */
-function Head({ skin, ears = false }: { skin: string; ears?: boolean }) {
+function Neck({ skin }: { skin: string }) {
   return (
     <>
-      {ears && (
-        <>
-          <circle cx="33" cy="45" r="4" fill={skin} />
-          <circle cx="67" cy="45" r="4" fill={skin} />
-        </>
-      )}
-      <ellipse cx="50" cy="42" rx="16" ry="19" fill={skin} />
+      <path d="M43 57h14v17H43z" fill={skin} />
+      <path d="M43 57h14v7H43z" fill="rgba(0,0,0,0.16)" />
     </>
   )
 }
 
 /**
- * A head covering: a dome over the crown that falls to the shoulders, with an
- * opening cut for the face. `opening` controls how much of the face shows —
- * this is what separates a wrapped hijab from a niqab from a full covering,
- * using the same two shapes each time.
+ * The face. `veil` hides everything below the eyes, which is what makes a niqab
+ * a niqab without needing a second set of shapes.
  */
-function Covering({
-  cloth,
+function Face({
   skin,
-  trim,
-  opening,
+  brows = HAIRDARK,
+  lashes = true,
+  veil = false,
+  glasses,
 }: {
-  cloth: string
   skin: string
-  trim?: string
-  opening: "face" | "eyes" | "none"
+  brows?: string
+  lashes?: boolean
+  veil?: boolean
+  glasses?: string
 }) {
   return (
     <>
-      <path d="M22 56 19 100h62L78 56z" fill={cloth} />
-      <ellipse cx="50" cy="44" rx="29" ry="31" fill={cloth} />
-      {opening === "face" && (
+      <ellipse cx="50" cy="44" rx="15.5" ry="18" fill={skin} />
+
+      {/* Brows. */}
+      <path d="M41.5 38.5C43 36.8 46 36.8 47.5 38.2" fill="none" stroke={brows} strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M52.5 38.2C54 36.8 57 36.8 58.5 38.5" fill="none" stroke={brows} strokeWidth="1.7" strokeLinecap="round" />
+
+      {/* Eyes. */}
+      {lashes && (
         <>
-          <ellipse cx="50" cy="43" rx="15" ry="18" fill={skin} />
-          {trim && (
-            <path d="M35 43C35 25 65 25 65 43" fill="none" stroke={trim} strokeWidth="2.5" strokeLinecap="round" />
-          )}
+          <path d="M41 43.2C42.4 41.4 46.2 41.4 47.6 43.2" fill="none" stroke={brows} strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M52.4 43.2C53.8 41.4 57.6 41.4 59 43.2" fill="none" stroke={brows} strokeWidth="1.5" strokeLinecap="round" />
         </>
       )}
-      {opening === "eyes" && (
+      <ellipse cx="44.3" cy="44.6" rx="2" ry="2.6" fill="#2a2118" />
+      <ellipse cx="55.7" cy="44.6" rx="2" ry="2.6" fill="#2a2118" />
+      <circle cx="45" cy="43.7" r="0.62" fill="#ffffff" />
+      <circle cx="56.4" cy="43.7" r="0.62" fill="#ffffff" />
+
+      {!veil && (
         <>
-          <rect x="36" y="38" width="28" height="9" rx="4.5" fill={skin} />
-          {trim && <path d="M34 38C34 21 66 21 66 38" fill="none" stroke={trim} strokeWidth="2" strokeLinecap="round" />}
+          {/* Nose and mouth. */}
+          <path d="M50 47.5v3.2c0 .7-.6 1.1-1.4 1.1" fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1.1" strokeLinecap="round" />
+          <path d="M46.8 55.2C48.2 54.4 51.8 54.4 53.2 55.2C51.9 57.4 48.1 57.4 46.8 55.2Z" fill={LIP} />
+          {/* Cheeks. */}
+          <ellipse cx="40.5" cy="49.5" rx="3.1" ry="2" fill="rgba(200,90,80,0.16)" />
+          <ellipse cx="59.5" cy="49.5" rx="3.1" ry="2" fill="rgba(200,90,80,0.16)" />
+        </>
+      )}
+
+      {glasses && (
+        <>
+          <rect x="38.6" y="40.6" width="10" height="8" rx="3.4" fill="rgba(255,255,255,0.12)" stroke={glasses} strokeWidth="1.5" />
+          <rect x="51.4" y="40.6" width="10" height="8" rx="3.4" fill="rgba(255,255,255,0.12)" stroke={glasses} strokeWidth="1.5" />
+          <path d="M48.6 44.2h2.8" stroke={glasses} strokeWidth="1.5" strokeLinecap="round" />
         </>
       )}
     </>
   )
 }
 
-/** A beard, as three drawn variants rather than a formula. */
-function Beard({ color, length }: { color: string; length: "stubble" | "short" | "full" | "long" }) {
-  const d = {
-    stubble: "M34 44c0 10 7 17 16 17s16-7 16-17c0 6-6 10-16 10s-16-4-16-10z",
-    short: "M34 43c0 13 7 21 16 21s16-8 16-21c0 7-6 12-16 12s-16-5-16-12z",
-    full: "M33 42c0 18 8 28 17 28s17-10 17-28c0 8-7 14-17 14s-17-6-17-14z",
-    long: "M33 42c0 26 8 38 17 38s17-12 17-38c0 9-7 15-17 15s-17-6-17-15z",
-  }[length]
-  return <path d={d} fill={color} />
-}
-
 /* ---------------------------------------------------------------- female -- */
+
+/**
+ * A headscarf. `crown` is the dome over the head, `drape` falls to the
+ * shoulders, and the face opening is cut by drawing the face on top — so the
+ * scarf reads as framing it rather than sitting behind it.
+ */
+function Scarf({ cloth, shade }: { cloth: string; shade: string }) {
+  return (
+    <>
+      <path d="M27 58 25 100h50L73 58z" fill={shade} />
+      <path
+        d="M50 12C33 12 22 25 22 42c0 10 3 17 6 23 2 4 3 8 3 12h38c0-4 1-8 3-12 3-6 6-13 6-23 0-17-11-30-28-30Z"
+        fill={cloth}
+      />
+    </>
+  )
+}
 
 function Woman({
   skin,
   cloth,
+  shade,
   garment,
-  trim,
-  opening = "face",
+  collar,
+  veil = false,
+  glasses,
   extra,
+  under,
 }: {
   skin: string
   cloth: string
+  shade: string
   garment: string
-  trim?: string
-  opening?: "face" | "eyes" | "none"
+  collar?: string
+  veil?: boolean
+  glasses?: string
   extra?: React.ReactNode
+  under?: React.ReactNode
 }) {
   return (
     <>
-      <Base garment={garment} skin={skin} />
-      <Head skin={skin} />
-      <Covering cloth={cloth} skin={skin} trim={trim} opening={opening} />
+      <circle cx="50" cy="50" r="50" fill={FIELD} />
+      <Shoulders garment={garment} collar={collar} />
+      {under}
+      <Neck skin={skin} />
+      <Scarf cloth={cloth} shade={shade} />
+      <Face skin={skin} veil={veil} glasses={glasses} />
+      {/* Veil across the lower face, drawn after the features so it covers
+          them. */}
+      {veil && <path d="M31 47c0 16 8 27 19 27s19-11 19-27z" fill={cloth} />}
       {extra}
     </>
   )
 }
 
 const FEMALE_ART: Record<string, React.ReactNode> = {
-  "f-1": <Woman skin={SKIN.warm} cloth="#c9a227" garment="#8a6b1c" trim="#ffe9ad" />,
-  "f-2": (
-    <Woman
-      skin={SKIN.light}
-      cloth="#6fc7a3"
-      garment="#1f5a44"
-      trim="#2f7d5f"
-      extra={<path d="M36 32C36 18 64 18 64 32Z" fill="#b8f2d8" />}
-    />
-  ),
+  // Khadijah — rust scarf, deep teal dress.
+  "f-1": <Woman skin={SKIN.warm} cloth="#d4762f" shade="#a8571d" garment="#1f3d54" collar="#e0b088" />,
+
+  // Aisha — powder blue scarf over an aubergine top.
+  "f-2": <Woman skin={SKIN.light} cloth="#8fc7e8" shade="#5f9dc4" garment="#5a3d6b" collar="#f2d3b3" />,
+
+  // Fatimah — black abaya, gold-edged.
   "f-3": (
-    // Turban wrap: the covering stops at the crown, so the collar has to come
-    // up to meet the jaw or the neck reads as a giraffe. It does.
-    <>
-      <Base garment="#5a4a2c" skin={SKIN.tan} />
-      <Head skin={SKIN.tan} ears />
-      <path d="M38 62h24v14H38z" fill="#5a4a2c" />
-      <path d="M38 62h24v4H38z" fill="rgba(0,0,0,0.2)" />
-      <path d="M30 38c0-12 9-22 20-22s20 10 20 22c0 4-3 6-7 4-4-2-8-3-13-3s-9 1-13 3c-4 2-7 0-7-4z" fill="#dcc9a4" />
-      <path d="M31 31c7-5 31-5 38 0" fill="none" stroke="#f6e6c4" strokeWidth="2.5" strokeLinecap="round" />
-    </>
-  ),
-  "f-4": <Woman skin={SKIN.deep} cloth="#33436e" garment="#232f4f" trim="#8fa6e0" />,
-  "f-5": (
     <Woman
-      skin={SKIN.rich}
-      cloth="#3d2d53"
-      garment="#2a1f3a"
-      trim="#c9a227"
-      extra={<path d="M28 80h44" stroke="#c9a227" strokeWidth="2.5" strokeDasharray="3 4" strokeLinecap="round" />}
+      skin={SKIN.tan}
+      cloth="#22252e"
+      shade="#15171d"
+      garment="#0f1116"
+      extra={<path d="M30 82h40" stroke="#d4af37" strokeWidth="2" strokeDasharray="4 3" strokeLinecap="round" />}
     />
   ),
-  "f-6": <Woman skin={SKIN.warm} cloth="#2c3d5e" garment="#23324f" trim="#4a628f" opening="eyes" />,
-  "f-7": (
-    // Full covering, with a woven grille.
+
+  // Maryam — teal turban with a long braid over the shoulder.
+  "f-4": (
     <>
-      <Base garment="#3d4f33" skin={SKIN.tan} />
-      <Head skin={SKIN.tan} />
-      <Covering cloth="#4a5d3f" skin={SKIN.tan} opening="none" />
-      <rect x="39" y="32" width="22" height="16" rx="3" fill="#33422b" />
+      <circle cx="50" cy="50" r="50" fill={FIELD} />
+      <Shoulders garment="#3f7fb3" collar="#7fb2d8" />
+      {/* Braid, plaited down the right shoulder. */}
+      <path d="M69 46c6 6 8 16 7 26" fill="none" stroke="#2a1c0c" strokeWidth="7" strokeLinecap="round" />
       {[0, 1, 2, 3].map((i) => (
-        <line key={`h${i}`} x1="39" y1={35 + i * 4} x2="61" y2={35 + i * 4} stroke="#7d9470" strokeWidth="0.9" />
+        <ellipse key={i} cx={70.5 + i * 1.6} cy={54 + i * 5.5} rx="4.2" ry="3" fill="#3d2a12" transform={`rotate(${-24 + i * 5} ${70.5 + i * 1.6} ${54 + i * 5.5})`} />
       ))}
-      {[0, 1, 2, 3, 4].map((i) => (
-        <line key={`v${i}`} x1={41.5 + i * 4.5} y1="32" x2={41.5 + i * 4.5} y2="48" stroke="#7d9470" strokeWidth="0.9" />
-      ))}
+      <Neck skin={SKIN.warm} />
+      <Face skin={SKIN.warm} />
+      {/* Turban: wrapped bands rather than a smooth dome. */}
+      <path d="M31 38c0-13 9-24 19-24s19 11 19 24c0 4-3 6-7 4-4-2-8-3-12-3s-8 1-12 3c-4 2-7 0-7-4z" fill="#2f9e8f" />
+      <path d="M31 32c8-6 30-6 38 0" fill="none" stroke="#54c4b4" strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M32 25c7-5 29-5 36 0" fill="none" stroke="#1f7a6e" strokeWidth="2.6" strokeLinecap="round" />
     </>
   ),
+
+  // Sumayyah — mint scarf, glasses, cream blouse.
+  "f-5": <Woman skin={SKIN.light} cloth="#a9dcc4" shade="#78b99d" garment="#efe6d2" collar="#d8c9a8" glasses="#3a2f16" />,
+
+  // Hafsa — powder-blue niqab, eyes only.
+  "f-6": <Woman skin={SKIN.warm} cloth="#bcd8ea" shade="#8fb4cc" garment="#8fb4cc" veil />,
+
+  // Zaynab — deep green khimar with a face veil.
+  "f-7": <Woman skin={SKIN.deep} cloth="#1f5f4a" shade="#154034" garment="#154034" veil />,
+
+  // Ruqayyah — cream scarf, crimson dress, gold trim.
   "f-8": (
     <Woman
-      skin={SKIN.light}
-      cloth="#8a1f3d"
-      garment="#5c1428"
-      trim="#f0cd6d"
-      extra={<path d="M43 76v20M57 76v20" stroke="#f0cd6d" strokeWidth="3" strokeLinecap="round" />}
+      skin={SKIN.rich}
+      cloth="#f0e4cb"
+      shade="#cbb894"
+      garment="#a32338"
+      collar="#f0cd6d"
+      extra={
+        <>
+          <path d="M50 76v24" stroke="#f0cd6d" strokeWidth="2.4" strokeLinecap="round" />
+          <path d="M42 79l8 7 8-7" fill="none" stroke="#f0cd6d" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+        </>
+      }
     />
   ),
 }
 
 /* ------------------------------------------------------------------ male -- */
 
+function Beard({ color, length }: { color: string; length: "stubble" | "short" | "full" | "long" }) {
+  const d = {
+    stubble: "M34.5 45c0 10 7 17 15.5 17S65.5 55 65.5 45c0 6-6 10-15.5 10S34.5 51 34.5 45z",
+    short: "M34 44c0 13 7 21 16 21s16-8 16-21c0 7-6 12-16 12s-16-5-16-12z",
+    full: "M33.5 43c0 18 7 29 16.5 29S66.5 61 66.5 43c0 8-7 14-16.5 14S33.5 51 33.5 43z",
+    long: "M33.5 43c0 26 7 39 16.5 39S66.5 69 66.5 43c0 9-7 15-16.5 15S33.5 52 33.5 43z",
+  }[length]
+  return <path d={d} fill={color} />
+}
+
+function Cap({ fill, band }: { fill: string; band: string }) {
+  return (
+    <>
+      <path d="M32 29h36c0-10-8-16-18-16s-18 6-18 16z" fill={fill} />
+      <path d="M30.5 27.5h39v5.5h-39z" rx="2.5" fill={band} />
+    </>
+  )
+}
+
 function Man({
   skin,
   garment,
+  collar,
   beard,
-  beardColor = "#241a05",
+  beardColor = HAIRDARK,
+  glasses,
   headwear,
+  ears = true,
 }: {
   skin: string
   garment: string
+  collar?: string
   beard?: "stubble" | "short" | "full" | "long"
   beardColor?: string
+  glasses?: string
   headwear?: React.ReactNode
+  ears?: boolean
 }) {
   return (
     <>
-      <Base garment={garment} skin={skin} />
-      <Head skin={skin} ears />
+      <circle cx="50" cy="50" r="50" fill={FIELD} />
+      <Shoulders garment={garment} collar={collar} />
+      <Neck skin={skin} />
+      {ears && (
+        <>
+          <circle cx="33.5" cy="46" r="3.8" fill={skin} />
+          <circle cx="66.5" cy="46" r="3.8" fill={skin} />
+        </>
+      )}
+      {beard && <Beard color={beardColor} length={beard} />}
+      <Face skin={skin} lashes={false} glasses={glasses} />
       {beard && <Beard color={beardColor} length={beard} />}
       {headwear}
     </>
   )
 }
 
-/** A brimless cap sitting on the crown. */
-function Cap({ fill, band }: { fill: string; band: string }) {
-  return (
-    <>
-      <path d="M32 30h36c0-9-8-15-18-15s-18 6-18 15z" fill={fill} />
-      <rect x="30" y="28" width="40" height="5" rx="2.5" fill={band} />
-    </>
-  )
-}
-
 const MALE_ART: Record<string, React.ReactNode> = {
+  // Yusuf — fade, bomber collar.
   "m-1": (
     <Man
       skin={SKIN.warm}
-      garment="#33436e"
-      headwear={<path d="M33 40c0-11 8-19 17-19s17 8 17 19c0-7-8-9-17-9s-17 2-17 9z" fill="#241a05" />}
+      garment="#2f4a7a"
+      collar="#5f7fb5"
+      headwear={<path d="M33.5 41c0-12 8-20 16.5-20s16.5 8 16.5 20c0-7-8-9-16.5-9s-16.5 2-16.5 9z" fill={HAIRDARK} />}
     />
   ),
-  "m-2": <Man skin={SKIN.light} garment="#1f5a44" beard="stubble" beardColor="#4a3a1c" headwear={<Cap fill="#6fc7a3" band="#b8f2d8" />} />,
-  "m-3": <Man skin={SKIN.tan} garment="#5a4a2c" beard="full" headwear={<Cap fill="#f0cd6d" band="#ffe9ad" />} />,
+
+  // Bilal — kufi, stubble, mandarin collar.
+  "m-2": <Man skin={SKIN.deep} garment="#1f6b52" collar="#43a383" beard="stubble" headwear={<Cap fill="#2f9e8f" band="#7fd8c8" />} />,
+
+  // Umar — gold taqiyah, full beard, sand thobe.
+  "m-3": <Man skin={SKIN.tan} garment="#c9b48b" collar="#efe6d2" beard="full" headwear={<Cap fill="#e0b12f" band="#ffe9ad" />} />,
+
+  // Idris — imamah, white beard, plum shawl. The elder.
   "m-4": (
-    // Imamah over a cap, white beard — the elder.
     <Man
       skin={SKIN.deep}
-      garment="#3d2d53"
+      garment="#4a3562"
+      collar="#7d5f9c"
       beard="long"
-      beardColor="#ededed"
+      beardColor="#eeeeee"
       headwear={
         <>
-          <path d="M28 30c0-12 10-20 22-20s22 8 22 20z" fill="#f6e6c4" />
-          <path d="M26 28c8-5 40-5 48 0 2 1 2 6 0 7-8 4-40 4-48 0-2-1-2-6 0-7z" fill="#ffffff" />
-          <path d="M27 31c8-4 38-4 46 0" fill="none" stroke="#dcd3bd" strokeWidth="1.4" />
-          <path d="M71 33c5 5 6 12 3 18" fill="none" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" />
+          <path d="M28 30c0-13 10-21 22-21s22 8 22 21z" fill="#f6e6c4" />
+          <path d="M26 28c8-6 40-6 48 0 2 1 2 6 0 7-8 4-40 4-48 0-2-1-2-6 0-7z" fill="#ffffff" />
+          <path d="M27 31c8-4 38-4 46 0" fill="none" stroke="#ddd4bf" strokeWidth="1.4" />
+          <path d="M71 34c5 5 6 13 3 19" fill="none" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" />
         </>
       }
     />
   ),
+
+  // Salman — ghutra and agal. Cloth first, face cut back in, then the beard.
   "m-5": (
-    // Ghutra with agal. The cloth is drawn over the head, then the face is cut
-    // back in, then the beard — order matters or the cloth covers the beard.
     <>
-      <Base garment="#8a6b1c" skin={SKIN.light} />
-      <path d="M25 34c0-14 11-24 25-24s25 10 25 24c0 20-4 30-6 42H31c-2-12-6-22-6-42z" fill="#ffffff" />
-      <ellipse cx="50" cy="43" rx="15" ry="18" fill={SKIN.light} />
-      <Beard color="#241a05" length="short" />
-      <path d="M27 26c8-5 38-5 46 0" fill="none" stroke="#1b2540" strokeWidth="4.5" />
-      <path d="M27 33c8-5 38-5 46 0" fill="none" stroke="#1b2540" strokeWidth="3" />
+      <circle cx="50" cy="50" r="50" fill={FIELD} />
+      <Shoulders garment="#e8dcc2" collar="#ffffff" />
+      <Neck skin={SKIN.light} />
+      <path d="M25 34c0-14 11-25 25-25s25 11 25 25c0 21-4 31-6 44H31c-2-13-6-23-6-44z" fill="#ffffff" />
+      <Beard color={HAIRDARK} length="short" />
+      <Face skin={SKIN.light} lashes={false} />
+      <Beard color={HAIRDARK} length="short" />
+      <path d="M27 25c8-5 38-5 46 0" fill="none" stroke="#1b2540" strokeWidth="4.5" strokeLinecap="round" />
+      <path d="M27 32c8-5 38-5 46 0" fill="none" stroke="#1b2540" strokeWidth="3" strokeLinecap="round" />
     </>
   ),
+
+  // Musa — tarboosh and moustache.
   "m-6": (
     <Man
       skin={SKIN.rich}
-      garment="#23324f"
-      beard="short"
-      beardColor="#1a1208"
+      garment="#243b52"
+      beard="stubble"
       headwear={
         <>
-          <path d="M37 28h26l-2-16H39z" fill="#8a1f3d" />
-          <rect x="35" y="26" width="30" height="5" rx="2" fill="#5c1428" />
-          <path d="M50 12v-4" stroke="#1a1208" strokeWidth="2" strokeLinecap="round" />
+          <path d="M37 27h26l-2-17H39z" fill="#9b2335" />
+          <path d="M34.5 25.5h31v5.5h-31z" fill="#6d1524" />
+          <path d="M50 10V6" stroke="#2a1108" strokeWidth="2" strokeLinecap="round" />
         </>
       }
     />
   ),
+
+  // Harun — glasses, short beard, charcoal jacket.
   "m-7": (
     <Man
       skin={SKIN.tan}
-      garment="#dcc9a4"
-      beard="long"
-      beardColor="#3a2f16"
-      headwear={
-        <>
-          <Cap fill="#5a4a2c" band="#7a663c" />
-          <path d="M18 88c9-7 20-10 32-10s23 3 32 10" fill="none" stroke="#8a6b1c" strokeWidth="5" strokeLinecap="round" />
-        </>
-      }
+      garment="#2c3038"
+      collar="#8a939f"
+      beard="short"
+      glasses="#e6e6e6"
+      headwear={<path d="M33.5 40c0-12 8-20 16.5-20s16.5 8 16.5 20c0-8-8-10-16.5-10s-16.5 2-16.5 10z" fill="#2a1c0c" />}
     />
   ),
+
+  // Zayd — hood up, young.
   "m-8": (
     <Man
       skin={SKIN.deep}
-      garment="#2a3550"
+      garment="#33436e"
       beard="stubble"
-      beardColor="#1a1208"
+      ears={false}
       headwear={
         <>
-          <path d="M24 44c0-16 12-28 26-28s26 12 26 28c0-9-2-13-4-15-7 4-37 4-44 0-2 2-4 6-4 15z" fill="#3c4a72" />
-          <path d="M16 100c3-14 11-23 18-26l6 7h20l6-7c7 3 15 12 18 26z" fill="#3c4a72" />
+          <path d="M24 45c0-17 12-30 26-30s26 13 26 30c0-9-2-14-4-16-7 5-37 5-44 0-2 2-4 7-4 16z" fill="#44548a" />
+          <path d="M15 100c3-16 11-25 18-28l7 8h20l7-8c7 3 15 12 18 28z" fill="#44548a" />
         </>
       }
     />
@@ -344,28 +406,28 @@ const MALE_ART: Record<string, React.ReactNode> = {
 }
 
 export const AVATARS: AvatarDefinition[] = [
-  { id: "f-1", gender: "female", label: "Wrapped hijab" },
-  { id: "f-2", gender: "female", label: "Hijab and underscarf" },
-  { id: "f-3", gender: "female", label: "Turban wrap" },
-  { id: "f-4", gender: "female", label: "Khimar" },
-  { id: "f-5", gender: "female", label: "Abaya and shayla" },
-  { id: "f-6", gender: "female", label: "Niqab" },
-  { id: "f-7", gender: "female", label: "Full covering" },
-  { id: "f-8", gender: "female", label: "Scholar" },
-  { id: "m-1", gender: "male", label: "Short hair" },
-  { id: "m-2", gender: "male", label: "Kufi cap" },
-  { id: "m-3", gender: "male", label: "Taqiyah and beard" },
-  { id: "m-4", gender: "male", label: "Imamah, elder" },
-  { id: "m-5", gender: "male", label: "Ghutra and agal" },
-  { id: "m-6", gender: "male", label: "Tarboosh" },
-  { id: "m-7", gender: "male", label: "Thobe and shawl" },
-  { id: "m-8", gender: "male", label: "Hooded, modern" },
+  { id: "f-1", gender: "female", name: "Khadijah", style: "Rust scarf, teal dress" },
+  { id: "f-2", gender: "female", name: "Aisha", style: "Powder blue scarf" },
+  { id: "f-3", gender: "female", name: "Fatimah", style: "Black abaya, gold trim" },
+  { id: "f-4", gender: "female", name: "Maryam", style: "Teal turban and braid" },
+  { id: "f-5", gender: "female", name: "Sumayyah", style: "Mint scarf and glasses" },
+  { id: "f-6", gender: "female", name: "Hafsa", style: "Powder blue niqab" },
+  { id: "f-7", gender: "female", name: "Zaynab", style: "Deep green khimar" },
+  { id: "f-8", gender: "female", name: "Ruqayyah", style: "Cream scarf, crimson dress" },
+  { id: "m-1", gender: "male", name: "Yusuf", style: "Fade and bomber" },
+  { id: "m-2", gender: "male", name: "Bilal", style: "Kufi cap" },
+  { id: "m-3", gender: "male", name: "Umar", style: "Taqiyah and thobe" },
+  { id: "m-4", gender: "male", name: "Idris", style: "Imamah, elder" },
+  { id: "m-5", gender: "male", name: "Salman", style: "Ghutra and agal" },
+  { id: "m-6", gender: "male", name: "Musa", style: "Tarboosh" },
+  { id: "m-7", gender: "male", name: "Harun", style: "Glasses and jacket" },
+  { id: "m-8", gender: "male", name: "Zayd", style: "Hood up" },
 ]
 
 const ART: Record<string, React.ReactNode> = { ...FEMALE_ART, ...MALE_ART }
 
-export function avatarLabel(id: string | null | undefined): string | null {
-  return AVATARS.find((a) => a.id === id)?.label ?? null
+export function avatarName(id: string | null | undefined): string | null {
+  return AVATARS.find((a) => a.id === id)?.name ?? null
 }
 
 export function isKnownAvatar(id: string | null | undefined): boolean {
@@ -374,8 +436,7 @@ export function isKnownAvatar(id: string | null | undefined): boolean {
 
 /**
  * An unknown id — including the remote URLs the previous third-party set
- * stored — falls back to the brand mark rather than an empty circle, so an old
- * profile degrades to something deliberate.
+ * stored — falls back to the brand mark rather than an empty circle.
  */
 export function AvatarArt({ id, ...props }: { id: string } & SVGProps<SVGSVGElement>) {
   const art = ART[id]

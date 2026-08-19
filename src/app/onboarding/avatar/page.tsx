@@ -45,7 +45,7 @@ export default function AvatarSelectionPage() {
             type="button"
             onClick={() => handleSelect(avatar.id)}
             aria-pressed={isSelected}
-            title={avatar.label}
+            title={`${avatar.name} — ${avatar.style}`}
             className={`group relative flex flex-col items-center gap-2 rounded-xl border-2 p-2 transition-all ${
               isSelected
                 ? "border-primary bg-primary/10"
@@ -60,8 +60,8 @@ export default function AvatarSelectionPage() {
                 </span>
               )}
             </span>
-            <span className="text-center text-[0.65rem] leading-tight text-on-surface-variant">
-              {avatar.label}
+            <span className="text-center text-xs font-medium leading-tight text-on-surface">
+              {avatar.name}
             </span>
           </button>
         )
