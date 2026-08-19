@@ -14,12 +14,16 @@ import type { SVGProps } from "react"
  *   3. They are six flat shapes. There was never much to fetch.
  *
  * A NOTE ON THE ARABIC ENTRY
- * The Saudi flag carries the shahada. Rendering the testimony of faith as a
- * crude approximation of Arabic calligraphy, scaled to 24px, would be worse
- * than not rendering it — so this draws the green field and the sword and
- * stops there. It is deliberately not a facsimile of the national flag. If an
- * exact flag is ever wanted it should come from a proper source, not from this
- * file.
+ * Arabic gets the Arab League flag rather than a national one. That is the
+ * better answer on two counts: Arabic is spoken across some twenty-two
+ * countries, so no single national flag represents the language, and the Saudi
+ * flag — the usual default — carries the shahada, which should not be reduced
+ * to approximated calligraphy at 24px.
+ *
+ * The emblem is simplified to what survives at this size: the white crescent,
+ * the gold chain ring and the laurel wreath. The Arabic legend inside the
+ * crescent reads "League of Arab States" on the real flag and is omitted here,
+ * because at 24px it would be an illegible smudge that merely suggests writing.
  *
  * All are drawn on a 60x40 canvas so they share proportions in the row.
  */
@@ -72,13 +76,31 @@ function FlagFR(props: FlagProps) {
   )
 }
 
-/** Arabic. Green field and sword only — see the note at the top of this file. */
+/** Arabic — the Arab League. See the note at the top of this file. */
 function FlagAR(props: FlagProps) {
   return (
     <Flag {...props}>
-      <rect width="60" height="40" fill="#165D31" />
-      <path d="M12 27h34" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M46 27l-5-3v6z" fill="#fff" />
+      <rect width="60" height="40" fill="#137a3f" />
+      <g transform="translate(30 20) scale(0.92) translate(-30 -20)">
+        {/* Crescent, opening upward, as on the emblem. Drawn as one circle with
+            a second offset above it removed — the same construction used for
+            the brand mark, for the same reason: an arc whose chord equals twice
+            its radius is degenerate and browsers close it with a straight
+            line. */}
+        <path
+          fillRule="evenodd"
+          d="M30 11a9 9 0 1 1 0 18 9 9 0 1 1 0-18Z M30 6.5a8 8 0 1 1 0 16 8 8 0 1 1 0-16Z"
+          fill="#ffffff"
+        />
+        {/* Gold chain ring. */}
+        <circle cx="30" cy="20" r="10.4" fill="none" stroke="#d4af37" strokeWidth="1.1" strokeDasharray="1.6 1.4" />
+        {/* Laurel wreath, open at the top and tied at the foot. */}
+        <g fill="#ffffff">
+          <ellipse cx="28.00" cy="31.33" rx="2.6" ry="1.25" transform="rotate(190.0 28.00 31.33)" /><ellipse cx="24.47" cy="30.08" rx="2.6" ry="1.25" transform="rotate(208.8 24.47 30.08)" /><ellipse cx="21.52" cy="27.77" rx="2.6" ry="1.25" transform="rotate(227.5 21.52 27.77)" /><ellipse cx="19.47" cy="24.63" rx="2.6" ry="1.25" transform="rotate(246.2 19.47 24.63)" /><ellipse cx="18.54" cy="21.00" rx="2.6" ry="1.25" transform="rotate(265.0 18.54 21.00)" /><ellipse cx="18.83" cy="17.27" rx="2.6" ry="1.25" transform="rotate(283.8 18.83 17.27)" /><ellipse cx="20.30" cy="13.82" rx="2.6" ry="1.25" transform="rotate(302.5 20.30 13.82)" /><ellipse cx="22.80" cy="11.03" rx="2.6" ry="1.25" transform="rotate(321.2 22.80 11.03)" /><ellipse cx="26.07" cy="9.19" rx="2.6" ry="1.25" transform="rotate(340.0 26.07 9.19)" />
+          <ellipse cx="32.00" cy="31.33" rx="2.6" ry="1.25" transform="rotate(-10.0 32.00 31.33)" /><ellipse cx="35.53" cy="30.08" rx="2.6" ry="1.25" transform="rotate(-28.8 35.53 30.08)" /><ellipse cx="38.48" cy="27.77" rx="2.6" ry="1.25" transform="rotate(-47.5 38.48 27.77)" /><ellipse cx="40.53" cy="24.63" rx="2.6" ry="1.25" transform="rotate(-66.2 40.53 24.63)" /><ellipse cx="41.46" cy="21.00" rx="2.6" ry="1.25" transform="rotate(-85.0 41.46 21.00)" /><ellipse cx="41.17" cy="17.27" rx="2.6" ry="1.25" transform="rotate(-103.8 41.17 17.27)" /><ellipse cx="39.70" cy="13.82" rx="2.6" ry="1.25" transform="rotate(-122.5 39.70 13.82)" /><ellipse cx="37.20" cy="11.03" rx="2.6" ry="1.25" transform="rotate(-141.2 37.20 11.03)" /><ellipse cx="33.93" cy="9.19" rx="2.6" ry="1.25" transform="rotate(-160.0 33.93 9.19)" />
+        </g>
+        <path d="M27 32.6h6l-1.6 2.6h-2.8z" fill="#ffffff" />
+      </g>
     </Flag>
   )
 }
