@@ -1,10 +1,11 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ProgressRing } from "@/components/game/ProgressRing"
 import { PrayerTimesCard } from "@/components/game/PrayerTimesCard"
+import { SalaamGreeting } from "@/components/game/SalaamGreeting"
 import { DailyHadith } from "@/components/game/DailyHadith"
 import { StreakCounter } from "@/components/game/StreakCounter"
 import { ReviewCallout } from "@/components/game/ReviewCallout"
@@ -62,10 +63,11 @@ export default function HomePage() {
                 </svg>
               </div>
             </div>
-            <div className="hidden sm:block">
-              <p className="font-label-caps text-label-caps text-on-surface-variant/70">{t("welcomeBack").toUpperCase()}</p>
-              <h1 className="font-headline-md text-headline-md text-primary -mt-1">ILM Hunt</h1>
-            </div>
+            {/* The greeting moved into <main> as <SalaamGreeting />. It used to
+                live here behind `hidden sm:block`, a 640px width breakpoint no
+                phone reaches in portrait, so no phone user ever saw it. The
+                wordmark stays and is shown at every size. */}
+            <h1 className="font-headline-md text-headline-md text-primary">ILM Hunt</h1>
           </div>
           <div className="flex items-center gap-4 bg-surface-container-high/40 px-4 py-1.5 rounded-full border border-white/5">
             <div className="flex items-center gap-1.5">
@@ -87,6 +89,9 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="mt-20 px-5 max-w-7xl mx-auto space-y-4 relative">
+        {/* Salaam, name, rank. First thing on the page, on every screen size. */}
+        <SalaamGreeting />
+
         {/* What is due for spaced review. Renders nothing when the queue is empty. */}
         <ReviewCallout />
 

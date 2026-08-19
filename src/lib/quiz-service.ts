@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { timeLimitForTier, clampTier } from '@/lib/hunt-engine';
 import type { QuizQuestion } from '@/lib/types';
 
 /**
@@ -57,21 +58,28 @@ export async function getPublishedQuizQuestions(slug: string): Promise<QuizQuest
     // NOTE: correct_choice_index / explanation / citation are intentionally NOT
     // selected here — they must never reach the browser before an answer is
     // submitted. Grading happens server-side in submitAnswer().
-    .select('id, question_text, choices, difficulty')
+    .select('id, question_text, choices, difficulty, tier')
     .eq('category_id', category.id)
     .eq('review_status', 'published')
     .order('created_at', { ascending: true });
 
   if (error || !data) return [];
 
-  return data.map((row: any) => ({
-    id: row.id as string,
-    text: row.question_text as string,
-    options: (row.choices ?? []) as string[],
-    difficulty: labelDifficulty(row.difficulty),
-    points: POINTS_BY_DIFFICULTY[row.difficulty as DbDifficulty] ?? 10,
-    timeLimit: 30,
-  }));
+  return data.map((row: any) => {
+    const tier = clampTier(row.tier ?? 1);
+    return {
+      id: row.id as string,
+      text: row.question_text as string,
+      options: (row.choices ?? []) as string[],
+      difficulty: labelDifficulty(row.difficulty),
+      tier,
+      points: POINTS_BY_DIFFICULTY[row.difficulty as DbDifficulty] ?? 10,
+      // The clock follows the tier, not the old three-way band: 25s at
+      // Mubtadi rising to 45s at Mujaddid. It used to be a flat 30 for every
+      // question regardless of difficulty.
+      timeLimit: timeLimitForTier(tier),
+    };
+  });
 }
 
 export async function getCategoriesWithProgress(): Promise<QuizCategory[]> {

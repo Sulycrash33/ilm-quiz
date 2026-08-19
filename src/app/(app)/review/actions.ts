@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { labelDifficulty, POINTS_BY_DIFFICULTY } from "@/lib/quiz-service";
+import { timeLimitForTier, clampTier } from "@/lib/hunt-engine";
 import type { QuizQuestion } from "@/lib/types";
 
 /**
@@ -85,7 +86,7 @@ export async function getDueReviewQuestions(
 
   const { data, error } = await supabase
     .from("user_question_schedule")
-    .select("question_id, due_on, questions!inner(id, question_text, choices, difficulty, review_status)")
+    .select("question_id, due_on, questions!inner(id, question_text, choices, difficulty, tier, review_status)")
     .eq("user_id", user.id)
     .lte("due_on", today)
     .eq("questions.review_status", "published")
@@ -96,13 +97,15 @@ export async function getDueReviewQuestions(
 
   return data.map((row: any) => {
     const q = row.questions;
+    const tier = clampTier(q.tier ?? 1);
     return {
       id: q.id as string,
       text: q.question_text as string,
       options: (q.choices ?? []) as string[],
       difficulty: labelDifficulty(q.difficulty),
+      tier,
       points: POINTS_BY_DIFFICULTY[q.difficulty as keyof typeof POINTS_BY_DIFFICULTY] ?? 10,
-      timeLimit: 30,
+      timeLimit: timeLimitForTier(tier),
     };
   });
 }

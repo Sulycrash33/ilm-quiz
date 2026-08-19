@@ -20,6 +20,23 @@ export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced';
 
 export const DIFFICULTY_ORDER: Difficulty[] = ['Beginner', 'Intermediate', 'Advanced'];
 
+/**
+ * The nine ranks, as question difficulty.
+ *
+ * A seeker climbs Mubtadi → Mujaddid, and questions are pitched at those same
+ * nine levels (`questions.tier`, migration 0019). The ladder used to run on the
+ * three-way easy/medium/hard band, which meant a Mujaddid and a Talib drew from
+ * the same "hard" pile. Tiers are what the ladder climbs now; `difficulty`
+ * survives for display and for the XP the server grants.
+ */
+export const TIER_MIN = 1;
+export const TIER_MAX = 9;
+
+export function clampTier(tier: number): number {
+  if (!Number.isFinite(tier)) return TIER_MIN;
+  return Math.min(TIER_MAX, Math.max(TIER_MIN, Math.round(tier)));
+}
+
 /** Tuning knobs for a run. Kept in one place so balance changes are one edit. */
 export const HUNT_RULES = {
   /** Questions in a full run, when the category has enough published content. */
@@ -30,6 +47,8 @@ export const HUNT_RULES = {
   startingLives: 3,
   /** Seconds on the clock, per difficulty. Harder questions get more thinking time. */
   timeLimit: { Beginner: 25, Intermediate: 30, Advanced: 40 } as Record<Difficulty, number>,
+  /** Seconds at tier 1 and at tier 9; tiers between are interpolated. */
+  tierTimeLimit: { min: 25, max: 45 },
   /** Correct answers in a row before the combo steps up. */
   comboStep: 3,
   /** Combo multiplier ceiling. Mirrors REWARD_RULES.maxStreakMultiplier. */
@@ -79,8 +98,8 @@ export interface HuntState {
   timedOut: number;
   /** Lifeline ids already spent this run. Each is once per run. */
   lifelinesUsed: string[];
-  /** Difficulty the ladder is currently offering. */
-  tier: Difficulty;
+  /** Rank tier the ladder is currently offering, 1-9. */
+  tier: number;
   /** Rolling run of correct answers at the current tier, for promotion. */
   tierRun: number;
   /** Rolling run of misses, for demotion. */
@@ -116,38 +135,62 @@ export function shuffle<T>(items: readonly T[], rng: () => number): T[] {
 /**
  * Build the ladder for a run.
  *
- * The shape we want is a climb: mostly Beginner early, mostly Advanced late,
- * so a run has an arc instead of being a flat bag of questions. We take the
- * pool, split it by difficulty, shuffle each bucket, then fill each stage from
- * the difficulty that stage *wants* — falling back to the nearest bucket that
- * still has questions left, because most categories won't have a clean spread.
+ * The shape we want is a climb, so a run has an arc instead of being a flat bag
+ * of questions. The climb is now anchored to the seeker: a Faqih starts near
+ * Faqih-level questions rather than always starting at Mubtadi. We take the
+ * pool, split it by tier, shuffle each bucket, then fill each stage from the
+ * tier that stage *wants* — falling back to the nearest tier that still has
+ * questions left.
+ *
+ * That fallback is doing real work. Nine tiers across twenty-five categories is
+ * 225 buckets and most are empty (migration 0019), so a category may hold
+ * nothing at all at the seeker's own tier. Widening outward keeps every
+ * category playable at every rank instead of producing a half-length run or
+ * none at all.
  */
 export function buildLadder(
   pool: readonly QuizQuestion[],
-  opts: { length?: number; rng?: () => number } = {},
+  opts: { length?: number; rng?: () => number; startTier?: number } = {},
 ): HuntQuestion[] {
   const rng = opts.rng ?? makeRng(Date.now());
   const target = Math.min(opts.length ?? HUNT_RULES.runLength, pool.length);
   if (target === 0) return [];
 
-  const buckets: Record<Difficulty, QuizQuestion[]> = {
-    Beginner: [],
-    Intermediate: [],
-    Advanced: [],
-  };
-  pool.forEach((q) => buckets[q.difficulty].push(q));
-  DIFFICULTY_ORDER.forEach((d) => {
-    buckets[d] = shuffle(buckets[d], rng);
-  });
+  const startTier = clampTier(opts.startTier ?? TIER_MIN);
+
+  const buckets = new Map<number, QuizQuestion[]>();
+  for (let t = TIER_MIN; t <= TIER_MAX; t += 1) buckets.set(t, []);
+  pool.forEach((q) => buckets.get(clampTier(q.tier))!.push(q));
+  buckets.forEach((list, t) => buckets.set(t, shuffle(list, rng)));
 
   const ladder: HuntQuestion[] = [];
   for (let i = 0; i < target; i += 1) {
-    const wanted = curveDifficulty(i, target);
-    const picked = takeNearest(buckets, wanted);
+    const wanted = curveTier(i, target, startTier);
+    const picked = takeNearestTier(buckets, wanted);
     if (!picked) break;
-    ladder.push({ ...picked, stage: ladder.length + 1, timeLimit: timeLimitFor(picked.difficulty) });
+    ladder.push({
+      ...picked,
+      stage: ladder.length + 1,
+      timeLimit: timeLimitForTier(picked.tier),
+    });
   }
   return ladder;
+}
+
+/**
+ * Which tier stage `index` of a `length`-question run should aim for.
+ *
+ * The run spans one tier below the seeker's rank to one above it, so it opens
+ * with something they should get, and closes with something that stretches
+ * them. Clamped at both ends: a Mubtadi never starts below tier 1, and a
+ * Mujaddid's run tops out at 9 rather than running off the end.
+ */
+export function curveTier(index: number, length: number, startTier: number): number {
+  const anchor = clampTier(startTier);
+  const from = clampTier(anchor - 1);
+  const to = clampTier(anchor + 1);
+  const progress = length <= 1 ? 0 : index / (length - 1);
+  return clampTier(from + progress * (to - from));
 }
 
 /** Which difficulty stage `index` of a `length`-question run should aim for. */
@@ -159,23 +202,33 @@ export function curveDifficulty(index: number, length: number): Difficulty {
 }
 
 /**
- * Pull a question of `wanted` difficulty, or the closest available. Walking
- * outward by distance keeps a Beginner-only category playable instead of
- * producing a half-length run.
+ * Pull a question at `wanted` tier, or the closest available.
+ *
+ * Ties break downward — given nothing at tier 5, a question at 4 is preferred
+ * to one at 6. Asking slightly under rank is a kinder failure than asking over
+ * it, and it keeps a sparse category from feeling punishing.
  */
-function takeNearest(
-  buckets: Record<Difficulty, QuizQuestion[]>,
-  wanted: Difficulty,
+function takeNearestTier(
+  buckets: Map<number, QuizQuestion[]>,
+  wanted: number,
 ): QuizQuestion | null {
-  const from = DIFFICULTY_ORDER.indexOf(wanted);
-  const byDistance = DIFFICULTY_ORDER.map((d, i) => ({ d, dist: Math.abs(i - from) })).sort(
-    (a, b) => a.dist - b.dist || DIFFICULTY_ORDER.indexOf(a.d) - DIFFICULTY_ORDER.indexOf(b.d),
-  );
-  for (const { d } of byDistance) {
-    const q = buckets[d].pop();
+  const from = clampTier(wanted);
+  const order: number[] = [];
+  for (let t = TIER_MIN; t <= TIER_MAX; t += 1) order.push(t);
+  order.sort((a, b) => Math.abs(a - from) - Math.abs(b - from) || a - b);
+
+  for (const t of order) {
+    const q = buckets.get(t)?.pop();
     if (q) return q;
   }
   return null;
+}
+
+/** Seconds on the clock at a given tier: 25 at Mubtadi rising to 45 at Mujaddid. */
+export function timeLimitForTier(tier: number): number {
+  const { min, max } = HUNT_RULES.tierTimeLimit;
+  const span = TIER_MAX - TIER_MIN;
+  return Math.round(min + ((clampTier(tier) - TIER_MIN) / span) * (max - min));
 }
 
 export function timeLimitFor(difficulty: Difficulty): number {
@@ -214,7 +267,7 @@ export function initialState(ladder: HuntQuestion[]): HuntState {
     wrong: 0,
     timedOut: 0,
     lifelinesUsed: [],
-    tier: ladder[0]?.difficulty ?? 'Beginner',
+    tier: ladder[0]?.tier ?? TIER_MIN,
     tierRun: 0,
     missRun: 0,
   };
@@ -312,9 +365,9 @@ function advance(state: HuntState): HuntState {
   }
 
   // Re-point the remaining stages first, then read the tier off whatever
-  // actually ended up next — otherwise the badge shows the pre-swap difficulty.
+  // actually ended up next — otherwise the badge shows the pre-swap tier.
   const tuned = { ...next, ...retune(next) };
-  return { ...tuned, tier: tuned.ladder[tuned.stage].difficulty };
+  return { ...tuned, tier: tuned.ladder[tuned.stage].tier };
 }
 
 /**
@@ -334,7 +387,7 @@ function retune(state: HuntState): Pick<HuntState, 'ladder'> {
   const demoting = state.missRun >= HUNT_RULES.demoteAfter;
   if (promoting === demoting) return { ladder: state.ladder };
 
-  const rank = (q: HuntQuestion) => DIFFICULTY_ORDER.indexOf(q.difficulty);
+  const rank = (q: HuntQuestion) => clampTier(q.tier);
   const sorted = remaining
     .slice()
     .sort((a, b) => (promoting ? rank(b) - rank(a) : rank(a) - rank(b)));

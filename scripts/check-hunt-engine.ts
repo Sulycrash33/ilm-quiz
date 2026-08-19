@@ -11,6 +11,7 @@
 import {
   buildLadder, initialState, applyAnswer, applyTimeout, applySkip, summarize,
   comboMultiplier, speedBonus, currentQuestion, makeRng, HUNT_RULES, curveDifficulty,
+  curveTier, clampTier, timeLimitForTier, TIER_MIN, TIER_MAX,
 } from '../src/lib/hunt-engine';
 import type { QuizQuestion } from '../src/lib/types';
 
@@ -23,9 +24,23 @@ function check(name: string, cond: boolean, extra?: unknown) {
 const pool: QuizQuestion[] = [];
 (['Beginner', 'Intermediate', 'Advanced'] as const).forEach((d, di) => {
   for (let i = 0; i < 8; i += 1) {
-    pool.push({ id: `${d}-${i}`, text: `q ${d} ${i}`, options: ['a', 'b', 'c', 'd'], difficulty: d, points: 10 + di * 5, timeLimit: 30 });
+    // Three tiers per band, so the pool covers all nine and the ladder has
+    // somewhere to climb to.
+    const tier = di * 3 + (i % 3) + 1;
+    pool.push({
+      id: `${d}-${i}`, text: `q ${d} ${i}`, options: ['a', 'b', 'c', 'd'],
+      difficulty: d, tier, points: 10 + di * 5, timeLimit: 30,
+    });
   }
 });
+
+/** A pool holding exactly one tier, for the fallback checks. */
+function poolAtTier(tier: number, count = 12): QuizQuestion[] {
+  return Array.from({ length: count }, (_, i) => ({
+    id: `t${tier}-${i}`, text: `q t${tier} ${i}`, options: ['a', 'b', 'c', 'd'],
+    difficulty: 'Intermediate' as const, tier, points: 15, timeLimit: 30,
+  }));
+}
 
 // --- ladder composition
 const rng = makeRng(42);
@@ -33,9 +48,48 @@ const ladder = buildLadder(pool, { rng });
 check('ladder is runLength long', ladder.length === HUNT_RULES.runLength, ladder.length);
 check('ladder has no duplicates', new Set(ladder.map((q) => q.id)).size === ladder.length);
 check('stages are 1..n', ladder.every((q, i) => q.stage === i + 1));
-check('starts easy', ladder[0].difficulty === 'Beginner', ladder[0].difficulty);
-check('ends hard', ladder[ladder.length - 1].difficulty === 'Advanced', ladder[ladder.length - 1].difficulty);
-check('time limits follow difficulty', ladder.every((q) => q.timeLimit === HUNT_RULES.timeLimit[q.difficulty]));
+// The ladder climbs tiers now, anchored to the seeker's rank, so the old
+// "always starts Beginner, always ends Advanced" contract is gone on purpose:
+// a Mubtadi's run should not finish at Mujaddid-level questions.
+check('unanchored run starts at the bottom', ladder[0].tier <= 2, ladder[0].tier);
+check('run does not descend overall', ladder[ladder.length - 1].tier >= ladder[0].tier, {
+  first: ladder[0].tier, last: ladder[ladder.length - 1].tier,
+});
+check('time limits follow tier', ladder.every((q) => q.timeLimit === timeLimitForTier(q.tier)));
+
+// --- tier anchoring
+const midRun = buildLadder(pool, { rng: makeRng(42), startTier: 5 });
+check('anchored run opens near the seeker rank', Math.abs(midRun[0].tier - 4) <= 1, midRun[0].tier);
+check('anchored run climbs above the seeker rank', midRun.some((q) => q.tier >= 5), midRun.map((q) => q.tier));
+check('anchored run stays off the bottom', midRun.every((q) => q.tier >= 3), midRun.map((q) => q.tier));
+
+const topRun = buildLadder(pool, { rng: makeRng(7), startTier: 9 });
+check('top rank clamps to 9', topRun.every((q) => q.tier <= TIER_MAX), topRun.map((q) => q.tier));
+const bottomRun = buildLadder(pool, { rng: makeRng(7), startTier: 1 });
+check('bottom rank clamps to 1', bottomRun.every((q) => q.tier >= TIER_MIN), bottomRun.map((q) => q.tier));
+
+// --- the fallback that keeps sparse categories playable
+// 150 of the 225 (category, tier) buckets are empty, so a category may hold
+// nothing at the seeker's own tier. A run must still be full length.
+const sparse = buildLadder(poolAtTier(8), { rng: makeRng(3), startTier: 1 });
+check('sparse category still fills a run', sparse.length === HUNT_RULES.runLength, sparse.length);
+check('sparse category falls back to what exists', sparse.every((q) => q.tier === 8));
+
+// --- curveTier
+check('curveTier opens one below the anchor', curveTier(0, 10, 5) === 4, curveTier(0, 10, 5));
+check('curveTier closes one above the anchor', curveTier(9, 10, 5) === 6, curveTier(9, 10, 5));
+check('curveTier clamps at the floor', curveTier(0, 10, 1) === 1, curveTier(0, 10, 1));
+check('curveTier clamps at the ceiling', curveTier(9, 10, 9) === 9, curveTier(9, 10, 9));
+check('curveTier survives a single-question run', curveTier(0, 1, 5) === 4, curveTier(0, 1, 5));
+
+// --- clampTier and the clock
+check('clampTier floors', clampTier(-3) === TIER_MIN);
+check('clampTier ceilings', clampTier(99) === TIER_MAX);
+check('clampTier rejects NaN', clampTier(Number.NaN) === TIER_MIN);
+check('clock is 25s at Mubtadi', timeLimitForTier(1) === 25, timeLimitForTier(1));
+check('clock is 45s at Mujaddid', timeLimitForTier(9) === 45, timeLimitForTier(9));
+check('clock rises with tier', Array.from({ length: 8 }, (_, i) => i + 1)
+  .every((t) => timeLimitForTier(t) <= timeLimitForTier(t + 1)));
 
 // small pool -> shorter ladder, no crash
 const tiny = buildLadder(pool.slice(0, 2), { rng: makeRng(1) });
@@ -109,13 +163,12 @@ check('skip costs no life', k.lives === HUNT_RULES.startingLives);
 check('skip is not a correct answer', k.correct === 0);
 
 // --- adaptivity: a hot streak should pull harder questions forward
-let hot = initialState(buildLadder(pool, { rng: makeRng(11) }));
-const plannedThird = hot.ladder[2].difficulty;
+let hot = initialState(buildLadder(pool, { rng: makeRng(11), startTier: 5 }));
+const plannedThird = hot.ladder[2].tier;
 hot = applyAnswer(hot, { correct: true, xpEarned: 10, msLeft: 20000 });
 hot = applyAnswer(hot, { correct: true, xpEarned: 10, msLeft: 20000 });
-const actualThird = currentQuestion(hot)!.difficulty;
-const rank = (d: string) => ['Beginner', 'Intermediate', 'Advanced'].indexOf(d);
-check('streak does not make it easier', rank(actualThird) >= rank(plannedThird), { plannedThird, actualThird });
+const actualThird = currentQuestion(hot)!.tier;
+check('streak does not make it easier', actualThird >= plannedThird, { plannedThird, actualThird });
 check('tier tracks the live question', hot.tier === actualThird);
 check('retune keeps ladder intact', new Set(hot.ladder.map((q) => q.id)).size === hot.ladder.length);
 check('retune keeps ladder length', hot.ladder.length === HUNT_RULES.runLength);
