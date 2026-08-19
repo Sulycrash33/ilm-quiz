@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { rankFor } from "@/lib/ranks";
 import { useProfile } from "@/hooks/use-profile";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { GradeResult, QuizQuestion } from "@/lib/types";
@@ -72,9 +73,15 @@ export function HuntView({
   // A run is seeded once per mount (and once per "play again"), so the ladder
   // is stable across re-renders but different every time you play.
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 2 ** 31));
+
+  // The ladder is anchored to the seeker's own rank, so a Faqih is asked
+  // Faqih-level questions rather than starting every run at Mubtadi. `rankFor`
+  // uses the same thresholds as `rank_tiers`, which is what the database
+  // derives `profiles.current_rank_id` from.
+  const startTier = rankFor(profile?.totalXp ?? 0).level;
   const ladder = useMemo(
-    () => buildLadder(questions, { rng: makeRng(seed) }),
-    [questions, seed],
+    () => buildLadder(questions, { rng: makeRng(seed), startTier }),
+    [questions, seed, startTier],
   );
 
   const [state, setState] = useState<HuntState>(() => initialState(ladder));

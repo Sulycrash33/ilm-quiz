@@ -40,7 +40,16 @@ export interface QuizQuestion {
   id: string;
   text: string;
   options: string[];
+  /**
+   * The coarse three-way band, kept for display and for the XP the server
+   * grants. The ladder no longer runs on this — see `tier`.
+   */
   difficulty: "Beginner" | "Intermediate" | "Advanced";
+  /**
+   * Which of the nine ranks this question is pitched at, 1 (Mubtadi) to 9
+   * (Mujaddid). Mirrors `questions.tier`. This is what the Hunt ladder climbs.
+   */
+  tier: number;
   points: number;
   timeLimit: number;
 }
