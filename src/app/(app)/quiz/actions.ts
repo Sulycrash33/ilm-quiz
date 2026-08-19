@@ -32,13 +32,17 @@ export async function submitAnswer(
   const row = Array.isArray(data) ? data[0] : data;
   if (!row) throw new Error('Could not submit your answer.');
 
+  // Columns are `o_`-prefixed: the RPC's OUT parameters were renamed in
+  // migration 0016. Named plainly, `explanation` collided with the column of
+  // the same name on `questions` and the function raised 42702 on every call,
+  // so no answer in the game was ever recorded.
   return {
-    correct: row.correct,
-    correctIndex: row.correct_index,
-    explanation: row.explanation ?? '',
-    citation: row.citation ?? '',
-    xpEarned: row.xp_earned,
-    streakMultiplier: row.streak_multiplier,
+    correct: row.o_correct,
+    correctIndex: row.o_correct_index,
+    explanation: row.o_explanation ?? '',
+    citation: row.o_citation ?? '',
+    xpEarned: row.o_xp_earned,
+    streakMultiplier: row.o_streak_multiplier,
   };
 }
 

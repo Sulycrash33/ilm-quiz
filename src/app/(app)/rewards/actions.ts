@@ -26,10 +26,13 @@ export async function claimDailyLogin(): Promise<LoginClaimResult> {
   const row = Array.isArray(data) ? data[0] : data
   if (!row) return { success: false, error: "Could not claim today's reward." }
 
-  if (row.already_claimed) return { success: false, alreadyClaimedToday: true, dayNumber: row.day_number }
-  if (!row.success) return { success: false, error: row.error ?? "Could not claim today's reward." }
+  // Columns are `o_`-prefixed: the RPC's OUT parameters were renamed in
+  // migration 0016 because `day_number` collided with the identically-named
+  // column on `user_login_claims`, which made the function raise at call time.
+  if (row.o_already_claimed) return { success: false, alreadyClaimedToday: true, dayNumber: row.o_day_number }
+  if (!row.o_success) return { success: false, error: row.o_error ?? "Could not claim today's reward." }
 
-  return { success: true, dayNumber: row.day_number, coinsAwarded: row.coins_awarded, xpAwarded: row.xp_awarded }
+  return { success: true, dayNumber: row.o_day_number, coinsAwarded: row.o_coins_awarded, xpAwarded: row.o_xp_awarded }
 }
 
 export interface SpinResult {
