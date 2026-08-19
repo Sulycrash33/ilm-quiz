@@ -1,6 +1,6 @@
 "use client";
 
-import { Coins } from "lucide-react";
+import { Coins, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Translations } from "@/lib/i18n";
@@ -42,7 +42,10 @@ export function LifelineDock({ prices, coins, used, locked, pending, onUse }: Li
           if (!meta) return null;
 
           const isUsed = used.includes(lifeline.id);
-          const affordable = coins >= lifeline.cost;
+          // A stocked lifeline is spent from inventory, so coins are irrelevant
+          // to whether it can be used.
+          const inStock = lifeline.owned > 0;
+          const affordable = inStock || coins >= lifeline.cost;
           const isPending = pending === lifeline.id;
           const disabled = isUsed || !affordable || locked || pending !== null;
 
@@ -53,13 +56,19 @@ export function LifelineDock({ prices, coins, used, locked, pending, onUse }: Li
               disabled={disabled}
               onClick={() => onUse(lifeline.id)}
               title={t(meta.descKey)}
-              aria-label={`${t(meta.nameKey)} — ${lifeline.cost} ${t("coinsWord")}`}
+              aria-label={
+                inStock
+                  ? `${t(meta.nameKey)} — ${t("ownedCount", { count: lifeline.owned })}`
+                  : `${t(meta.nameKey)} — ${lifeline.cost} ${t("coinsWord")}`
+              }
               className={cn(
                 "flex flex-col items-center gap-1 rounded-xl border p-3 transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 disabled
                   ? "border-outline-variant/40 bg-surface-container opacity-45"
-                  : "border-tertiary/30 bg-surface-container hover:border-tertiary hover:bg-surface-container-high",
+                  : inStock
+                    ? "border-primary/40 bg-surface-container hover:border-primary hover:bg-surface-container-high"
+                    : "border-tertiary/30 bg-surface-container hover:border-tertiary hover:bg-surface-container-high",
                 isPending && "animate-pulse",
               )}
             >
@@ -69,15 +78,22 @@ export function LifelineDock({ prices, coins, used, locked, pending, onUse }: Li
               <span className="text-center text-xs font-medium leading-tight text-on-surface">
                 {t(meta.nameKey)}
               </span>
-              <span
-                className={cn(
-                  "flex items-center gap-1 text-xs tabular-nums",
-                  affordable ? "text-tertiary" : "text-error",
-                )}
-              >
-                <Coins className="h-3 w-3" aria-hidden="true" />
-                {lifeline.cost}
-              </span>
+              {inStock ? (
+                <span className="flex items-center gap-1 text-xs font-semibold tabular-nums text-primary">
+                  <Package className="h-3 w-3" aria-hidden="true" />
+                  {t("ownedCount", { count: lifeline.owned })}
+                </span>
+              ) : (
+                <span
+                  className={cn(
+                    "flex items-center gap-1 text-xs tabular-nums",
+                    affordable ? "text-tertiary" : "text-error",
+                  )}
+                >
+                  <Coins className="h-3 w-3" aria-hidden="true" />
+                  {lifeline.cost}
+                </span>
+              )}
             </button>
           );
         })}

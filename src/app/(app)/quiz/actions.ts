@@ -68,6 +68,9 @@ export interface LifelinePrice {
   id: string;
   cost: number;
   sortOrder: number;
+  /** How many the player owns from the store. A stocked lifeline is spent from
+   * inventory instead of coins, so the dock shows it as free. */
+  owned: number;
 }
 
 /**
@@ -78,11 +81,11 @@ export interface LifelinePrice {
  * missing table means lifelines can't be bought, not that they become free.
  */
 const FALLBACK_LIFELINE_PRICES: LifelinePrice[] = [
-  { id: 'fifty-fifty', cost: 50, sortOrder: 1 },
-  { id: 'ask-imam', cost: 75, sortOrder: 2 },
-  { id: 'skip', cost: 25, sortOrder: 3 },
-  { id: 'double-points', cost: 100, sortOrder: 4 },
-  { id: 'time-boost', cost: 30, sortOrder: 5 },
+  { id: 'fifty-fifty', cost: 50, sortOrder: 1, owned: 0 },
+  { id: 'ask-imam', cost: 75, sortOrder: 2, owned: 0 },
+  { id: 'skip', cost: 25, sortOrder: 3, owned: 0 },
+  { id: 'double-points', cost: 100, sortOrder: 4, owned: 0 },
+  { id: 'time-boost', cost: 30, sortOrder: 5, owned: 0 },
 ];
 
 export async function getLifelinePrices(): Promise<LifelinePrice[]> {
@@ -95,10 +98,30 @@ export async function getLifelinePrices(): Promise<LifelinePrice[]> {
 
   if (error || !data || data.length === 0) return FALLBACK_LIFELINE_PRICES;
 
+  // Store items that map to a lifeline (migration 0008) are spendable stock:
+  // owning one means the lifeline costs nothing this run.
+  const ownedByLifeline = new Map<string, number>();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: stock } = await supabase
+      .from('user_inventory')
+      .select('quantity, store_items!inner(lifeline_id)')
+      .eq('user_id', user.id)
+      .gt('quantity', 0);
+
+    (stock ?? []).forEach((row: any) => {
+      const lifelineId = row.store_items?.lifeline_id;
+      if (lifelineId) {
+        ownedByLifeline.set(lifelineId, (ownedByLifeline.get(lifelineId) ?? 0) + row.quantity);
+      }
+    });
+  }
+
   return data.map((row: { id: string; cost: number; sort_order: number }) => ({
     id: row.id,
     cost: row.cost,
     sortOrder: row.sort_order,
+    owned: ownedByLifeline.get(row.id) ?? 0,
   }));
 }
 
@@ -107,6 +130,10 @@ export interface SpendResult {
   error?: string;
   newBalance?: number;
   cost?: number;
+  /** 'inventory' when a stocked copy was consumed, 'coins' when it was bought. */
+  paidWith?: 'inventory' | 'coins';
+  /** Copies of this lifeline still on the shelf afterwards. */
+  remaining?: number;
 }
 
 /**
@@ -135,7 +162,13 @@ export async function spendLifeline(lifelineId: string): Promise<SpendResult> {
     return { success: false, error: row.error ?? 'Not enough coins.', newBalance: row.new_balance ?? undefined };
   }
 
-  return { success: true, newBalance: row.new_balance, cost: row.cost };
+  return {
+    success: true,
+    newBalance: row.new_balance,
+    cost: row.cost,
+    paidWith: row.paid_with ?? 'coins',
+    remaining: row.remaining ?? 0,
+  };
 }
 
 export interface HuntRunRecord {
