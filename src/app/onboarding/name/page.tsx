@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Check } from "lucide-react"
-import { IslamicBackground } from "@/components/layout/IslamicBackground"
+import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
 import { Progress } from "@/components/ui/progress"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 
@@ -26,7 +26,7 @@ export default function NameSelectionPage() {
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
-      <IslamicBackground />
+      <NamesOfAllahBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost">
           <Link href="/onboarding/avatar">

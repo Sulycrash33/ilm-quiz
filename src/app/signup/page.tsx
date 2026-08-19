@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IlmHuntMark } from "@/components/icons/IlmHuntMark";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { IslamicBackground } from "@/components/layout/IslamicBackground";
+import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getOnboardingSelections, clearOnboardingSelections } from "@/lib/onboarding-storage";
@@ -96,7 +96,7 @@ export default function SignupPage() {
 
   return (
     <div className="relative flex min-h-[100dvh] items-center justify-center bg-background p-4">
-      <IslamicBackground />
+      <NamesOfAllahBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost" size="icon">
           <Link href="/login">

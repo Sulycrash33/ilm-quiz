@@ -1,7 +1,8 @@
 "use client"
 
+import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
+import { FlagIcon } from "@/components/icons/FlagIcons"
 import Link from "next/link"
-import Image from "next/image"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { motion } from "framer-motion"
@@ -24,6 +25,7 @@ export default function LanguageSelectionPage() {
   return (
     <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4 py-6">
       {/* Background */}
+      <NamesOfAllahBackdrop />
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
         <div className="absolute top-1/2 -left-24 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
@@ -75,14 +77,12 @@ export default function LanguageSelectionPage() {
                     }`}
                   >
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="relative h-8 w-12 overflow-hidden rounded-md">
-                        <Image
-                          src={`https://flagcdn.com/${lang.flag}.svg`}
-                          alt={`${lang.name} flag`}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
+                      <FlagIcon
+                        code={lang.flag}
+                        className="h-8 w-12 shrink-0 rounded-md"
+                        role="img"
+                        aria-label={`${lang.name} flag`}
+                      />
                       <span className="font-bold text-on-surface text-lg">{lang.name}</span>
                     </div>
                     <svg

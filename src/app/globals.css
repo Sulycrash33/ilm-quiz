@@ -267,25 +267,45 @@
 }
 
 /* ---------------------------------------------------------------------------
-   The 99 names drifting behind the landing page.
+   The 99 names drifting across the page.
 
-   The column holds two identical copies of the list, so translating by exactly
-   -50% lands the second copy where the first began and the loop is seamless.
-   One full pass takes a little over three minutes: slow enough to read a name
-   if you stop on it, slow enough not to pull the eye off the content.
+   Each column holds two copies of the list, so translating by exactly -50%
+   lands the second copy where the first began and the loop is seamless.
+
+   The four columns run at different durations and two of them run in reverse,
+   which is what stops the page reading as one repeating band: at any moment no
+   two columns show the same name at the same height. Durations are deliberately
+   coprime-ish rather than round multiples, so the pattern between any two
+   columns takes a very long time to repeat.
    --------------------------------------------------------------------------- */
-@keyframes names-drift {
+@keyframes names-drift-up {
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(0, -50%, 0); }
 }
 
-.names-scroll {
-  animation: names-drift 200s linear infinite;
+@keyframes names-drift-down {
+  from { transform: translate3d(0, -50%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+.names-col-a,
+.names-col-b,
+.names-col-c,
+.names-col-d {
+  display: flex;
   will-change: transform;
 }
 
+.names-col-a { animation: names-drift-up   197s linear infinite; }
+.names-col-b { animation: names-drift-down 233s linear infinite; }
+.names-col-c { animation: names-drift-up   271s linear infinite; }
+.names-col-d { animation: names-drift-down 313s linear infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  .names-scroll {
+  .names-col-a,
+  .names-col-b,
+  .names-col-c,
+  .names-col-d {
     animation: none;
   }
 }

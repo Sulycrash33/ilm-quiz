@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { IslamicBackground } from "@/components/layout/IslamicBackground"
+import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
 import { Progress } from "@/components/ui/progress"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 
@@ -28,7 +28,7 @@ export default function AgeSelectionPage() {
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
-      <IslamicBackground />
+      <NamesOfAllahBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost">
           <Link href="/language">
