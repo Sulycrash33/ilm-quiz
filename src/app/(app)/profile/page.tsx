@@ -11,7 +11,7 @@ export default async function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[100dvh]">
         <p>Please sign in to view your profile.</p>
       </div>
     )
@@ -21,7 +21,7 @@ export default async function ProfilePage() {
 
   if (!stats) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[100dvh]">
         <p>We couldn&apos;t load your profile. Please try again.</p>
       </div>
     )

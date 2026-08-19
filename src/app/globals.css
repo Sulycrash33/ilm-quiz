@@ -11,19 +11,19 @@
     --card-foreground: #dae2fd;
     --popover: #171f33;
     --popover-foreground: #dae2fd;
-    --primary: #4edea3;
-    --primary-foreground: #003824;
-    --secondary: #b4c5ff;
+    --primary: #f0cd6d;
+    --primary-foreground: #3a2c00;
+    --secondary: #dcc9a4;
     --secondary-foreground: #00174b;
     --muted: #222a3d;
     --muted-foreground: #bbcabf;
-    --accent: #e9c349;
-    --accent-foreground: #3c2f00;
+    --accent: #f0cd6d;
+    --accent-foreground: #3a2c00;
     --destructive: #93000a;
     --destructive-foreground: #ffdad6;
     --border: #2d3449;
     --input: #2d3449;
-    --ring: #4edea3;
+    --ring: #f0cd6d;
     --radius: 0.5rem;
     
     /* Islamic Design Tokens */
@@ -36,47 +36,47 @@
     --surface-variant: #2d3449;
     --surface-dim: #0b1326;
     --surface-bright: #31394d;
-    --surface-tint: #4edea3;
+    --surface-tint: #f0cd6d;
     
-    --primary-container: #10b981;
-    --primary-fixed: #6ffbbe;
-    --primary-fixed-dim: #4edea3;
-    --on-primary: #003824;
-    --on-primary-container: #00422b;
-    --on-primary-fixed: #002113;
-    --on-primary-fixed-variant: #005236;
+    --primary-container: #8a6b1c;
+    --primary-fixed: #ffe9ad;
+    --primary-fixed-dim: #f0cd6d;
+    --on-primary: #3a2c00;
+    --on-primary-container: #ffe9ad;
+    --on-primary-fixed: #241a00;
+    --on-primary-fixed-variant: #5c4700;
     
-    --secondary-container: #0053db;
-    --secondary-fixed: #dbe1ff;
-    --secondary-fixed-dim: #b4c5ff;
-    --on-secondary: #002a78;
-    --on-secondary-container: #cdd7ff;
-    --on-secondary-fixed: #00174b;
-    --on-secondary-fixed-variant: #003ea8;
+    --secondary-container: #5a4a2c;
+    --secondary-fixed: #f6e6c4;
+    --secondary-fixed-dim: #dcc9a4;
+    --on-secondary: #3a2f16;
+    --on-secondary-container: #f6e6c4;
+    --on-secondary-fixed: #241a05;
+    --on-secondary-fixed-variant: #5a4a2c;
     
-    --tertiary: #e9c349;
-    --tertiary-container: #c29f27;
-    --tertiary-fixed: #ffe088;
-    --tertiary-fixed-dim: #e9c349;
-    --on-tertiary: #3c2f00;
-    --on-tertiary-container: #473700;
-    --on-tertiary-fixed: #241a00;
-    --on-tertiary-fixed-variant: #574500;
+    --tertiary: #7fd4b0;
+    --tertiary-container: #1f5a44;
+    --tertiary-fixed: #b8f2d8;
+    --tertiary-fixed-dim: #7fd4b0;
+    --on-tertiary: #00382a;
+    --on-tertiary-container: #b8f2d8;
+    --on-tertiary-fixed: #00251c;
+    --on-tertiary-fixed-variant: #005141;
     
     --error: #ffb4ab;
     --error-container: #93000a;
     --on-error: #690005;
     --on-error-container: #ffdad6;
     
-    --outline: #86948a;
-    --outline-variant: #3c4a42;
+    --outline: #9a8f79;
+    --outline-variant: #4a4335;
     
     --on-surface: #dae2fd;
-    --on-surface-variant: #bbcabf;
+    --on-surface-variant: #cabfa8;
     --on-background: #dae2fd;
     --on-inverse-surface: #283044;
     --inverse-surface: #dae2fd;
-    --inverse-primary: #006c49;
+    --inverse-primary: #6b5300;
   }
 }
 
@@ -88,7 +88,7 @@
     @apply bg-background text-on-background;
     font-family: 'Inter', sans-serif;
     -webkit-tap-highlight-color: transparent;
-    min-height: max(884px, 100dvh);
+    min-height: 100dvh;
   }
 }
 
@@ -113,7 +113,7 @@
     background: rgba(23, 31, 51, 0.8);
     border-color: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 10px 40px -10px rgba(78, 222, 163, 0.2);
+    box-shadow: 0 10px 40px -10px rgba(240, 205, 109, 0.2);
   }
 
   /* Islamic Pattern Overlay */
@@ -206,8 +206,8 @@
   }
 
   @keyframes glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(78, 222, 163, 0.3); }
-    50% { box-shadow: 0 0 40px rgba(78, 222, 163, 0.6); }
+    0%, 100% { box-shadow: 0 0 20px rgba(240, 205, 109, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(240, 205, 109, 0.6); }
   }
 
   /* Haptic Feedback Simulation */
@@ -264,4 +264,130 @@
 ::selection {
   background-color: var(--primary);
   color: var(--on-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   The 99 names drifting across the page.
+
+   Each column holds two copies of the list, so translating by exactly -50%
+   lands the second copy where the first began and the loop is seamless.
+
+   The four columns run at different durations and two of them run in reverse,
+   which is what stops the page reading as one repeating band: at any moment no
+   two columns show the same name at the same height. Durations are deliberately
+   coprime-ish rather than round multiples, so the pattern between any two
+   columns takes a very long time to repeat.
+   --------------------------------------------------------------------------- */
+@keyframes names-drift-up {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -50%, 0); }
+}
+
+@keyframes names-drift-down {
+  from { transform: translate3d(0, -50%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+.names-col-a,
+.names-col-b,
+.names-col-c,
+.names-col-d {
+  display: flex;
+  will-change: transform;
+}
+
+.names-col-a { animation: names-drift-up   197s linear infinite; }
+.names-col-b { animation: names-drift-down 233s linear infinite; }
+.names-col-c { animation: names-drift-up   271s linear infinite; }
+.names-col-d { animation: names-drift-down 313s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .names-col-a,
+  .names-col-b,
+  .names-col-c,
+  .names-col-d {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Entrance animations for the landing page.
+
+   These are CSS rather than framer-motion for a specific reason. A motion
+   component renders its `initial` state into the HTML — `opacity: 0` — and only
+   animates once React has hydrated and the library has started. Until then the
+   element is in the document but invisible. On the landing page that meant the
+   primary call to action could not be seen until JavaScript had downloaded,
+   parsed and hydrated, which on a slow connection is the difference between a
+   page that feels instant and one that feels broken.
+
+   A CSS animation runs off the stylesheet, so the button paints with the first
+   frame and animates without waiting for anything.
+   --------------------------------------------------------------------------- */
+@keyframes rise-in {
+  from { opacity: 0; transform: translate3d(0, 12px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes settle-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.rise-in {
+  animation: rise-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.settle-in {
+  animation: settle-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.delay-1 { animation-delay: 0.10s; }
+.delay-2 { animation-delay: 0.22s; }
+
+/* No animation means the content is simply there, which is the correct
+   fallback — never a hidden element. */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in,
+  .settle-in {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Safe areas.
+
+   Most players are on phones, and most of those phones have something the OS
+   owns at the edges: a notch or Dynamic Island at the top, a home indicator at
+   the bottom on every iPhone since the X, and gesture bars on much of Android.
+   `viewport-fit=cover` in the viewport export lets the page paint into those
+   regions; these utilities pad it back out.
+
+   `max(...)` rather than a bare `env(...)` on purpose. On a device with no
+   inset — most Android phones, and any desktop browser — `env()` resolves to
+   0px, and the element would end up flush against the edge with no breathing
+   room at all. The `max` keeps a sensible floor everywhere and only grows where
+   the hardware actually needs it.
+
+   This replaces a hardcoded `pb-6` on the bottom nav, which was a guess at the
+   iPhone home indicator: 24px of dead space on Android, and still short of the
+   34px an iPhone Pro Max actually reserves.
+   --------------------------------------------------------------------------- */
+.pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+
+.px-safe {
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+}
+
+/* For content that scrolls beneath a fixed bottom bar: the bar's own height
+   plus whatever the device reserves under it. */
+.pb-nav-safe {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 }

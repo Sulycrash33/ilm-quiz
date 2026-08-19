@@ -60,7 +60,7 @@ export default function AppLayout({
   const pathname = usePathname()
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-[100dvh] bg-background">
       {/* Background Accents */}
       <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
@@ -69,12 +69,12 @@ export default function AppLayout({
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 pb-24 md:pb-8">{children}</main>
+      <main className="relative z-10 pb-nav-safe md:pb-8">{children}</main>
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-around items-center py-2 pb-6">
+          <div className="flex justify-around items-center py-2 pb-safe">
             {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
               return (

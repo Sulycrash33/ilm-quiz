@@ -63,7 +63,7 @@ export function PremiumProgress({
             h-full
             bg-gradient-to-r ${variants[variant]}
             rounded-full
-            shadow-[0_0_8px_rgba(78,222,163,0.3)]
+            shadow-[0_0_8px_rgba(240, 205, 109,0.3)]
           `}
         />
       </div>

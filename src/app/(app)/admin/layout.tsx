@@ -71,7 +71,7 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-[100dvh] bg-background flex">
       {/* Sidebar */}
       <motion.aside
         initial={false}

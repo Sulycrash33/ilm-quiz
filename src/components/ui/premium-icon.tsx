@@ -43,7 +43,7 @@ export function PremiumIcon({
   }
 
   const glowEffects = {
-    primary: "shadow-[0_0_20px_rgba(78,222,163,0.3)]",
+    primary: "shadow-[0_0_20px_rgba(240, 205, 109,0.3)]",
     secondary: "shadow-[0_0_20px_rgba(180,197,255,0.3)]",
     tertiary: "shadow-[0_0_20px_rgba(233,195,73,0.3)]",
     success: "shadow-[0_0_20px_rgba(34,197,94,0.3)]",

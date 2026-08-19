@@ -66,7 +66,7 @@ export function AdminDashboardClient({
   const waiting = (alerts?.reports ?? 0) + (alerts?.applications ?? 0)
 
   return (
-    <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div className="min-h-[100dvh] px-5 py-6 max-w-7xl mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

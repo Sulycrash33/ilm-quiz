@@ -294,7 +294,7 @@ export default function MultiplayerPage() {
   }
 
   return (
-    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-[100dvh] px-5 py-6 max-w-7xl mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

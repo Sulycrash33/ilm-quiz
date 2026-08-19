@@ -64,7 +64,7 @@ export function KnowledgeTree({ nodes }: KnowledgeTreeProps) {
                   w-20 h-20 rounded-full
                   flex items-center justify-center
                   ${node.unlocked
-                    ? "bg-gradient-to-br from-primary/20 to-primary-container/20 border-2 border-primary shadow-[0_0_20px_rgba(78,222,163,0.3)]"
+                    ? "bg-gradient-to-br from-primary/20 to-primary-container/20 border-2 border-primary shadow-[0_0_20px_rgba(240, 205, 109,0.3)]"
                     : "bg-surface-container-highest border-2 border-white/10"
                   }
                   transition-all duration-300

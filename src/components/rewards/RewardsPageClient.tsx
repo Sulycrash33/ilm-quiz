@@ -135,7 +135,7 @@ export function RewardsPageClient({
   }
 
   return (
-    <div dir={dir} className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
+    <div dir={dir} className="min-h-[100dvh] px-5 py-6 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <Link href="/home">
           <PremiumButton variant="ghost" size="sm">
