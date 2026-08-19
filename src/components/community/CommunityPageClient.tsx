@@ -3,9 +3,9 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { useState, useTransition } from "react"
-import { PremiumCard } from "@/components/ui/premium-card"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { CircleCard } from "@/components/community/CircleCard"
 import { useLanguage } from "@/contexts/LanguageContext"
 import {
   createStudyCircle,
@@ -23,6 +23,7 @@ export function CommunityPageClient({ circles }: { circles: StudyCircleView[] })
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [maxMembers, setMaxMembers] = useState(20)
+  const [weeklyGoal, setWeeklyGoal] = useState(500)
   const [error, setError] = useState<string | null>(null)
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -30,12 +31,13 @@ export function CommunityPageClient({ circles }: { circles: StudyCircleView[] })
   const handleCreate = () => {
     setError(null)
     startTransition(async () => {
-      const result = await createStudyCircle({ name, description, maxMembers })
+      const result = await createStudyCircle({ name, description, maxMembers, weeklyGoal })
       if (result.success) {
         setShowCreateForm(false)
         setName("")
         setDescription("")
         setMaxMembers(20)
+        setWeeklyGoal(500)
       } else {
         setError(result.error ?? t("somethingWentWrong"))
       }
@@ -133,6 +135,18 @@ export function CommunityPageClient({ circles }: { circles: StudyCircleView[] })
                     className="w-32 px-4 py-2 rounded-lg bg-surface-container-high border border-white/10 text-on-surface"
                   />
                 </div>
+                <div>
+                  <label className="text-sm text-on-surface-variant mb-1 block">{t("circleGoalLabel")}</label>
+                  <input
+                    type="number"
+                    min={100}
+                    max={100000}
+                    step={50}
+                    value={weeklyGoal}
+                    onChange={(e) => setWeeklyGoal(Number(e.target.value))}
+                    className="w-32 px-4 py-2 rounded-lg bg-surface-container-high border border-white/10 text-on-surface"
+                  />
+                </div>
                 {error && <p className="text-sm text-error">{error}</p>}
                 <PremiumButton variant="primary" onClick={handleCreate} disabled={isPending}>
                   {isPending ? t("creatingLabel") : t("createCircleButton")}
@@ -149,31 +163,12 @@ export function CommunityPageClient({ circles }: { circles: StudyCircleView[] })
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {circles.map((circle, index) => (
                 <motion.div key={circle.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
-                  <PremiumCard className="p-6 h-full flex flex-col">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-bold text-on-surface text-lg">{circle.name}</h3>
-                      {circle.createdByMe && <PremiumBadge variant="tertiary" size="sm">{t("yoursLabel")}</PremiumBadge>}
-                    </div>
-                    {circle.description && <p className="text-on-surface-variant text-sm mb-3 flex-1">{circle.description}</p>}
-                    {circle.currentTopic && (
-                      <p className="text-xs text-on-surface-variant mb-3">
-                        {t("currentlyDiscussing")} <span className="text-on-surface">{circle.currentTopic}</span>
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="text-sm text-on-surface-variant">
-                        {circle.memberCount}/{circle.maxMembers} {t("membersCountSuffix")}
-                      </span>
-                      <PremiumButton
-                        variant={circle.isMember ? "ghost" : "primary"}
-                        size="sm"
-                        onClick={() => handleToggleMembership(circle)}
-                        disabled={pendingId === circle.id || (!circle.isMember && circle.memberCount >= circle.maxMembers)}
-                      >
-                        {circle.isMember ? t("leaveLabel") : circle.memberCount >= circle.maxMembers ? t("fullLabel") : t("joinLabel")}
-                      </PremiumButton>
-                    </div>
-                  </PremiumCard>
+                  <CircleCard
+                    circle={circle}
+                    pending={pendingId === circle.id}
+                    onToggleMembership={handleToggleMembership}
+                    onError={setError}
+                  />
                 </motion.div>
               ))}
             </div>
