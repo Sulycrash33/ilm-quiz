@@ -45,6 +45,13 @@ const quickActions = [
     icon: "👥",
     color: "primary",
   },
+  {
+    title: "Moderation",
+    description: "Reported posts and mentor applications",
+    href: "/admin/moderation",
+    icon: "🛡️",
+    color: "secondary",
+  },
 ]
 
 export function AdminDashboardClient({ stats, recentAttempts, topCategories }: AdminDashboardClientProps) {
