@@ -33,8 +33,10 @@ export type AvatarGender = "female" | "male"
 export interface AvatarDefinition {
   id: string
   gender: AvatarGender
-  /** The character's name — what the picker shows. */
+  /** The epithet the picker shows. */
   name: string
+  /** Who it belongs to, and what it means. Shown under the name. */
+  of: string
   /** What they are wearing. Used as the tile's title and for screen readers. */
   style: string
 }
@@ -48,7 +50,6 @@ const SKIN = {
 } as const
 
 const FIELD = "#1b2540"
-const LIP = "#c1706b"
 const HAIRDARK = "#231508"
 
 /* ------------------------------------------------------------------ base -- */
@@ -72,62 +73,19 @@ function Neck({ skin }: { skin: string }) {
 }
 
 /**
- * The face. `veil` hides everything below the eyes, which is what makes a niqab
- * a niqab without needing a second set of shapes.
+ * The head.
+ *
+ * No eyes, nose or mouth — that is the settled decision, arrived at twice from
+ * different directions. Views among Muslims differ on depicting animate beings,
+ * and facial features are where the disagreement sits; leaving them off means
+ * someone who avoids such images is not asked to pick one, and nobody else
+ * loses anything, because every distinguishing thing here is in the dress.
+ *
+ * `veil` is kept because a niqab still needs the head shape underneath it, and
+ * a covering drawn over nothing would sit wrong at the jaw.
  */
-function Face({
-  skin,
-  brows = HAIRDARK,
-  lashes = true,
-  veil = false,
-  glasses,
-}: {
-  skin: string
-  brows?: string
-  lashes?: boolean
-  veil?: boolean
-  glasses?: string
-}) {
-  return (
-    <>
-      <ellipse cx="50" cy="44" rx="15.5" ry="18" fill={skin} />
-
-      {/* Brows. */}
-      <path d="M41.5 38.5C43 36.8 46 36.8 47.5 38.2" fill="none" stroke={brows} strokeWidth="1.7" strokeLinecap="round" />
-      <path d="M52.5 38.2C54 36.8 57 36.8 58.5 38.5" fill="none" stroke={brows} strokeWidth="1.7" strokeLinecap="round" />
-
-      {/* Eyes. */}
-      {lashes && (
-        <>
-          <path d="M41 43.2C42.4 41.4 46.2 41.4 47.6 43.2" fill="none" stroke={brows} strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M52.4 43.2C53.8 41.4 57.6 41.4 59 43.2" fill="none" stroke={brows} strokeWidth="1.5" strokeLinecap="round" />
-        </>
-      )}
-      <ellipse cx="44.3" cy="44.6" rx="2" ry="2.6" fill="#2a2118" />
-      <ellipse cx="55.7" cy="44.6" rx="2" ry="2.6" fill="#2a2118" />
-      <circle cx="45" cy="43.7" r="0.62" fill="#ffffff" />
-      <circle cx="56.4" cy="43.7" r="0.62" fill="#ffffff" />
-
-      {!veil && (
-        <>
-          {/* Nose and mouth. */}
-          <path d="M50 47.5v3.2c0 .7-.6 1.1-1.4 1.1" fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1.1" strokeLinecap="round" />
-          <path d="M46.8 55.2C48.2 54.4 51.8 54.4 53.2 55.2C51.9 57.4 48.1 57.4 46.8 55.2Z" fill={LIP} />
-          {/* Cheeks. */}
-          <ellipse cx="40.5" cy="49.5" rx="3.1" ry="2" fill="rgba(200,90,80,0.16)" />
-          <ellipse cx="59.5" cy="49.5" rx="3.1" ry="2" fill="rgba(200,90,80,0.16)" />
-        </>
-      )}
-
-      {glasses && (
-        <>
-          <rect x="38.6" y="40.6" width="10" height="8" rx="3.4" fill="rgba(255,255,255,0.12)" stroke={glasses} strokeWidth="1.5" />
-          <rect x="51.4" y="40.6" width="10" height="8" rx="3.4" fill="rgba(255,255,255,0.12)" stroke={glasses} strokeWidth="1.5" />
-          <path d="M48.6 44.2h2.8" stroke={glasses} strokeWidth="1.5" strokeLinecap="round" />
-        </>
-      )}
-    </>
-  )
+function Face({ skin }: { skin: string; veil?: boolean }) {
+  return <ellipse cx="50" cy="44" rx="15.5" ry="18" fill={skin} />
 }
 
 /* ---------------------------------------------------------------- female -- */
@@ -156,7 +114,6 @@ function Woman({
   garment,
   collar,
   veil = false,
-  glasses,
   extra,
   under,
 }: {
@@ -166,7 +123,6 @@ function Woman({
   garment: string
   collar?: string
   veil?: boolean
-  glasses?: string
   extra?: React.ReactNode
   under?: React.ReactNode
 }) {
@@ -177,23 +133,26 @@ function Woman({
       {under}
       <Neck skin={skin} />
       <Scarf cloth={cloth} shade={shade} />
-      <Face skin={skin} veil={veil} glasses={glasses} />
-      {/* Veil across the lower face, drawn after the features so it covers
-          them. */}
-      {veil && <path d="M31 47c0 16 8 27 19 27s19-11 19-27z" fill={cloth} />}
+      <Face skin={skin} veil={veil} />
+      {veil && (
+        <>
+          <path d="M31 41.5c0-14 8-25.5 19-25.5s19 11.5 19 25.5z" fill={cloth} />
+          <path d="M31 47.5c0 16 8 27 19 27s19-11 19-27z" fill={cloth} />
+        </>
+      )}
       {extra}
     </>
   )
 }
 
 const FEMALE_ART: Record<string, React.ReactNode> = {
-  // Khadijah — rust scarf, deep teal dress.
+  // At-Tahirah — rust scarf, deep teal dress.
   "f-1": <Woman skin={SKIN.warm} cloth="#d4762f" shade="#a8571d" garment="#1f3d54" collar="#e0b088" />,
 
-  // Aisha — powder blue scarf over an aubergine top.
+  // As-Siddiqah — powder blue scarf over an aubergine top.
   "f-2": <Woman skin={SKIN.light} cloth="#8fc7e8" shade="#5f9dc4" garment="#5a3d6b" collar="#f2d3b3" />,
 
-  // Fatimah — black abaya, gold-edged.
+  // Az-Zahra — black abaya, gold-edged.
   "f-3": (
     <Woman
       skin={SKIN.tan}
@@ -204,7 +163,7 @@ const FEMALE_ART: Record<string, React.ReactNode> = {
     />
   ),
 
-  // Maryam — teal turban with a long braid over the shoulder.
+  // Dhat an-Nitaqayn — teal turban with a long braid over the shoulder.
   "f-4": (
     <>
       <circle cx="50" cy="50" r="50" fill={FIELD} />
@@ -223,16 +182,16 @@ const FEMALE_ART: Record<string, React.ReactNode> = {
     </>
   ),
 
-  // Sumayyah — mint scarf, glasses, cream blouse.
-  "f-5": <Woman skin={SKIN.light} cloth="#a9dcc4" shade="#78b99d" garment="#efe6d2" collar="#d8c9a8" glasses="#3a2f16" />,
+  // Ash-Shahidah — mint scarf, cream blouse.
+  "f-5": <Woman skin={SKIN.light} cloth="#a9dcc4" shade="#78b99d" garment="#efe6d2" collar="#d8c9a8" />,
 
-  // Hafsa — powder-blue niqab, eyes only.
+  // Umm al-Masakin — powder-blue niqab.
   "f-6": <Woman skin={SKIN.warm} cloth="#bcd8ea" shade="#8fb4cc" garment="#8fb4cc" veil />,
 
-  // Zaynab — deep green khimar with a face veil.
+  // Al-Muhajirah — deep green khimar with a face veil.
   "f-7": <Woman skin={SKIN.deep} cloth="#1f5f4a" shade="#154034" garment="#154034" veil />,
 
-  // Ruqayyah — cream scarf, crimson dress, gold trim.
+  // Ar-Rumaysa — cream scarf, crimson dress, gold trim.
   "f-8": (
     <Woman
       skin={SKIN.rich}
@@ -277,7 +236,6 @@ function Man({
   collar,
   beard,
   beardColor = HAIRDARK,
-  glasses,
   headwear,
   ears = true,
 }: {
@@ -286,7 +244,6 @@ function Man({
   collar?: string
   beard?: "stubble" | "short" | "full" | "long"
   beardColor?: string
-  glasses?: string
   headwear?: React.ReactNode
   ears?: boolean
 }) {
@@ -302,7 +259,7 @@ function Man({
         </>
       )}
       {beard && <Beard color={beardColor} length={beard} />}
-      <Face skin={skin} lashes={false} glasses={glasses} />
+      <Face skin={skin} />
       {beard && <Beard color={beardColor} length={beard} />}
       {headwear}
     </>
@@ -310,7 +267,7 @@ function Man({
 }
 
 const MALE_ART: Record<string, React.ReactNode> = {
-  // Yusuf — fade, bomber collar.
+  // As-Siddiq — fade, bomber collar.
   "m-1": (
     <Man
       skin={SKIN.warm}
@@ -320,13 +277,13 @@ const MALE_ART: Record<string, React.ReactNode> = {
     />
   ),
 
-  // Bilal — kufi, stubble, mandarin collar.
+  // Al-Farooq — kufi, stubble, mandarin collar.
   "m-2": <Man skin={SKIN.deep} garment="#1f6b52" collar="#43a383" beard="stubble" headwear={<Cap fill="#2f9e8f" band="#7fd8c8" />} />,
 
-  // Umar — gold taqiyah, full beard, sand thobe.
+  // Dhun-Nurayn — gold taqiyah, full beard, sand thobe.
   "m-3": <Man skin={SKIN.tan} garment="#c9b48b" collar="#efe6d2" beard="full" headwear={<Cap fill="#e0b12f" band="#ffe9ad" />} />,
 
-  // Idris — imamah, white beard, plum shawl. The elder.
+  // Kalimullah — imamah, white beard, plum shawl. The elder.
   "m-4": (
     <Man
       skin={SKIN.deep}
@@ -345,7 +302,7 @@ const MALE_ART: Record<string, React.ReactNode> = {
     />
   ),
 
-  // Salman — ghutra and agal. Cloth first, face cut back in, then the beard.
+  // Sayfullah — ghutra and agal. Cloth first, head cut back in, then the beard.
   "m-5": (
     <>
       <circle cx="50" cy="50" r="50" fill={FIELD} />
@@ -353,14 +310,14 @@ const MALE_ART: Record<string, React.ReactNode> = {
       <Neck skin={SKIN.light} />
       <path d="M25 34c0-14 11-25 25-25s25 11 25 25c0 21-4 31-6 44H31c-2-13-6-23-6-44z" fill="#ffffff" />
       <Beard color={HAIRDARK} length="short" />
-      <Face skin={SKIN.light} lashes={false} />
+      <Face skin={SKIN.light} />
       <Beard color={HAIRDARK} length="short" />
       <path d="M27 25c8-5 38-5 46 0" fill="none" stroke="#1b2540" strokeWidth="4.5" strokeLinecap="round" />
       <path d="M27 32c8-5 38-5 46 0" fill="none" stroke="#1b2540" strokeWidth="3" strokeLinecap="round" />
     </>
   ),
 
-  // Musa — tarboosh and moustache.
+  // Asadullah — tarboosh.
   "m-6": (
     <Man
       skin={SKIN.rich}
@@ -376,19 +333,18 @@ const MALE_ART: Record<string, React.ReactNode> = {
     />
   ),
 
-  // Harun — glasses, short beard, charcoal jacket.
+  // Amin al-Ummah — short beard, charcoal jacket.
   "m-7": (
     <Man
       skin={SKIN.tan}
       garment="#2c3038"
       collar="#8a939f"
       beard="short"
-      glasses="#e6e6e6"
       headwear={<path d="M33.5 40c0-12 8-20 16.5-20s16.5 8 16.5 20c0-8-8-10-16.5-10s-16.5 2-16.5 10z" fill="#2a1c0c" />}
     />
   ),
 
-  // Zayd — hood up, young.
+  // Dhun-Nun — hood up, young.
   "m-8": (
     <Man
       skin={SKIN.deep}
@@ -406,22 +362,22 @@ const MALE_ART: Record<string, React.ReactNode> = {
 }
 
 export const AVATARS: AvatarDefinition[] = [
-  { id: "f-1", gender: "female", name: "Khadijah", style: "Rust scarf, teal dress" },
-  { id: "f-2", gender: "female", name: "Aisha", style: "Powder blue scarf" },
-  { id: "f-3", gender: "female", name: "Fatimah", style: "Black abaya, gold trim" },
-  { id: "f-4", gender: "female", name: "Maryam", style: "Teal turban and braid" },
-  { id: "f-5", gender: "female", name: "Sumayyah", style: "Mint scarf and glasses" },
-  { id: "f-6", gender: "female", name: "Hafsa", style: "Powder blue niqab" },
-  { id: "f-7", gender: "female", name: "Zaynab", style: "Deep green khimar" },
-  { id: "f-8", gender: "female", name: "Ruqayyah", style: "Cream scarf, crimson dress" },
-  { id: "m-1", gender: "male", name: "Yusuf", style: "Fade and bomber" },
-  { id: "m-2", gender: "male", name: "Bilal", style: "Kufi cap" },
-  { id: "m-3", gender: "male", name: "Umar", style: "Taqiyah and thobe" },
-  { id: "m-4", gender: "male", name: "Idris", style: "Imamah, elder" },
-  { id: "m-5", gender: "male", name: "Salman", style: "Ghutra and agal" },
-  { id: "m-6", gender: "male", name: "Musa", style: "Tarboosh" },
-  { id: "m-7", gender: "male", name: "Harun", style: "Glasses and jacket" },
-  { id: "m-8", gender: "male", name: "Zayd", style: "Hood up" },
+  { id: "f-1", gender: "female", name: "At-Tahirah", of: "The Pure — Khadijah", style: "Rust scarf, teal dress" },
+  { id: "f-2", gender: "female", name: "As-Siddiqah", of: "The Truthful — Aisha", style: "Powder blue scarf" },
+  { id: "f-3", gender: "female", name: "Az-Zahra", of: "The Radiant — Fatimah", style: "Black abaya, gold trim" },
+  { id: "f-4", gender: "female", name: "Dhat an-Nitaqayn", of: "Of the Two Belts — Asma", style: "Teal turban and braid" },
+  { id: "f-5", gender: "female", name: "Ash-Shahidah", of: "The First Martyr — Sumayyah", style: "Mint scarf" },
+  { id: "f-6", gender: "female", name: "Umm al-Masakin", of: "Mother of the Poor — Zaynab", style: "Powder blue niqab" },
+  { id: "f-7", gender: "female", name: "Al-Muhajirah", of: "The Emigrant — Umm Salamah", style: "Deep green khimar" },
+  { id: "f-8", gender: "female", name: "Ar-Rumaysa", of: "Umm Sulaym", style: "Cream scarf, crimson dress" },
+  { id: "m-1", gender: "male", name: "As-Siddiq", of: "The Truthful — Abu Bakr", style: "Fade and bomber" },
+  { id: "m-2", gender: "male", name: "Al-Farooq", of: "The Distinguisher — Umar", style: "Kufi cap" },
+  { id: "m-3", gender: "male", name: "Dhun-Nurayn", of: "Of the Two Lights — Uthman", style: "Taqiyah and thobe" },
+  { id: "m-4", gender: "male", name: "Kalimullah", of: "Who Spoke with Allah — Musa", style: "Imamah, elder" },
+  { id: "m-5", gender: "male", name: "Sayfullah", of: "The Drawn Sword — Khalid", style: "Ghutra and agal" },
+  { id: "m-6", gender: "male", name: "Asadullah", of: "The Lion of Allah — Hamza", style: "Tarboosh" },
+  { id: "m-7", gender: "male", name: "Amin al-Ummah", of: "Trustee of the Ummah — Abu Ubayda", style: "Jacket and collar" },
+  { id: "m-8", gender: "male", name: "Dhun-Nun", of: "Companion of the Whale — Yunus", style: "Hood up" },
 ]
 
 const ART: Record<string, React.ReactNode> = { ...FEMALE_ART, ...MALE_ART }
