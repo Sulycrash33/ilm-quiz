@@ -1,5 +1,6 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { AdminDashboardClient } from '@/components/admin/AdminDashboardClient'
+import { getModerationAlertCounts } from '@/app/(app)/community/forum-actions'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -48,6 +49,10 @@ export default async function AdminPage() {
     .select('user_id', { count: 'exact', head: true })
     .gte('created_at', today.toISOString())
 
+  // What is waiting on a moderator right now, for the badge on the Moderation
+  // card. Returns zeros for anyone who is not one, so no role branch is needed.
+  const alerts = await getModerationAlertCounts()
+
   return (
     <AdminDashboardClient
       stats={{
@@ -58,6 +63,7 @@ export default async function AdminPage() {
       }}
       recentAttempts={recentAttempts ?? []}
       topCategories={topCategories ?? []}
+      alerts={alerts}
     />
   )
 }

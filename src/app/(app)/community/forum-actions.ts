@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
+import { notifyModeratorsOfReport } from "@/lib/moderation-notify"
 
 /**
  * Forum.
@@ -200,6 +201,17 @@ export async function editOwnPost(input: {
   return result
 }
 
+/**
+ * Report a post.
+ *
+ * `report_content` also returns `o_notify`, true only for the first unresolved
+ * report on that item. It is read here and never returned: this runs on the
+ * server, so the browser cannot see it, which keeps the property that a
+ * reporter learns nothing about what is already in the queue.
+ *
+ * The email is not awaited. A slow or failing mail provider must not hold the
+ * reporter's action open or make a successful report look like a failure.
+ */
 export async function reportContent(input: {
   kind: "forum_topic" | "forum_reply" | "mentor_question" | "mentor_answer"
   id: string
@@ -213,7 +225,35 @@ export async function reportContent(input: {
     p_reason: input.reason,
     p_detail: input.detail ?? null,
   })
-  return unwrap(data, error)
+
+  const result = unwrap(data, error)
+
+  if (result.success) {
+    const row = Array.isArray(data) ? (data[0] as { o_notify?: boolean } | undefined) : null
+    if (row?.o_notify) {
+      void notifyModeratorsOfReport({ kind: input.kind, reason: input.reason })
+    }
+  }
+
+  return result
+}
+
+export interface ModerationAlertCounts {
+  /** Items with at least one unresolved report. */
+  reports: number
+  /** Mentor applications waiting on a decision. */
+  applications: number
+}
+
+/** Zeros for anyone who is not a moderator, so a shared layout can call this
+ * without first checking the role. */
+export async function getModerationAlertCounts(): Promise<ModerationAlertCounts> {
+  const supabase = await createClient()
+  const { data, error } = await supabase.rpc("get_moderation_alert_counts")
+  if (error || !data) return { reports: 0, applications: 0 }
+
+  const row = Array.isArray(data) ? (data[0] as { o_reports: number; o_applications: number } | undefined) : null
+  return { reports: row?.o_reports ?? 0, applications: row?.o_applications ?? 0 }
 }
 
 /** Moderator only — the RPC enforces it, this is just the call. */
