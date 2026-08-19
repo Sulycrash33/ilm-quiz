@@ -29,16 +29,27 @@ import {
 import type { Rank, Category, Question, Topic, CategoryAchievement, CategoryDetails } from './types';
 import { MosqueIcon } from '@/components/icons/MosqueIcon';
 
+/**
+ * The nine ranks.
+ *
+ * `minPoints` MUST match `rank_tiers.min_xp` in the database, which is the
+ * authority: a trigger on `profiles` derives `current_rank_id` from `total_xp`
+ * against that table (migration 0018). These thresholds used to be 100/300/600
+ * /1000/1500/2200/3000/5000 while the database used the values below, so the
+ * rank shown by client-side `rankFor()` disagreed with the rank stored on the
+ * profile and used for achievement criteria — a seeker could read as Faqih in
+ * one place and Talib in another. Change both or neither.
+ */
 export const RANKS: Rank[] = [
   { level: 1, title: 'Mubtadi', icon: Sprout, theme: 'text-green-500', minPoints: 0 },
-  { level: 2, title: 'Talib', icon: BookOpen, theme: 'text-blue-500', minPoints: 100 },
-  { level: 3, title: 'Hafiz', icon: BookMarked, theme: 'text-yellow-500', minPoints: 300 },
-  { level: 4, title: 'Faqih', icon: Scale, theme: 'text-purple-500', minPoints: 600 },
-  { level: 5, title: 'Muhaddith', icon: ScrollText, theme: 'text-amber-700', minPoints: 1000 },
-  { level: 6, title: 'Mufassir', icon: Search, theme: 'text-gray-500', minPoints: 1500 },
-  { level: 7, title: 'Shaykh', icon: MosqueIcon, theme: 'text-emerald-500', minPoints: 2200 },
-  { level: 8, title: 'Imam', icon: Crown, theme: 'text-blue-700', minPoints: 3000 },
-  { level: 9, title: 'Mujaddid', icon: Flame, theme: 'text-red-500', minPoints: 5000 },
+  { level: 2, title: 'Talib', icon: BookOpen, theme: 'text-blue-500', minPoints: 500 },
+  { level: 3, title: 'Hafiz', icon: BookMarked, theme: 'text-yellow-500', minPoints: 1500 },
+  { level: 4, title: 'Faqih', icon: Scale, theme: 'text-purple-500', minPoints: 3000 },
+  { level: 5, title: 'Muhaddith', icon: ScrollText, theme: 'text-amber-700', minPoints: 5000 },
+  { level: 6, title: 'Mufassir', icon: Search, theme: 'text-gray-500', minPoints: 8000 },
+  { level: 7, title: 'Shaykh', icon: MosqueIcon, theme: 'text-emerald-500', minPoints: 12000 },
+  { level: 8, title: 'Imam', icon: Crown, theme: 'text-blue-700', minPoints: 18000 },
+  { level: 9, title: 'Mujaddid', icon: Flame, theme: 'text-red-500', minPoints: 25000 },
 ];
 
 export const CATEGORIES: Category[] = [

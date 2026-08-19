@@ -1,9 +1,22 @@
-﻿export type Locale = "en" | "ha" | "fr" | "ar" | "ms" | "id"
+export type Locale = "en" | "ha" | "fr" | "ar" | "ms" | "id"
 
 export interface Translations {
   // Common
   welcome: string
   welcomeBack: string
+  /** The full Islamic greeting, in Arabic script. Identical in every locale —
+   * it is the greeting itself, not a translation of one. */
+  salaamArabic: string
+  /** The same greeting romanised, for readers who do not read Arabic script.
+   * Empty string in the Arabic locale, where the script line already says it. */
+  salaamLatin: string
+  /** Prefixes the rank on the home page, e.g. "Rank: Hafiz". */
+  rankLabel: string
+  /** Countdown to the next prayer, e.g. "Zuhr in 45m". */
+  nextPrayerIn: string
+  prayerNow: string
+  prayerTimesTitle: string
+  enableLocationForPrayer: string
   loading: string
   save: string
   cancel: string
@@ -549,6 +562,13 @@ const enTranslations: Translations = {
   // Common
   welcome: "Welcome",
   welcomeBack: "Welcome Back",
+  salaamArabic: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ",
+  salaamLatin: "Assalamu alaikum wa rahmatullahi wa barakatuh",
+  rankLabel: "Rank",
+  nextPrayerIn: "{prayer} in {time}",
+  prayerNow: "It is {prayer} time",
+  prayerTimesTitle: "Prayer times",
+  enableLocationForPrayer: "Enable location to see prayer times",
   loading: "Loading...",
   save: "Save",
   cancel: "Cancel",
@@ -1095,6 +1115,13 @@ const msTranslations: Translations = {
   // Common
   welcome: "Selamat Datang",
   welcomeBack: "Selamat Kembali",
+  salaamArabic: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ",
+  salaamLatin: "Assalamu alaikum wa rahmatullahi wa barakatuh",
+  rankLabel: "Pangkat",
+  nextPrayerIn: "{prayer} dalam {time}",
+  prayerNow: "Waktu {prayer} telah masuk",
+  prayerTimesTitle: "Waktu solat",
+  enableLocationForPrayer: "Aktifkan lokasi untuk melihat waktu solat",
   loading: "Memuatkan...",
   save: "Simpan",
   cancel: "Batal",
@@ -1641,6 +1668,13 @@ const idTranslations: Translations = {
   // Common
   welcome: "Selamat Datang",
   welcomeBack: "Selamat Kembali",
+  salaamArabic: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ",
+  salaamLatin: "Assalamu alaikum wa rahmatullahi wa barakatuh",
+  rankLabel: "Pangkat",
+  nextPrayerIn: "{prayer} dalam {time}",
+  prayerNow: "Waktu {prayer} telah masuk",
+  prayerTimesTitle: "Waktu solat",
+  enableLocationForPrayer: "Aktifkan lokasi untuk melihat waktu solat",
   loading: "Memuat...",
   save: "Simpan",
   cancel: "Batal",
@@ -2187,6 +2221,13 @@ const haTranslations: Translations = {
   // Common
   welcome: "Barka da zuwa",
   welcomeBack: "Barka da dawowa",
+  salaamArabic: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ",
+  salaamLatin: "Assalamu alaikum wa rahmatullahi wa barakatuh",
+  rankLabel: "Matsayi",
+  nextPrayerIn: "{prayer} cikin {time}",
+  prayerNow: "Lokacin {prayer} ya yi",
+  prayerTimesTitle: "Lokutan salla",
+  enableLocationForPrayer: "Kunna wuri don ganin lokutan salla",
   loading: "Ana lodawa...",
   save: "Ajiye",
   cancel: "Soke",
@@ -2733,6 +2774,13 @@ const frTranslations: Translations = {
   // Common
   welcome: "Bienvenue",
   welcomeBack: "Content de vous revoir",
+  salaamArabic: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ",
+  salaamLatin: "Assalamu alaikum wa rahmatullahi wa barakatuh",
+  rankLabel: "Rang",
+  nextPrayerIn: "{prayer} dans {time}",
+  prayerNow: "C'est l'heure du {prayer}",
+  prayerTimesTitle: "Heures de prière",
+  enableLocationForPrayer: "Activez la localisation pour voir les heures de prière",
   loading: "Chargement...",
   save: "Enregistrer",
   cancel: "Annuler",
@@ -3279,6 +3327,13 @@ const arTranslations: Translations = {
   // Common
   welcome: "مرحباً",
   welcomeBack: "أهلاً بعودتك",
+  salaamArabic: "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ",
+  salaamLatin: "",
+  rankLabel: "الرتبة",
+  nextPrayerIn: "{prayer} بعد {time}",
+  prayerNow: "حان وقت {prayer}",
+  prayerTimesTitle: "مواقيت الصلاة",
+  enableLocationForPrayer: "فعّل الموقع لعرض مواقيت الصلاة",
   loading: "جارٍ التحميل...",
   save: "حفظ",
   cancel: "إلغاء",
