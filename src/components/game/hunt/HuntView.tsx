@@ -89,6 +89,11 @@ export function HuntView({
   const [showImam, setShowImam] = useState(false);
   const [particles, setParticles] = useState(false);
   const [coins, setCoins] = useState(0);
+  // Owned lifeline stock, seeded from the server and decremented as it is spent
+  // (migration 0008: a stocked lifeline is consumed instead of charged).
+  const [stock, setStock] = useState<Record<string, number>>(() =>
+    Object.fromEntries(lifelinePrices.map((l) => [l.id, l.owned])),
+  );
 
   // Profile XP as it stood when the run began — the summary needs it to work
   // out how far the run moved the rank bar.
@@ -233,7 +238,8 @@ export function HuntView({
 
     const price = lifelinePrices.find((l) => l.id === id);
     if (!price) return;
-    if (coins < price.cost) {
+    // A stocked copy is spent instead of coins, so a low balance is no bar.
+    if ((stock[id] ?? 0) === 0 && coins < price.cost) {
       toast({ title: t("notEnoughCoins"), variant: "destructive" });
       return;
     }
@@ -253,6 +259,10 @@ export function HuntView({
     }
 
     if (spend.newBalance !== undefined) setCoins(spend.newBalance);
+    if (spend.paidWith === "inventory") {
+      setStock((prev) => ({ ...prev, [id]: spend.remaining ?? Math.max(0, (prev[id] ?? 1) - 1) }));
+      toast({ title: t("usedFromStock") });
+    }
     setState((prev) => markLifelineSpent(prev, id));
 
     switch (id) {
@@ -403,7 +413,7 @@ export function HuntView({
       </AnimatePresence>
 
       <LifelineDock
-        prices={lifelinePrices}
+        prices={lifelinePrices.map((l) => ({ ...l, owned: stock[l.id] ?? 0 }))}
         coins={coins}
         used={state.lifelinesUsed}
         locked={locked}

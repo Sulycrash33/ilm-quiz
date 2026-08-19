@@ -96,6 +96,8 @@ export interface Translations {
   questionHunt: string
   xpToRank: string
   maxRankReached: string
+  ownedCount: string
+  usedFromStock: string
 
   // Categories
   knowledgeCategories: string
@@ -537,6 +539,8 @@ const enTranslations: Translations = {
   questionHunt: "{count}-question hunt",
   xpToRank: "{xp} XP to {rank}",
   maxRankReached: "Highest rank reached",
+  ownedCount: "×{count} owned",
+  usedFromStock: "Used one from your stock",
 
   // Categories
   knowledgeCategories: "Knowledge Categories",
@@ -979,6 +983,8 @@ const msTranslations: Translations = {
   questionHunt: "Perburuan {count} soalan",
   xpToRank: "{xp} XP ke {rank}",
   maxRankReached: "Pangkat tertinggi dicapai",
+  ownedCount: "×{count} dimiliki",
+  usedFromStock: "Menggunakan satu daripada simpanan anda",
 
   // Categories
   knowledgeCategories: "Kategori Ilmu",
@@ -1421,6 +1427,8 @@ const idTranslations: Translations = {
   questionHunt: "Perburuan {count} soal",
   xpToRank: "{xp} XP menuju {rank}",
   maxRankReached: "Peringkat tertinggi tercapai",
+  ownedCount: "×{count} dimiliki",
+  usedFromStock: "Menggunakan satu dari simpanan Anda",
 
   // Categories
   knowledgeCategories: "Kategori Ilmu",
@@ -1863,6 +1871,8 @@ const haTranslations: Translations = {
   questionHunt: "Farautar tambayoyi {count}",
   xpToRank: "{xp} XP zuwa {rank}",
   maxRankReached: "An kai matsayi mafi girma",
+  ownedCount: "×{count} a hannu",
+  usedFromStock: "An yi amfani da ɗaya daga cikin tanadinka",
 
   // Categories
   knowledgeCategories: "Rukunin Ilimi",
@@ -2305,6 +2315,8 @@ const frTranslations: Translations = {
   questionHunt: "Chasse de {count} questions",
   xpToRank: "{xp} XP jusqu'à {rank}",
   maxRankReached: "Rang le plus élevé atteint",
+  ownedCount: "×{count} en réserve",
+  usedFromStock: "Un exemplaire utilisé depuis votre réserve",
 
   // Categories
   knowledgeCategories: "Catégories de connaissances",
@@ -2747,6 +2759,8 @@ const arTranslations: Translations = {
   questionHunt: "رحلة من {count} أسئلة",
   xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
   maxRankReached: "تم بلوغ أعلى رتبة",
+  ownedCount: "×{count} لديك",
+  usedFromStock: "تم استخدام واحدة من مخزونك",
 
   // Categories
   knowledgeCategories: "فئات المعرفة",
