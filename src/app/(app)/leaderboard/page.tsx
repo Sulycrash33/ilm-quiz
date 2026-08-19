@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { LeaderboardPageClient } from "@/components/leaderboard/LeaderboardPageClient"
+import { LeagueStandings } from "@/components/leaderboard/LeagueStandings"
+import { getMyLeague } from "./actions"
 
 export default async function LeaderboardPage() {
   const supabase = await createClient()
@@ -52,12 +54,23 @@ export default async function LeaderboardPage() {
   const myAllTimeRank = allTime.find((e) => e.isCurrentUser)
   const myWeeklyRank = weekly.find((e) => e.isCurrentUser)
 
+  // Assigns a division if the player has none yet, which also closes out their
+  // previous week so promotion applies. Null when signed out.
+  const league = await getMyLeague()
+
   return (
-    <LeaderboardPageClient
-      allTime={allTime}
-      weekly={weekly}
-      myAllTimeRank={myAllTimeRank ?? null}
-      myWeeklyRank={myWeeklyRank ?? null}
-    />
+    <div className="space-y-8">
+      {league && (
+        <div className="mx-auto max-w-7xl px-5 pt-6">
+          <LeagueStandings league={league} />
+        </div>
+      )}
+      <LeaderboardPageClient
+        allTime={allTime}
+        weekly={weekly}
+        myAllTimeRank={myAllTimeRank ?? null}
+        myWeeklyRank={myWeeklyRank ?? null}
+      />
+    </div>
   )
 }
