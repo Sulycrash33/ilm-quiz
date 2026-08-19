@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { getProfileStats } from "@/lib/profile-stats"
 import { GameModesPageClient } from "@/components/challenges/GameModesPageClient"
+import { DailyChallengeCard } from "@/components/challenges/DailyChallengeCard"
+import { getDailyChallenge } from "./actions"
 
 export default async function ChallengesPage() {
   const supabase = await createClient()
@@ -10,6 +12,10 @@ export default async function ChallengesPage() {
   } = await supabase.auth.getUser()
 
   const stats = user ? await getProfileStats(user.id) : null
+
+  // Generates today's challenge if this is the first request of the day; there
+  // is no scheduler, so it is materialised lazily (migration 0011).
+  const dailyChallenge = await getDailyChallenge()
 
   const today = new Date().toISOString().slice(0, 10)
   const { data: todayChallenge } = await supabase
@@ -30,7 +36,13 @@ export default async function ChallengesPage() {
   }
 
   return (
-    <GameModesPageClient
+    <div className="space-y-6">
+      {dailyChallenge && (
+        <div className="mx-auto max-w-7xl px-5 pt-6">
+          <DailyChallengeCard challenge={dailyChallenge} />
+        </div>
+      )}
+      <GameModesPageClient
       totalAttempts={stats?.totalAttempts ?? 0}
       accuracyPct={stats?.accuracyPct ?? 0}
       totalXp={stats?.profile.totalXp ?? 0}
@@ -39,6 +51,7 @@ export default async function ChallengesPage() {
           ? { rewardCoins: todayChallenge.reward_coins, rewardXp: todayChallenge.reward_xp, completed: challengeCompleted }
           : null
       }
-    />
+      />
+    </div>
   )
 }

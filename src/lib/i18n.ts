@@ -96,6 +96,20 @@ export interface Translations {
   questionHunt: string
   xpToRank: string
   maxRankReached: string
+
+  // Leagues + daily challenge
+  leagueTitle: string
+  leagueDivision: string
+  leagueResetsMonday: string
+  leaguePromoted: string
+  leagueRelegated: string
+  leagueEmpty: string
+  leagueRules: string
+  leaguePromotionZone: string
+  leagueRelegationZone: string
+  challengeProgress: string
+  challengeClaim: string
+  challengeClaimed: string
   ownedCount: string
   usedFromStock: string
 
@@ -555,6 +569,20 @@ const enTranslations: Translations = {
   questionHunt: "{count}-question hunt",
   xpToRank: "{xp} XP to {rank}",
   maxRankReached: "Highest rank reached",
+
+  // Leagues + daily challenge
+  leagueTitle: "Weekly league",
+  leagueDivision: "Division {division}",
+  leagueResetsMonday: "Resets Monday",
+  leaguePromoted: "Promoted",
+  leagueRelegated: "Relegated",
+  leagueEmpty: "Answer a question to join this week's league.",
+  leagueRules: "Top {promote} move up. Bottom {relegate} move down.",
+  leaguePromotionZone: "Promotion place",
+  leagueRelegationZone: "Relegation place",
+  challengeProgress: "{done} of {total} answered",
+  challengeClaim: "Claim reward",
+  challengeClaimed: "Claimed {coins} coins and {xp} XP",
   ownedCount: "×{count} owned",
   usedFromStock: "Used one from your stock",
 
@@ -1015,6 +1043,20 @@ const msTranslations: Translations = {
   questionHunt: "Perburuan {count} soalan",
   xpToRank: "{xp} XP ke {rank}",
   maxRankReached: "Pangkat tertinggi dicapai",
+
+  // Leagues + daily challenge
+  leagueTitle: "Liga mingguan",
+  leagueDivision: "Divisyen {division}",
+  leagueResetsMonday: "Set semula Isnin",
+  leaguePromoted: "Naik",
+  leagueRelegated: "Turun",
+  leagueEmpty: "Jawab satu soalan untuk menyertai liga minggu ini.",
+  leagueRules: "{promote} teratas naik. {relegate} terbawah turun.",
+  leaguePromotionZone: "Tempat kenaikan",
+  leagueRelegationZone: "Tempat penurunan",
+  challengeProgress: "{done} daripada {total} dijawab",
+  challengeClaim: "Tuntut ganjaran",
+  challengeClaimed: "Menuntut {coins} syiling dan {xp} XP",
   ownedCount: "×{count} dimiliki",
   usedFromStock: "Menggunakan satu daripada simpanan anda",
 
@@ -1475,6 +1517,20 @@ const idTranslations: Translations = {
   questionHunt: "Perburuan {count} soal",
   xpToRank: "{xp} XP menuju {rank}",
   maxRankReached: "Peringkat tertinggi tercapai",
+
+  // Leagues + daily challenge
+  leagueTitle: "Liga mingguan",
+  leagueDivision: "Divisi {division}",
+  leagueResetsMonday: "Atur ulang Senin",
+  leaguePromoted: "Naik",
+  leagueRelegated: "Turun",
+  leagueEmpty: "Jawab satu soal untuk bergabung dengan liga minggu ini.",
+  leagueRules: "{promote} teratas naik. {relegate} terbawah turun.",
+  leaguePromotionZone: "Posisi promosi",
+  leagueRelegationZone: "Posisi degradasi",
+  challengeProgress: "{done} dari {total} dijawab",
+  challengeClaim: "Klaim hadiah",
+  challengeClaimed: "Mengklaim {coins} koin dan {xp} XP",
   ownedCount: "×{count} dimiliki",
   usedFromStock: "Menggunakan satu dari simpanan Anda",
 
@@ -1935,6 +1991,20 @@ const haTranslations: Translations = {
   questionHunt: "Farautar tambayoyi {count}",
   xpToRank: "{xp} XP zuwa {rank}",
   maxRankReached: "An kai matsayi mafi girma",
+
+  // Leagues + daily challenge
+  leagueTitle: "Gasar mako",
+  leagueDivision: "Rukuni na {division}",
+  leagueResetsMonday: "Yana sabuntawa Litinin",
+  leaguePromoted: "An daga",
+  leagueRelegated: "An sauke",
+  leagueEmpty: "Amsa tambaya guda don shiga gasar wannan mako.",
+  leagueRules: "{promote} na sama suna hawa. {relegate} na ƙasa suna sauka.",
+  leaguePromotionZone: "Matsayin hawa",
+  leagueRelegationZone: "Matsayin sauka",
+  challengeProgress: "An amsa {done} daga {total}",
+  challengeClaim: "Karɓi lada",
+  challengeClaimed: "An karɓi tsabar kuɗi {coins} da XP {xp}",
   ownedCount: "×{count} a hannu",
   usedFromStock: "An yi amfani da ɗaya daga cikin tanadinka",
 
@@ -2395,6 +2465,20 @@ const frTranslations: Translations = {
   questionHunt: "Chasse de {count} questions",
   xpToRank: "{xp} XP jusqu'à {rank}",
   maxRankReached: "Rang le plus élevé atteint",
+
+  // Leagues + daily challenge
+  leagueTitle: "Ligue hebdomadaire",
+  leagueDivision: "Division {division}",
+  leagueResetsMonday: "Réinitialisée lundi",
+  leaguePromoted: "Promu",
+  leagueRelegated: "Relégué",
+  leagueEmpty: "Répondez à une question pour rejoindre la ligue de cette semaine.",
+  leagueRules: "Les {promote} premiers montent. Les {relegate} derniers descendent.",
+  leaguePromotionZone: "Place de promotion",
+  leagueRelegationZone: "Place de relégation",
+  challengeProgress: "{done} sur {total} répondues",
+  challengeClaim: "Réclamer la récompense",
+  challengeClaimed: "{coins} pièces et {xp} XP réclamés",
   ownedCount: "×{count} en réserve",
   usedFromStock: "Un exemplaire utilisé depuis votre réserve",
 
@@ -2855,6 +2939,20 @@ const arTranslations: Translations = {
   questionHunt: "رحلة من {count} أسئلة",
   xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
   maxRankReached: "تم بلوغ أعلى رتبة",
+
+  // Leagues + daily challenge
+  leagueTitle: "دوري الأسبوع",
+  leagueDivision: "القسم {division}",
+  leagueResetsMonday: "يُعاد ضبطه الاثنين",
+  leaguePromoted: "تمت الترقية",
+  leagueRelegated: "تم الهبوط",
+  leagueEmpty: "أجب عن سؤال للانضمام إلى دوري هذا الأسبوع.",
+  leagueRules: "أعلى {promote} يصعدون، وآخر {relegate} يهبطون.",
+  leaguePromotionZone: "مركز صعود",
+  leagueRelegationZone: "مركز هبوط",
+  challengeProgress: "تمت الإجابة عن {done} من {total}",
+  challengeClaim: "استلم المكافأة",
+  challengeClaimed: "تم استلام {coins} عملة و{xp} نقطة خبرة",
   ownedCount: "×{count} لديك",
   usedFromStock: "تم استخدام واحدة من مخزونك",
 
