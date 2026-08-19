@@ -99,6 +99,22 @@ export interface Translations {
   ownedCount: string
   usedFromStock: string
 
+  // Spaced review + streak shield
+  reviewTitle: string
+  reviewIntro: string
+  reviewAllCaughtUp: string
+  reviewDue: string
+  reviewScheduled: string
+  reviewNextDue: string
+  reviewStart: string
+  reviewHowItWorks: string
+  reviewCta: string
+  storeItem17Name: string
+  storeItem17Desc: string
+  streakShieldUsed: string
+  streakLabel: string
+  freezesHeld: string
+
   // Categories
   knowledgeCategories: string
   categories: string
@@ -541,6 +557,22 @@ const enTranslations: Translations = {
   maxRankReached: "Highest rank reached",
   ownedCount: "×{count} owned",
   usedFromStock: "Used one from your stock",
+
+  // Spaced review + streak shield
+  reviewTitle: "Review",
+  reviewIntro: "Questions you have answered before, brought back at the moment you are most likely to have started forgetting them.",
+  reviewAllCaughtUp: "Nothing due today. Come back when the next batch is ready.",
+  reviewDue: "Due now",
+  reviewScheduled: "Scheduled",
+  reviewNextDue: "Next review on {date}",
+  reviewStart: "Review {count} questions",
+  reviewHowItWorks: "Answer well and a question comes back later. Miss it and it returns tomorrow.",
+  reviewCta: "{count} due for review",
+  storeItem17Name: "Streak Shield",
+  storeItem17Desc: "Protects your streak for one missed day",
+  streakShieldUsed: "A streak shield covered your missed day",
+  streakLabel: "Day streak",
+  freezesHeld: "{count} shields held",
 
   // Categories
   knowledgeCategories: "Knowledge Categories",
@@ -986,6 +1018,22 @@ const msTranslations: Translations = {
   ownedCount: "×{count} dimiliki",
   usedFromStock: "Menggunakan satu daripada simpanan anda",
 
+  // Spaced review + streak shield
+  reviewTitle: "Ulang kaji",
+  reviewIntro: "Soalan yang pernah anda jawab, dibawa kembali ketika anda paling mungkin mula melupakannya.",
+  reviewAllCaughtUp: "Tiada yang perlu diulang hari ini. Kembali apabila kumpulan seterusnya sedia.",
+  reviewDue: "Perlu sekarang",
+  reviewScheduled: "Dijadualkan",
+  reviewNextDue: "Ulang kaji seterusnya pada {date}",
+  reviewStart: "Ulang kaji {count} soalan",
+  reviewHowItWorks: "Jawab dengan baik dan soalan kembali kemudian. Tersalah, ia kembali esok.",
+  reviewCta: "{count} perlu diulang kaji",
+  storeItem17Name: "Perisai Rentetan",
+  storeItem17Desc: "Melindungi rentetan anda untuk satu hari terlepas",
+  streakShieldUsed: "Perisai rentetan menampung hari yang anda terlepas",
+  streakLabel: "Rentetan harian",
+  freezesHeld: "{count} perisai dipegang",
+
   // Categories
   knowledgeCategories: "Kategori Ilmu",
   categories: "Kategori",
@@ -1429,6 +1477,22 @@ const idTranslations: Translations = {
   maxRankReached: "Peringkat tertinggi tercapai",
   ownedCount: "×{count} dimiliki",
   usedFromStock: "Menggunakan satu dari simpanan Anda",
+
+  // Spaced review + streak shield
+  reviewTitle: "Ulasan",
+  reviewIntro: "Soal yang pernah Anda jawab, dimunculkan kembali saat Anda paling mungkin mulai melupakannya.",
+  reviewAllCaughtUp: "Tidak ada yang jatuh tempo hari ini. Kembalilah saat kumpulan berikutnya siap.",
+  reviewDue: "Jatuh tempo",
+  reviewScheduled: "Terjadwal",
+  reviewNextDue: "Ulasan berikutnya pada {date}",
+  reviewStart: "Ulas {count} soal",
+  reviewHowItWorks: "Jawab dengan baik dan soal kembali nanti. Salah, ia kembali besok.",
+  reviewCta: "{count} perlu diulas",
+  storeItem17Name: "Perisai Rentetan",
+  storeItem17Desc: "Melindungi rentetan Anda untuk satu hari terlewat",
+  streakShieldUsed: "Perisai rentetan menutupi hari yang terlewat",
+  streakLabel: "Rentetan harian",
+  freezesHeld: "{count} perisai dimiliki",
 
   // Categories
   knowledgeCategories: "Kategori Ilmu",
@@ -1874,6 +1938,22 @@ const haTranslations: Translations = {
   ownedCount: "×{count} a hannu",
   usedFromStock: "An yi amfani da ɗaya daga cikin tanadinka",
 
+  // Spaced review + streak shield
+  reviewTitle: "Sake dubawa",
+  reviewIntro: "Tambayoyin da ka taɓa amsawa, sun dawo a lokacin da ka fi yiwuwa ka fara mantawa.",
+  reviewAllCaughtUp: "Babu abin dubawa yau. Ka dawo lokacin da na gaba ya shirya.",
+  reviewDue: "Ya kai lokaci",
+  reviewScheduled: "An tsara",
+  reviewNextDue: "Dubawa ta gaba a {date}",
+  reviewStart: "Duba tambayoyi {count}",
+  reviewHowItWorks: "Ka amsa daidai sai tambaya ta dawo daga baya. Ka kuskure sai ta dawo gobe.",
+  reviewCta: "{count} na jiran dubawa",
+  storeItem17Name: "Garkuwar Jerin",
+  storeItem17Desc: "Yana kare jerinka na rana ɗaya da ka rasa",
+  streakShieldUsed: "Garkuwar jeri ta rufe ranar da ka rasa",
+  streakLabel: "Jerin kwanaki",
+  freezesHeld: "Garkuwa {count} a hannu",
+
   // Categories
   knowledgeCategories: "Rukunin Ilimi",
   categories: "Rukunoni",
@@ -2318,6 +2398,22 @@ const frTranslations: Translations = {
   ownedCount: "×{count} en réserve",
   usedFromStock: "Un exemplaire utilisé depuis votre réserve",
 
+  // Spaced review + streak shield
+  reviewTitle: "Révision",
+  reviewIntro: "Des questions déjà répondues, ramenées au moment où vous risquez le plus de les oublier.",
+  reviewAllCaughtUp: "Rien à réviser aujourd'hui. Revenez quand le prochain lot sera prêt.",
+  reviewDue: "À réviser",
+  reviewScheduled: "Programmées",
+  reviewNextDue: "Prochaine révision le {date}",
+  reviewStart: "Réviser {count} questions",
+  reviewHowItWorks: "Une bonne réponse éloigne la question. Une erreur la ramène demain.",
+  reviewCta: "{count} à réviser",
+  storeItem17Name: "Bouclier de série",
+  storeItem17Desc: "Protège votre série pour un jour manqué",
+  streakShieldUsed: "Un bouclier a couvert votre jour manqué",
+  streakLabel: "Série de jours",
+  freezesHeld: "{count} boucliers en réserve",
+
   // Categories
   knowledgeCategories: "Catégories de connaissances",
   categories: "Catégories",
@@ -2761,6 +2857,22 @@ const arTranslations: Translations = {
   maxRankReached: "تم بلوغ أعلى رتبة",
   ownedCount: "×{count} لديك",
   usedFromStock: "تم استخدام واحدة من مخزونك",
+
+  // Spaced review + streak shield
+  reviewTitle: "المراجعة",
+  reviewIntro: "أسئلة أجبت عنها من قبل، تعود إليك في الوقت الذي يُرجَّح أن تكون قد بدأت نسيانها فيه.",
+  reviewAllCaughtUp: "لا شيء للمراجعة اليوم. عد حين تجهز الدفعة التالية.",
+  reviewDue: "مستحقة الآن",
+  reviewScheduled: "مجدولة",
+  reviewNextDue: "المراجعة التالية في {date}",
+  reviewStart: "راجع {count} سؤالاً",
+  reviewHowItWorks: "أجب إجابة صحيحة فيعود السؤال لاحقاً، وأخطئ فيعود غداً.",
+  reviewCta: "{count} بانتظار المراجعة",
+  storeItem17Name: "درع السلسلة",
+  storeItem17Desc: "يحمي سلسلتك ليوم واحد فائت",
+  streakShieldUsed: "غطّى درع السلسلة يومك الفائت",
+  streakLabel: "سلسلة الأيام",
+  freezesHeld: "{count} من الدروع لديك",
 
   // Categories
   knowledgeCategories: "فئات المعرفة",

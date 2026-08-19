@@ -7,6 +7,7 @@ import { ProgressRing } from "@/components/game/ProgressRing"
 import { PrayerTimesCard } from "@/components/game/PrayerTimesCard"
 import { DailyHadith } from "@/components/game/DailyHadith"
 import { StreakCounter } from "@/components/game/StreakCounter"
+import { ReviewCallout } from "@/components/game/ReviewCallout"
 import { UserStats } from "@/components/game/UserStats"
 import { DailyProgressCard } from "@/components/game/DailyProgressCard"
 
@@ -86,6 +87,9 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="mt-20 px-5 max-w-7xl mx-auto space-y-4 relative">
+        {/* What is due for spaced review. Renders nothing when the queue is empty. */}
+        <ReviewCallout />
+
         {/* Daily Progress Section */}
         <motion.section
           initial={{ opacity: 0, scale: 0.9 }}
