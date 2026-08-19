@@ -22,7 +22,7 @@ export default function LanguageSelectionPage() {
   const { setLocale, t } = useLanguage()
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4 py-6">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
@@ -34,10 +34,10 @@ export default function LanguageSelectionPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-5 sm:mb-8"
         >
-          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center border-2 border-primary/30">
-            <svg className="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 24 24">
+          <div className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center border-2 border-primary/30">
+            <svg className="w-7 h-7 sm:w-10 sm:h-10 text-primary" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
             </svg>
           </div>
@@ -54,8 +54,8 @@ export default function LanguageSelectionPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <PremiumCard className="p-6">
-            <div className="space-y-3">
+          <PremiumCard className="p-4 sm:p-6">
+            <div className="space-y-2 sm:space-y-3">
               {languages.map((lang, index) => (
                 <motion.div
                   key={lang.code}
@@ -70,11 +70,11 @@ export default function LanguageSelectionPage() {
                       saveOnboardingSelection({ preferredLanguage: lang.code })
                     }}
                     dir={lang.dir}
-                    className={`flex items-center justify-between p-4 rounded-xl border transition-all hover:bg-surface-container-high hover:border-primary/30 ${
+                    className={`flex items-center justify-between p-3 sm:p-4 rounded-xl border transition-all hover:bg-surface-container-high hover:border-primary/30 ${
                       lang.font || ""
                     }`}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                       <div className="relative h-8 w-12 overflow-hidden rounded-md">
                         <Image
                           src={`https://flagcdn.com/${lang.flag}.svg`}

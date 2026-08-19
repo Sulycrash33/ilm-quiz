@@ -333,3 +333,41 @@
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Safe areas.
+
+   Most players are on phones, and most of those phones have something the OS
+   owns at the edges: a notch or Dynamic Island at the top, a home indicator at
+   the bottom on every iPhone since the X, and gesture bars on much of Android.
+   `viewport-fit=cover` in the viewport export lets the page paint into those
+   regions; these utilities pad it back out.
+
+   `max(...)` rather than a bare `env(...)` on purpose. On a device with no
+   inset — most Android phones, and any desktop browser — `env()` resolves to
+   0px, and the element would end up flush against the edge with no breathing
+   room at all. The `max` keeps a sensible floor everywhere and only grows where
+   the hardware actually needs it.
+
+   This replaces a hardcoded `pb-6` on the bottom nav, which was a guess at the
+   iPhone home indicator: 24px of dead space on Android, and still short of the
+   34px an iPhone Pro Max actually reserves.
+   --------------------------------------------------------------------------- */
+.pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+
+.px-safe {
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+}
+
+/* For content that scrolls beneath a fixed bottom bar: the bar's own height
+   plus whatever the device reserves under it. */
+.pb-nav-safe {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}

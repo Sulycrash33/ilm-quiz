@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter, Source_Serif_4 } from "next/font/google"
 import { ThemeProvider } from "@/components/ui/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
@@ -17,6 +17,18 @@ const sourceSerif = Source_Serif_4({
   weight: ["400", "600"],
   variable: "--font-source-serif",
 })
+
+export const viewport: Viewport = {
+  themeColor: "#0b1326",
+  width: "device-width",
+  initialScale: 1,
+  // Lets the page paint into the notch and home-indicator areas, which is what
+  // makes env(safe-area-inset-*) non-zero. The layout then pads itself back
+  // out per device rather than guessing a fixed number.
+  viewportFit: "cover",
+  // Deliberately no maximumScale or userScalable: blocking pinch zoom is an
+  // accessibility failure, and this app is used by children and elders.
+}
 
 export const metadata: Metadata = {
   title: "ILM Hunt - Premium Islamic Learning",
@@ -48,7 +60,6 @@ export const metadata: Metadata = {
       "Premium gamified Islamic education platform for learning Quran, Hadith, and more.",
     images: ["/og-image.png"],
   },
-  themeColor: "#0b1326",
 }
 
 export default function RootLayout({
@@ -63,7 +74,7 @@ export default function RootLayout({
       className={`${inter.variable} ${sourceSerif.variable} dark`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen font-body-md antialiased bg-background text-on-background">
+      <body className="min-h-[100dvh] font-body-md antialiased bg-background text-on-background">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

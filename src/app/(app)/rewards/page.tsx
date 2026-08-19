@@ -10,7 +10,7 @@ export default async function RewardsPage() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[100dvh]">
         <p>Please sign in to view rewards.</p>
       </div>
     )

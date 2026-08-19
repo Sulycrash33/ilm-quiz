@@ -25,7 +25,7 @@ export default function NameSelectionPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
       <IslamicBackground />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost">

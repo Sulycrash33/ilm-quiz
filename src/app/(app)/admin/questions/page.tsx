@@ -6,7 +6,7 @@ export default async function QuestionsPage() {
   
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
-    return <div className="flex items-center justify-center min-h-screen"><p>Please sign in to access admin.</p></div>
+    return <div className="flex items-center justify-center min-h-[100dvh]"><p>Please sign in to access admin.</p></div>
   }
 
   // Check if user is admin
@@ -17,7 +17,7 @@ export default async function QuestionsPage() {
     .single()
 
   if (profile?.role !== 'admin') {
-    return <div className="flex items-center justify-center min-h-screen"><p>Access denied. Admin only.</p></div>
+    return <div className="flex items-center justify-center min-h-[100dvh]"><p>Access denied. Admin only.</p></div>
   }
 
   // Fetch real questions

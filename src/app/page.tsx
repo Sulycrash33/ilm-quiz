@@ -43,19 +43,19 @@ export default function LandingScreen() {
         <div className="absolute -left-24 top-1/2 h-80 w-80 rounded-full bg-secondary/5 blur-[100px]" />
       </div>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-8 px-5 py-10">
+      <main className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-6 px-5 py-6 sm:gap-8 sm:py-10">
         <div className="settle-in relative flex flex-col items-center">
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="pulse-effect h-56 w-56 rounded-full border border-primary/20" />
+            <div className="pulse-effect h-44 w-44 sm:h-56 sm:w-56 rounded-full border border-primary/20" />
             <div
-              className="pulse-effect absolute h-72 w-72 rounded-full border border-primary/10"
+              className="pulse-effect absolute h-56 w-56 sm:h-72 sm:w-72 rounded-full border border-primary/10"
               style={{ animationDelay: "1s" }}
             />
           </div>
 
-          <div className="relative flex flex-col items-center gap-4 rounded-full border border-primary/15 bg-surface-container/40 p-6 shadow-[0_10px_40px_-10px_rgba(240,205,109,0.25)] backdrop-blur-2xl">
-            <div className="flex h-36 w-36 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary-container/20 sm:h-44 sm:w-44">
-              <IlmHuntMark className="h-24 w-24 text-primary sm:h-28 sm:w-28" />
+          <div className="relative flex flex-col items-center gap-3 rounded-full border border-primary/15 bg-surface-container/40 p-5 sm:gap-4 sm:p-6 shadow-[0_10px_40px_-10px_rgba(240,205,109,0.25)] backdrop-blur-2xl">
+            <div className="flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary-container/20 sm:h-44 sm:w-44">
+              <IlmHuntMark className="h-20 w-20 text-primary sm:h-28 sm:w-28" />
             </div>
 
             <div className="pt-1 text-center">
@@ -84,7 +84,7 @@ export default function LandingScreen() {
           </p>
         </div>
 
-        <div className="rise-in delay-2 mt-2 w-full max-w-md text-center">
+        <div className="rise-in delay-2 w-full max-w-md text-center">
           <blockquote className="font-quote-italic text-quote-italic italic leading-relaxed text-on-surface/80">
             &ldquo;Seek knowledge from the cradle to the grave.&rdquo;
           </blockquote>
