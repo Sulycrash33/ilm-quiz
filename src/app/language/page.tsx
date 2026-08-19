@@ -105,19 +105,6 @@ export default function LanguageSelectionPage() {
           </PremiumCard>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-6"
-        >
-          <p className="text-sm text-on-surface-variant/50">
-            Malay & Indonesian have the largest Muslim populations in the world
-          </p>
-          <p className="text-sm text-on-surface-variant/50">
-            with over 200 million Muslims combined
-          </p>
-        </motion.div>
       </div>
     </div>
   )

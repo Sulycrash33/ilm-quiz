@@ -156,7 +156,7 @@ export default function HomePage() {
                   <span>{t("complete", { percent: 60 })}</span>
                 </div>
                 <div className="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-primary to-primary-fixed-dim w-[60%] rounded-full shadow-[0_0_8px_rgba(78,222,163,0.3)]" />
+                  <div className="h-full bg-gradient-to-r from-primary to-primary-fixed-dim w-[60%] rounded-full shadow-[0_0_8px_rgba(240, 205, 109,0.3)]" />
                 </div>
               </div>
             </div>

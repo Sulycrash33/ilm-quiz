@@ -5,53 +5,77 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight, Check } from "lucide-react"
 import { IslamicBackground } from "@/components/layout/IslamicBackground"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
+import { AVATARS, AvatarArt, type AvatarGender } from "@/components/avatars/avatar-art"
 
-const avatars = {
-  female: [
-    { id: "f-1", src: "https://avatar.iran.liara.run/public/girl?username=aisha" },
-    { id: "f-2", src: "https://avatar.iran.liara.run/public/girl?username=fatima" },
-    { id: "f-3", src: "https://avatar.iran.liara.run/public/girl?username=zainab" },
-    { id: "f-4", src: "https://avatar.iran.liara.run/public/girl?username=khadija" },
-    { id: "f-5", src: "https://avatar.iran.liara.run/public/girl?username=maryam" },
-    { id: "f-6", src: "https://avatar.iran.liara.run/public/girl?username=hafsa" },
-    { id: "f-7", src: "https://avatar.iran.liara.run/public/girl?username=sumayyah" },
-    { id: "f-8", src: "https://avatar.iran.liara.run/public/girl?username=nusaiba" },
-  ],
-  male: [
-    { id: "m-1", src: "https://avatar.iran.liara.run/public/boy?username=omar" },
-    { id: "m-2", src: "https://avatar.iran.liara.run/public/boy?username=ali" },
-    { id: "m-3", src: "https://avatar.iran.liara.run/public/boy?username=yusuf" },
-    { id: "m-4", src: "https://avatar.iran.liara.run/public/boy?username=bilal" },
-    { id: "m-5", src: "https://avatar.iran.liara.run/public/boy?username=khalid" },
-    { id: "m-6", src: "https://avatar.iran.liara.run/public/boy?username=hassan" },
-    { id: "m-7", src: "https://avatar.iran.liara.run/public/boy?username=ibrahim" },
-    { id: "m-8", src: "https://avatar.iran.liara.run/public/boy?username=salim" },
-  ],
-}
-
+/**
+ * Avatar picker.
+ *
+ * The previous version fetched every tile from avatar.iran.liara.run. That
+ * service had stopped responding, so the grid rendered as fallback letters —
+ * the "boring" screen was actually a broken one. These are local SVGs, so the
+ * page has no network dependency at all now.
+ *
+ * What is stored also changed. It used to save the full remote URL into
+ * `profiles.avatar_id`; it now saves a short stable id like "f-1". Anything
+ * still holding an old URL renders the fallback mark rather than a broken
+ * image.
+ */
 export default function AvatarSelectionPage() {
   const router = useRouter()
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string | null>(null)
 
-  const handleSelect = (avatarSrc: string) => {
-    setSelectedAvatar(avatarSrc)
-    saveOnboardingSelection({ avatarUrl: avatarSrc })
-    setTimeout(() => router.push("/onboarding/name"), 300)
+  const handleSelect = (id: string) => {
+    setSelected(id)
+    saveOnboardingSelection({ avatarUrl: id })
+    setTimeout(() => router.push("/onboarding/name"), 280)
   }
 
+  const grid = (gender: AvatarGender) => (
+    <div className="grid grid-cols-4 gap-3 sm:gap-5">
+      {AVATARS.filter((a) => a.gender === gender).map((avatar) => {
+        const isSelected = selected === avatar.id
+        return (
+          <button
+            key={avatar.id}
+            type="button"
+            onClick={() => handleSelect(avatar.id)}
+            aria-pressed={isSelected}
+            title={avatar.label}
+            className={`group relative flex flex-col items-center gap-2 rounded-xl border-2 p-2 transition-all ${
+              isSelected
+                ? "border-primary bg-primary/10"
+                : "border-transparent hover:border-primary/40 hover:bg-primary/5"
+            }`}
+          >
+            <span className="relative block overflow-hidden rounded-full ring-1 ring-primary/15">
+              <AvatarArt id={avatar.id} className="h-16 w-16 sm:h-20 sm:w-20" />
+              {isSelected && (
+                <span className="absolute inset-0 flex items-center justify-center bg-background/50">
+                  <Check className="h-6 w-6 text-primary" aria-hidden="true" />
+                </span>
+              )}
+            </span>
+            <span className="text-center text-[0.65rem] leading-tight text-on-surface-variant">
+              {avatar.label}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
       <IslamicBackground />
-      <div className="absolute top-4 left-4 z-20">
+      <div className="absolute left-4 top-4 z-20">
         <Button asChild variant="ghost">
           <Link href="/onboarding/age">
-            <ArrowLeft className="h-6 w-6 mr-2" />
+            <ArrowLeft className="mr-2 h-6 w-6" />
             Back
           </Link>
         </Button>
@@ -59,10 +83,10 @@ export default function AvatarSelectionPage() {
 
       <div className="z-10 w-full max-w-2xl">
         <Card className="w-full bg-card/80 backdrop-blur-sm">
-          <CardHeader className="text-center space-y-4">
+          <CardHeader className="space-y-3 text-center">
             <CardTitle className="text-3xl font-bold">Choose Your Avatar</CardTitle>
-            <CardDescription>Select an avatar that represents you.</CardDescription>
-            <Progress value={66} className="w-2/3 mx-auto" />
+            <CardDescription>Pick the one that feels like you.</CardDescription>
+            <Progress value={66} className="mx-auto w-2/3" />
             <div className="text-sm text-muted-foreground">Step 2 of 3</div>
           </CardHeader>
           <CardContent>
@@ -72,52 +96,19 @@ export default function AvatarSelectionPage() {
                 <TabsTrigger value="male">Male</TabsTrigger>
               </TabsList>
               <TabsContent value="female" className="mt-6">
-                <div className="grid grid-cols-4 md:grid-cols-4 gap-6">
-                  {avatars.female.map((avatar) => (
-                    <div
-                      key={avatar.id}
-                      className={`flex flex-col items-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all ${
-                        selectedAvatar === avatar.src ? "border-primary bg-primary/10" : "border-transparent hover:bg-muted"
-                      }`}
-                      onClick={() => handleSelect(avatar.src)}
-                      role="button"
-                      aria-label={`Select avatar ${avatar.id}`}
-                    >
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage src={avatar.src} alt={`Avatar ${avatar.id}`} />
-                        <AvatarFallback>{avatar.id.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  ))}
-                </div>
+                {grid("female")}
               </TabsContent>
               <TabsContent value="male" className="mt-6">
-                 <div className="grid grid-cols-4 md:grid-cols-4 gap-6">
-                  {avatars.male.map((avatar) => (
-                    <div
-                      key={avatar.id}
-                      className={`flex flex-col items-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all ${
-                        selectedAvatar === avatar.src ? "border-primary bg-primary/10" : "border-transparent hover:bg-muted"
-                      }`}
-                      onClick={() => handleSelect(avatar.src)}
-                      role="button"
-                      aria-label={`Select avatar ${avatar.id}`}
-                    >
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage src={avatar.src} alt={`Avatar ${avatar.id}`} />
-                        <AvatarFallback>{avatar.id.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  ))}
-                </div>
+                {grid("male")}
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
-         <div className="text-center mt-6">
-            <Button variant="outline" onClick={() => router.push("/onboarding/name")}>
-                Skip <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
+
+        <div className="mt-6 text-center">
+          <Button variant="outline" onClick={() => router.push("/onboarding/name")}>
+            Skip <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
