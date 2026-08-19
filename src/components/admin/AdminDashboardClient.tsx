@@ -14,6 +14,7 @@ interface AdminDashboardClientProps {
   }
   recentAttempts: any[]
   topCategories: any[]
+  alerts?: { reports: number; applications: number }
 }
 
 const quickActions = [
@@ -54,7 +55,16 @@ const quickActions = [
   },
 ]
 
-export function AdminDashboardClient({ stats, recentAttempts, topCategories }: AdminDashboardClientProps) {
+export function AdminDashboardClient({
+  stats,
+  recentAttempts,
+  topCategories,
+  alerts,
+}: AdminDashboardClientProps) {
+  // One number on the card: everything waiting on a decision. Splitting reports
+  // from applications here would be two badges saying "go to the same page".
+  const waiting = (alerts?.reports ?? 0) + (alerts?.applications ?? 0)
+
   return (
     <div className="min-h-screen px-5 py-6 max-w-7xl mx-auto">
       {/* Header */}
@@ -109,7 +119,15 @@ export function AdminDashboardClient({ stats, recentAttempts, topCategories }: A
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {quickActions.map((action) => (
             <Link key={action.title} href={action.href}>
-              <PremiumCard hover className="p-4 h-full">
+              <PremiumCard hover className="p-4 h-full relative">
+                {action.href === "/admin/moderation" && waiting > 0 && (
+                  <span
+                    className="absolute right-2 top-2 min-w-6 rounded-full bg-error px-2 py-0.5 text-center text-xs font-bold tabular-nums text-on-error"
+                    aria-label={`${waiting} waiting on a moderator`}
+                  >
+                    {waiting > 99 ? "99+" : waiting}
+                  </span>
+                )}
                 <div className="text-center">
                   <span className="text-3xl mb-2 block">{action.icon}</span>
                   <h3 className="font-semibold text-on-surface">{action.title}</h3>
