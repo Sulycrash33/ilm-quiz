@@ -4,8 +4,10 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { useState, useTransition } from "react"
 import { PremiumButton } from "@/components/ui/premium-button"
-import { PremiumBadge } from "@/components/ui/premium-badge"
 import { CircleCard } from "@/components/community/CircleCard"
+import { ForumTab } from "@/components/community/ForumTab"
+import { MentorshipTab } from "@/components/community/MentorshipTab"
+import type { ForumViewerContext } from "@/app/(app)/community/forum-actions"
 import { useLanguage } from "@/contexts/LanguageContext"
 import {
   createStudyCircle,
@@ -16,7 +18,13 @@ import {
 
 type Tab = "circles" | "forum" | "mentorship"
 
-export function CommunityPageClient({ circles }: { circles: StudyCircleView[] }) {
+export function CommunityPageClient({
+  circles,
+  viewer,
+}: {
+  circles: StudyCircleView[]
+  viewer: ForumViewerContext
+}) {
   const { t, dir } = useLanguage()
   const [activeTab, setActiveTab] = useState<Tab>("circles")
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -85,15 +93,13 @@ export function CommunityPageClient({ circles }: { circles: StudyCircleView[] })
         ))}
       </motion.div>
 
-      {activeTab !== "circles" ? (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-10 text-center">
-          <PremiumBadge variant="secondary" size="md" className="mb-4">{t("comingSoon")}</PremiumBadge>
-          <h2 className="font-headline-md text-headline-md text-on-surface mb-2">
-            {activeTab === "forum" ? t("forumNotLive") : t("mentorshipNotLive")}
-          </h2>
-          <p className="text-on-surface-variant max-w-xl mx-auto">
-            {t("circlesWorkingNote")} {activeTab === "forum" ? t("forumThreadsNeed") : t("mentorMatchingNeed")} {t("needBackendSuffix")}
-          </p>
+      {activeTab === "forum" ? (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <ForumTab viewer={viewer} />
+        </motion.div>
+      ) : activeTab === "mentorship" ? (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <MentorshipTab />
         </motion.div>
       ) : (
         <>
