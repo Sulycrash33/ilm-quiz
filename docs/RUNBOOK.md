@@ -194,6 +194,22 @@ insert; none of them is guessable from the column list.
   share an opening three words. `"What is the"` is exhausted almost immediately — plan
   varied openings from the first tier, because retrofitting them later means rewriting
   questions that were otherwise fine.
+- **Budget your question *frames*, not just your facts.** This is the single biggest time
+  sink in authoring. The near-duplicate check compares whole question strings, so four
+  questions built on one frame — "Which classification applies to Surah X?", "How many verses
+  does Surah Y have?", "Applied to an attribute, what does Z mean?" — flag against *each
+  other* even though every fact is different. **Cap any one frame at two uses per category**
+  and vary the verb as well as the subject. It costs nothing while drafting and is expensive
+  to repair afterwards.
+- **Categories with a dominant shared noun collide hardest.** In Holy Quran nearly every
+  question contains "Quran" or "surah", so short questions sit above 0.5 similarity on the
+  shared words alone. Write longer, more specific stems there, and prefer frames that name
+  something distinctive ("Between al-Isra and Maryam, which surah stands?") over generic ones
+  ("Which surah is eighteenth?").
+- **Watch the answer cap while drafting too.** In a category about one subject the same
+  answer recurs naturally — "Al-Fatihah", "Al-Baqarah", "Sahih", "Hanafi" — and three uses
+  trips it. When an answer is about to repeat a third time, recast the question so it tests
+  the fact from the other end.
 - **Near-duplicate flags usually mean the questions are genuinely redundant.** Three
   questions asking the rak'ah count of three different prayers tripped it. The right fix was
   to replace two with different facts, not to reword them until the checker stopped
