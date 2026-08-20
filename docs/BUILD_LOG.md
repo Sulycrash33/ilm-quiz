@@ -380,6 +380,80 @@ technical sense back into him overstates the claim.
 
 All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
+## 7. Quran Commentary (Tafsir) — 180 / 180
+
+Sourced from **real commentary text**, not from memory. The quran.com API carries three English
+tafsirs — **Ibn Kathir (169), Ma'arif al-Qur'an (168), Tazkirul Quran (817)** — and roughly 750KB
+was pulled across 20 verses chosen because interpretation genuinely turns on them.
+
+The working endpoint is `/api/v4/tafsirs/{id}/by_ayah/{verse_key}`. The one that looks right,
+`/api/v4/quran/tafsirs/{id}?verse_key=…`, returns `{"tafsirs":[]}` with **HTTP 200** — an empty
+success, not an error. Recorded in `docs/SOURCES.md`.
+
+### Three tafsirs on one verse is the whole category
+
+At **24:35** Ibn Kathir opens with 'Ali ibn Abi Talhah from Ibn 'Abbas, then Ibn Jurayj from
+Mujahid, then as-Suddi, then a hadith in the Two Sahihs, then Ibn Mas'ud — every claim attributed.
+Tazkirul Quran, on the same verse, reads the niche as the human heart and the lamp as faith,
+citing **no earlier authority at all** and comparing human receptivity to petrol.
+
+Neither is disqualified by the comparison. Tier 7 makes the contrast itself the lesson: know
+which kind of claim you are being handed.
+
+### Tier 8 got a disagreement with its reasoning attached
+
+The pause dispute at **3:7** — stop at "except Allah", or carry on past "those firmly grounded in
+knowledge" — is set out **by Ibn Kathir himself**, with both sides sourced and the reason each
+rests on:
+
+| if *ta'wil* means | then | because |
+|---|---|---|
+| the true reality of a thing (12:100, 7:53) | stop at the divine Name | only Allah knows realities |
+| explanation, exposition (12:36) | carry on | "the Qur'an does not address the people with what they cannot understand" |
+
+He names the first stop from 'A'ishah, 'Urwah, Abu ash-Sha'tha' and Abu Nahik, and cites Ibn
+'Abbas — "I am among those who are firmly grounded in its ta'wil" — for the second. This is a
+category where the classical commentary is *more* forthcoming about disagreement than most
+modern presentations of it.
+
+### Worked examples the corpus supplied
+
+- **2:187** — Companions tied black and white threads to their legs until "of dawn" was revealed
+  (al-Bukhari, from Sahl ibn Sa'd). The literal reading was the natural first reading, corrected
+  by revelation. 'Adi ibn Hatim asked whether they were actual threads and was told: "Rather, they
+  are the blackness of the night and the whiteness of the daylight."
+- **2:219** — 'Umar's repeated "O Allah! Give us a clear ruling regarding al-Khamr", answered in
+  three stages (2:219 → 4:43 → al-Ma'idah), ending with his "We did abstain, we did abstain."
+  Tier 9 asks a student to refute someone citing stage one as the final ruling.
+- **2:106** — Ibn Kathir states the rule with its condition: naskh governs commandments,
+  prohibitions and permissions, and **"As for stories, they do not undergo Nasakh."**
+- **2:115** — Ibn 'Abbas: the first abrogation concerned the qiblah. Ibn Kathir gives sixteen or
+  seventeen months while the report he cites says some ten, and he **preserves both** rather than
+  smoothing them. Tier 6 asks what that tells a reader.
+
+### What the validator caught this time
+
+Three near-duplicate pairs, all genuine redundancy rather than accident:
+
+- the **same Ibn 'Abbas quotation** used as the subject of two different questions (tiers 5 and 8)
+- "Which commentary is the most recent of those named here?" against "Which commentary named here
+  was completed most recently?" — the same question twice, in two tiers
+- the two *ta'wil*-sense questions in tier 8, mirror images of each other
+
+All three were replaced or recast into a different shape. The mirrored pair became a citation
+question: what 12:36 establishes, and what follows at 3:7.
+
+The new cross-tier pre-flight (`emit.check(..., existing=…)`) **did earn its keep** — it caught
+three category-wide stem overruns before insertion rather than after. It did not catch these
+three, because a 4-gram Jaccard score and pg_trgm similarity measure different things. The
+database check remains the authority.
+
+Verified in passing: **Ibn Kathir al-Makki (d. 120 AH), one of the seven canonical reciters, is
+not Isma'il ibn Kathir (d. 774 AH) the mufassir** — six and a half centuries apart, and now a
+tier-3 question.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
 ---
 
 ## Running total
@@ -392,4 +466,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Holy Quran | 180 / 180 |
 | Prophetic Biography | 180 / 180 |
 | Hadith Sciences | 180 / 180 |
-| **total** | **1,080 of 5,220** |
+| Quran Commentary (Tafsir) | 180 / 180 |
+| **total** | **1,260 of 5,220** |

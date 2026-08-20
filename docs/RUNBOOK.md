@@ -263,3 +263,20 @@ insert; none of them is guessable from the column list.
   of these, and reject any text ending in `(ﷺ)` — in this corpus that reliably marks a cut-off
   sentence. Beware over-filtering too: the Abu Dawud translation routinely omits a final full
   stop on complete sentences, so "no terminal punctuation" alone is not a defect.
+
+### Added while authoring Quran Commentary
+
+- **The pre-flight and the validator do not measure the same thing.** `emit.check` scores stems by
+  4-gram Jaccard overlap; `validate.sql` uses pg_trgm `similarity()`. A pair can pass one and fail
+  the other, and three did — including the *same quotation* used as the subject of two questions in
+  different tiers. The pre-flight is worth running because it catches stem overruns cheaply before
+  an insert; **the database check is still the authority**, and a category is not done until it
+  returns only `ok` rows.
+- **Watch for one source item reused as the subject of two questions.** Not the same wording — the
+  same *thing*. Ibn 'Abbas's "I am among those firmly grounded in its ta'wil" anchored a tier-5
+  question and a tier-8 question. Keep a list of the specific narrations, quotations and incidents
+  already used as subjects, not just the stems already written.
+- **Mirror-image question pairs remain the most common self-inflicted flag.** "If X means A, then…"
+  beside "If X means B, then…" is the same trap as the parallel constructions in Allah's Names.
+  Where a subject has two symmetrical branches, put one of them in a different shape — a citation
+  question, or a "which side does this support" question.
