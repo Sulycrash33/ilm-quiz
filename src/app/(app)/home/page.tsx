@@ -12,6 +12,8 @@ import { ReviewCallout } from "@/components/game/ReviewCallout"
 import { UserStats } from "@/components/game/UserStats"
 import { DailyProgressCard } from "@/components/game/DailyProgressCard"
 
+import { getContinueCard, type ContinueCard } from "./actions"
+import { getDailyChallenge, type DailyChallengeView } from "../challenges/actions"
 import { useProfile } from "@/hooks/use-profile"
 import { useTodayStats } from "@/hooks/use-today-stats"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -26,6 +28,24 @@ export default function HomePage() {
   const { questionsToday, accuracy } = useTodayStats()
   const { t, dir } = useLanguage()
   const [currentTime, setCurrentTime] = useState("")
+
+  // Both of these cards used to be hardcoded. They now come from the database
+  // and render an honest empty state when there is nothing to show.
+  const [continueCard, setContinueCard] = useState<ContinueCard | null>(null)
+  const [challenge, setChallenge] = useState<DailyChallengeView | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    void (async () => {
+      const [c, d] = await Promise.all([getContinueCard(), getDailyChallenge()])
+      if (cancelled) return
+      setContinueCard(c)
+      setChallenge(d)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     const updateTime = () => {
@@ -92,6 +112,12 @@ export default function HomePage() {
         {/* Salaam, name, rank. First thing on the page, on every screen size. */}
         <SalaamGreeting />
 
+        {/* Prayer times, directly under the greeting. This is the real card:
+            it locates the seeker, counts down to the next salah, and rolls over
+            to tomorrow's Fajr after Isha. What used to sit further down the
+            page was a hardcoded panel that always read "Dhuhr, in 2h 15m". */}
+        <PrayerTimesCard />
+
         {/* What is due for spaced review. Renders nothing when the queue is empty. */}
         <ReviewCallout />
 
@@ -100,9 +126,13 @@ export default function HomePage() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col items-center py-8"
+          className="flex flex-col items-center py-6"
         >
-          <div className="relative w-64 h-64 md:w-72 md:h-72">
+          {/* Sized base-first. At 288px inside a 256px box the ring overflowed
+              and the stats beneath sat on top of its stroke; it now fills the
+              box, and the box itself is small enough to leave room on a 360px
+              screen. */}
+          <div className="relative w-52 h-52 xs:w-56 xs:h-56 sm:w-64 sm:h-64 md:w-72 md:h-72">
             <ProgressRing progress={dailyProgress} size={288} strokeWidth={8} />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <span className="font-display-lg-mobile text-display-lg-mobile text-primary">
@@ -126,7 +156,11 @@ export default function HomePage() {
                 <svg className="w-5 h-5 text-secondary" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.66 7.93L12 2.27 6.34 7.93c-3.12 3.12-3.12 8.19 0 11.31C7.9 20.8 9.95 21.58 12 21.58c2.05 0 4.1-.78 5.66-2.34 3.12-3.12 3.12-8.19 0-11.31zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59s.62-3.11 1.76-4.24L12 5.1v14.49z" />
                 </svg>
-                <span className="font-bold text-headline-md text-on-surface">{accuracy}%</span>
+                {/* `accuracy` is null until a question has been answered.
+                    Interpolating it rendered a bare "%" with no number. */}
+                <span className="font-bold text-headline-md text-on-surface">
+                  {accuracy === null ? "—" : `${accuracy}%`}
+                </span>
               </div>
               <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">{t("focusLevel")}</p>
             </div>
@@ -135,98 +169,114 @@ export default function HomePage() {
 
         {/* Bento Grid Content */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-          {/* Continue Learning Card */}
+          {/* Continue Learning Card.
+              Everything here was hardcoded: the course name, "Lesson 4 of 12",
+              "15 mins remaining", "60% complete". A brand-new account with no
+              attempts at all was told it was most of the way through a course
+              it had never opened. It also carried `cursor-pointer` with nothing
+              to click, which is why tapping it did nothing.
+
+              It now shows the category most recently answered in, with real
+              counts, and is a real link. Someone who has never played is
+              invited to start rather than shown invented progress. */}
           <motion.div
             variants={cardVariants}
             initial="hidden"
             animate="visible"
-            className="md:col-span-8 glass-card p-6 relative overflow-hidden group cursor-pointer transition-transform active:scale-[0.98]"
+            className="md:col-span-8"
           >
-            <div className="absolute bottom-0 right-0 mashrabiya-pattern w-32 h-32 rotate-12" />
-            <div className="relative z-10">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest">{t("inProgress")}</span>
-                  <h2 className="font-headline-md text-headline-md text-on-surface mt-1">
-                    Life of the Prophet (pbuh)
-                  </h2>
-                  <p className="text-on-surface-variant text-sm mt-1">{t("lessonOf", { current: 4, total: 12 })} • {t("minsRemaining", { mins: 15 })}</p>
+            <Link
+              href={continueCard ? `/quiz/${continueCard.slug}` : "/quiz"}
+              className="glass-card p-6 relative overflow-hidden group block transition-transform active:scale-[0.98]"
+            >
+              <div className="absolute bottom-0 right-0 mashrabiya-pattern w-32 h-32 rotate-12" />
+              <div className="relative z-10">
+                <div className="flex justify-between items-start gap-3 mb-6">
+                  <div className="min-w-0">
+                    <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest">
+                      {continueCard ? t("inProgress") : t("startLearning")}
+                    </span>
+                    <h2 className="font-headline-md text-headline-md text-on-surface mt-1 break-words">
+                      {continueCard ? continueCard.name : t("pickACategory")}
+                    </h2>
+                    <p className="text-on-surface-variant text-sm mt-1">
+                      {continueCard
+                        ? t("continueAnswered", {
+                            answered: continueCard.answered,
+                            total: continueCard.total,
+                          })
+                        : t("noProgressYet")}
+                    </p>
+                  </div>
+                  <svg className="w-8 h-8 shrink-0 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                  </svg>
                 </div>
-                <svg className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
-                </svg>
+                {continueCard && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs font-medium text-on-surface-variant">
+                      <span>{t("complete", { percent: continueCard.percent })}</span>
+                    </div>
+                    <div className="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-primary to-primary-fixed-dim rounded-full transition-[width] duration-700"
+                        style={{ width: `${continueCard.percent}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-medium text-on-surface-variant">
-                  <span>{t("complete", { percent: 60 })}</span>
-                </div>
-                <div className="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-primary to-primary-fixed-dim w-[60%] rounded-full shadow-[0_0_8px_rgba(240, 205, 109,0.3)]" />
-                </div>
-              </div>
-            </div>
+            </Link>
           </motion.div>
 
-          {/* Prayer Progress Widget */}
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            className="md:col-span-4 glass-card p-6 flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                </svg>
-                <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">{t("prayerTimes")}</h3>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-headline-md text-headline-md text-on-surface">Dhuhr</span>
-                <span className="text-on-surface-variant mt-1">In 2h 15m</span>
-              </div>
-            </div>
-            <div className="mt-6 flex gap-1">
-              <div className="flex-1 h-1 bg-primary rounded-full" />
-              <div className="flex-1 h-1 bg-primary rounded-full" />
-              <div className="flex-1 h-1 bg-surface-container-highest rounded-full" />
-              <div className="flex-1 h-1 bg-surface-container-highest rounded-full" />
-              <div className="flex-1 h-1 bg-surface-container-highest rounded-full" />
-            </div>
-          </motion.div>
-
-          {/* Daily Mission Card */}
+          {/* Daily Mission. The title used to read "Complete 3 Arabic
+              Quizzes" regardless of what today's challenge actually was; only
+              the progress number was real. Both now come from
+              `getDailyChallenge`, which materialises the day's challenge on
+              first read since this project has no scheduler. */}
           <motion.div
             variants={cardVariants}
             initial="hidden"
             animate="visible"
             className="md:col-span-12 glass-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-l-tertiary"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-12 h-12 shrink-0 rounded-full bg-tertiary/10 flex items-center justify-center">
                 <svg className="w-7 h-7 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                 </svg>
               </div>
-              <div>
-                <h3 className="font-headline-md text-headline-md text-on-surface">Complete 3 Arabic Quizzes</h3>
-                <p className="text-on-surface-variant">Current progress: {questionsToday} / 3</p>
+              <div className="min-w-0">
+                <h3 className="font-headline-md text-headline-md text-on-surface break-words">
+                  {challenge
+                    ? t("challengeQuestions", { count: challenge.questionCount })
+                    : t("dailyChallengeTitle")}
+                </h3>
+                <p className="text-on-surface-variant">
+                  {challenge
+                    ? challenge.completed
+                      ? t("challengeDone")
+                      : t("currentProgress", {
+                          answered: challenge.answered,
+                          total: challenge.questionCount,
+                        })
+                    : t("noChallengeToday")}
+                </p>
               </div>
             </div>
-            <div className="flex items-center gap-4 bg-surface-container-high/60 px-4 py-2 rounded-lg border border-white/5">
-              <div className="flex items-center gap-2">
-                <span className="text-tertiary font-bold">+50</span>
-                <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
-                </svg>
+            {challenge && (
+              <div className="flex items-center gap-4 bg-surface-container-high/60 px-4 py-2 rounded-lg border border-white/5 shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-tertiary font-bold">+{challenge.rewardXp}</span>
+                  <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
+                  </svg>
+                </div>
+                <Link href="/challenges" className="btn-primary px-6 py-2 rounded-lg font-bold text-sm">
+                  {t("continueButton")}
+                </Link>
               </div>
-              <Link
-                href="/quiz"
-                className="btn-primary px-6 py-2 rounded-lg font-bold text-sm"
-              >
-                {t("continueButton")}
-              </Link>
-            </div>
+            )}
           </motion.div>
         </div>
 

@@ -75,7 +75,11 @@ export function ProfilePageClient({
           </PremiumButton>
         </Link>
         <label className="flex items-center gap-2 text-sm text-on-surface-variant">
-          <span className="hidden sm:inline">{t("language")}</span>
+          {/* `hidden sm:inline` removed the word entirely on phones, which
+              also removed the select's accessible name — and `sm` is 640px, so
+              that meant every phone. `sr-only` keeps the label for assistive
+              technology while still freeing the space visually. */}
+          <span className="sr-only sm:not-sr-only sm:inline">{t("language")}</span>
           <select
             value={locale}
             onChange={(e) => setLocale(e.target.value as Locale)}
