@@ -97,14 +97,27 @@ the narration itself.
 
 ## Still blocking
 
-**The category list.** The owner is rearranging it — cutting some categories and adding
-others. Do not author depth into categories that may be about to be deleted. Wait for the
-final list.
+~~**The category list.**~~ **Settled 2026-08-20.** The owner gave the final list and it is
+recorded, ordered, and mapped tier by tier in `docs/CATEGORY_TIER_MAPS.md`. Authoring is no
+longer blocked on it.
 
-He also asked that once the scouting is done, we suggest categories of our own, based on
+**29 categories x 9 tiers x 20 questions = 5,220**, up from the 25 x 180 = 4,500 above. The
+owner's own list came to 26; he then accepted three additions — Usul al-Fiqh, Du'a & Dhikr,
+and Preservation of the Qur'an (Jam' & Qira'at) — proposed because the sources sustain nine
+genuine tiers in each. **Intimacy** was renamed **Marriage & Family Life** at his direction;
+marital intimacy remains a strand within it.
+
+Web access was also confirmed the same day. `sunnah.com` and `dorar.net` are both walled off
+behind Cloudflare and a key requirement; `fawazahmed0/hadith-api` replaces them as the hadith
+backbone. See `docs/SOURCES.md` for what was probed and what came back.
+
+He also asked that once the scouting was done, we suggest categories of our own, based on
 where the sources actually support nine tiers of genuine difficulty and where they do not.
-Narrow categories (e.g. Islamic Calendar) will struggle at the top tiers, where the risk is
-drifting from difficulty into obscure trivia. Those two things are not the same.
+**Done 2026-08-20.** Three were proposed and accepted (above). **Islamic Calendar was
+considered and deliberately not proposed** — it is exactly the narrow category this
+paragraph warns about, and it is better folded into Five Pillars and Sacred Geography than
+stretched over nine tiers. Difficulty and obscurity are not the same thing, and a narrow
+category reaches the top of the ladder only by becoming obscure.
 
 ## Environment
 
@@ -128,6 +141,44 @@ than working around it.
   his local mosque may use a different calculation
 - Authenticated routes are not covered by `scripts/check-mobile-overflow.mjs` — it cannot
   log in. A throwaway test account would let it cover them.
+
+## Language: author in English, translate later
+
+Decided 2026-08-20 by the owner: **the question bank is authored in English only.**
+Translation happens afterwards, one language at a time, as its own phase. Do not author a
+category in several languages at once, and do not hold up authoring for a translation.
+
+This is not a demotion of Hausa. It is sequencing: 5,220 questions in one language, checked
+once, then translated deliberately — rather than six partial banks that each need their own
+scholar review.
+
+**What is already true in the codebase** (checked, because two planning documents in this
+repo disagree about it):
+
+- `src/lib/i18n.ts` carries **complete UI translations for all six locales** — en, ha, fr,
+  ar, id, ms — with real Hausa strings, not fallbacks ("Barka da zuwa", "Lokutan salla").
+- `.claude/plans/comprehensive-fix-plan.md` and `.mimocode/plans/…` both claim Hausa, French
+  and Arabic are untranslated or fall back to English. **Those claims are stale.** Believe
+  `src/lib/i18n.ts`.
+- `app_language` already defaults to `'en'` in the schema, so authoring in English needs no
+  migration.
+
+So the app's *interface* is already multilingual and stays that way. Only the *questions*
+are English-first.
+
+**What the sources allow, when translation does begin** (measured, see `docs/SOURCES.md`):
+
+| | Hausa available |
+|---|---|
+| Qur'an via quran.com | **yes** — Abubakar Mahmoud Gumi (id 32), Abubakar Mahmood Jummi (id 115) |
+| Qur'an via the fawazahmed0 mirror | **yes** — 4 editions, both translators, with and without transliteration |
+| **Hadith via fawazahmed0 (our backbone)** | **no** — ar, bn, en, fr, id, ru, ta, tr, ur only |
+
+Gumi's is the Hausa Qur'an most Nigerian players will recognise, so Qur'anic material can be
+rendered into Hausa against a text they already know. **Hadith has no Hausa edition in any
+source scouted.** When the Hausa phase starts, hadith text will have to be translated rather
+than sourced — that is a scholar's job, not a mechanical one, and it should be planned as
+such rather than discovered mid-phase.
 
 ## Standing preferences
 

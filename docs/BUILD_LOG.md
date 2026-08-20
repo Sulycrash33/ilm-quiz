@@ -1,0 +1,128 @@
+# Question bank build log
+
+One entry per category as it is authored. Numbers come from the database, not from memory.
+
+---
+
+## Five Pillars — 180 of 180 · complete, validator clean
+
+Authored 2026-08-20. First category of the rebuild. **All nine tiers at 20.**
+
+Validator clean on every check: no near-duplicate pair above 0.5 similarity, no correct
+answer appearing more than twice, no opening stem appearing more than four times.
+
+### Tier 8 was short at 10, then closed
+
+Worth recording, because the recovery is the reusable part. Tier 8 asks where the schools
+differ *and why*, and misattributing a position breaches the one hard condition in the
+handoff. A first pass sourced only ten differences to a citable standard — a wrong fatwa
+page on islamweb, then Wikimedia rate limiting — so the bucket was reported short at 10
+rather than padded from memory.
+
+It was then closed properly. **al-Jaziri's *al-Fiqh ala al-Madhahib al-Arbaa* is available
+as plain text on archive.org**, 3.8 MB, Volume I being *Modes of Islamic Worship* — exactly
+the volume covering the pillars:
+
+```
+https://archive.org/download/IslamicJurisprudenceAccordingToTheFourSunniSchoolsAlFiqhalaAlMadhahibAlArbaah/IslamicJurisprudenceAccordingToTheFourSunniSchoolsAlFiqhalaAlMadhahibAlArbaah_djvu.txt
+```
+
+Follow redirects, or resolve the host from `archive.org/metadata/<item>` first; a plain
+request returns zero bytes. Scanning it for windows naming three or more schools yields 464
+comparative passages. Eleven questions came out of it directly.
+
+**It also corrected work already written.** A tier-8 question sourced from Wikipedia said the
+intention in wudu is "a formal obligation" in Maliki, Shafii and Hanbali. al-Jaziri is
+sharper: for the Hanbalis it is a *condition of validity*, for the Malikis and Shafiis a
+*pillar*, and for the Hanafis an emulation of the Sunnah that is neither. That question was
+deleted and replaced by two carrying the real distinction. **Prefer al-Jaziri over Wikipedia
+for any school attribution.**
+
+### Citations
+
+Every citation checked against real source text before use, not recalled:
+
+- 24 Qur'an verses through the quran.com API
+- hadith through the fawazahmed0 corpus, with gradings where carried: Bukhari 8, 1405, 1447,
+  1503, 1623, 1936; Muslim 874, 1570, 1572; Abu Dawud 59, 61, 171, 175, 408, 415, 494, 594;
+  Nasai 2333; Tirmidhi 787
+- Tafsir Ibn Kathir on 2:158 through the quran.com tafsir endpoint
+- eleven tier-8 positions from al-Jaziri; four earlier ones remain Wikipedia-sourced and
+  should be re-checked against al-Jaziri when convenient
+
+Tier 8 remains the highest scholar-review priority in this category.
+
+### Notes for review
+
+- Tier 5 deliberately includes narrations graded **Daif** (Abu Dawud 408, 415, 594). Each is
+  asked *about the grading*, never as the basis of a ruling, per the handoff.
+- Abu Dawud 415 is used to teach that **Maqtu** marks a Successor's statement rather than a
+  hadith of the Prophet.
+- Tier 9 answers are framed as *the reasoning to apply*, not as settled rulings, because
+  these are cases on which qualified scholars genuinely differ.
+- All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
+## Creed (Aqeedah) — 180 of 180 · complete, validator clean
+
+Authored 2026-08-20. Second category. **All nine tiers at 20, clean on every check** — no
+near-duplicate pair above 0.5, no correct answer more than twice, no opening stem more than
+four times.
+
+### Sourcing
+
+- Qur'an: 30 verses through the quran.com API, each read before use — 112:1–4, 2:3, 2:177,
+  2:255, 2:285, 3:7, 3:31, 4:48, 4:65, 4:136, 5:72, 6:59, 7:180, 16:36, 18:50, 21:25, 23:100,
+  30:30, 33:36, 35:1, 41:30, 42:11, 47:19, 49:14, 51:56, 55:15, 59:23
+- Hadith through the fawazahmed0 corpus: Bukhari 50 (hadith of Jibril), Bukhari 1359
+  (fitrah), Muslim 97, Muslim 7216, Nasa'i 5005 (seventy-odd branches, Sahih), Tirmidhi 2027
+  (Sahih), Tirmidhi 2640 (Hasan Sahih), Tirmidhi 2641, Tirmidhi 172 (Mawdu), Abu Dawud 4623,
+  Abu Dawud 4695
+- Tier 8's three schools sourced from the Ash'arism, Maturidism and Athari articles
+
+### Tier 8 without a comparative-fiqh source
+
+al-Jaziri is a work of *fiqh* and carries nothing on kalam, so the Five Pillars method did
+not transfer. The three Sunni theological orientations were sourced separately, and the
+questions turn on **method** rather than on slogans:
+
+- Ash'ari as a middle path between Athari and Mu'tazila, permitting both **tafwid** and
+  **ta'wil** for the ambiguous verses
+- Athari emerging from Ahl al-Hadith, holding the *zahir* the sole authority in creed,
+  opposing ta'wil, and accepting the text **bila kayfa**
+- Maturidi grounded in Abu Hanifa, holding ethics objectively knowable by reason, and
+  treating reports as unreliable where they conflict with reason
+
+One question asks what the three have in **common** — that all are orientations within Sunni
+theology, differing over method rather than over the framework. That is deliberate: the
+category must not read as though one orientation were Sunni Islam and the others deviations.
+
+**These attributions are Wikipedia-sourced and are the highest scholar-review priority in
+this category.** A primary-source pass (al-Ash'ari's *al-Ibanah*, al-Maturidi's *Kitab
+al-Tawhid*, al-Tahawi's *Aqeedah*) would put them on the footing al-Jaziri gave Five Pillars.
+
+### Tier 7 and the handling of takfir
+
+Tier 7 covers exceptions to general creedal rules, which in this category means the ground
+around declaring a person a disbeliever. Every question there is framed as **a distinction
+the scholars draw**, never as a ruling on any person or group:
+
+- judging a statement is a general ruling; judging a named individual requires conditions met
+  and impediments absent
+- ignorance and the non-arrival of the proof operate as recognised impediments
+- a major sin does not by itself expel a person from Islam, against the Kharijite position
+- the bedouins of 49:14 were told faith had not entered their hearts and were still not
+  called disbelievers — falling short of complete faith is not disbelief
+
+The final question asks *why* scholars are cautious here, and answers that the severity of
+the consequence is itself the reason for restraint.
+
+### Notes for review
+
+- Tier 5 uses **Tirmidhi 2641**, where Shakir and Al-Albani grade Hasan while Zubair Ali Zai
+  grades Da'if, to teach that a contested report cannot settle a creedal question.
+- **Tirmidhi 172**, graded Mawdu, is used to teach that fabrication is graver than weakness
+  because the report does not trace to the Prophet at all.
+- Tier 9 frames answers as *the reasoning to apply*, not settled rulings.
+- All 180 rows are `review_status = 'ai_drafted'`. None is published.
