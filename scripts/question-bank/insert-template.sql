@@ -15,7 +15,7 @@ select
   'en',
   'agreed',     -- or the specific school where they differ; 'na' if not a fiqh question
   v.q, v.c, v.i, v.e, v.cite,
-  'ai', 'ai_drafted',
+  'ai_drafted', 'ai_drafted',
   'rebuild-2026-08'   -- keeps this pass identifiable
 from (values
   ('Question text?',

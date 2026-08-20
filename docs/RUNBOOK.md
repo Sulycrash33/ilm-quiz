@@ -55,7 +55,7 @@ These do not change and are not yours to relitigate. They came from the owner.
 7. **A weak narration may never ground a ruling question** — only a question about the
    narration itself.
 8. Everything written is `review_status = 'ai_drafted'`. Nothing is `published` without a
-   scholar. Set `source_type = 'ai'` and `tier_is_estimated = false`.
+   scholar. Set `source_type = 'ai_drafted'` (a CHECK constraint allows only 'human' or 'ai_drafted') and `tier_is_estimated = false`.
 
 ## The loop — one category at a time
 
@@ -176,3 +176,25 @@ Everything else, decide yourself and tell him what you decided.
 Say plainly what was not done and why. The owner values that over polish, and has said so.
 If a category came out weaker than the others, say which and why. If a citation could not be
 verified against real source text, say so rather than shipping it quietly.
+
+## Things the schema will reject — learned the hard way
+
+Checked against the live database while authoring Five Pillars. Each of these cost a failed
+insert; none of them is guessable from the column list.
+
+- **`source_type` is CHECK-constrained to `'human'` or `'ai_drafted'`.** Not `'ai'`.
+- **`daily_challenges` references `categories` and blocks a category delete.** It also holds
+  `question_ids` as a bare `uuid[]` with **no foreign key**, so wiping questions leaves it
+  pointing at rows that no longer exist and the database will not warn you. It is
+  regenerated daily; delete its rows as part of any wipe.
+- **Six tables reference `categories`**, not the three the handoff names (those three
+  reference *questions*). `mentor_questions`, `hunt_runs` and `forum_topics` are
+  `ON DELETE SET NULL` and safe; `questions`, `daily_challenges` and `study_circles` block.
+- **The stem cap is category-wide, not per tier.** Across all 180 questions only four may
+  share an opening three words. `"What is the"` is exhausted almost immediately — plan
+  varied openings from the first tier, because retrofitting them later means rewriting
+  questions that were otherwise fine.
+- **Near-duplicate flags usually mean the questions are genuinely redundant.** Three
+  questions asking the rak'ah count of three different prayers tripped it. The right fix was
+  to replace two with different facts, not to reword them until the checker stopped
+  complaining. Rewording to defeat the validator defeats the point of having it.
