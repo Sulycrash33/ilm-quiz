@@ -13,11 +13,10 @@ import { rankProgress } from "@/lib/ranks"
  * which no phone reaches in portrait, so on the devices almost every player
  * uses the greeting was not merely generic, it was absent.
  *
- * The salaam is not translated per locale: it is the same Arabic phrase
- * everywhere, so the script line is identical in all six bundles. What varies
- * is whether a romanisation is shown underneath — in the Arabic locale the
- * script line already reads as the greeting, so `salaamLatin` is empty there
- * and the second line is skipped.
+ * One line, not two. It first showed the Arabic script with a romanisation
+ * beneath it, which said the same thing twice and cost two lines of a phone
+ * screen. Arabic readers get the script; everyone else gets the romanisation.
+ * The greeting itself is not translated — it is the same phrase everywhere.
  *
  * The rank is derived from `total_xp` by the same thresholds the database
  * uses, so what is shown here agrees with `profiles.current_rank_id` and with
@@ -43,14 +42,15 @@ export function SalaamGreeting() {
 
   return (
     <section className="pt-2 pb-1">
-      {/* The greeting itself, always in Arabic script. */}
-      <p dir="rtl" className="text-primary/90 text-[15px] leading-relaxed">
-        {arabic}
-      </p>
-
-      {latin && (
-        <p dir="ltr" className="mt-0.5 text-[11px] uppercase tracking-[0.14em] text-on-surface-variant/60">
+      {/* The greeting, in one form only: script for Arabic readers, the
+          romanisation for everyone else. */}
+      {latin ? (
+        <p dir="ltr" className="text-primary/90 text-[13px] uppercase tracking-[0.1em] leading-relaxed">
           {latin}
+        </p>
+      ) : (
+        <p dir="rtl" className="text-primary/90 text-[15px] leading-relaxed">
+          {arabic}
         </p>
       )}
 
@@ -84,8 +84,10 @@ export function SalaamGreeting() {
               style={{ width: `${percent}%` }}
             />
           </div>
+          {/* "500 XP → Talib" beside a MUBTADI badge read as though the
+              seeker held two ranks at once. Saying "to" makes it a target. */}
           <p className="mt-1 text-[11px] text-on-surface-variant/60">
-            {xpToNext} XP → {next?.title}
+            {xpToNext} XP to {next?.title}
           </p>
         </div>
       )}

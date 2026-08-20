@@ -147,6 +147,15 @@ export interface Translations {
   categories: string
   questionsAvailable: string
   questionsAnswered: string
+  /** Home page: cards driven by real data, with honest empty states. */
+  startLearning: string
+  pickACategory: string
+  noProgressYet: string
+  continueAnswered: string
+  challengeQuestions: string
+  challengeDone: string
+  currentProgress: string
+  noChallengeToday: string
   progress: string
   startQuiz: string
   comingSoon: string
@@ -699,6 +708,14 @@ const enTranslations: Translations = {
   categories: "Categories",
   questionsAvailable: "questions available",
   questionsAnswered: "questions answered",
+  startLearning: "Start learning",
+  pickACategory: "Pick a category",
+  noProgressYet: "You haven't answered anything yet",
+  continueAnswered: "{answered} of {total} answered",
+  challengeQuestions: "Answer {count} questions",
+  challengeDone: "Done for today",
+  currentProgress: "{answered} of {total} answered",
+  noChallengeToday: "No challenge today",
   progress: "Progress",
   startQuiz: "Start Quiz",
   comingSoon: "Coming Soon",
@@ -1252,6 +1269,14 @@ const msTranslations: Translations = {
   categories: "Kategori",
   questionsAvailable: "soalan tersedia",
   questionsAnswered: "soalan dijawab",
+  startLearning: "Mula belajar",
+  pickACategory: "Pilih kategori",
+  noProgressYet: "Anda belum menjawab apa-apa lagi",
+  continueAnswered: "{answered} daripada {total} dijawab",
+  challengeQuestions: "Jawab {count} soalan",
+  challengeDone: "Selesai hari ini",
+  currentProgress: "{answered} daripada {total} dijawab",
+  noChallengeToday: "Tiada cabaran hari ini",
   progress: "Kemajuan",
   startQuiz: "Mulakan Kuiz",
   comingSoon: "Akan Datang",
@@ -1805,6 +1830,14 @@ const idTranslations: Translations = {
   categories: "Kategori",
   questionsAvailable: "soal tersedia",
   questionsAnswered: "soal terjawab",
+  startLearning: "Mulai belajar",
+  pickACategory: "Pilih kategori",
+  noProgressYet: "Anda belum menjawab apa pun",
+  continueAnswered: "{answered} dari {total} dijawab",
+  challengeQuestions: "Jawab {count} pertanyaan",
+  challengeDone: "Selesai hari ini",
+  currentProgress: "{answered} dari {total} dijawab",
+  noChallengeToday: "Tidak ada tantangan hari ini",
   progress: "Kemajuan",
   startQuiz: "Mulai Kuis",
   comingSoon: "Segera Hadir",
@@ -2358,6 +2391,14 @@ const haTranslations: Translations = {
   categories: "Rukunoni",
   questionsAvailable: "tambayoyi akwai",
   questionsAnswered: "tambayoyin da aka amsa",
+  startLearning: "Fara koyo",
+  pickACategory: "Zabi rukuni",
+  noProgressYet: "Ba ka amsa komai ba tukuna",
+  continueAnswered: "{answered} daga {total} an amsa",
+  challengeQuestions: "Amsa tambayoyi {count}",
+  challengeDone: "An gama yau",
+  currentProgress: "{answered} daga {total} an amsa",
+  noChallengeToday: "Babu kalubale yau",
   progress: "Ci gaba",
   startQuiz: "Fara Jarabawa",
   comingSoon: "Ana Zuwa",
@@ -2911,6 +2952,14 @@ const frTranslations: Translations = {
   categories: "Catégories",
   questionsAvailable: "questions disponibles",
   questionsAnswered: "questions répondues",
+  startLearning: "Commencer",
+  pickACategory: "Choisir une catégorie",
+  noProgressYet: "Vous n'avez encore rien répondu",
+  continueAnswered: "{answered} sur {total} répondues",
+  challengeQuestions: "Répondez à {count} questions",
+  challengeDone: "Terminé pour aujourd'hui",
+  currentProgress: "{answered} sur {total} répondues",
+  noChallengeToday: "Aucun défi aujourd'hui",
   progress: "Progression",
   startQuiz: "Commencer le quiz",
   comingSoon: "Bientôt disponible",
@@ -3464,6 +3513,14 @@ const arTranslations: Translations = {
   categories: "الفئات",
   questionsAvailable: "أسئلة متاحة",
   questionsAnswered: "أسئلة تمت الإجابة عنها",
+  startLearning: "ابدأ التعلم",
+  pickACategory: "اختر فئة",
+  noProgressYet: "لم تجب على أي شيء بعد",
+  continueAnswered: "{answered} من {total} تمت الإجابة",
+  challengeQuestions: "أجب عن {count} أسئلة",
+  challengeDone: "تم اليوم",
+  currentProgress: "{answered} من {total} تمت الإجابة",
+  noChallengeToday: "لا يوجد تحد اليوم",
   progress: "التقدم",
   startQuiz: "ابدأ الاختبار",
   comingSoon: "قريباً",

@@ -10,6 +10,22 @@ export default {
   ],
   theme: {
     extend: {
+      /**
+       * A breakpoint inside the phone range.
+       *
+       * Tailwind's smallest default, `sm`, is 640px WIDE. No phone reaches it
+       * in portrait — an iPhone 16 Pro Max is 440px — so every `sm:` class in
+       * this app is desktop-only, and anything hidden behind one is invisible
+       * to almost every player. That is exactly how the home page greeting came
+       * to be absent on phones.
+       *
+       * `xs` at 380px sits between the small phones (320-375) and the common
+       * ones (390-440), which is the only place a phone-first layout actually
+       * has a decision to make.
+       */
+      screens: {
+        xs: '380px',
+      },
       colors: {
         // Premium Islamic Design System Colors
         'on-tertiary-container': '#b8f2d8',
