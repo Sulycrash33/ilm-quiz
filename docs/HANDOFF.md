@@ -111,10 +111,13 @@ Web access was also confirmed the same day. `sunnah.com` and `dorar.net` are bot
 behind Cloudflare and a key requirement; `fawazahmed0/hadith-api` replaces them as the hadith
 backbone. See `docs/SOURCES.md` for what was probed and what came back.
 
-He also asked that once the scouting is done, we suggest categories of our own, based on
+He also asked that once the scouting was done, we suggest categories of our own, based on
 where the sources actually support nine tiers of genuine difficulty and where they do not.
-Narrow categories (e.g. Islamic Calendar) will struggle at the top tiers, where the risk is
-drifting from difficulty into obscure trivia. Those two things are not the same.
+**Done 2026-08-20.** Three were proposed and accepted (above). **Islamic Calendar was
+considered and deliberately not proposed** — it is exactly the narrow category this
+paragraph warns about, and it is better folded into Five Pillars and Sacred Geography than
+stretched over nine tiers. Difficulty and obscurity are not the same thing, and a narrow
+category reaches the top of the ladder only by becoming obscure.
 
 ## Environment
 
