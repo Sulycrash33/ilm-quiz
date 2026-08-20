@@ -307,6 +307,79 @@ theology tiers in Creed and Allah's Names.**
 
 All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
+## 6. Hadith Sciences — 180 / 180
+
+The flagship category: the one the **da'if format** was designed for, and the one that had to
+be built before the format could ship anywhere else.
+
+### The da'if format, tier 5
+
+Twenty questions, each showing four real narrations with one weak among them. Built from a
+filtered pool of the corpus — **150 unanimously-weak and 582 unanimously-sound** narrations
+surviving these exclusions:
+
+- gradings whose term maps to nothing in the sahih/hasan/da'if scale (`Shadh`, `Munkar`), which
+  had been silently dropped and were making **non-unanimous narrations look unanimous**
+- the **7,167 contested** narrations where critics disagree — those belong to tier 7, not here
+- cross-reference fragments ("a similar tradition…", "the rest of the tradition to the same
+  effect"), which are not standalone narrations
+- texts carrying an embedded grade label such as `(Daif)`, which **give the answer away**
+- mid-sentence truncations and corpus artifacts
+
+Per-choice gradings ride in the new `choice_meta jsonb` column (migration
+`add_choice_meta_for_daif_format`), each entry `{g, ref, by[]}` naming every scholar and the
+exact grade string. A *hasan* choice is labelled hasan, never rounded up to sahih — that
+rounding was a factual error about a scholar's grading, caught before it shipped.
+
+### Two design faults the automated checks could not see
+
+**Consecutive narrations as adjacent answers.** Tier 5 had Ibn Majah **921** and **922** — the
+same companion, the same subject, consecutive numbers — as the weak answer in two adjacent
+questions. A player who learned the first would guess the second. Replaced 922 with Ibn Majah
+2668 ("There is no retaliation except with the sword"), a weak narration a fiqh-aware player
+might well believe sound.
+
+**A mis-tokenizing parser.** The regex `'((?:[^']|'')*)'` reads SQL literals ambiguously and
+mis-aligns on rows containing escaped quotes, which produced a defect report naming the wrong
+choices. Replaced with a real character scanner (`parse.py`). *Do not parse SQL literals with a
+regex.*
+
+### The tiers that the corpus made possible
+
+Tier 7 asks about **real disagreements between named critics**, of which the corpus holds about
+**2,530**. Three kinds are legible from the grade strings alone, and each became a question:
+
+| pattern | what is in dispute | example |
+|---|---|---|
+| `Hasan Lighairihi` vs `Daif` | whether corroborating chains suffice to raise the report | Abu Dawud 26 |
+| `Isnaad Hasan` vs `Daif` | the chain affirmed while the report is not | Abu Dawud 227 |
+| `Daif` vs `Sahih Muslim (1963)` | **this chain** weak, **this report** sound elsewhere | Abu Dawud 2797 |
+
+That third pattern is the most useful thing in the category: a weak grading attaches to a chain
+in a given collection, not to the report wherever it appears.
+
+Tier 6 rests on gradings that carry two verdicts at once — `Sahih Isnaad Mauquf`
+(Abu Dawud 4330), `Sahih Maqtu` (Abu Dawud 102, 349), `Sahih Isnaad Mursal`
+(an-Nasa'i 4142–4145). Each shows the same lesson from a different angle: **a sound chain does
+not make a report prophetic.**
+
+### Tier 8 sourcing
+
+The comparative usul positions — Hanafi and Maliki acceptance of mursal, al-Shafi'i's
+requirement of corroboration, Maliki `'amal ahl al-Madinah`, the Hanafi `'umum al-balwa`
+condition, Ahmad's reported ordering — were checked against the usul literature via search.
+**Same review priority as the theology tiers in Creed and Allah's Names.** Tier 8 also teaches
+its own caveat: Ahmad's "da'if" predates the hardened terminology, so reading the later
+technical sense back into him overstates the claim.
+
+### Verified facts picked up along the way
+
+- an-Nawawi's **Forty** Hadith contains **42**
+- Bukhari 7,563 · Muslim 7,563 · an-Nasa'i 5,758 · Abu Dawud 5,274 · Ibn Majah 4,341 ·
+  at-Tirmidhi 3,956 · Muwatta 1,858 numbered reports in the standard English editions
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
 ---
 
 ## Running total
@@ -318,4 +391,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Allah's Names & Attributes | 180 / 180 |
 | Holy Quran | 180 / 180 |
 | Prophetic Biography | 180 / 180 |
-| **total** | **900 of 5,220** |
+| Hadith Sciences | 180 / 180 |
+| **total** | **1,080 of 5,220** |

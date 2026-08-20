@@ -56,6 +56,16 @@ These do not change and are not yours to relitigate. They came from the owner.
    narration itself.
 8. Everything written is `review_status = 'ai_drafted'`. Nothing is `published` without a
    scholar. Set `source_type = 'ai_drafted'` (a CHECK constraint allows only 'human' or 'ai_drafted') and `tier_is_estimated = false`.
+9. **Vary where the answer sits.** The app serves `choices` in stored order — nothing
+   shuffles them for the player. Aim for a roughly even spread across indexes 0-3 within a
+   category, and let `validate.sql`'s `answer_index_skew` check confirm it before you call
+   the category done. This one bit me: the first five categories were authored straight off
+   the insert template, whose example puts the answer at index 1, and they came out ~90% at
+   index 1 — a player who always pressed the second button would have scored about 89%
+   without knowing a thing. Fixed across all 920 rows by a deterministic rotation keyed on
+   `hashtext(id::text) % 4`, rotating `choices` and `choice_meta` together and recomputing
+   the index. Safe only because no choice in the bank refers to another by position; check
+   that again before ever repeating it.
 
 ## The loop — one category at a time
 
@@ -224,3 +234,32 @@ insert; none of them is guessable from the column list.
   questions asking the rak'ah count of three different prayers tripped it. The right fix was
   to replace two with different facts, not to reword them until the checker stopped
   complaining. Rewording to defeat the validator defeats the point of having it.
+
+### Added while authoring Hadith Sciences
+
+- **An insert can land twice, silently.** Three `execute_sql` batches each landed twice —
+  tier 5 read **35 rows for 20 questions**. Nothing errored. Migration
+  `unique_question_text_per_category` now puts a unique index on
+  `(category_id, question_text)` so a repeated batch fails loudly instead. **Still check the
+  tier count after every batch**; the index catches exact repeats, not a half-landed batch.
+- **Check for near-duplicates across the whole category before inserting, not within a tier.**
+  A per-tier pre-flight passed cleanly and the category-wide validator then flagged five
+  near-duplicate pairs and three over-used stems — every one of them a *cross-tier* collision
+  ("What does the grade munkar indicate?" in tier 3 against "What does the grade shadh
+  indicate?" in the same tier; "Which statement about the five conditions is accurate?" in
+  tier 4 against "Which statement about the six collections is accurate?" in tier 2). Load the
+  category's existing stems and compare against them while drafting.
+- **Authoring naturally puts the correct answer first every time.** Twenty questions written in
+  a sitting will have all twenty answers at index 0, because that is the order you think in.
+  The app serves choices in stored order — nothing shuffles them. Apply a deterministic
+  rotation before emitting SQL (`emit.rebalance` in the scratchpad tooling) rather than
+  hand-tuning positions, which turns into whack-a-mole against the skew check.
+- **Do not parse SQL literals with a regex.** `'((?:[^']|'')*)'` is ambiguous on rows
+  containing `''` and mis-aligns its capture groups, which will hand you a defect report about
+  the wrong choices in the wrong rows. Write a real character scanner.
+- **Corpus text needs a quality filter before it reaches a player.** The translations carry
+  leading stray parentheses, OCR artifacts (`9saw`, `waived meaning`), mid-sentence
+  truncations, and cross-reference fragments that are not standalone narrations. Filter on all
+  of these, and reject any text ending in `(ﷺ)` — in this corpus that reliably marks a cut-off
+  sentence. Beware over-filtering too: the Abu Dawud translation routinely omits a final full
+  stop on complete sentences, so "no terminal punctuation" alone is not a defect.
