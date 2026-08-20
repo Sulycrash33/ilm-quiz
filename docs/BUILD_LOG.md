@@ -126,3 +126,77 @@ the consequence is itself the reason for restraint.
   because the report does not trace to the Prophet at all.
 - Tier 9 frames answers as *the reasoning to apply*, not settled rulings.
 - All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
+## Allah's Names & Attributes — 180 of 180 · complete, validator clean
+
+Authored 2026-08-20. Third category. **All nine tiers at 20, clean on every check.**
+
+### The constraint this category was built around
+
+`docs/CATEGORY_TIER_MAPS.md` set the rule before authoring began, and tier 5 now teaches it
+directly rather than working around it. Verified again against the corpus:
+
+| narration | content | grading |
+|---|---|---|
+| Tirmidhi 3506 | the *statement* that Allah has 99 names | **Sahih** (Shakir, Al-Albani) |
+| Tirmidhi 3508 | the same statement | **Sahih** (Shakir); Sahih Bukhari (Zubair Ali Zai) |
+| **Tirmidhi 3507** | the **enumeration** of the 99 | **Da'if** — Shakir, Al-Albani *and* Zubair Ali Zai alike |
+| Ibn Majah 3861 | related enumeration | **contested** — Sahih (Al-Albani), Da'if (Zubair Ali Zai) |
+
+Both Sahihs carry the statement (Bukhari 2736, 6410, 7392; Muslim 6809, 6810). Neither
+carries the enumeration.
+
+So the category is built as the tier map required:
+
+- **every name is anchored to its Qur'anic occurrence**, never to the Tirmidhi list;
+- **no question asks "is X one of the 99?"** as a question of fact, because the list that
+  would settle it is graded weak;
+- tier 5 makes the discrepancy itself the subject — including that wide reproduction on
+  posters and apps establishes nothing, since authenticity is a property of transmission.
+
+### Sourcing
+
+Around 40 Qur'anic verses read through the API before use, including the name-dense passages
+59:22–24, 57:3, 40:3, 3:26, 2:255, 112:1–4, 7:180, 6:103, 67:14, 24:35, 22:6, 51:58, 55:27,
+30:54, 2:107, 2:186, 65:3, 11:73, 85:14, 19:96, 9:128.
+
+Tier 8 reuses the Ash'ari / Maturidi / Athari sourcing from Creed but applies it to the
+attributes specifically — tafwid, ta'wil, ithbat, and the terms *ta'til* and *tashbih* for
+the two errors the schools jointly rule out. **Wikipedia-sourced; same review priority as in
+Creed.**
+
+### What the validator caught here
+
+The recurring failure in this category was **parallel construction**: writing a matched pair
+of questions and having them come back as near-duplicates of each other.
+
+- "Which scripture was given to Musa / Isa / Dawud" — three at once (in Creed, same pattern)
+- "Tawhid ar-rububiyyah concerns... / Tawhid al-uluhiyyah concerns..."
+- "What follows from dwelling on forgiveness... / on severity..."
+- "Al-Awwal and al-Akhir affirmed together... / Az-Zahir and al-Batin affirmed together..."
+- "Applied to a divine attribute, what does tafwid / ta'wil mean?"
+
+Each was fixed by **recasting one side into a different question shape**, not by nudging
+words until the checker fell silent. Worth knowing in advance: any tier that naturally
+invites a matched pair will trip this, and it is cheaper to vary the shape at authoring time
+than to repair it afterwards.
+
+### Notes for review
+
+- Tier 9 answers are framed as *the reasoning to apply*, and two questions ask explicitly
+  what makes a derivation from a name sound rather than fanciful — including that a binding
+  legal ruling cannot rest on a name alone.
+- All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
+## Running total
+
+| category | status |
+|---|---|
+| Five Pillars | 180 / 180 |
+| Creed (Aqeedah) | 180 / 180 |
+| Allah's Names & Attributes | 180 / 180 |
+| **total** | **540 of 5,220** |
