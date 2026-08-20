@@ -135,3 +135,111 @@ than working around it.
   exists because Tailwind's smallest default (`sm`) is 640px wide and no phone reaches it in
   portrait. Check phone widths before desktop, always.
 - Say plainly what was not done and why. The owner values that over polish.
+
+---
+
+# The question bank is to be rebuilt from zero
+
+Added 2026-08-20 at the owner's instruction. This section overrides anything above that
+implies topping up the existing bank.
+
+## Wipe first
+
+**Delete all existing questions and author 4,500 fresh ones.** Do not keep any of the
+current 1,169. They were written to a 10-per-bucket target, 273 of them have a tier that was
+*guessed* rather than authored, and mixing them into a fresh bank would leave exactly the
+inconsistency this rebuild exists to remove.
+
+The wipe is safe. All three tables that reference `questions` were checked and every one is
+empty:
+
+| referencing table | rows |
+|---|---|
+| `attempts` | 0 |
+| `quiz_room_questions` | 0 |
+| `user_question_schedule` | 0 |
+
+Nobody has played yet, so nothing is lost. **Re-check these counts before deleting** — if
+the owner has been testing, they may no longer be zero, and in that case ask him before
+destroying anything.
+
+## Three failure modes he explicitly asked to be protected against
+
+He named these himself. They are the ways this job goes wrong, and none of them is prevented
+by intending not to do them. Each needs a mechanism.
+
+### 1. Repetition and near-duplicates
+
+The risk is not exact duplicates — the loader already rejects those. It is **asking the same
+thing in different words**, and **many questions sharing one answer** ("Abu Bakr" as the
+answer to nine questions in The Companions).
+
+Enforce it with a validator that runs after **every** category batch, not at the end:
+
+- `create extension if not exists pg_trgm;` — it is available on this project but not yet
+  installed. Then flag any pair within a category where
+  `similarity(question_text_a, question_text_b) > 0.5`.
+- Flag any correct answer appearing more than **twice** within a category.
+- Flag repeated stems: more than four questions in a category opening "Who was the first",
+  "How many", "In which year", and so on.
+- Every question in a bucket must test a **distinct fact**. Twenty questions at Faqih level
+  in Zakat must be twenty different rulings, not one ruling asked twenty ways.
+
+Report the validator's output to the owner after each category. Do not report a category as
+done until it comes back clean.
+
+### 2. Drifting or thinning out partway through
+
+4,500 is long enough that quality decays without structure. So:
+
+- **Author one category at a time**, all 180 questions, all nine tiers, then stop and show
+  him before starting the next.
+- **Within a category, write the full tier spread together** — tier 1 and tier 9 of the same
+  category authored in the same pass. The gradient is only real if the two ends are visible
+  to each other. Never write all of tier 1 across every category and come back for tier 9
+  later; that guarantees an inconsistent ladder.
+- **Never pad to reach 20.** If a bucket genuinely cannot sustain twenty distinct questions
+  at that level, say so and name the bucket. Do not fill it with trivia to make the number.
+  The owner would far rather hear "Islamic Calendar tier 9 supports 12, not 20" than receive
+  eight questions nobody can defend.
+
+### 3. Ignoring the difficulty levels
+
+The single most likely failure is 4,500 questions of roughly the same difficulty wearing
+nine different tier labels. The tier must change **what kind of knowledge is required**, not
+merely how obscure the fact is.
+
+**Difficulty is not obscurity.** "Which sahabi had the fewest narrations" is obscure, not
+hard. "Why do the Hanafis and Shafi'is differ on raising the hands, and what does each rely
+on" is hard. Prefer the second at high tiers, always.
+
+Working rubric — each tier demands a different *type* of knowing:
+
+| tier | rank | what a question at this level requires |
+|---|---|---|
+| 1 | Mubtadi | a single everyday fact a practising child would know |
+| 2 | Talib | basic maktab teaching; still single-fact recall |
+| 3 | Hafiz | specific names, numbers, sequences — requires having actually studied |
+| 4 | Faqih | a ruling **and its condition**, not just the ruling |
+| 5 | Muhaddith | a narration together with its source or grading |
+| 6 | Mufassir | context of revelation, or a distinction drawn in tafsir |
+| 7 | Shaykh | comparing two positions, or knowing an exception to a general rule |
+| 8 | Imam | where the schools differ **and why** |
+| 9 | Mujaddid | synthesis — applying a principle to a case, or a chain of reasoning |
+
+Check each finished bucket against this rubric before moving on. A tier-8 question that is
+really a tier-3 fact with harder vocabulary must be rewritten, not relabelled.
+
+## Verification after every category
+
+Run and report:
+
+```sql
+select t.id as tier, count(q.id) as n
+from public.rank_tiers t
+left join public.questions q
+  on q.tier = t.id and q.category_id = :category_id
+group by t.id order by t.id;
+```
+
+Every tier must read exactly 20. Then run the duplicate checks above. Only then move on.
