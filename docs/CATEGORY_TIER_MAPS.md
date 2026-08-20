@@ -35,6 +35,12 @@ authorities**. Every category below has both. None needed padding to get there.
 of knowing, not a rarer fact. Check each finished bucket against its line here before moving
 on; a question that does not match its line is rewritten, not relabelled.
 
+## Language
+
+**Authored in English only** (`language = 'en'`). Translation is a later phase, one language
+at a time — see the language section in `docs/HANDOFF.md`. Every tier line below is written
+to be authored in English; none of them assume a translated source.
+
 ## Order
 
 Ordered by **dependency, not difficulty** — each band assumes the ones above it. The banding

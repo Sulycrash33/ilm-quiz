@@ -142,6 +142,44 @@ than working around it.
 - Authenticated routes are not covered by `scripts/check-mobile-overflow.mjs` — it cannot
   log in. A throwaway test account would let it cover them.
 
+## Language: author in English, translate later
+
+Decided 2026-08-20 by the owner: **the question bank is authored in English only.**
+Translation happens afterwards, one language at a time, as its own phase. Do not author a
+category in several languages at once, and do not hold up authoring for a translation.
+
+This is not a demotion of Hausa. It is sequencing: 5,220 questions in one language, checked
+once, then translated deliberately — rather than six partial banks that each need their own
+scholar review.
+
+**What is already true in the codebase** (checked, because two planning documents in this
+repo disagree about it):
+
+- `src/lib/i18n.ts` carries **complete UI translations for all six locales** — en, ha, fr,
+  ar, id, ms — with real Hausa strings, not fallbacks ("Barka da zuwa", "Lokutan salla").
+- `.claude/plans/comprehensive-fix-plan.md` and `.mimocode/plans/…` both claim Hausa, French
+  and Arabic are untranslated or fall back to English. **Those claims are stale.** Believe
+  `src/lib/i18n.ts`.
+- `app_language` already defaults to `'en'` in the schema, so authoring in English needs no
+  migration.
+
+So the app's *interface* is already multilingual and stays that way. Only the *questions*
+are English-first.
+
+**What the sources allow, when translation does begin** (measured, see `docs/SOURCES.md`):
+
+| | Hausa available |
+|---|---|
+| Qur'an via quran.com | **yes** — Abubakar Mahmoud Gumi (id 32), Abubakar Mahmood Jummi (id 115) |
+| Qur'an via the fawazahmed0 mirror | **yes** — 4 editions, both translators, with and without transliteration |
+| **Hadith via fawazahmed0 (our backbone)** | **no** — ar, bn, en, fr, id, ru, ta, tr, ur only |
+
+Gumi's is the Hausa Qur'an most Nigerian players will recognise, so Qur'anic material can be
+rendered into Hausa against a text they already know. **Hadith has no Hausa edition in any
+source scouted.** When the Hausa phase starts, hadith text will have to be translated rather
+than sourced — that is a scholar's job, not a mechanical one, and it should be planned as
+such rather than discovered mid-phase.
+
 ## Standing preferences
 
 - **Mobile first.** Most players will be on Android and iPhone. An `xs` breakpoint at 380px
