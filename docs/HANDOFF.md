@@ -11,7 +11,18 @@ The next piece of work is **the question bank**, and it has not started.
 
 The question bank is short of what the owner asked for, and we agreed how to fix it.
 
-**What he asked for:** 25 categories x 9 difficulty tiers x 10 questions = **2,250 questions**.
+**What he asked for:** 25 categories x 9 difficulty tiers x **20 questions** = **180 per category**,
+**4,500 in total**.
+
+This was raised from 10 per tier to 20 on 2026-08-20, deliberately and with the trade-off
+stated. The reason is not storage (see below) — it is **repetition**. A Hunt run is 10
+questions and the ladder draws from the player's tier plus one either side, so at 10 per
+bucket a player has only 30 questions in reach and starts seeing repeats on their third run
+in a category. At 20 per bucket that becomes 60, or roughly six runs. Still not generous.
+
+He was told that the real cost of doubling is not disk but scholar review — 4,500 unreviewed
+questions are worse than 2,250 reviewed ones — and chose 20 anyway. That is his decision;
+do not relitigate it.
 
 **What actually exists** (verified against the live database, project `ziblpvwiqzpjnkqjwodl`):
 
@@ -21,17 +32,29 @@ The question bank is short of what the owner asked for, and we agreed how to fix
 | authored for a specific tier (`seed_batch` set) | 896 |
 | older rows whose tier was *estimated* from easy/medium/hard | 273 (`tier_is_estimated = true`) |
 | buckets (category x tier) holding exactly 4 questions | **150 of 225** |
-| short of 10-per-bucket | **1,083 questions** |
+| thinnest / fullest bucket | 4 / 12 |
+| short of 20-per-bucket (**the target**) | **3,331 questions** |
+| short of 10-per-bucket (superseded) | 1,083 questions |
 
 Every one of the 225 buckets has something in it, but most are shallow. Coverage was
 chosen over depth in the first pass, and that trade was not clearly flagged to the owner
 at the time. He has since been told plainly.
 
-**Storage is not a constraint and must not be treated as one.** The `questions` table is
-776 kB for 1,169 rows (~680 bytes/row), the whole database is 14 MB, and the Supabase free
-plan allows 500 MB. 2,250 questions is ~1.5 MB, or 0.3% of the allowance. What will
-eventually consume space is `attempts` (one row per player per answer, currently 0 rows) —
-not questions.
+**Storage is not a constraint and must not be treated as one.** This was settled by
+measurement, not estimation: a copy of the `questions` table with identical columns,
+constraints and indexes was filled to each size and measured.
+
+| questions | measured size | % of the 500 MB free plan |
+|---|---|---|
+| 1,169 (today) | 776 kB | 0.15% |
+| 2,338 | 1.4 MB | 0.28% |
+| **4,676** (~the 4,500 target) | **2.7 MB** | **0.53%** |
+| 23,380 | 13 MB | 2.58% |
+
+Cost per row *falls* as the table grows (680 bytes at today's size, 578 at 23,000) because
+index overhead amortises. What will eventually consume space is `attempts` — one row per
+player per answer, currently 0 rows — not questions. Do not raise storage as a reason to
+limit the question bank.
 
 ## How the remaining questions are to be written
 
