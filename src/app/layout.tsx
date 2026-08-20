@@ -31,6 +31,32 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  /**
+   * Icons.
+   *
+   * The tab icon was still the Next.js starter favicon shipped with the
+   * scaffold, so the browser showed the old mark long after the logo was
+   * redrawn. All of these now render the crescent-and-star glyph — the same
+   * one as `IlmHuntGlyph`, which exists precisely because the full mihrab mark
+   * turns to mush below about 32px.
+   *
+   * Next resolves `src/app/icon.svg`, `apple-icon.png` and `favicon.ico` by
+   * filename, but they are declared here as well so the order is explicit:
+   * the SVG is preferred where supported and scales to any size, with the .ico
+   * as the fallback for browsers that request /favicon.ico directly and ignore
+   * the link tags.
+   *
+   * The Apple touch icon is deliberately square-cornered. iOS applies its own
+   * rounded mask, so a pre-rounded image gets its corners clipped twice.
+   */
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/manifest.webmanifest",
   title: "ILM Hunt - Premium Islamic Learning",
   description:
     "Embark on a premium journey through Islamic knowledge with gamified learning, achievements, and a beautiful experience.",
