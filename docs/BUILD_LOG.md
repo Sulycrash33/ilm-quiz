@@ -250,6 +250,65 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## Prophetic Biography — 180 of 180 · complete, validator clean
+
+Authored 2026-08-20. Fifth category. **All nine tiers at 20, clean on every check.**
+
+### Tier 5 is the strongest tier in the bank so far
+
+The tier map asked for *which sira author reports an incident, and how their reliability
+differs*. Sourced properly, that turns out to be unusually rich:
+
+**Ibn Ishaq** (b. Medina c. 704) survives only through **recensions**. Al-Bakka'i's perished;
+**Ibn Hisham's** survived — and Ibn Hisham stated openly what he removed: *"things which it is
+disgraceful to discuss; matters which would distress certain people; and such reports as
+al-Bakka'i told me he could not accept as trustworthy."* His most discussed critic was
+**Malik ibn Anas**, who rejected the reports about the Jews of Madinah on the ground that they
+rested solely on accounts by sons of Jewish converts.
+
+**Al-Waqidi** (b. c. 748, qadi for al-Ma'mun) was *"considered reliable by most early Islamic
+scholars"* on the expeditions — and was savaged by the hadith critics: al-Shafi'i (*"All the
+books of al-Waqidi are lies"*), Yahya ibn Ma'in (*"He is weak. He is nothing. Not reliable!"*),
+Ahmad ibn Hanbal (*"He is a liar, makes alterations in the traditions"*), Ali ibn al-Madini,
+Ishaq ibn Rahwayh, Abu Zur'a al-Razi.
+
+**That tension is the tier's central lesson**: the two judgements answer different questions —
+usefulness for recording history against reliability for establishing a binding report. A
+source can be genuinely both.
+
+Also recorded: **Guillaume's 1955 translation merged Ibn Hisham with al-Tabari's Ibn Ishaq
+material**, so a passage cited as "Ibn Ishaq" from it may rest on either transmission.
+
+### Where facts come from, stated honestly
+
+**The Prophet's mother's name does not appear anywhere in the hadith collections used here.**
+Searching the corpus for "Aminah" returns nothing. So tier 1 attributes it — and the father's
+name, the birthplace, the ages, the Makkan and Madinan spans — to **the sira literature**,
+while the first revelation, Hudaybiyyah, the battles and the Ashura change carry **Bukhari**
+citations. One tier-5 question asks the learner why this category cites the two differently.
+
+### Tier 6 — the Abu Jandal episode
+
+Bukhari 2711 gives the tier its worked example: Suhayl ibn 'Amr's condition that anyone coming
+from the Makkan side be returned **even if Muslim**; the Muslims *"did not like this condition
+and got disgusted with it"*; Abu Jandal returned to his father; and then the exception for the
+believing women, made not by preference but when revelation addressed their case.
+
+Read without that context the term looks like an inexplicable concession — which is exactly
+what tier 6 exists to teach.
+
+### Sourcing note
+
+`en.wikipedia.org` returned **429** partway through the sira-source research — the throttling
+documented in `docs/SOURCES.md`. The work was reordered around it: tiers 1–4 were authored from
+the hadith corpus, which has no rate limit, and the Wikipedia-dependent tiers were done once the
+limit cleared. **Wikipedia-sourced attributions here carry the same review priority as the
+theology tiers in Creed and Allah's Names.**
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -258,4 +317,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Creed (Aqeedah) | 180 / 180 |
 | Allah's Names & Attributes | 180 / 180 |
 | Holy Quran | 180 / 180 |
-| **total** | **720 of 5,220** |
+| Prophetic Biography | 180 / 180 |
+| **total** | **900 of 5,220** |
