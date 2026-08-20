@@ -14,6 +14,7 @@ Then paste the emitted SQL through the Supabase MCP tool and VERIFY THE TIER COU
 run against the whole category after the last tier lands.
 """
 import json,sys,re,itertools
+import trgm  # faithful port of pg_trgm similarity(); see trgm.py
 def lit(s): return "'"+s.replace("'","''")+"'"
 def build(slug,tier,diff,rows,madhab='na'):
     """rows: list of (q, [choices], correct_index, explanation, citation)"""
@@ -51,23 +52,19 @@ def check(rows,label,existing=()):
         if len(set(r[1]))!=4: probs.append(f"row {n}: duplicate choices")
         if not (0<=r[2]<4): probs.append(f"row {n}: bad index")
         if not r[4].strip(): probs.append(f"row {n}: no citation")
-    # crude near-duplicate: shared 4-grams between stems
-    def grams(s): 
-        w=re.sub(r'[^a-z ]','',s.lower()).split()
-        return set(tuple(w[i:i+4]) for i in range(len(w)-3))
+    # Near-duplicate detection, using the SAME metric validate.sql uses.
+    # THRESHOLD must track the one in validate.sql, currently 0.5.
+    THRESHOLD = 0.5
     for a,b in itertools.combinations(range(len(rows)),2):
-        ga,gb=grams(qs[a]),grams(qs[b])
-        if ga and gb:
-            j=len(ga&gb)/len(ga|gb)
-            if j>0.35: probs.append(f"stems {a+1}&{b+1} similar ({j:.2f})")
+        sim = trgm.similarity(qs[a], qs[b])
+        if sim > THRESHOLD:
+            probs.append(f"stems {a+1}&{b+1} similar ({sim:.3f})")
     # cross-tier: compare against what the category already holds
     for n,q in enumerate(qs,1):
-        gq=grams(q)
         for e in existing:
-            ge=grams(e)
-            if gq and ge:
-                j=len(gq&ge)/len(gq|ge)
-                if j>0.35: probs.append(f"stem {n} similar to stored ({j:.2f}): {e[:50]}")
+            sim = trgm.similarity(q, e)
+            if sim > THRESHOLD:
+                probs.append(f"stem {n} similar to stored ({sim:.3f}): {e[:50]}")
     allst=Counter(' '.join(x.split()[:3]).lower() for x in list(qs)+list(existing))
     for k,v in allst.items():
         if v>4: probs.append(f"category-wide stem opening '{k}' would be {v}x")

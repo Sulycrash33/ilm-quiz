@@ -266,12 +266,26 @@ insert; none of them is guessable from the column list.
 
 ### Added while authoring Quran Commentary
 
-- **The pre-flight and the validator do not measure the same thing.** `emit.check` scores stems by
-  4-gram Jaccard overlap; `validate.sql` uses pg_trgm `similarity()`. A pair can pass one and fail
-  the other, and three did — including the *same quotation* used as the subject of two questions in
-  different tiers. The pre-flight is worth running because it catches stem overruns cheaply before
-  an insert; **the database check is still the authority**, and a category is not done until it
-  returns only `ok` rows.
+- **The pre-flight now computes the validator's own number.** It used to score stems by 4-gram
+  Jaccard while `validate.sql` used pg_trgm, so pairs passed locally and failed in the database —
+  three did, including the *same quotation* used as the subject of two questions in different
+  tiers. `scripts/question-bank/trgm.py` is now a faithful port of pg_trgm `similarity()`, and
+  `emit.check` uses it at the validator's threshold of 0.5.
+
+  The algorithm, confirmed against `show_trgm()` on the live database: lower-case, split on every
+  non-alphanumeric character, pad each word with **two leading spaces and one trailing**, take
+  sliding windows of 3, collapse to a **set**, then `|A n B| / (|A| + |B| - |A n B|)`.
+
+  Two details that matter for this project's text: Postgres treats **U+FDFA (ﷺ) as a word
+  character** — it hashes the multibyte trigrams, which is why `show_trgm` prints them as hex —
+  while **curly quotes and em dashes are separators**. Python's `str.isalnum()` agrees on all
+  three, so the port needs no special-casing; `trgm.py`'s self-test pins this down. Verified
+  end-to-end against all 16,110 pairs in one finished category: same count above threshold, same
+  maximum, same sum.
+
+  **Keep the threshold in `emit.check` in step with `validate.sql`.** Run the database check
+  anyway when a category is done — it also covers tier counts, answer repeats, stem repeats and
+  answer-position skew, which the pre-flight only partly duplicates.
 - **Watch for one source item reused as the subject of two questions.** Not the same wording — the
   same *thing*. Ibn 'Abbas's "I am among those firmly grounded in its ta'wil" anchored a tier-5
   question and a tier-8 question. Keep a list of the specific narrations, quotations and incidents
