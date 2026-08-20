@@ -90,7 +90,12 @@ owner asked to be protected against:
 **Do not report a category done until the validator comes back clean.** Fix and re-run.
 
 **Step 6 — report to the owner**: the tier counts, the validator output, and any bucket you
-had to report short. Then stop and wait before the next category.
+had to report short. **Then start the next category without waiting.**
+
+> **Standing instruction, 2026-08-20, from the owner: do not stop for permission between
+> tiers or between categories.** This supersedes the handoff's "stop and show him before
+> starting the next". Report what you finished and keep going. The four items under *Stop and
+> ask the owner only for these* below are still the only reasons to halt.
 
 ## If you run out of context mid-category
 
@@ -201,6 +206,11 @@ insert; none of them is guessable from the column list.
   other* even though every fact is different. **Cap any one frame at two uses per category**
   and vary the verb as well as the subject. It costs nothing while drafting and is expensive
   to repair afterwards.
+- **Trigram similarity ignores word order.** Two questions differing only in the arrangement
+  of the same words score **1.000** — "What does naskh al-hukm duna al-tilawa describe?"
+  against "What does naskh al-tilawa duna al-hukm describe?" were flagged as identical. Where
+  a subject has paired terms that are mirror images of each other, ask about them in genuinely
+  different shapes rather than swapping the order.
 - **Categories with a dominant shared noun collide hardest.** In Holy Quran nearly every
   question contains "Quran" or "surah", so short questions sit above 0.5 similarity on the
   shared words alone. Write longer, more specific stems there, and prefer frames that name

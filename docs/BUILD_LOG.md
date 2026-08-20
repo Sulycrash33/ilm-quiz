@@ -192,6 +192,64 @@ than to repair it afterwards.
 
 ---
 
+## Holy Quran — 180 of 180 · complete, validator clean
+
+Authored 2026-08-20. Fourth category. **All nine tiers at 20, clean on every check.**
+
+### Sourcing
+
+Chapter facts come from the quran.com `chapters` endpoint rather than memory: 114 surahs,
+6,236 verses, 86 Makkan against 28 Madinan, al-Baqarah longest at 286 verses, and **three**
+surahs tied on the minimum of three (al-'Asr, al-Kawthar, an-Nasr) — a detail easy to get
+wrong by naming al-Kawthar alone.
+
+Around 45 verses read through the API before use. Hadith through the corpus, with gradings:
+Bukhari 5015 (al-Ikhlas as a third of the Qur'an), Muslim 874, Abu Dawud 1400 and 1458,
+Ibn Majah 1369, 3785, 3786, Tirmidhi 2886.
+
+### Tier 5 — surah virtues, a genre where grading matters most
+
+The tier is built on the fact that virtue narrations attract unsound material:
+
+- **Abu Dawud 1400 / Ibn Majah 3786** (al-Mulk interceding): Hasan, Sahih, and *Hasan
+  Lighairihi* from different graders — a spread entirely **within** acceptance, used to teach
+  that such a spread is not a dispute.
+- **Tirmidhi 2886** (protection from reciting the opening of al-Kahf): **Da'if** from
+  Al-Albani and Zubair Ali Zai, **Shadh** from Ahmad Shakir. Widely repeated, and the tier
+  teaches that it should be stated with its grading rather than asserted plainly. *Shadh* also
+  earns its own question, as a defect distinct from a weak chain.
+
+### Tier 8 — abrogation, contested to its foundations
+
+Sourced from the Naskh literature rather than asserted. What the tier teaches:
+
+- **there has never been consensus** on how many passages naskh affects; estimates run from
+  **fewer than ten to over five hundred**
+- az-Zuhri (d. 742) held 42; the count rose to a peak around the eleventh century, then fell
+- whether the Sunnah may abrogate the Qur'an divides the **Shafi'i and Hanafi** schools —
+  a question of usul, which is why it splits schools rather than individuals
+- a **minority** hold that verses are not abrogated at all, favouring reinterpretation
+- some argue that **2:106 and 16:101 do not refer to the concept at all**, so even the
+  scriptural basis is disputed
+
+Two questions turn that on the reader: why "how many verses are abrogated" cannot be asked
+as a question of fact, and what is wrong with a teacher stating five hundred plainly.
+
+**Wikipedia-sourced; same review priority as the theology tiers in Creed and Allah's Names.**
+
+### What the validator caught
+
+A **1.000 similarity** between two questions differing only in word order — *naskh al-hukm
+duna al-tilawa* against *naskh al-tilawa duna al-hukm*. Trigram similarity is order-insensitive,
+so mirror-image terminology needs genuinely different question shapes. Recorded in the runbook.
+
+Frame budgeting, added to the runbook after the previous category, worked: tiers 4, 7 and 9
+passed first time, against six collisions in tier 1 before the rule was applied.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -199,4 +257,5 @@ than to repair it afterwards.
 | Five Pillars | 180 / 180 |
 | Creed (Aqeedah) | 180 / 180 |
 | Allah's Names & Attributes | 180 / 180 |
-| **total** | **540 of 5,220** |
+| Holy Quran | 180 / 180 |
+| **total** | **720 of 5,220** |
