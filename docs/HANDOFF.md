@@ -97,9 +97,19 @@ the narration itself.
 
 ## Still blocking
 
-**The category list.** The owner is rearranging it — cutting some categories and adding
-others. Do not author depth into categories that may be about to be deleted. Wait for the
-final list.
+~~**The category list.**~~ **Settled 2026-08-20.** The owner gave the final list and it is
+recorded, ordered, and mapped tier by tier in `docs/CATEGORY_TIER_MAPS.md`. Authoring is no
+longer blocked on it.
+
+**29 categories x 9 tiers x 20 questions = 5,220**, up from the 25 x 180 = 4,500 above. The
+owner's own list came to 26; he then accepted three additions — Usul al-Fiqh, Du'a & Dhikr,
+and Preservation of the Qur'an (Jam' & Qira'at) — proposed because the sources sustain nine
+genuine tiers in each. **Intimacy** was renamed **Marriage & Family Life** at his direction;
+marital intimacy remains a strand within it.
+
+Web access was also confirmed the same day. `sunnah.com` and `dorar.net` are both walled off
+behind Cloudflare and a key requirement; `fawazahmed0/hadith-api` replaces them as the hadith
+backbone. See `docs/SOURCES.md` for what was probed and what came back.
 
 He also asked that once the scouting is done, we suggest categories of our own, based on
 where the sources actually support nine tiers of genuine difficulty and where they do not.
