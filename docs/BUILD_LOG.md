@@ -4,63 +4,53 @@ One entry per category as it is authored. Numbers come from the database, not fr
 
 ---
 
-## Five Pillars — 170 of 180 · tier 8 short
+## Five Pillars — 180 of 180 · complete, validator clean
 
-Authored 2026-08-20. First category of the rebuild.
+Authored 2026-08-20. First category of the rebuild. **All nine tiers at 20.**
 
-| tier | target | actual | verdict |
-|---|---:|---:|---|
-| 1 Mubtadi | 20 | 20 | ok |
-| 2 Talib | 20 | 20 | ok |
-| 3 Hafiz | 20 | 20 | ok |
-| 4 Faqih | 20 | 20 | ok |
-| 5 Muhaddith | 20 | 20 | ok |
-| 6 Mufassir | 20 | 20 | ok |
-| 7 Shaykh | 20 | 20 | ok |
-| **8 Imam** | 20 | **10** | **SHORT** |
-| 9 Mujaddid | 20 | 20 | ok |
+Validator clean on every check: no near-duplicate pair above 0.5 similarity, no correct
+answer appearing more than twice, no opening stem appearing more than four times.
 
-Validator clean otherwise: no near-duplicate pairs above 0.5, no correct answer appearing
-more than twice, no opening stem appearing more than four times across all 170.
+### Tier 8 was short at 10, then closed
 
-### Why tier 8 is short, precisely
+Worth recording, because the recovery is the reusable part. Tier 8 asks where the schools
+differ *and why*, and misattributing a position breaches the one hard condition in the
+handoff. A first pass sourced only ten differences to a citable standard — a wrong fatwa
+page on islamweb, then Wikimedia rate limiting — so the bucket was reported short at 10
+rather than padded from memory.
 
-**This is not a claim that the bucket cannot hold twenty.** Comparative fiqh on the pillars
-is vast — al-Jaziri devotes volumes to exactly this. The shortfall is in **sourcing**, not
-in the material.
+It was then closed properly. **al-Jaziri's *al-Fiqh ala al-Madhahib al-Arbaa* is available
+as plain text on archive.org**, 3.8 MB, Volume I being *Modes of Islamic Worship* — exactly
+the volume covering the pillars:
 
-Tier 8 asks where the schools differ *and why*. Getting that wrong means attributing a
-position to a school that does not hold it, which breaches the one hard condition in the
-handoff. Ten differences were sourced to something citable:
+```
+https://archive.org/download/IslamicJurisprudenceAccordingToTheFourSunniSchoolsAlFiqhalaAlMadhahibAlArbaah/IslamicJurisprudenceAccordingToTheFourSunniSchoolsAlFiqhalaAlMadhahibAlArbaah_djvu.txt
+```
 
-- zakat al-Fitr paid as cash — Hanafi permits, the other three do not
-- intention as an obligation of wudu — Maliki, Shafii, Hanbali
-- muwalat in wudu — Maliki and Hanbali
-- zakat extended to horses — Hanafi alone, at one mithqal with no nisab
-- zakat on agricultural produce — Abu Yusuf and Muhammad against Abu Hanifa
-- tayammum when water would consume the prayer's time — Maliki
-- turning a small stone in tayammum — Hanafi and Maliki
-- fard distinguished from wajib, and what Hanafi usage requires to establish fard
+Follow redirects, or resolve the host from `archive.org/metadata/<item>` first; a plain
+request returns zero bytes. Scanning it for windows naming three or more schools yields 464
+comparative passages. Eleven questions came out of it directly.
 
-The remaining ten were **not** written, because the only way to reach twenty in this session
-would have been to assert attributions from memory. **`islamweb.net`, `dar-alifta.org` and
-al-Jaziri's *al-Fiqh ala al-Madhahib al-Arbaa* on archive.org are all reachable** (see
-`docs/SOURCES.md`) and none was mined properly — the attempt that was made hit a wrong
-fatwa page and Wikimedia rate limiting. **A dedicated sourcing pass against al-Jaziri should
-close this bucket.**
+**It also corrected work already written.** A tier-8 question sourced from Wikipedia said the
+intention in wudu is "a formal obligation" in Maliki, Shafii and Hanbali. al-Jaziri is
+sharper: for the Hanbalis it is a *condition of validity*, for the Malikis and Shafiis a
+*pillar*, and for the Hanafis an emulation of the Sunnah that is neither. That question was
+deleted and replaced by two carrying the real distinction. **Prefer al-Jaziri over Wikipedia
+for any school attribution.**
 
 ### Citations
 
-Every citation was checked against real source text before use, not recalled:
+Every citation checked against real source text before use, not recalled:
 
 - 24 Qur'an verses through the quran.com API
-- hadith numbers through the fawazahmed0 corpus, with gradings where the corpus carries
-  them: Bukhari 8, 1405, 1447, 1503, 1623, 1936; Muslim 874, 1570, 1572; Abu Dawud 59, 61,
-  171, 175, 408, 415, 494, 594; Nasai 2333; Tirmidhi 787
+- hadith through the fawazahmed0 corpus, with gradings where carried: Bukhari 8, 1405, 1447,
+  1503, 1623, 1936; Muslim 874, 1570, 1572; Abu Dawud 59, 61, 171, 175, 408, 415, 494, 594;
+  Nasai 2333; Tirmidhi 787
 - Tafsir Ibn Kathir on 2:158 through the quran.com tafsir endpoint
-- the ten tier-8 comparative positions are cited to their source and marked as such
+- eleven tier-8 positions from al-Jaziri; four earlier ones remain Wikipedia-sourced and
+  should be re-checked against al-Jaziri when convenient
 
-Tier 8's school attributions are **the highest scholar-review priority in this category**.
+Tier 8 remains the highest scholar-review priority in this category.
 
 ### Notes for review
 
@@ -70,4 +60,4 @@ Tier 8's school attributions are **the highest scholar-review priority in this c
   hadith of the Prophet.
 - Tier 9 answers are framed as *the reasoning to apply*, not as settled rulings, because
   these are cases on which qualified scholars genuinely differ.
-- All 170 rows are `review_status = 'ai_drafted'`. None is published.
+- All 180 rows are `review_status = 'ai_drafted'`. None is published.

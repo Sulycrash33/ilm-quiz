@@ -136,8 +136,22 @@ what an app serving all four madhahib needs.
 | `daruliftaa.com` | 522 | their server erroring, retry later |
 
 **al-Jaziri's *al-Fiqh 'ala al-Madhahib al-Arba'a*** — the canonical four-school comparison —
-is on archive.org in full text and `archive.org/metadata/...` returns 200. That single work
-is the best defence against presenting one school's position as consensus.
+is on archive.org **as 3.8 MB of plain text**, and it is the single most useful source found
+in this whole scout. Volume I is *Modes of Islamic Worship*, covering the pillars.
+
+```
+https://archive.org/download/IslamicJurisprudenceAccordingToTheFourSunniSchoolsAlFiqhalaAlMadhahibAlArbaah/IslamicJurisprudenceAccordingToTheFourSunniSchoolsAlFiqhalaAlMadhahibAlArbaah_djvu.txt
+```
+
+**Follow redirects** (`curl -sSL`), or resolve the host from `archive.org/metadata/<item>`
+first — a plain request returns zero bytes with no error. Scanning for passages naming three
+or more schools yields 464 comparative windows.
+
+**Prefer it over Wikipedia for any school attribution.** Used against Five Pillars tier 8 it
+corrected a question already written: Wikipedia called the intention in wudu "a formal
+obligation" in three schools, where al-Jaziri distinguishes a *condition of validity*
+(Hanbali) from a *pillar* (Maliki, Shafi'i) from an emulation of the Sunnah that is neither
+(Hanafi). That is exactly the precision tier 8 needs and Wikipedia does not carry.
 
 ## 4. Classical Arabic texts
 
