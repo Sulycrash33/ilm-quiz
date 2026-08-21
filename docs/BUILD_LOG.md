@@ -816,6 +816,64 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 16. Afterlife (Akhirah) (`akhirah`) — 180 / 180
+
+**Verified anchors**: Qur'an 22:7, 64:7 (resurrection is certain), 2:24-25, 21:47 (the scale, no
+soul wronged), 18:105 (deeds rendered weightless by disbelief), 15:43-44 (Hell's seven gates),
+39:68 (two blowings of the Trumpet), 27:87 (a blowing causing terror), 11:107 (the conditional
+clause used in the Hell-eternity debate), 4:169, 33:65, 72:23, 98:6 (*khalidina fiha abada*),
+75:22-23 (radiant faces looking at their Lord), 83:15 (the veiled, used by al-Shafi'i as evidence
+for seeing Allah), 47:15 (Paradise's rivers of milk, wine and honey), 81:5 (animals gathered);
+Sahih al-Bukhari 4699 (the grave's testimony), 806 (As-Sirat and its hooks), 2440 (the second
+bridge for interpersonal claims), 2790, 2809 (Paradise's hundred grades, Al-Firdaus), 6472, 5705
+(the seventy thousand who enter without reckoning, 'Ukasha bin Muhsin's exchange), 218, 1378, 6055
+(punishment in the grave for urine and gossip), 3803 (the Throne shaking at Sa'd bin Mu'adh's
+death), 554, 573, 7434, 7435, 7436, 806, 4581, 6573, 7437, 7438 (seeing Allah compared to seeing
+the moon and sun), 238, 876, 3486 (this Ummah last yet foremost), 4814, 4935 (the interval between
+the two blowings, the surviving coccyx bone); Sahih Muslim 7045 (the physically large man weighing
+nothing on the scale), 2868 (why the Prophet ﷺ will not ask to let people hear the grave's
+punishment); Musnad Ahmad and Sunan an-Nasa'i 2055 (the grave-squeeze narration tied to Sa'd bin
+Mu'adh); Jami' at-Tirmidhi 1071 (the grave widened seventy cubits); Sunan Abu Dawud 4753 (the
+believer's and disbeliever's contrasting graves).
+
+**Tier 5 is the category's grading-discipline tier**, built around a genuine surprise: the popularly
+repeated claim that even Sa'd bin Mu'adh's grave was "squeezed" despite the Throne shaking at his
+death turns out, on live research, to rest on a chain al-'Iraqi rated good, adh-Dhahabi called
+reliable, and al-Albani accepted as authentic (Musnad Ahmad; Sunan an-Nasa'i 2055) — the opposite
+of the "popular therefore weak" assumption the tier exists to correct. It is set beside Tirmidhi
+1071 (graded only *hasan gharib*) and Abu Dawud 4753 (graded *sahih* by al-Albani in *Ahkam
+al-Jana'iz*) to show that overlapping content does not merge two narrations' grades into one.
+
+**Tier 6 works through the classical literal-versus-figurative question** for three cases — seeing
+Allah (*ru'yatullah*), Paradise's rivers, and As-Sirat — naming the Sunni majority's literal
+reading against the Mu'tazila's metaphorical one on vision specifically, without overstating either
+side's numerical weight.
+
+**Tier 7 reconciles two live tensions rather than asserting a false consensus**: Qur'an 27:87's
+blowing of terror against 39:68's two blowings (Ibn Kathir, al-Tabari and al-Tha'labi's three-fold
+*nafkhat al-faza'/al-sa'q/al-qiyam* framework, set candidly against al-Qurtubi's own two-blowing
+count — live research found sources genuinely differ on which view is more widely held, so neither
+is presented as "the" majority) and the "last yet foremost" tension of Bukhari 238.
+
+**Tier 8, flagged in the tier map as contested-scope, states two live-researched internal-Sunni
+debates non-partisanly**: the eternity of Hellfire (the overwhelming *khalidina fiha abada*
+majority against Ibn al-Qayyim's well-documented *fana' al-nar* leaning in *Hadi al-Arwah* and
+*Shifa' al-'Alil* — with Ibn Taymiyyah's own personal stance left explicitly unsettled, since later
+Hanbali scholars disputed the attribution to him); and the mechanism of grave-punishment (majority
+body-and-soul-together against Ibn Hazm's soul-only minority and Ibn al-Qayyim's *Kitab al-Ruh*
+"ta'alluq" proposal) — deliberately declining to invent an al-Ghazali position on the latter that
+could not be confirmed against a specific work.
+
+**Tier 9's capstone reasons from tiers 1-8's own established principles into new, unaddressed
+cases** (Paradise's unlisted fruits, a partial match to the seventy-thousand's named qualities, an
+unfamiliar hadith found online, an unnamed Paradise grade, Qur'an 81:5's gathered animals) rather
+than introducing fresh unverified claims, closing on the distinction between a text's silence and
+its denial.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -835,4 +893,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Islamic Ethics (Akhlaq) | 180 / 180 |
 | Du'a & Dhikr | 180 / 180 |
 | Sufism & Spirituality | 180 / 180 |
-| **total** | **2,700 of 5,220** |
+| Afterlife (Akhirah) | 180 / 180 |
+| **total** | **2,880 of 5,220** |
