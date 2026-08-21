@@ -501,6 +501,50 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 9. Tajwid (`tajwid`) — 180 / 180
+
+The most technical category so far, and the one where a vague answer is most obviously wrong.
+The five anchor verses were pulled from the quran.com API rather than quoted from memory —
+**73:4** (*wa rattil al-Qur'ana tartila*), **16:98** (the isti'adhah), **17:106** and **25:32**
+(revelation spaced out over time) and **75:16–18** (do not hasten; follow its recitation).
+
+The rule content is stated with its conditions attached, because a rule without its condition is
+simply false: qalqalah only when the letter bears a sukun, greater qalqalah only at a stop, madd
+lazim invariant because its cause is inherent while madd 'arid varies because its cause is the
+reciter's own choice to stop. Tier 4 turns on exactly that distinction and tier 7 uses it to
+resolve apparent collisions between rules.
+
+**Tier 8 is the regional tier again, and it is concrete.** Verified madd munfasil lengths:
+
+| transmission | madd munfasil |
+|---|---|
+| Hafs from 'Asim | 4 or 5 counts |
+| Warsh from Nafi' | 6 counts |
+| Qalun from Nafi' | 2 or 4 counts |
+
+Warsh and Qalun transmit the *same reader*, which makes the point that naming the reader is not
+enough — the route must be named too. Madd badal sharpens it further: two counts everywhere
+except Warsh by the route of al-Azraq, which transmits two, four and six. The practical question
+for a Nigerian learner studying from an Egyptian recording is a tier-8 question.
+
+### Two tooling failures found and fixed mid-category
+
+**A failed pre-flight still wrote its file.** `emit.check()` printed `PROBLEMS:` and returned
+`False`; every authoring script then called `emit.build()` regardless. Nothing enforced the check
+— it had worked only because I re-ran after reading the output. A failing Tajwid run overwrote
+Hadith Sciences' `t1.sql` before I noticed. `check()` now raises `SystemExit(1)`. The database
+was verified intact (Hadith Sciences still 180/180); only a staging artifact was lost.
+
+**Staging files were named by tier, so categories collided.** `t*.sql` meant Hadith Sciences'
+tiers and Tajwid's alike, and the cross-tier duplicate loader globbed across both — reporting a
+page of phantom collisions that were really another category's stems. Staging now lives in
+`cat/<slug>/<tier>.sql`, and the loader is pointed at one category's directory with the file
+being written passed as `exclude`.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -513,4 +557,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Hadith Sciences | 180 / 180 |
 | Quran Commentary (Tafsir) | 180 / 180 |
 | Preservation of the Qur'an | 180 / 180 |
-| **total** | **1,440 of 5,220** |
+| Tajwid | 180 / 180 |
+| **total** | **1,620 of 5,220** |
