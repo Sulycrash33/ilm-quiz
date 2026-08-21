@@ -545,6 +545,53 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 10. Arabic Language (`arabic_language`) — 180 / 180
+
+Built on **corpus.quran.com's syntactic treebank**, queried live. Every grammatical claim about a
+specific word is taken from its annotation rather than from memory, and the citations say so.
+
+What the treebank gave that memory would not have:
+
+- **2:255** — `sinatun` (slumber) is annotated **feminine**, `nawmun` (sleep) **masculine**, two
+  near-synonyms side by side in one verse, and the verb `takhudhuhu` is feminine singular because
+  it agrees with the first. Tier 2's gender questions rest on that rather than on a rule of thumb.
+- **2:124** — `ibrāhīma` accusative, `rabbuhu` nominative. The object precedes the subject and only
+  the endings say which is which.
+- **9:3** — the same two words appear **twice in one verse** with different endings: `warasūlihi`
+  genitive (governed by *min*), `warasūluhu` nominative. Reading the second as genitive would
+  reverse the verse. This is tier 6's spine.
+- **71:10** — `is'taghfirū` is a **Form X imperative**, the cleanest illustration of that measure's
+  "seeking" sense, from a word every learner already knows.
+- **73:4** — `l-qur'āna` accusative as object, `tartīlan` accusative as **absolute object**, and
+  both `rattili` and `tartīlan` annotated **Form II**: the masdar matching its own verb's measure.
+  The same verse anchors Tajwid tier 1.
+
+**Tier 4** ("when a noun takes nasb") is therefore built from five verified governors rather than
+a remembered list: object of a verb, absolute object, the *lā* of absolute negation (2:255), the
+noun of *inna* (35:28), and the predicate of *kāna* (71:10).
+
+**Tier 7 turns on a case the endings cannot settle.** At 3:7 `l-rāsikhūna` is nominative on *both*
+parsings — as the subject of a resumed sentence, or coordinated with the nominative name of Allah.
+So unlike 9:3, i'rab does not decide; what decides is how the *wāw* is read and which sense of
+*ta'wīl* is meant. The corpus marks it resumptive (استئنافية), and the tier says plainly that this
+is one editorial choice among two attested classical parsings, not a verdict.
+
+**Tier 9** parses **49:13**, which exercises most of the category at once: a vocative, two *inna*
+constructions, a preposition with genitive, two objects in nasb, an *iḍāfa*, an accusative adverb
+of place (a nasb cause tier 4 had not covered), and `litaʿārafū` — **Form VI**, whose reciprocal
+sense *is* the verse's argument.
+
+Tier 5 and tier 8 are the attribution tiers: al-Khalil and Sibawayh for Basra, al-Kisa'i and
+al-Farra' for Kufa, with **al-Anbari's *al-Insaf fi Masa'il al-Khilaf*** as the work that preserves
+the disputes. Verified details worth keeping: al-Khalil is cited **608 times** in al-Kitab; the
+schools take **opposite** positions on whether the masdar or the verb is the origin of derivation;
+and al-Kisa'i heads a grammatical school *and* is one of the seven canonical readers — the same
+name the Preservation and Tajwid categories already carry.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -558,4 +605,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Quran Commentary (Tafsir) | 180 / 180 |
 | Preservation of the Qur'an | 180 / 180 |
 | Tajwid | 180 / 180 |
-| **total** | **1,620 of 5,220** |
+| Arabic Language | 180 / 180 |
+| **total** | **1,800 of 5,220** |
