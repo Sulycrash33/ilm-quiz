@@ -456,6 +456,51 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 8. Preservation of the Qur'an (`quran_sciences`) — 180 / 180
+
+Built on **Sahih al-Bukhari Book 66, Virtues of the Qur'an**, read directly from the corpus
+rather than from memory: 4986 (Zayd ibn Thabit on Abu Bakr's collection), 4987 (Anas ibn Malik
+on 'Uthman's standardisation), 4991 (Ibn 'Abbas on the seven ahruf) and 4992 ('Umar and Hisham).
+
+What the primary text gave that a summary would not:
+
+- Abu Bakr **and** Zayd raised the *same* objection — "How can you do something which Allah's
+  Messenger (ﷺ) did not do?" The narration records the hesitation twice before recording the
+  decision. A story built to justify the collection would not open that way.
+- 'Uthman's tie-break instruction was addressed to **"the three Quraishi men"** — which marks
+  the fourth, Zayd, as the Ansari on the committee. That phrasing is a tier-3 question.
+- The 'Umar/Hisham report sits at **4992 in Book 66 and again at 2419 in Book 44 (Disputes)**.
+  One narration, two chapter headings — which is a concrete way to show how a chapter-arranged
+  collection works, and why its numbered total exceeds its count of distinct reports.
+
+**Tier 7 is the regional tier.** Warsh from Nafi' is the dominant transmission in Nigeria and
+across West Africa, so the differences between Warsh and Hafs are worked through concretely —
+3:146 (*qatala* / *qutila*) and 2:184 (singular / plural *miskin*) — with the undotted early
+script explained as the reason both fit one rasm.
+
+**Tier 8 states plainly that the ahruf question is unsettled**, sets out the three families of
+position, and separates it from the standing of *shadhdh* readings, where scholars differ again.
+
+### The pre-flight now matches the database exactly
+
+The gap flagged in the Tafsir entry is closed. `scripts/question-bank/trgm.py` is a faithful
+port of pg_trgm's `similarity()` — confirmed against `show_trgm()` on the live database:
+lower-case, split on non-alphanumerics, pad each word with **two** leading spaces and one
+trailing, collect trigrams into a **set**, then Jaccard. It reproduces Postgres to six decimal
+places on real question text.
+
+It earned its keep immediately, catching three collisions that the old 4-gram check would have
+passed through to the database — including one tier-5 stem that simply repeated a tier-2
+question, and a 0.638 match against a stored Tafsir stem.
+
+Also fixed: `existing_stems.py` was reading stems with the regex `\('((?:[^']|'')*)'`, which is
+ambiguous about where a doubled `''` ends a literal and can overrun into the next column. It now
+uses the shared tokenizer. Verified identical output on all 180 rows before the swap.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -467,4 +512,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Prophetic Biography | 180 / 180 |
 | Hadith Sciences | 180 / 180 |
 | Quran Commentary (Tafsir) | 180 / 180 |
-| **total** | **1,260 of 5,220** |
+| Preservation of the Qur'an | 180 / 180 |
+| **total** | **1,440 of 5,220** |
