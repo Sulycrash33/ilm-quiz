@@ -874,6 +874,69 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 17. Companions (Sahaba) (`companions`) — 180 / 180
+
+**Verified anchors**: Sahih al-Bukhari 3656, 6738 (the Khalil hadith, Abu Bakr), 6280 ('Ali's
+"Abu Turab" nickname, narrated by Sahl bin Sa'd), 466, 3654 (Abu Bakr weeping at the "choice"
+sermon), 3294, 6085 (Satan avoiding 'Umar's path), 2778 ('Uthman's own account, under siege, of
+the well of Ruma and equipping the army of Tabuk), 4416, 3706 (Hadith al-Manzila, 'Ali compared to
+Aaron), 946, 4119 (the two groups' differing 'Asr-prayer readings at Banu Qurayza, and the
+Prophet's ﷺ non-condemnation of either), 3667-3668 ('A'ishah's full account of 'Umar's shock,
+Abu Bakr's address and Qur'an 39:30/3:144, and the Saqifah negotiation); Jami' at-Tirmidhi 3686
+and Musnad Ahmad ('Umar's contested "prophet after me" saying, genuinely disputed between
+al-Albani's endorsement and Ibn al-Jawzi's rejection); Sunan Abu Dawud 4607 and Jami' at-Tirmidhi
+2676 (the Khulafa' ar-Rashidun hadith); Ibn Hajar al-'Asqalani's *al-Isaba fi Tamyiz as-Sahaba*
+(the classical sahabi definition).
+
+**Tiers 1-3 build identity from specific, traceable facts** — kunyas (As-Siddiq, Al-Farooq,
+Dhun-Nurayn, Abu Turab, Abu Hurairah) each tied to a specific incident rather than an arbitrary
+label; nisbas (Al-Ghifari, Al-Ansari, Al-Ash'ari) distinguished from kunyas; and the four
+caliphs' successions, tenures, and causes of death individually verified rather than generalised.
+This is also where the category's recurring bug pattern first appeared and was fixed: filling in
+the same question template once per person (four "what was X's full name" questions, four "how
+did X become caliph" questions) trips `emit.check()`'s trigram similarity even with no wording
+literally repeated, since the check does not know the subject differs — logged in RUNBOOK.md.
+
+**Tier 4 states Ibn Hajar's classical three-part sahabi definition** (meeting the Prophet ﷺ,
+believing in him at that meeting, dying a Muslim) and works through its edge cases: no minimum
+duration, no requirement to have narrated hadith, no social-status restriction, and an explicitly
+flagged genuine dispute over very young children with no retained memory of the meeting.
+
+**Tier 5 pairs each caliph's Bukhari-sourced virtue with a grading exercise**, then contrasts
+'Umar's two virtue-sayings directly: the Satan-avoidance hadith (sahih, in Bukhari itself) against
+the popularly repeated "if there were a prophet after me" saying (hasan gharib per at-Tirmidhi,
+sahih per al-Albani, rejected by Ibn al-Jawzi — genuinely contested, not settled either way). This
+tier's insert also surfaced a second bug: four different "how is this graded?" questions sharing
+the identical correct-answer text ("Sahih, carrying the standing authenticity of material within
+Sahih al-Bukhari itself"), which passed `emit.check()` clean but failed the database's
+`answer_repeated` check after insertion — fixed by rephrasing three of the four and logged in
+RUNBOOK.md alongside the template-collision lesson.
+
+**Tiers 6-7 each work a single incident in full, primary-source depth**: 'Umar's shock at the
+Prophet's ﷺ death, Abu Bakr's address and the Saqifah negotiation (Bukhari 3667-3668, including
+the un-elaborated "Allah has killed him" exchange about Sa'd bin 'Ubadah, deliberately not
+extended beyond what the hadith itself states); and the Banu Qurayza 'Asr-prayer disagreement
+(Bukhari 946, 4119), read as validating sincere ijtihad without overclaiming that both readings
+were equally the Prophet's ﷺ actual intent.
+
+**Tier 8, flagged in the tier map as the hardest bucket, reports where historians differ on the
+Fitna without adjudicating between Companions**: the Battle of the Camel and Siffin's parties
+named without ranking blame; al-Tahawi's, al-Sabuni's, Ibn Taymiyyah's (*Minhaj al-Sunna*), and
+al-Nawawi's own creedal instructions to withhold judgment, quoted directly; 'A'ishah's reported
+regret hedged as widely repeated but not independently verified to a single isnad; and
+'Abdullah ibn Saba's historicity presented as a live, unresolved dispute among modern historians
+(skeptics including Wilferd Madelung and Bernard Lewis; affirming voices including Sean Anthony),
+tracing the core issue to reliance on the weakly-graded narrator Sayf ibn 'Umar al-Tamimi.
+
+**Tier 9's capstone reapplies each of tiers 1-8's specific principles to new, unaddressed cases**
+(a modern ambiguous instruction, an unsourced viral virtue-saying, an overconfident historical
+verdict, an isolated out-of-context quotation, a hypothetical near-miss sahabi case) rather than
+merely repeating prior facts.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -894,4 +957,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Du'a & Dhikr | 180 / 180 |
 | Sufism & Spirituality | 180 / 180 |
 | Afterlife (Akhirah) | 180 / 180 |
-| **total** | **2,880 of 5,220** |
+| Companions (Sahaba) | 180 / 180 |
+| **total** | **3,060 of 5,220** |

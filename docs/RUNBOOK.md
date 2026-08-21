@@ -325,3 +325,35 @@ insert; none of them is guessable from the column list.
   a preview, a summary, or recollection of what the file contains. Verify immediately after each
   insert with a per-tier `group by correct_choice_index` count — cheap enough to run every time,
   and it would have caught this on the first tier instead of after all nine.
+
+### Added while authoring Companions (Sahaba)
+
+- **A tier built around "the same fact, once per person" (four caliphs' full names, four
+  Companions' kunyas, four death-dates) collides with itself even when no wording is literally
+  copy-pasted.** `emit.check()`'s trigram similarity doesn't care that the *subject* differs —
+  "What was Abu Bakr's family relationship to the Prophet (ﷺ)?" and the same sentence with
+  "'Umar" swapped in share enough trigrams to trip the >0.5 threshold. Filling in a template four
+  times is the failure mode, not a typo. The fix is to break the parallel structure itself:
+  vary which noun phrase leads the sentence, fold two facts into one combined question instead of
+  two near-identical ones, or ask for a specific pairing/contrast across all four instead of the
+  same question four times. This came up repeatedly — tier 1's four "full name" and four "family
+  relationship" questions, tier 2's four "how did X become caliph" questions — and cost more
+  rounds of fixing than any other single pattern this category produced.
+- **The database's `answer_repeated` check (same correct-answer text used more than twice) can
+  pass `emit.check()` clean and still fail once inserted, for the same reason as the point above:**
+  four different "how is this hadith graded?" questions whose correct answer was all, word for
+  word, "Sahih, carrying the standing authenticity of material within Sahih al-Bukhari itself."
+  `emit.check()` only compares within one tier's batch against `existing`-loaded stems; it does
+  not itself flag a repeated *answer* text the way `validate.sql`'s database check does. Vary the
+  phrasing of a recurring correct answer (e.g. "graded sahih, since inclusion in Sahih al-Bukhari
+  itself confers that standing" vs "sahih — the same standing authenticity as other Bukhari
+  material") whenever the same underlying fact will be the correct choice more than twice in a
+  category, and always run the full-category `answer_repeated` query — not just `tier_count`,
+  `near_duplicate`, `answer_index_skew` and `stem_repeated` — since this bug produced zero
+  warnings anywhere except that one specific database check.
+- **For the hardest, non-partisan tier (differing historians on the Fitna), naming specific
+  scholars for specific positions and explicitly flagging what is *not* confirmed (Ibn
+  Taymiyyah's own personal stance on fana' al-nar-style leniency was left ambiguous by design;
+  'A'ishah's reported regret over the Camel was hedged as "widely reported, not independently
+  verified to a single isnad") kept the tier factual without requiring this project to adjudicate
+  between Companions — exactly the instruction the tier map gives for this bucket.
