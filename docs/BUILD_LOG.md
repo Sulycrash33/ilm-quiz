@@ -1025,6 +1025,30 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 20. Miracles & Signs (`miracles_signs`) — 180 / 180
+
+Verified anchors: Qur'an 2:23-24/10:38/11:13/17:88 (Qur'anic inimitability challenge); 13:38/40:78 (signs by Allah's permission only); 54:1-2 (moon-splitting) with Sahih al-Bukhari 3868/3869 and Sahih Muslim 2800a; 17:1 (Isra') with Sahih al-Bukhari 3887 and Sahih Muslim 162 (Mi'raj); Musa's signs (7:107-108/20:17-22/27:10/28:31/17:101); 'Isa (3:49/19:29-33), Salih (7:73/11:64/26:155), Ibrahim (21:69), Sulayman (21:81-82/27:16-19/27:38-40), Dawud (34:10/21:79-80), Yunus (37:142-144), Nuh (29:15); al-Baqillani's *at-Tamhid* on mu'jizah conditions; Sahih al-Bukhari 3583/3572/3579 (tree trunk, water from fingers) against Sunan Abi Dawud 2549/al-Hakim's *al-Mustadrak* (complaining camel) against al-Bayhaqi's *Dala'il al-Nubuwwah* (pebbles) against al-Albani's/Ibn 'Uthaymeen's grading of the spider-web story; Ibn Kathir's, al-Tabari's, al-Razi's, al-Qurtubi's, Rashid Rida's, al-Maraghi's, al-Shanqiti's, and Sayyid Qutb's readings of 54:1; classical Ash'ari-Maturidi-Hanbali consensus and Ibn Taymiyyah's writings on karamat al-awliya.
+
+This is the category the tier map itself flags as carrying the highest risk of fabricated material in popular circulation, requiring "the tightest citation discipline of the 29" and the explicit rule that a weak narration may never ground a ruling question — only a question about the narration itself.
+
+**Tiers 1-3** cover the general basis for prophetic signs (13:38, 40:78) and the Qur'an's own claimed inimitability (the four challenge verses, 2:23-24/10:38/11:13/17:88, argued as the Qur'an's own status as "the greatest sign" since its challenge stays open and testable rather than being a single historical event); the moon-splitting, Isra'/Mi'raj, and Musa's staff, each showing a Qur'anic core with hadith or repeated-telling supplying further detail; and prophet-by-prophet sign matching (nine prophets, each tied to an exact citation).
+
+**Tier 4** lays the definitional groundwork this category needed before its hardest tier: the mu'jizah/karamah/istidraj kalam framework, al-Baqillani's five evidentiary conditions for a mu'jizah, and the direct consequence that prophethood's closure means no event today can function as a mu'jizah.
+
+**Tier 5, "this category's whole discipline,"** grades four specific miracle-hadiths side by side — the tree-trunk and water-from-fingers narrations (Sahih al-Bukhari, the strongest tier), the complaining camel (sound but outside the Sahihayn, graded by al-Hakim with al-Dhahabi's concurrence), the pebbles-glorifying narration (a weaker, less certain chain), and the spider-web-at-Thawr story (no authentic basis at all, ruled da'if by al-Albani and called unauthenticated by Ibn 'Uthaymeen) — plus the shadowless-Prophet claim and the NASA-moon-photo myth as, respectively, a weak-chain example and a modern empirical misattribution distinct from any hadith-grading question.
+
+**Tier 6** pairs a genuine classical mufassir divide (54:1's literal-past majority against a named minority reading it as a future eschatological sign, plus Sayyid Qutb's separate emphasis argument) against a case with no comparable genuine classical debate (34:12's wind-sign, essentially classical consensus as literal, with a figurative reading belonging only to modern commentary) — teaching that not every claimed "interpretive question" carries equal weight.
+
+**Tier 7** compares the Mi'raj's dominant bodily-journey position (strong chains) against a minority vision-only position whose attribution to 'A'ishah rests on a weak, disconnected chain — a real position, weakly attributed — against the moon-splitting's several transmitted versions, which differ only in framing (Ibn Mas'ud's first-person wording versus Ibn 'Abbas's and Anas's demand-and-response framing) without any difference in grading.
+
+**Tier 8** gives a careful, three-position account of karamat al-awliya: the Ash'ari-Maturidi-Hanbali consensus affirming karamat as real-but-non-prophetic; the Mu'tazilite historical rejection on a specific confusion-with-prophethood concern; and Ibn Taymiyyah's own position — affirming karamat's reality while subordinating them to mu'jizat and separately criticizing specific unverifiable, self-serving, or shirk-adjacent grave-centered invocations of them, without that criticism amounting to a blanket rejection.
+
+**Tier 9's capstone reapplies each of tiers 1-8's specific principles to new, unfamiliar miracle claims** (a superiority-claim corrected via tier 4, an uncited tree-bowing story corrected via tier 5, a satellite-photo claim distinguished from a hadith-grading question, three overgeneralization corrections drawn from tiers 5/6/8, and closing comparisons to the Other Prophets and Companions categories' own capstone tiers) rather than merely repeating prior facts.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1048,4 +1072,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Companions (Sahaba) | 180 / 180 |
 | Ahl al-Bayt | 180 / 180 |
 | Other Prophets | 180 / 180 |
-| **total** | **3,420 of 5,220** |
+| Miracles & Signs | 180 / 180 |
+| **total** | **3,600 of 5,220** |

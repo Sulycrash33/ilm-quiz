@@ -373,3 +373,35 @@ insert; none of them is guessable from the column list.
   question, where the Shafi'i school genuinely diverges from the Hanafi/Maliki/jumhur majority).
   Checking the premise *before* writing 20 rows around it is cheaper than discovering later that
   the whole tier rests on an invented disagreement.
+
+### Added while authoring Miracles & Signs
+
+- Both the per-person-template collision and the answer_repeated trap were watched for from the
+  start this category (varied stems and answer phrasing up front); neither recurred as a post-insert
+  surprise. Other Prophets and Other Prophets alone needed a post-insert fix this segment (see above);
+  this category validated clean on every tier's first `emit.check()` pass or after one round of
+  category-wide stem-cap fixes.
+- **Not every claimed "interpretive debate" is a real classical one — check before presenting a
+  contrast as though both sides carried equal scholarly weight.** Research for this category's
+  tier 6 explicitly flagged that Sulayman's wind-sign (34:12) has no genuine classical mufassir
+  minority reading it figuratively, unlike the moon-splitting (54:1)'s real, named majority/minority
+  split (Ibn Kathir et al. vs Rashid Rida et al.). The temptation, drafting a "literal vs
+  figurative" tier, is to manufacture a parallel debate for every verse covered. Presenting 34:12's
+  literal reading as carrying the same weight of division as 54:1's would overstate the sources.
+  The fix was to draft 34:12 as a *contrast* case — "here is a claimed debate that isn't real,
+  unlike this one" — which taught the tier's actual lesson more precisely than two parallel "real
+  debate" cases would have.
+- **A weak hadith-isnad and a modern empirical misattribution are two different kinds of caution —
+  don't collapse them into one "this is false" bucket.** The spider-web-at-Thawr story is a
+  hadith-grading problem (a weak/unauthenticated chain). The "NASA photographed the moon-splitting
+  crack" claim is not a hadith at all — it's a modern claim conflating an ordinary lunar geological
+  feature with Qur'an 54:1, and NASA has denied it. Both are popular-but-wrong, but a reader who
+  treats them identically (as if both were isnad problems, or both were empirical-fact problems)
+  will misdiagnose the next claim they encounter. Tier 5 and tier 9 both drew this distinction
+  explicitly rather than lumping the two together as one flavor of "debunked miracle story."
+- This category's tier map carries the project's most explicit sourcing rule of any category so
+  far: weak material may ground a question *about the narration itself*, never a ruling question.
+  Every tier-5 row citing a weak or unauthenticated claim (the pebbles narration, the spider-web
+  story, the shadowless-Prophet claim) was phrased as "what is this claim's actual grading/status,"
+  never as "this happened" — worth flagging as the concrete pattern to imitate whenever a future
+  category's tier map singles out a similar weak-material risk.
