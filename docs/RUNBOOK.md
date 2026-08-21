@@ -307,3 +307,21 @@ insert; none of them is guessable from the column list.
   beside "If X means B, then…" is the same trap as the parallel constructions in Allah's Names.
   Where a subject has two symmetrical branches, put one of them in a different shape — a citation
   question, or a "which side does this support" question.
+
+### Added while authoring Islamic Ethics (Akhlaq)
+
+- **Never hand-retype or reconstruct an INSERT from memory or a terminal preview — read the
+  file and paste its exact content.** All 9 tiers passed `emit.check()` and every generated
+  `.sql` file parsed to a clean 5/5/5/5 `correct_choice_index` split. But after inserting, the
+  live database's `answer_index_skew` check flagged index 1 used 116 times out of 180. The
+  authoring and validation were never broken; the corruption happened at the insert step itself
+  — the `VALUES` clause was being retyped into the tool call from a `sed`/terminal preview of the
+  file rather than from the file's own content, which silently desynced the shuffled `choices`
+  array from its `correct_choice_index` in several rows per tier. Only the one tier that had been
+  pasted verbatim from the start came out correct.
+
+  The fix, and the standing rule going forward: use **Read** to load a staging `.sql` file in
+  full, then pass that exact text, unmodified, as the query. Never compose the query by hand from
+  a preview, a summary, or recollection of what the file contains. Verify immediately after each
+  insert with a per-tier `group by correct_choice_index` count — cheap enough to run every time,
+  and it would have caught this on the first tier instead of after all nine.

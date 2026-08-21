@@ -669,6 +669,60 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 13. Islamic Ethics (Akhlaq) (`ethics`) — 180 / 180
+
+Character and conduct, held to the same sourcing standard as ritual law: every claim traces to a
+verified verse or a named, numbered hadith rather than free-floating moral sentiment.
+
+**Verified anchors:** Qur'an 17:23, 31:14, 4:36, 9:119, 33:70 and 49:12 (all fetched live from the
+API); Sahih al-Bukhari 33 (the three signs of a hypocrite), 13 (Anas — "none of you truly believes
+until he wishes for his brother what he wishes for himself"), 6014/6015 ('A'ishah and Ibn 'Umar,
+independently, on the neighbour's right), 6018 (Abu Hurairah's threefold "whoever believes in
+Allah and the Last Day"), 6055/6056 (namimah and the qattat), and 9 (haya' as a branch of faith);
+Sahih Muslim 6593 (the Companions' own definition of ghibah, with buhtan as its counterpart for a
+false accusation) and 6633 (Umm Kulthum bint 'Uqbah, the three named exceptions to the prohibition
+on lying — battle, reconciliation between people, and words between spouses).
+
+**Tier 4 built and then rebuilt al-Nawawi's six exceptions to ghibah** (from *Riyad al-Salihin*):
+oppression brought to someone who can act on it, seeking help to change a wrong, a mufti asked for
+a legal opinion, warning others of genuine harm, an openly committed sin, and identification with
+no intent to demean. The first draft wrote six near-identical "which named exception is this"
+questions that collided pairwise on `similarity()`; the fix recast each as a distinct scenario.
+
+**Tier 6 tracks classical-versus-modern semantic drift** on three terms — hilm (al-Raghib
+al-Isfahani's definition: restraint despite the real capacity to retaliate, not mere passivity),
+muru'ah (a live standard of respectable conduct that varies by time and place, cited in classical
+fiqh as one factor in a witness's 'adalah), and haya' (Bukhari 9's own translation glosses it as
+self-respect and moral scruple generally, well beyond the narrowed modern sense of "modesty in
+dress").
+
+**Tier 8 states two genuinely contested scopes rather than picking a winner**: how far the
+mujahir bi-l-fisq (open sinner) exception to ghibah extends beyond warning into ordinary
+mention, and how far Muslim 6633's marital-reconciliation exception stretches into ambiguous
+cases — each framed the same way Islamic Law (Fiqh)'s tier 8 framed the basmalah dispute: naming
+the positions and what each rests on, not asserting one as final.
+
+**Tier 9 is a precedent-less dilemma** (a friend embezzling from an orphans' charity fund) walked
+through the assembled method: which of tier 4's six exceptions actually fits, which maqsad (mal,
+tier 6 of Islamic Law/Fiqh) is at stake, proportional escalation from private correction under
+tier 7 of Islamic Law (Fiqh)'s necessity framework, and haya' governing not just whether to
+disclose but how.
+
+**Data-integrity bug found and fixed during insertion** (see `docs/RUNBOOK.md` for the durable
+lesson): after all 9 tiers were authored and validator-clean at the file level, the live
+`answer_index_skew` check flagged index 1 used 116/180 times. Every authoring script had correctly
+called `emit.rebalance()`, and every generated `.sql` file parsed to a clean 5/5/5/5 split — the
+corruption was introduced by hand-retyping the INSERT text into the query call from memory/preview
+rather than reading the file's exact content. Fixed by deleting the affected tiers (1, 2, 3, 5, 6,
+7, 8, 9 — tier 4 had been pasted verbatim originally and was already correct) and re-inserting each
+from a direct Read of its `.sql` file, verified individually and then re-confirmed with the full
+category validator: all 9 tiers at 20/20, no near-duplicates, no repeated answers, no index skew,
+no repeated stems.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -685,4 +739,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Arabic Language | 180 / 180 |
 | Usul al-Fiqh | 180 / 180 |
 | Islamic Law (Fiqh) | 180 / 180 |
-| **total** | **2,160 of 5,220** |
+| Islamic Ethics (Akhlaq) | 180 / 180 |
+| **total** | **2,340 of 5,220** |
