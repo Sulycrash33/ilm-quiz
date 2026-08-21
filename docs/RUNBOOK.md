@@ -357,3 +357,19 @@ insert; none of them is guessable from the column list.
   'A'ishah's reported regret over the Camel was hedged as "widely reported, not independently
   verified to a single isnad") kept the tier factual without requiring this project to adjudicate
   between Companions — exactly the instruction the tier map gives for this bucket.
+
+### Added while authoring Ahl al-Bayt
+
+- Both bug patterns above recurred here (per-person-template collision in tiers 1-3; the
+  answer_repeated-passes-`emit.check()`-but-fails-the-database-check trap was watched for and
+  avoided this time by varying answer phrasing up front rather than discovered post-insert).
+- **Verify a sensitive scope/fiqh premise against real sources before drafting a whole tier
+  around it — don't assume a disagreement exists just because it would make a plausible tier.**
+  The planned premise for a zakat-scope tier ("Sunni schools dispute whether the Prophet's ﷺ
+  wives are covered by the zakat-prohibition rule") was checked with research before any rows
+  were written and turned out to be false — Ibn Kathir treats the wives' inclusion as settled,
+  not disputed, and no school argues otherwise. The tier was rebuilt around the real, verified
+  dispute found in that same research pass (the Banu Hashim/Banu al-Muttalib zakat-boundary
+  question, where the Shafi'i school genuinely diverges from the Hanafi/Maliki/jumhur majority).
+  Checking the premise *before* writing 20 rows around it is cheaper than discovering later that
+  the whole tier rests on an invented disagreement.

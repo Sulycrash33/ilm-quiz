@@ -937,6 +937,70 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 18. Ahl al-Bayt (`ahl_al_bayt`) — 180 / 180
+
+Verified anchors: Sahih al-Bukhari 3/3432/3815/3820/3896/3714/3767/3729/3753/5994/6194/1382/6195/1043/1060/1303;
+Sahih Muslim 2424; Jami' at-Tirmidhi 3768/3205; Sunan Ibn Majah 118; Qur'an 33:28-34; Ibn Kathir's and
+al-Wahidi's tafsir on 33:33; al-Tabari, al-Qurtubi, al-Razi, and al-Nasafi on the same verse's pronoun
+grammar; Ibn Qudamah's *al-Mughni*, al-Nawawi's *al-Majmu'*, and al-Shawkani's *Nayl al-Awtar* on the
+Banu Hashim/Banu al-Muttalib zakat boundary.
+
+**Tiers 1-3** cover core identity (Khadijah, Fatimah, Hasan, Husayn; all eleven wives; three sons and
+four daughters, with Ibrahim's death and the Dhun-Nurayn epithet cross-referenced to the Companions
+category) and lineage/terminology (the blood-cousin tie through 'Abd al-Muttalib versus the tie through
+Fatimah; Zayn al-'Abidin; Sayyid/Sharif usage hedged as regionally variable; Fatimah's birth year and
+Hasan's poisoning both handled with explicit restraint — reported without inventing an unconfirmed
+culprit or date). The per-person-template trigram-collision pattern first found in Companions recurred
+here and was fixed the same way: varying sentence structure per person rather than swapping only a name.
+
+**Tier 4, the scope-with-condition tier, is where the Sunni hard condition from the handoff binds
+hardest in this category**: Qur'an 33:33 read in its 33:28-34 context; the mainstream Sunni inclusive
+reading (Ibn Kathir, described as majority) set against al-Wahidi's minority wives-only reading; the
+Hadith al-Kisa (Sahih Muslim 2424) noted as agreed-authentic across Sunni and Shi'a scholarship while
+its scope-implication is not; the fiqh-based Banu Hashim definition (zakat-barred, khums-entitled); and
+the Twelver Shi'a "Five of the Cloak" narrower reading described factually and without polemic, per the
+tier map's explicit instruction never to present the Sunni reading as though no other reading existed.
+
+**Tier 5, a grading tier, carries a deliberate lesson**: the "leaders of the youth of Paradise" hadith is
+sourced to Jami' at-Tirmidhi 3768 and Sunan Ibn Majah 118 — not Bukhari or Muslim — graded hasan sahih by
+at-Tirmidhi and authenticated by al-Albani, making the explicit point that absence from the two Sahihs
+does not mean weak.
+
+**Tier 6 recovers the Hadith al-Kisa's narrative context**: 'A'ishah's Sahih Muslim 2424 account (a
+striped black camel's-hair cloak; the sequence Hasan, Husayn, Fatimah, 'Ali; no location given) set
+beside the separate Umm Salamah account (Tirmidhi 3205; her exchange with the Prophet ﷺ hedged as
+variably worded, not a harsh rejection); the event's date left unfixed, with the popular "632 CE" figure
+flagged as ungrounded in the primary sources; and Qur'an 33:28-32's immediate literary context (the
+Verse of Choice, doubled reward/punishment, the plain-speech instruction) laid out in detail.
+
+**Tier 7 traces a genuine Sunni-internal grammatical dispute**: the feminine plural forms (-kunna) used
+throughout 33:28-32 and 33:34 against 33:33's own shift to masculine plural (-kum); al-Razi and
+al-Nasafi reading the shift as a deliberate signal supporting the inclusive reading; the taghlib
+counter-argument (that "ahl" is itself a grammatically masculine noun, making -kum ordinary concord, not
+evidence of a referent shift) associated by name with Ikrimah and Muqatil, who cite 33:34's return to
+feminine forms as bracketing evidence for the restrictive reading; al-Qurtubi's inclusive-but-mediating
+position noted as holding both textual observations together rather than settling the grammar in only
+one direction.
+
+**Tier 8, a fiqh scope-dispute tier, required a mid-draft correction**: the originally planned premise —
+a genuine dispute over whether the Prophet's ﷺ wives are covered by the zakat-prohibition rule — was
+checked against research and found false (Ibn Kathir affirms their inclusion as settled, not disputed).
+The tier was rebuilt around the real, verified dispute instead: the Shafi'i school includes Banu
+al-Muttalib alongside Banu Hashim in the zakat-ineligible/khums-entitled group (citing a hadith tying the
+two clans together through the historical Quraysh boycott), against the Hanafi/Maliki/jumhur-majority
+position restricting the boundary to Banu Hashim alone (Ibn Qudamah's *al-Mughni*, al-Nawawi's
+*al-Majmu'*), with al-Shawkani's separate mawali-of-Banu-Hashim-versus-mawali-of-wives distinction noted
+as a different question not to be conflated with the main dispute.
+
+**Tier 9's capstone reapplies each of tiers 1-8's specific principles to new, unaddressed cases** (a new
+unsourced virtue-claim, an isolated out-of-context quotation, a fresh pronoun-shift passage, three
+distinct overgeneralization corrections drawn from tiers 4/8, and a closing comparison to the Companions
+and Afterlife categories' own capstone tiers) rather than merely repeating prior facts.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -958,4 +1022,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Sufism & Spirituality | 180 / 180 |
 | Afterlife (Akhirah) | 180 / 180 |
 | Companions (Sahaba) | 180 / 180 |
-| **total** | **3,060 of 5,220** |
+| Ahl al-Bayt | 180 / 180 |
+| **total** | **3,240 of 5,220** |
