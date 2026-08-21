@@ -630,6 +630,45 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 12. Islamic Law (Fiqh) (`fiqh`) — 180 / 180
+
+The first category to put usul al-fiqh's method to work on ordinary rulings, rather than teach
+the method itself. Every tier traces back to a verified anchor: five Qur'an verses (5:3, 5:90,
+2:275, 6:145, 59:7) fetched live from the API, dated founders (Abu Hanifa 80-150 AH, Malik
+93-179 AH, al-Shafi'i 150-204 AH, Ahmad ibn Hanbal 164-241 AH — with the genuine coincidence that
+Abu Hanifa died the same year al-Shafi'i was born), a specific hadith with its number (Sahih
+Muslim 639, 'Ali on the khuff-wiping durations), al-Ghazali's five maqasid, two named fiqh maxims
+(al-darurat tubih al-mahzurat / al-darurat tuqaddar bi qadariha), and a real, still-live scholarly
+dispute (the basmalah's status, Sahih Muslim 1110 on one side).
+
+**Tier 4 mixes agreed and school-specific content honestly** rather than flattening it: the
+qullatayn water threshold is tagged `madhab_tag='shafii'`, the ten-by-ten-cubits threshold
+`'hanafi'`, and only the comparison between them is tagged `'agreed'`. Same for tier 2's wudu
+nullifiers — wind, stool, deep sleep are agreed; touching one's own private parts and heavy
+bleeding are stated as genuine, named cross-school splits.
+
+**Tier 5 is the concrete demonstration of what tier 5 of the Hadith Sciences category promised.**
+Rather than asserting a duration, it names the exact hadith (Muslim 639), the narrator ('Ali,
+directed to by 'A'ishah specifically because he travelled with the Prophet ﷺ), and states plainly
+what would follow if a weaker hadith were the only support.
+
+**Tier 8 does not pick a winner.** All four schools' basmalah positions are stated with their
+practice (aloud/silent, verse/not-verse), Sahih Muslim 1110 is named as the report cited by the
+schools that recite quietly, and the tier states explicitly that citing one hadith does not mean
+the other schools lack evidence — they read the same body of reports differently.
+
+**Tier 9 is a real, live contemporary case, not an invented one:** pig-derived gelatin in
+vaccines. It walks through istihalah (transformation) as the operative doctrine, names the actual
+school split (Hanafi/Maliki and bodies like the European Council for Fatwa and Research generally
+accepting the transformation; Shafi'i/Hanbali positions and Saudi Arabia's Permanent Committee
+generally not), and then shows that even on the stricter reading the necessity exception from
+tier 7 is a separate, independently-checked line of reasoning — not proof that istihalah occurred.
+The tier is explicit that the two lines of reasoning must not be collapsed into one.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -645,4 +684,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Tajwid | 180 / 180 |
 | Arabic Language | 180 / 180 |
 | Usul al-Fiqh | 180 / 180 |
-| **total** | **1,980 of 5,220** |
+| Islamic Law (Fiqh) | 180 / 180 |
+| **total** | **2,160 of 5,220** |
