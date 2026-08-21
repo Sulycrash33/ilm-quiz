@@ -723,6 +723,50 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 14. Du'a & Dhikr (`dua_dhikr`) — 180 / 180
+
+Supplication and remembrance held to the same evidentiary standard as every prior category:
+specific hadith numbers and narrators throughout, not paraphrased custom.
+
+**Verified anchors:** Sahih Muslim 5269/5270 (Umar b. Abu Salama, naming Allah and eating from
+what is nearest); Sahih al-Bukhari 5459 (Abu Umama's after-meal du'a), 6312/6324 (Hudhaifa's
+sleeping/waking wording), 6384/6409 (Abu Musa al-Ash'ari — "la hawla wa la quwwata illa billah" as
+"a treasure of Paradise"), 1012/1025 (istisqa — facing the qiblah, cloak reversed), 6403/6405/6406
+(the post-prayer tasbih/tahmid/takbir counts and the "two phrases light on the tongue"), and 6408
+(gatherings of dhikr sought out by angels); Sunan al-Tirmidhi 3426 (leaving-the-house du'a, graded
+sahih), 3556 (Salman al-Farsi — Allah "too shy" to return raised hands empty, graded sahih), 3392
+(Abu Bakr's morning/evening/bedtime wording); Sahih Muslim 2346 (the disheveled traveller whose
+raised hands cannot overcome unlawful sustenance); Sunan Ibn Majah 927 (Abu Dharr, with the
+narrator Sufyan's own admitted uncertainty over which phrase carries the 34th count).
+
+**Tier 5 is this category's grading-territory tier**, the du'a counterpart to Islamic Law (Fiqh)'s
+basmalah dispute: Sunan Abu Dawud 5081's "Allah sufficeth me" formula is graded mawdu' by al-Albani
+and Muhammad Muhyi al-Din Abdul Hamid but "isnaad hasan" by Zubair Ali Zai — genuine grader
+disagreement, not settled consensus — set against Tirmidhi 3386 (wiping the face after du'a) and
+3552 ("whoever supplicates against his wronger has triumphed"), both da'if by every named grader.
+
+**Tier 7 resolves a real three-way count discrepancy rather than only noting it.** Ibn Majah 927
+shares tier 2's 33/33/34 post-prayer structure but its own narrator, Sufyan, admits he does not
+know which phrase carries the extra count — making Sahih Muslim 1349's unambiguous naming of the
+takbir the stronger report on that specific point, without discrediting Ibn Majah 927 overall
+(hasan sahih / sahih lighairihi) or unsettling the underlying practice.
+
+**Tier 8 states two genuinely contested scopes**, mirroring Islamic Law (Fiqh)'s and Islamic
+Ethics' own tier 8s: how far Bukhari 6408's gathered-remembrance hadith extends to organised,
+unison collective dhikr, and whether raising the hands has been established as a fixed, routine
+practice specifically after every fard prayer, as opposed to the general adab tier 4 established.
+Neither dispute is resolved in favour of one side.
+
+**Tier 9 judges a precedent-less, fabricated-sounding claim** (a widely-circulated "recite 100
+times after Fajr for guaranteed wealth" message citing no hadith number) through the assembled
+method: tracing the citation, checking for grading, examining what the wording actually asserts,
+comparing count variants, and separating the general adab from the specific unverified promise —
+landing on calibrated caution rather than either blind acceptance or a claim of deliberate fraud.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -740,4 +784,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Usul al-Fiqh | 180 / 180 |
 | Islamic Law (Fiqh) | 180 / 180 |
 | Islamic Ethics (Akhlaq) | 180 / 180 |
-| **total** | **2,340 of 5,220** |
+| Du'a & Dhikr | 180 / 180 |
+| **total** | **2,520 of 5,220** |
