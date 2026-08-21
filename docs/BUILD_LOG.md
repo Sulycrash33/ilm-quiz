@@ -592,6 +592,44 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 11. Usul al-Fiqh (`usul_fiqh`) — 180 / 180
+
+The hinge category. Every fiqh category from here on will present conclusions; this one teaches
+the reasoning that produces them, which is why the handoff singled it out.
+
+**Verified before writing, not asserted from memory:**
+
+- The Hanafi fard/wajib distinction — fard requires proof definitive (qat'i) in both transmission
+  and meaning; wajib rests on proof speculative (zanni) in one respect. The same split mirrors
+  haram/makruh tahrimi. Tier 3's madhab_tag is split per row: 12 `agreed` (the five ahkam
+  framework), 8 `hanafi` (the fard/wajib terminology) — caught and corrected after an initial
+  blanket tag, which is now the standing caution for any tier that mixes agreed and school-specific
+  content.
+- The five universal maxims and their two recording works: **al-Suyuti's *al-Ashbah wa'l-Naza'ir***
+  (Shafi'i) and the **Majalla** (Ottoman, Hanafi, drafted under Ahmad Cevdet Pasha 1869–76, its
+  first hundred articles devoted to ninety-nine maxims).
+- Al-mutlaq wal-muqayyad from real Qur'anic text: the bequest at **4:11** is unrestricted in
+  amount (mutlaq); the stepdaughter prohibition at **4:23** is restricted to where the mother's
+  marriage was consummated (muqayyad) — confirmed against the API, not recalled.
+- **Tier 7's conflict case is real and checkable**: Abu Hurairah's prohibition on drinking
+  standing (Sahih Muslim 5279) against the Prophet's (ﷺ) own recorded practice at Zamzam (Sahih
+  al-Bukhari 5617), with **'Ali naming the tension himself** at Bukhari 5615 — "Some people dislike
+  to drink while standing, but I saw the Prophet (ﷺ) doing [it]." The standard resolution is
+  reconciliation (jam'), not abrogation: the prohibition reads as discouragement, not a ban.
+- Tier 8's disputed sources — istihsan (Hanafi/Maliki, attacked explicitly by al-Shafi'i), masalih
+  mursalah (Maliki), 'amal ahl al-Madinah (distinctively Maliki, rejected by name by al-Shafi'i).
+
+**Tier 9 does not invent a novel fiqh ruling.** It walks a precedent-less medical case through
+the full assembled method — source order, qiyas structure, maxim conditions, technical precision,
+conflict resolution, awareness of disputed sources — and its explicit conclusion is that a
+defensible answer names what it can be checked against, and says plainly where more than one
+position remains defensible. That restraint is deliberate: this category's job is to teach the
+method, not to issue a ruling beyond its brief.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -606,4 +644,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Preservation of the Qur'an | 180 / 180 |
 | Tajwid | 180 / 180 |
 | Arabic Language | 180 / 180 |
-| **total** | **1,800 of 5,220** |
+| Usul al-Fiqh | 180 / 180 |
+| **total** | **1,980 of 5,220** |
