@@ -1001,6 +1001,30 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 19. Other Prophets (`stories_of_prophets`) — 180 / 180
+
+Verified anchors: Qur'an 2:31/2:34/2:258/3:33/3:59/3:93/4:125/4:163/4:164/6:74/6:83-86/7:65/7:73/7:85/7:106-108/9:12-15/11:27/11:44/11:69-76/12:3/12:4/14:10-11/14:37/14:39/16:36/17:90-93/18:22/18:25/18:50/18:74/18:80-81/19:12-15/19:29-33/19:56-57/20:9-36/20:115-123/21:25/21:51-70/21:78-79/21:83-84/21:85/21:87-88/26:111/26:153/26:161-186/27:16/27:22-44/28:4-6/28:29-35/28:78-79/29:14/34:34-35/37:83-98/37:99-113/37:139-148/38:48/43:22-24/51:24-34/54:1-2/68:48-50/71:7/71:21/71:26; Sahih al-Bukhari 1339/2262/3397/3407/3461/4485/7362; Sahih Muslim 1130; Ibn Kathir's and al-Tabari's tafsir on 37:99-113.
+
+**Tiers 1-3** cover the five founding names and one fact each (Adam, Nuh, Ibrahim, Musa, 'Isa), the 25 named prophets with their scripture-recipients, and lineages/sequence — each tier explicit about which claims are the Qur'an's own wording versus later convention (the traditional "25" figure, the Ya'qub/Isra'il identification, "Kan'an" and "Namrud" as unnamed figures' popular names).
+
+**Tier 4** traces the universal tawhid message (21:25, 16:36, the shared Al-A'raf formula) against a gallery of specific demands and excuses peoples raised — Pharaoh's demand for a sign, Quraysh's escalating list (17:90-93), "we found our fathers upon a religion" (43:22-24, shared by Ibrahim's own people), and Qarun's wealth-as-proof episode — closing on the tier's own point: the message stayed constant; only the objections varied.
+
+**Tier 5, "the governing distinction of this category,"** sorts specific details into Qur'anic (Ibrahim's father Azar, 6:74; the Cave's number deliberately left unsettled, 18:22), sound-hadith-supplementing (Musa striking the Angel of Death, Bukhari 1339/3407; the Ashura/Musa hadith, Bukhari 3397/Muslim 1130), and isra'iliyyat (Talut/Jalut cross-identified with Saul/Goliath; the ram's forty-years-in-Paradise tradition; "Balqis," "Jaysur," and the traditional names for Nuh's and Lut's wives) — with an explicit note that even "hadith-sourced" material varies in strength (the 124,000-prophets hadith, outside the Sahihayn).
+
+**Tier 6** reads four specific placements for their rhetorical purpose: Musa/Pharaoh in Surah Al-Qasas framed by 28:4-6's promise to the oppressed; Yusuf's story framed by 12:3 and traditionally tied to the Year of Sorrow; Ibrahim's idol-rejection inside Surah Al-Anbiya's tawhid refrain and again in Surah As-Saffat's sequence of vindicated prophets; and Surah Al-Kahf's four-trials structure (religion, wealth, knowledge, power) under 18:1-8's opening warning.
+
+**Tier 7** compares parallel Qur'anic tellings of the same story for what each specifically adds: Musa's calling in Ta-Ha, An-Naml, and Al-Qasas; Adam and Iblis in Al-Baqarah, Al-A'raf, and Ta-Ha; Ibrahim's angelic guests in Hud, Adh-Dhariyat, and Al-Hijr — each telling shown as a genuine, complete account suited to its own surah, not a flawed repetition of a single "real" version.
+
+**Tier 8** traces named mufassirun disagreement and isra'iliyyat-handling: al-Tabari's preference for Ishaq against Ibn Kathir's preference for Isma'il as Ibrahim's intended sacrifice (with Ibn Kathir explicitly tracing the Ishaq reports to Ka'b al-Ahbar); Ibn Kathir's citing-while-flagging treatment of the sacrificial ram's Paradise-grazing reports and al-Khidr's boy; and his three-part isra'iliyyat framework (accept if corroborated, reject if contradicted, narrate-but-don't-rely-on otherwise), rooted in Bukhari 3461 and 4485/7362.
+
+**Tier 9's capstone reapplies each of tiers 1-8's specific principles to new, unaddressed cases** (Ayyub's episode applying tier 1's method; a false "124,000 prophets is Qur'anic" claim corrected via tiers 2 and 5; Salih's she-camel demand as a new instance of tier 4's pattern; Dhul-Qarnayn's disputed identity applying tier 8's method) rather than merely repeating prior facts.
+
+One `answer_repeated` violation was caught post-insert (the correct-answer text "Isma'il" used identically in three separate questions across tiers 2, 3, and 8) and fixed via targeted `UPDATE` statements rewording two of the three instances; the category re-validated clean afterward.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1023,4 +1047,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Afterlife (Akhirah) | 180 / 180 |
 | Companions (Sahaba) | 180 / 180 |
 | Ahl al-Bayt | 180 / 180 |
-| **total** | **3,240 of 5,220** |
+| Other Prophets | 180 / 180 |
+| **total** | **3,420 of 5,220** |
