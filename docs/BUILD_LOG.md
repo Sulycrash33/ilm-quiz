@@ -767,6 +767,55 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 15. Sufism & Spirituality (`tazkiyah`) — 180 / 180
+
+Flagged before authoring as the highest-risk category in the runbook (33 hadith matches in the
+graded corpus, 28% weak — 1.61x the baseline). Anchored in classical texts and verified biography
+rather than leaning on the thin hadith base, per that flag's own instruction.
+
+**Verified anchors:** Qur'an 98:5, 39:2, 39:11 (sincere worship commanded), 87:14, 91:9-10
+(purification of the soul), 49:13 (taqwa as the standard of nobility), 3:159, 65:3 (tawakkul),
+2:153 (sabr), 12:53, 75:2, 89:27 (the three named stages of the nafs — ammara, lawwama,
+mutma'inna); Sahih al-Bukhari 1 (intentions), 2697 (innovation rejected, paired with Sahih Muslim
+4492); Sahih Muslim 93 (the hadith of Jibril defining ihsan), 6542 (Allah looks at hearts, not
+bodies or faces).
+
+**Tier 3 anchors two named classical works with live-researched biography**, not recollection:
+al-Qushayri (376-465 AH, born Ustuwa, taught and died in Nishapur, imprisoned over a letter
+defending Ash'arism) and his *Risala* (437 AH, addressed to the Sufi community, combining
+biography with technical vocabulary); al-Ghazali (450-505 AH, Hujjat al-Islam, left the Nizamiyya
+in 488 AH after a documented spiritual crisis) and the *Ihya' 'Ulum al-Din*'s four-quarter, forty-book
+structure, plus *al-Munqidh min al-Dalal*'s survey of kalam, falsafa, Ta'limiyya and Sufism.
+
+**Tier 5 grounds "where a teaching comes from" in al-Junayd al-Baghdadi's own dictum** — Sufi
+knowledge is "bound by the Book and the Sunnah" — deliberately hedged as *widely attributed to and
+recorded in* Abu Nu'aym's *Hilyat al-Awliya'* and al-Qushayri's *Risala*, rather than asserted as a
+letter-perfect quotation, since the wording carries normal pre-modern transmission variance.
+
+**Tier 7 states the sahw/sukr (sober/intoxicated) contrast between al-Junayd and Abu Yazid
+al-Bistami with the same care**, hedging Abu Yazid's disputed death date (234-261 AH across
+sources) and the non-canonical wording of his best-known ecstatic utterance, while noting the
+dichotomy itself is partly a later systematised typology rather than a label either figure used of
+himself.
+
+**Tier 8 states the genuine three-way Sunni split on tasawwuf itself — accepted, qualified,
+rejected — each in its own holders' terms**, per the runbook's explicit instruction that this tier
+"must be handled without partisanship": the fully accepting position (ihsan/tazkiyat al-nafs as a
+third dimension of religion, per al-Ghazali and al-Qushayri); Ibn Taymiyyah's qualified position
+(praising named early Sufis and zuhd/tawbah by name in *Majmu' al-Fatawa*, while criticizing
+specific doctrines like wahdat al-wujud and specific later practices, not the discipline itself);
+and the milder modern rejecting position (islamqa/al-Fawzan style — the term and its institutional
+apparatus post-date the Salaf, while the underlying sincerity and purification are already fully
+covered). All three positions are shown converging on tier 9's capstone claim.
+
+**Tier 9 tests a claim all three of tier 8's positions reject**: a self-styled teacher's assertion
+of exemption from the five daily prayers, walked through tiers 4, 5, 7 and 8's assembled method to
+a calibrated verdict that separates textual justification from the speaker's sincerity.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -785,4 +834,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Islamic Law (Fiqh) | 180 / 180 |
 | Islamic Ethics (Akhlaq) | 180 / 180 |
 | Du'a & Dhikr | 180 / 180 |
-| **total** | **2,520 of 5,220** |
+| Sufism & Spirituality | 180 / 180 |
+| **total** | **2,700 of 5,220** |
