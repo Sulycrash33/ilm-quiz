@@ -192,6 +192,19 @@ Say plainly what was not done and why. The owner values that over polish, and ha
 If a category came out weaker than the others, say which and why. If a citation could not be
 verified against real source text, say so rather than shipping it quietly.
 
+## Two failures the tooling now prevents
+
+**A failed pre-flight used to still write its file.** `emit.check()` printed `PROBLEMS:` and
+returned `False`, and every authoring script then called `emit.build()` regardless. Nothing
+enforced the check — it worked only because I happened to re-run after reading the output. It
+now raises `SystemExit(1)`, so a failed check can never produce output.
+
+**Staging files must be namespaced per category.** They were named by tier (`t1.sql`…`t9.sql`),
+which meant Hadith Sciences and Tajwid both wanted `t1.sql`. Worse, the cross-tier duplicate
+loader globs `t*.sql`, so it silently fed one category's stems into another's check and produced
+a page of phantom collisions. Staging files now live in `cat/<slug>/<tier>.sql` and the loader is
+pointed at one category's directory. Write tier files under the category slug, never at the root.
+
 ## Things the schema will reject — learned the hard way
 
 Checked against the live database while authoring Five Pillars. Each of these cost a failed

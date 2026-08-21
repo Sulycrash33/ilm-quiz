@@ -69,7 +69,13 @@ def check(rows,label,existing=()):
     for k,v in allst.items():
         if v>4: probs.append(f"category-wide stem opening '{k}' would be {v}x")
     print(f"{label}: " + ("PROBLEMS: "+"; ".join(probs) if probs else "clean"))
-    return not probs
+    if probs:
+        # Hard stop. This used to return False and let the caller carry on to
+        # build(), which meant a failed check still wrote its .sql file — and
+        # once overwrote another category's staging file. A failed check must
+        # never produce output.
+        raise SystemExit(1)
+    return True
 
 def spread(rows, seed=0):
     """Deterministically rotate each row's choices so the correct answer
