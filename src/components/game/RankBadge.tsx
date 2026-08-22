@@ -1,14 +1,18 @@
+"use client";
+
 import { RANKS } from "@/lib/constants";
 import type { Rank } from "@/lib/types";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RankBadgeProps {
   currentPoints: number;
 }
 
 export function RankBadge({ currentPoints }: RankBadgeProps) {
+  const { t } = useLanguage();
   const currentRank = [...RANKS].reverse().find(rank => currentPoints >= rank.minPoints) || RANKS[0];
   const nextRank = RANKS.find(rank => rank.level === currentRank.level + 1);
 
@@ -39,13 +43,13 @@ export function RankBadge({ currentPoints }: RankBadgeProps) {
         {nextRank ? (
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Progress to {nextRank.title}</span>
+              <span>{t("progressToRank", { rank: nextRank.title })}</span>
               <span className="font-semibold">{currentPoints}/{nextRank.minPoints} XP</span>
             </div>
-            <Progress value={progress} className="h-3" aria-label={`Progress to ${nextRank.title}`} />
+            <Progress value={progress} className="h-3" aria-label={t("progressToRank", { rank: nextRank.title })} />
           </div>
         ) : (
-          <p className="text-center text-sm font-semibold text-accent">You have reached the highest rank!</p>
+          <p className="text-center text-sm font-semibold text-accent">{t("highestRankReachedFull")}</p>
         )}
       </CardContent>
     </Card>

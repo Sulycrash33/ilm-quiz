@@ -47,7 +47,7 @@ export default function LanguageSelectionPage() {
             {t("welcome")}
           </h1>
           <p className="text-on-surface-variant">
-            Choose your preferred language
+            {t("chooseYourLanguage")}
           </p>
         </motion.div>
 

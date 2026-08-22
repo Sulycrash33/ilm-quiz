@@ -13,6 +13,15 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
+/** Writes the document-level language and writing direction. Kept in one
+ * place so every path that changes the locale — restore-from-storage,
+ * restore-from-profile, and an explicit pick — applies it identically. */
+function applyDocumentLocale(next: Locale) {
+  if (typeof document === "undefined") return
+  document.documentElement.lang = next
+  document.documentElement.dir = next === "ar" ? "rtl" : "ltr"
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en")
 
@@ -21,6 +30,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem("ilm-locale") as Locale
     if (saved && translations[saved]) {
       setLocaleState(saved)
+      // This used to be missing on the restore path, so a returning Arabic
+      // reader got their translated text laid out left-to-right until they
+      // re-picked the language by hand.
+      applyDocumentLocale(saved)
     }
 
     // Then check the real profile - a signed-in user's saved preference
@@ -37,8 +50,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       if (preferred && translations[preferred]) {
         setLocaleState(preferred)
         localStorage.setItem("ilm-locale", preferred)
-        document.documentElement.lang = preferred
-        document.documentElement.dir = preferred === "ar" ? "rtl" : "ltr"
+        applyDocumentLocale(preferred)
       }
     })
   }, [])
@@ -46,8 +58,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLocale = useCallback((newLocale: Locale, persistToProfile = true) => {
     setLocaleState(newLocale)
     localStorage.setItem("ilm-locale", newLocale)
-    document.documentElement.lang = newLocale
-    document.documentElement.dir = newLocale === "ar" ? "rtl" : "ltr"
+    applyDocumentLocale(newLocale)
 
     if (persistToProfile) {
       const supabase = createClient()

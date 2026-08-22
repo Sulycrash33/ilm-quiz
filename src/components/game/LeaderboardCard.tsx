@@ -22,10 +22,11 @@ interface LeaderboardCardProps {
 
 export function LeaderboardCard({
   entries,
-  title = "Global Leaderboard",
+  title,
   showStreak = true,
 }: LeaderboardCardProps) {
   const { t } = useLanguage()
+  const cardTitle = title ?? t("globalLeaderboard")
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
@@ -58,7 +59,7 @@ export function LeaderboardCard({
     <div className="glass-card p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-headline-md text-headline-md text-on-surface">
-          {title}
+          {cardTitle}
         </h3>
         <PremiumBadge variant="tertiary">{t("liveBadge")}</PremiumBadge>
       </div>

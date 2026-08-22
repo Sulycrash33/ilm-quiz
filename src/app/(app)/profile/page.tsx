@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { getProfileStats } from "@/lib/profile-stats"
 import { ProfilePageClient } from "@/components/profile/ProfilePageClient"
 
@@ -10,21 +11,13 @@ export default async function ProfilePage() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[100dvh]">
-        <p>Please sign in to view your profile.</p>
-      </div>
-    )
+    return <TranslatedNotice messageKey="signInToViewProfile" />
   }
 
   const stats = await getProfileStats(user.id)
 
   if (!stats) {
-    return (
-      <div className="flex items-center justify-center min-h-[100dvh]">
-        <p>We couldn&apos;t load your profile. Please try again.</p>
-      </div>
-    )
+    return <TranslatedNotice messageKey="couldntLoadProfile" />
   }
 
   return <ProfilePageClient stats={stats} email={user.email ?? null} joinedAt={user.created_at} />

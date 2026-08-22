@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { RewardsPageClient } from "@/components/rewards/RewardsPageClient"
 
 export default async function RewardsPage() {
@@ -9,11 +10,7 @@ export default async function RewardsPage() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[100dvh]">
-        <p>Please sign in to view rewards.</p>
-      </div>
-    )
+    return <TranslatedNotice messageKey="signInToViewRewards" />
   }
 
   const { data: profile } = await supabase

@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
@@ -37,6 +38,7 @@ export function SettingsDialog({
     setIsMounted(true);
   }, []);
 
+  const { t } = useLanguage();
   const handleSave = () => {
     onUserDataChange({ name, email });
     onOpenChange(false);
@@ -50,22 +52,22 @@ export function SettingsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
+          <DialogTitle>{t("settings")}</DialogTitle>
           <DialogDescription>
-            Manage your account settings and preferences.
+            {t("manageAccountSettings")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Username</Label>
+            <Label htmlFor="name">{t("username")}</Label>
             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <div className="flex items-center justify-between">
-            <Label htmlFor="dark-mode">Dark Mode</Label>
+            <Label htmlFor="dark-mode">{t("darkMode")}</Label>
             <Switch
               id="dark-mode"
               checked={theme === "dark"}
@@ -73,15 +75,15 @@ export function SettingsDialog({
             />
           </div>
            <div className="space-y-2">
-            <Label>Password</Label>
-             <Button variant="outline" className="w-full">Change Password</Button>
+            <Label>{t("password")}</Label>
+             <Button variant="outline" className="w-full">{t("changePassword")}</Button>
           </div>
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t("cancel")}
           </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave}>{t("saveChanges")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,14 +1,18 @@
-﻿import { Flame, Shield } from "lucide-react";
+﻿"use client";
+
+import { Flame, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { getStreakStyle } from "@/lib/design-tokens";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface StreakCounterProps {
   streak: number;
 }
 
 export function StreakCounter({ streak }: StreakCounterProps) {
+  const { t } = useLanguage();
   const flameStyle = getStreakStyle(streak);
 
   return (
@@ -21,12 +25,12 @@ export function StreakCounter({ streak }: StreakCounterProps) {
         }} aria-hidden="true" />
             <div>
               <p className={cn("text-xl font-bold", flameStyle)}>{streak}</p>
-              <p className="text-sm text-muted-foreground">Day Streak</p>
+              <p className="text-sm text-muted-foreground">{t("dayStreak")}</p>
             </div>
           </div>
           <Badge variant="secondary" className="bg-emerald-400/10 text-emerald-400">
             <Shield className="h-3 w-3 mr-1" aria-hidden="true" />
-            Protected
+            {t("protectedLabel")}
           </Badge>
         </div>
         <div className="flex gap-1" role="meter" aria-label={`Streak progress: ${streak} days`}>

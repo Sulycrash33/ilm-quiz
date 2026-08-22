@@ -13,6 +13,7 @@ import { getAIHint } from "@/app/actions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MosqueIcon } from "../icons/MosqueIcon";
 import type { QuizQuestion } from "@/lib/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AskTheImamDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface AskTheImamDialogProps {
 }
 
 export function AskTheImamDialog({ open, onOpenChange, question }: AskTheImamDialogProps) {
+  const { t } = useLanguage();
   const [hint, setHint] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,10 +58,10 @@ export function AskTheImamDialog({ open, onOpenChange, question }: AskTheImamDia
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MosqueIcon className="h-6 w-6 text-primary" />
-            Ask the Imam
+            {t("askTheImam")}
           </DialogTitle>
           <DialogDescription>
-            The Imam is considering your question...
+            {t("imamConsidering")}
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4 space-y-4 py-4">
@@ -78,7 +80,7 @@ export function AskTheImamDialog({ open, onOpenChange, question }: AskTheImamDia
           {error && <p className="text-destructive">{error}</p>}
         </div>
         <Button onClick={() => onOpenChange(false)} className="w-full">
-          Return to Quiz
+          {t("returnToQuiz")}
         </Button>
       </DialogContent>
     </Dialog>

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { getProfileStats } from "@/lib/profile-stats"
 import { AchievementsPageClient } from "@/components/achievements/AchievementsPageClient"
 
@@ -10,11 +11,7 @@ export default async function AchievementsPage() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[100dvh]">
-        <p>Please sign in to view achievements.</p>
-      </div>
-    )
+    return <TranslatedNotice messageKey="signInToViewAchievements" />
   }
 
   const stats = await getProfileStats(user.id)

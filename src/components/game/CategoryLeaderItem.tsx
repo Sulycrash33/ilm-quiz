@@ -5,8 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CategoryLeader } from "@/lib/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-export const CategoryLeaderItem = ({ category }: { category: CategoryLeader }) => (
+export const CategoryLeaderItem = ({ category }: { category: CategoryLeader }) => {
+  const { t } = useLanguage();
+  return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -19,7 +22,7 @@ export const CategoryLeaderItem = ({ category }: { category: CategoryLeader }) =
           <div>
             <CardTitle className="text-lg text-primary">{category.category}</CardTitle>
             <Badge variant="secondary" className="text-xs">
-              Category Leader
+              {t("categoryLeader")}
             </Badge>
           </div>
         </div>
@@ -42,10 +45,11 @@ export const CategoryLeaderItem = ({ category }: { category: CategoryLeader }) =
           </div>
           <div className="text-right">
             <div className="text-lg font-bold text-primary">{category.points.toLocaleString()}</div>
-            <div className="text-sm text-muted-foreground">Category Points</div>
+            <div className="text-sm text-muted-foreground">{t("categoryPoints")}</div>
           </div>
         </div>
       </CardContent>
     </Card>
     </motion.div>
 );
+};

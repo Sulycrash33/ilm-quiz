@@ -11,6 +11,7 @@ import {
   BookOpen
 } from "lucide-react"
 import type { Bundle } from "@/data/store-items"
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BundleCardProps {
     bundle: Bundle;
@@ -19,6 +20,7 @@ interface BundleCardProps {
 }
 
 export function BundleCard({ bundle, userCoins, handlePurchase }: BundleCardProps) {
+  const { t } = useLanguage();
   const savings = bundle.originalPrice - bundle.price
   const discount = Math.round((savings / bundle.originalPrice) * 100)
 
@@ -29,7 +31,7 @@ export function BundleCard({ bundle, userCoins, handlePurchase }: BundleCardProp
           <div className="text-5xl">{bundle.icon}</div>
           <Badge className="bg-primary/10 text-primary">
             <Trophy className="h-3 w-3 mr-1" />
-            Best Value
+            {t("bestValue")}
           </Badge>
         </div>
         <CardTitle className="text-2xl text-primary">{bundle.name}</CardTitle>
@@ -67,7 +69,7 @@ export function BundleCard({ bundle, userCoins, handlePurchase }: BundleCardProp
           size="lg"
         >
           <Gift className="h-5 w-5 mr-2" />
-          Buy Bundle
+          {t("buyBundle")}
         </Button>
       </CardContent>
     </Card>

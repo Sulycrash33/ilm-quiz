@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface PremiumAvatarProps {
   src?: string
@@ -14,13 +15,15 @@ interface PremiumAvatarProps {
 
 export function PremiumAvatar({
   src,
-  alt = "Avatar",
+  alt,
   size = "md",
   ring = false,
   ringColor = "primary",
   status,
   className = "",
 }: PremiumAvatarProps) {
+  const { t } = useLanguage()
+  const altText = alt ?? t("avatarAlt")
   const sizes = {
     sm: "w-8 h-8",
     md: "w-12 h-12",
@@ -56,7 +59,7 @@ export function PremiumAvatar({
         `}
       >
         {src ? (
-          <img src={src} alt={alt} className="w-full h-full object-cover" />
+          <img src={src} alt={altText} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center">
             <svg
