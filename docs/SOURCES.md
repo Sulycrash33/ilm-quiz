@@ -239,3 +239,28 @@ and query them locally rather than fetching per-hadith.
   (Open-Hadith-Data, LK-Hadith-Corpus) — not against UmmahAPI.
 - Nothing here has been scholar-reviewed. It is a map of where text can be obtained, not a
   warrant that any particular text is sound.
+
+## quran.com tafsir API — endpoint shape (added 2026-08-20)
+
+Three **English** tafsirs are available and were used for the Quran Commentary category:
+
+| id | work | author |
+|---:|---|---|
+| 169 | Ibn Kathir (Abridged) | Hafiz Ibn Kathir |
+| 168 | Ma'arif al-Qur'an | Mufti Muhammad Shafi |
+| 817 | Tazkirul Quran | Maulana Wahiduddin Khan |
+
+`GET /api/v4/resources/tafsirs` lists all 20, including Arabic (al-Tabari 15, al-Qurtubi 90,
+al-Baghawi 94, al-Sa'di 91, Ibn Kathir 14) and Bengali, Urdu, Russian and Kurdish works.
+
+**Working endpoint for a single verse:**
+
+    /api/v4/tafsirs/{tafsir_id}/by_ayah/{verse_key}     e.g. .../169/by_ayah/3:7
+
+**The trap.** `/api/v4/quran/tafsirs/{id}?verse_key=3:7` looks correct and returns **HTTP 200**
+with `{"tafsirs":[],"meta":{...}}` — an empty success, not an error. A fetch loop that only
+checks the status code will record twenty successful requests and no content.
+
+**Fetch with `curl`, not Python `urllib`.** Through this environment's agent proxy, `urllib`
+received **403 Forbidden** on every request while `curl` to the identical URL succeeded. Do not
+disable TLS verification or unset `HTTPS_PROXY` to work around it — just use `curl`.
