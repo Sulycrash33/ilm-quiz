@@ -178,6 +178,37 @@ export function buildLadder(
 }
 
 /**
+ * Build a ladder confined to one tier — the run mode behind the level-locked
+ * adventure path, where a category is nine discrete levels (one per rank
+ * tier) instead of one adaptive climb.
+ *
+ * Unlike `buildLadder`, there is deliberately no cross-tier fallback: a level
+ * is that tier's own questions, shuffled, capped at `runLength` (or shorter,
+ * if the tier does not have that many published yet). A tier with no
+ * questions returns an empty ladder rather than borrowing from a neighbor —
+ * borrowing here would let a player "complete" a level without ever seeing
+ * that level's own material, which defeats the point of gating on it.
+ */
+export function buildTierLadder(
+  pool: readonly QuizQuestion[],
+  tier: number,
+  opts: { length?: number; rng?: () => number } = {},
+): HuntQuestion[] {
+  const rng = opts.rng ?? makeRng(Date.now());
+  const t = clampTier(tier);
+  const bucket = shuffle(
+    pool.filter((q) => clampTier(q.tier) === t),
+    rng,
+  );
+  const target = Math.min(opts.length ?? HUNT_RULES.runLength, bucket.length);
+  return bucket.slice(0, target).map((q, i) => ({
+    ...q,
+    stage: i + 1,
+    timeLimit: timeLimitForTier(t),
+  }));
+}
+
+/**
  * Which tier stage `index` of a `length`-question run should aim for.
  *
  * The run spans one tier below the seeker's rank to one above it, so it opens

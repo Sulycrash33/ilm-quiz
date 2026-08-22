@@ -11,6 +11,7 @@ import { StreakCounter } from "@/components/game/StreakCounter"
 import { ReviewCallout } from "@/components/game/ReviewCallout"
 import { UserStats } from "@/components/game/UserStats"
 import { DailyProgressCard } from "@/components/game/DailyProgressCard"
+import { LogoutButton } from "@/components/layout/LogoutButton"
 
 import { getContinueCard, type ContinueCard } from "./actions"
 import { getDailyChallenge, type DailyChallengeView } from "../challenges/actions"
@@ -104,6 +105,7 @@ export default function HomePage() {
               </svg>
             </div>
           </div>
+          <LogoutButton className="flex items-center justify-center h-9 w-9 rounded-full text-on-surface-variant/70 hover:bg-white/5 hover:text-error transition-colors" />
         </div>
       </motion.header>
 

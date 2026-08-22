@@ -107,6 +107,12 @@ export interface Translations {
   huntComplete: string
   beginHunt: string
   questionHunt: string
+  /** "Level" as in "Level 3" on the per-category adventure path. */
+  levelLabel: string
+  levelLocked: string
+  completeLevelToUnlock: string
+  backToLevels: string
+  levelComplete: string
   xpToRank: string
   maxRankReached: string
 
@@ -668,6 +674,11 @@ const enTranslations: Translations = {
   huntComplete: "Hunt complete",
   beginHunt: "Begin the hunt",
   questionHunt: "{count}-question hunt",
+  levelLabel: "Level",
+  levelLocked: "Locked",
+  completeLevelToUnlock: "Complete this level to unlock the next one",
+  backToLevels: "Back to Levels",
+  levelComplete: "Level complete! The next level is unlocked.",
   xpToRank: "{xp} XP to {rank}",
   maxRankReached: "Highest rank reached",
 
@@ -1229,6 +1240,11 @@ const msTranslations: Translations = {
   huntComplete: "Perburuan selesai",
   beginHunt: "Mula memburu",
   questionHunt: "Perburuan {count} soalan",
+  levelLabel: "Tahap",
+  levelLocked: "Berkunci",
+  completeLevelToUnlock: "Selesaikan tahap ini untuk membuka tahap seterusnya",
+  backToLevels: "Kembali ke Tahap",
+  levelComplete: "Tahap selesai! Tahap seterusnya telah dibuka.",
   xpToRank: "{xp} XP ke {rank}",
   maxRankReached: "Pangkat tertinggi dicapai",
 
@@ -1790,6 +1806,11 @@ const idTranslations: Translations = {
   huntComplete: "Perburuan selesai",
   beginHunt: "Mulai berburu",
   questionHunt: "Perburuan {count} soal",
+  levelLabel: "Level",
+  levelLocked: "Terkunci",
+  completeLevelToUnlock: "Selesaikan level ini untuk membuka level berikutnya",
+  backToLevels: "Kembali ke Level",
+  levelComplete: "Level selesai! Level berikutnya telah terbuka.",
   xpToRank: "{xp} XP menuju {rank}",
   maxRankReached: "Peringkat tertinggi tercapai",
 
@@ -2351,6 +2372,11 @@ const haTranslations: Translations = {
   huntComplete: "An kammala farauta",
   beginHunt: "Fara farauta",
   questionHunt: "Farautar tambayoyi {count}",
+  levelLabel: "Mataki",
+  levelLocked: "An kulle",
+  completeLevelToUnlock: "Kammala wannan matakin domin buɗe na gaba",
+  backToLevels: "Koma zuwa Matakai",
+  levelComplete: "An kammala matakin! An buɗe matakin gaba.",
   xpToRank: "{xp} XP zuwa {rank}",
   maxRankReached: "An kai matsayi mafi girma",
 
@@ -2912,6 +2938,11 @@ const frTranslations: Translations = {
   huntComplete: "Chasse terminée",
   beginHunt: "Commencer la chasse",
   questionHunt: "Chasse de {count} questions",
+  levelLabel: "Niveau",
+  levelLocked: "Verrouillé",
+  completeLevelToUnlock: "Terminez ce niveau pour débloquer le suivant",
+  backToLevels: "Retour aux niveaux",
+  levelComplete: "Niveau terminé ! Le niveau suivant est débloqué.",
   xpToRank: "{xp} XP jusqu'à {rank}",
   maxRankReached: "Rang le plus élevé atteint",
 
@@ -3473,6 +3504,11 @@ const arTranslations: Translations = {
   huntComplete: "اكتملت الرحلة",
   beginHunt: "ابدأ الرحلة",
   questionHunt: "رحلة من {count} أسئلة",
+  levelLabel: "المستوى",
+  levelLocked: "مقفل",
+  completeLevelToUnlock: "أكمل هذا المستوى لفتح المستوى التالي",
+  backToLevels: "العودة إلى المستويات",
+  levelComplete: "اكتمل المستوى! تم فتح المستوى التالي.",
   xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
   maxRankReached: "تم بلوغ أعلى رتبة",
 
