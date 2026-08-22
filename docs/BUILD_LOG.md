@@ -1123,6 +1123,32 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 24. Islamic Arts & Culture (`arts_culture`) — 180 / 180
+
+Verified anchors: minaret/calligraphy/mihrab/minbar/muqarnas basic vocabulary; the Blue Qur'an, Baysunghur Qur'an, and Qur'an of Sultan Baybars al-Jashnagir as named illuminated manuscripts; five named calligraphy scripts (Kufic, Naskh, Thuluth, Diwani, Nasta'liq) and eight named mosques (Masjid al-Haram, Masjid an-Nabawi, the Umayyad Mosque of Damascus, the Great Mosque of Cordoba, the Blue Mosque, the Süleymaniye Mosque, the Badshahi Mosque, the Sheikh Zayed Grand Mosque); Mimar Sinan's career and the Süleymaniye/Selimiye Mosques; the Umayyad Mosque of Damascus (al-Walid I), the Great Mosque of Samarra's malwiya (Abbasid, al-Mutawakkil), the Alhambra (Nasrid), and the Dome of the Rock's own foundation inscription (AH 72/691-692 CE, 'Abd al-Malik) including its later al-Ma'mun name-substitution while preserving the original date; documented early qiblah-orientation deviation at the mosques of Kufa, Wasit, and Baghdad; the minbar's evolution and reported enlargement under Mu'awiya I; muqarnas's dual decorative/structural role; the Blue Qur'an's genuinely disputed dating and origin (Jonathan Bloom's Fatimid-Kairouan hypothesis, not settled consensus) and its dispersed surviving fragments; the popularly-but-not-provenly "Uthmanic" association carried by the Topkapı manuscript and the Samarkand Kufic Qur'an; the Verse of Light (Qur'an 24:35) on Mamluk mosque lamps and an Isfahan mihrab; Amanat Khan's signed Taj Mahal inscriptional program (Surahs Ya-Sin, al-Zumar, al-Fajr); Ottoman-versus-Mughal architectural comparison; the Ibn Muqla/Ibn al-Bawwab Kufic-to-Naskh transition (10th-11th centuries); and the genuine classical/art-historical debates on figural depiction (Bukhari hadith on image-makers, the courtly-miniature-painting exception, Oleg Grabar's scholarship) and on music (Ibn Taymiyyah, Ibn Hazm, Abu Hamid al-Ghazali, Ahmad Ghazali's *Bawariq al-Ilma'*).
+
+This category's research pass corrected several premises before drafting began: the number of genuinely settled architect/inventor attributions (Badshahi's architect, the Taj Mahal's architect, and Nasta'liq's traditional inventor are each flagged as disputed rather than settled, contrasted with Amanat Khan's own signed, contemporaneous inscription); the Blue Qur'an's origin (a leading hypothesis, not a consensus); and the shape of the figural-depiction and music debates, which the research explicitly cautioned against flattening into "Islam bans/allows X."
+
+**Tiers 1-3** cover basic architectural and artistic vocabulary, five named scripts and eight named mosques with their standout features, and script/architect/dynasty/period matching — the last explicitly distinguishing well-attested attributions (the Dome of the Rock's own foundation inscription, Amanat Khan's signed calligraphy) from popularly repeated but genuinely disputed ones (Badshahi's architect, the Taj Mahal's architect, Nasta'liq's traditional inventor).
+
+**Tier 4** covers three design conventions each with a specific qualifying condition: the mihrab's qiblah orientation, including the real, academically documented phenomenon of measurable early-mosque qiblah deviation (Kufa, Wasit, Baghdad) tied to less precise pre-spherical-trigonometry orientation methods rather than any doctrinal disagreement; the minbar's ceremonial function and its reported historical enlargement under Mu'awiya I; and muqarnas's structural role specifically when bridging a square base to a round dome, distinct from its purely decorative use elsewhere.
+
+**Tier 5** distinguishes well-attested manuscript/monument evidence from popular but less certain tradition: the Blue Qur'an's genuinely disputed dating and origin (with Bloom's own methodological caution that long presence in a location does not prove production there) against the Dome of the Rock's own foundation inscription as a textbook case of primary evidence settling a dating question, and the popularly-but-not-provenly "Uthmanic" association carried by more than one manuscript (the Topkapı manuscript, the Samarkand Kufic Qur'an in Tashkent).
+
+**Tier 6** examines specific motifs in their original context: geometric pattern's common but explicitly hedged art-historical "infinite divine unity" reading (a scholarly interpretive convention, not settled theological doctrine); muqarnas's dual decorative/structural meaning revisited; and two specific, checkable verse-to-function pairings — the Verse of Light (24:35) on Mamluk mosque lamps and an Isfahan mihrab, and Amanat Khan's own signed selection of funerary-themed surahs (Ya-Sin, al-Zumar, al-Fajr) for the Taj Mahal.
+
+**Tier 7** compares Ottoman and Mughal architecture (dome engineering, İznik tilework versus red-sandstone-and-marble, minaret form and function) and Kufic versus Naskh script, anchored to the real, named Ibn Muqla/Ibn al-Bawwab transition point (10th-11th centuries) rather than a vague, undated shift — with neither comparison framed as declaring one tradition superior.
+
+**Tier 8, the category's most sensitive tier,** presents two genuine classical debates with full evidentiary care on both sides rather than a flattened verdict: figural depiction (the Bukhari hadith basis for caution in religious contexts, set against the real courtly miniature-painting tradition in Persianate/Ottoman/Mughal contexts and the several actively-discussed art-historical explanations for that exception, per Oleg Grabar's scholarship) and music/sama' (Ibn Taymiyyah's stricter position, Ibn Hazm's evidentiary-grounds permissive position, Abu Hamid al-Ghazali's conditional middle position, the daf-at-weddings hadith cited by the permissive side, and Sufi sama's own further internal controversy via Ahmad Ghazali's *Bawariq al-Ilma'*).
+
+**Tier 9's capstone reapplies each of tiers 2-8's specific corrections to new, unattributed claims** (an Ottoman-vs-Mughal architectural identification, a Kufic-script identification, a false Blue-Qur'an-consensus claim, an unproven "Uthmanic" manuscript claim, a mismatched mihrab-verse claim, a false muqarnas-is-always-decorative claim, a false universal-mihrab-accuracy claim, a false Ibn-Taymiyyah/Ibn-Hazm-agreement claim, a false Badshahi-architect-certainty claim, a false figural-imagery-never-appeared claim, a false Nasta'liq-single-inventor claim, a false Kufic-Naskh-no-transition claim, and a false figural-depiction/music-unanimous-agreement claim) rather than merely repeating prior facts — including one item explicitly noting that the honorific-versus-binding-legal-designation distinction belongs to the Sacred Geography category rather than this one, modeling accurate cross-category boundaries rather than overreaching.
+
+The full-category validator (tier counts, near-duplicates, answer-index balance, repeated answers, repeated stems) came back fully clean on first check — no post-insert fixes needed for this category.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1150,4 +1176,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Women in Islam | 180 / 180 |
 | Islamic History | 180 / 180 |
 | Sacred Geography | 180 / 180 |
-| **total** | **4,140 of 5,220** |
+| Islamic Arts & Culture | 180 / 180 |
+| **total** | **4,320 of 5,220** |

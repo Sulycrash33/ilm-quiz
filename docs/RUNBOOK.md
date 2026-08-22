@@ -512,3 +512,44 @@ insert; none of them is guessable from the column list.
   "Makkah, in the Hijaz" / "Madinah, as the second sanctuary") rather than rewriting the question.
   Expect this specific check to fire in any future geography- or place-name-heavy category and
   budget for it up front rather than treating it as a sign something went wrong.
+
+### Added while authoring Islamic Arts & Culture
+
+- **A "who built/invented this" attribution is a distinct risk category from a hadith grading or
+  a historical-date dispute, and it recurred constantly in this art/architecture category.**
+  Three separate popular single-name attributions — the Badshahi Mosque's architect, the Taj
+  Mahal's architect (Ustad Ahmad Lahauri, resting on a later chronicle rather than a
+  contemporaneous source), and Nasta'liq's traditional sole inventor (Mir Ali Tabrizi, when
+  current scholarship treats the script's development as gradual) — were all flagged by the
+  research pass as genuinely less certain than popular tradition presents them. The fix pattern
+  was the same each time: state the popular attribution, then explicitly flag why historians
+  regard it as uncertain, rather than picking a single name and treating it as settled. Contrast
+  this against Amanat Khan's role at the Taj Mahal, which *is* solidly attested via his own
+  signed, contemporaneous inscription — a clean paired example of a well-attested attribution
+  sitting right next to a disputed one on the very same building.
+- **An interpretive claim about what ornament "means" (e.g., geometric pattern evoking infinite
+  divine unity) needs a different hedge than a factual claim about a date or an attribution.**
+  It isn't "disputed" in the sense of competing named positions — it's a common art-historical
+  interpretive convention that should be labeled as such, explicitly distinguished from settled
+  theological doctrine, rather than presented either as uncontested fact or as controversial.
+  Watch for this third category — interpretation-as-convention — alongside the more familiar
+  "verified fact" and "genuinely disputed claim" buckets in any future category touching
+  aesthetics, symbolism, or meaning.
+- **The figural-depiction and music tiers (this category's designated highest-sensitivity tier)
+  needed named positions on both sides, not a flattened verdict, and research explicitly modeled
+  the real shape of each debate rather than a caricature.** Figural depiction is not "Islam bans
+  images" — strict avoidance is close to consensus specifically in religious/sacred contexts,
+  while a real, art-historically-discussed courtly miniature-painting tradition existed
+  alongside it, with the reasoning behind that exception still an open scholarly question (Oleg
+  Grabar), not a single settled explanation. Music is not "some say yes, some say no" — it is a
+  named spectrum (Ibn Taymiyyah's stricter reading of the instruments hadith; Ibn Hazm's
+  evidentiary rejection of that hadith's reliability; al-Ghazali's conditional middle position;
+  Sufi sama's own further internal debate, via Ahmad Ghazali's explicit written defense). Naming
+  specific scholars and specific texts, rather than "some scholars," is what keeps a sensitive
+  topic like this checkable instead of a vague gesture at controversy.
+- **This category needed exactly one honest cross-category boundary check in its capstone tier**:
+  the haram-legal-designation-versus-honorific-title distinction (from Sacred Geography) does not
+  belong in Arts & Culture, and the capstone item drawing on that idea was written to say so
+  explicitly rather than reaching for a plausible-sounding but wrong tier to cite. When a
+  capstone's reapplied-principle case doesn't actually have a clean home in the current
+  category's own tiers, saying so is more accurate than forcing a fit.
