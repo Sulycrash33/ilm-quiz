@@ -585,3 +585,45 @@ insert; none of them is guessable from the column list.
   tier, and the capstone tier** — a pattern distinct from the geography category's short-place-name
   repeats, but the same light fix applied: add a brief qualifying phrase to one repeated
   choice-array entry rather than rewriting the question it belongs to.
+
+### Added while authoring Islamic Finance
+
+- **A tier built around five parallel contract definitions (murabaha, mudaraba, musharaka,
+  ijara, salam) will collide immediately if each item uses the identical "What is X, precisely
+  defined?" template** — all five collided with each other in tier 3's first pass, at similarity
+  scores from 0.62 to 0.75. The fix, consistent with prior categories' per-item-template lesson,
+  was to flip the template: describe the transaction concretely and ask which named contract it
+  is, rather than asking for a definition of a given name. This both fixed the collision and
+  produced a better-quality applied question.
+- **A tier built around several parallel "which AAOIFI Shari'ah Standard covers X?" items has the
+  same collision risk, but the fix needs more variety than a single template flip can supply.**
+  Seven standard-number items in tier 5 needed seven genuinely different sentence structures
+  (forward lookup, reverse lookup, a "memo cites SS13" scenario, an embedded title quotation) to
+  clear both the intra-tier check and the category-wide stem-opener cap — a single alternate
+  template, reused seven times, still trips the cap.
+- **Numeric/institutional-fact categories carry a distinct research-honesty risk: fabricating a
+  precise-sounding number or clause citation that cannot actually be verified.** The research
+  pass for this category explicitly flagged that AAOIFI's standard *numbers and titles* are
+  independently confirmable from AAOIFI's own site, but internal *clause numbers* are not (the
+  standards themselves are paywalled) — so every AAOIFI citation in this category cites the
+  standard by number and title only, never a fabricated clause reference. The same discipline
+  applied to the stock-screening thresholds: the research corrected an initial assumption of one
+  fuzzy "30-33%" range into two specific, attributable figures (AAOIFI's 30% versus the market
+  indices' 33%/33.33%), with the ~5% impure-income threshold confirmed as the one genuinely
+  convergent figure — precision about *which* number belongs to *which* body mattered as much as
+  getting a number at all.
+- **A hadith-attested example is not automatically identical to a classical jurist's teaching
+  illustration of the same concept, and this category needed both distinguished explicitly.**
+  The popular "fish still in the water" / "bird in the sky" glosses for gharar are classical
+  illustrations, not the Prophet's own verbatim wording (the actual hadith, Sahih Muslim 1513, is
+  a general statement); habal al-habala and bay' al-hasah/mulamasah/munabadha are the directly,
+  verbatim hadith-attested cases. Presenting the former as though it were the latter would have
+  been a citation-precision failure of exactly the kind this bank's discipline exists to catch.
+- **This category's designated highest-sensitivity tier (organized tawarruq, conventional
+  insurance, screening thresholds) needed named institutional decisions, not just named scholarly
+  positions** — a pattern one step beyond the usual "name the specific scholars on each side."
+  IIFA's actual resolution number (179 (5/19), 19th session, Sharjah, 2009) and AAOIFI's actual
+  standard numbers are institutional, checkable facts in their own right, sitting alongside named
+  individual scholars (al-Zarqa, al-Khafif, Siddiqi) on the conventional-insurance question. A
+  modern applied-fiqh category should expect both kinds of citation to be available and should
+  use whichever is actually the more precise fit for a given claim.

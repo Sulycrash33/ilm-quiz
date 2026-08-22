@@ -1175,6 +1175,32 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 26. Islamic Finance (`islamic_finance`) — 180 / 180
+
+Verified anchors: Qur'an 2:275-280 (riba's most extensive treatment), 3:130, 30:39 on riba and giving; the hadith of 'Ubadah ibn al-Samit (Sahih Muslim 1587) establishing the six ribawi commodities and the riba al-fadl/riba al-nasi'ah distinction; the gold/silver zakat nisab (85g/595g as modern conversions of 20 mithqal/200 dirhams, not text-stated gram figures) and the genuine Hanafi-silver versus Maliki/Shafi'i/Hanbali-gold school split; precise definitions of murabaha, mudaraba, musharaka, ijara, and salam; the hadith of Hakim ibn Hizam ("do not sell what you do not possess") underlying murabaha's ownership/possession/risk conditions; seven confirmed AAOIFI Shari'ah Standard numbers (5, 8, 9, 10, 12, 13, 21, 26) fetched directly from AAOIFI's own site, plus the explicit finding that no standalone AAOIFI standard on gharar exists; the hadith of Abu Hurayrah (Sahih Muslim 1513) on gharar, with habal al-habala and bay' al-hasah/mulamasah/munabadha as directly hadith-attested examples distinct from the "fish in the water" classical jurists' illustrative gloss; the gharar fahish/yasir distinction; bay' al-'inah's majority-prohibited/Shafi'i-permitted cross-school split; IIFA Resolution No. 179 (5/19) (19th session, Sharjah, 2009) ruling against organized tawarruq; the majority riba/gharar/maysir critique of conventional insurance against takaful (AAOIFI SS26) and the named minority-permissive scholars (al-Zarqa, al-Khafif, Siddiqi); and the AAOIFI-30%-versus-index-33%/33.33% stock-screening divergence alongside the convergent ~5% impure-income threshold.
+
+This category's research pass (conducted via live web search against AAOIFI's and IIFA's own official sites, S&P/MSCI/DJIM methodology PDFs, and sunnah.com) corrected several working assumptions before drafting began: "fish in the water"/"bird in the sky" were confirmed as classical jurists' teaching illustrations rather than the Prophet's own verbatim hadith wording; no standalone AAOIFI "gharar standard" exists, contrary to an initial assumption that one might; and the stock-screening threshold was corrected from an assumed fuzzy "30-33%" range to two distinct, attributable figures — AAOIFI's specific 30% (reasoned from the classical one-third bequest-limit principle) against the major indices' specific 33%/33.33% — with the ~5% impure-income threshold confirmed as the genuinely convergent figure across methodologies.
+
+**Tiers 1-3** cover riba's basic Qur'anic prohibition alongside sadaqah's encouragement; the precise riba al-fadl/riba al-nasi'ah distinction, the zakat nisab's gold/silver conversion figures and genuine school split, and zakatable wealth categories; and precise, structurally distinguishing definitions of all five named contracts (murabaha, mudaraba, musharaka, ijara, salam), each via a description-to-name format to avoid the flat "what is X, defined?" template collision across five parallel items.
+
+**Tier 4** works through murabaha's specific validity conditions — ownership prior to sale, actual/constructive possession with genuine risk-bearing, cost disclosure — and the hila critique of murabaha structures that skip these conditions, collapsing into a disguised interest-bearing loan.
+
+**Tier 5** names seven specific AAOIFI Shari'ah Standard numbers against their exact contract types, verified directly from AAOIFI's own site, and explicitly corrects the assumption that a standalone "gharar standard" exists, redirecting gharar's citation to the hadith of Abu Hurayrah and classical fiqh manuals instead.
+
+**Tier 6** gives gharar's precise classical definition, distinguishes the Prophet's actual hadith wording (Sahih Muslim 1513) from jurists' "fish in the water" illustrative gloss, names habal al-habala and bay' al-hasah/mulamasah/munabadha as directly hadith-attested worked examples, and introduces the gharar fahish/yasir severity distinction.
+
+**Tier 7** compares three paired structures reaching similar practical ends — compliant murabaha against an interest loan, ijara wa iqtina against a conventional mortgage, and classical tawarruq against bay' al-'inah — each pairing distinguished by specific structural features (ownership, risk, independent economic purpose) rather than by practical resemblance alone.
+
+**Tier 8, this category's most dispute-focused tier,** presents three genuinely still-live disputes with full evidentiary care: organized tawarruq (tawarruq munazzam), specifically ruled against by IIFA's Resolution No. 179 (5/19) yet still documented in practice at some institutions; conventional insurance's majority riba/gharar/maysir prohibition against takaful's tabarru'-based alternative, with named minority-permissive scholars (al-Zarqa, al-Khafif, Siddiqi) and their reasoning; and the genuine AAOIFI-versus-market-index divergence on stock-screening debt thresholds, alongside the convergent impure-income threshold.
+
+**Tier 9's capstone applies each of tiers 1-8's specific structural conditions to new, unfamiliar financial products** (an app-based cash-advance product resembling a disguised loan, a takaful cooperative, a bank-arranged organized-tawarruq-style resale, a musharaka-structured crowdfunding platform, an insufficiently screened investment fund, a gharar fahish warehouse-contents sale, a compliant ijara wa iqtina lease, a false AAOIFI-gharar-standard inference, a valid salam, and a paired murabaha-versus-disguised-loan structure comparison) rather than merely repeating prior facts.
+
+The full-category validator (tier counts, near-duplicates, answer-index balance, repeated answers, repeated stems) came back fully clean on first check — no post-insert fixes needed for this category, joining Islamic Arts & Culture as the only categories this segment to validate clean on the first pass.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1204,4 +1230,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Sacred Geography | 180 / 180 |
 | Islamic Arts & Culture | 180 / 180 |
 | Science in Islam | 180 / 180 |
-| **total** | **4,500 of 5,220** |
+| Islamic Finance | 180 / 180 |
+| **total** | **4,680 of 5,220** |
