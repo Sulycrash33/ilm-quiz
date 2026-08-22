@@ -623,6 +623,42 @@ insert; none of them is guessable from the column list.
   playful affection, balanced view of a spouse's character), never explicit, consistent with the
   standing English-only/no-explicit-content constraint that applies category-wide.
 
+### Added while authoring Interfaith Relations
+
+- **A verse popularly cited as textbook "proof" of a hostile or a tolerant reading (here, 9:5 and
+  9:29, and separately 2:256) usually has a real, documented classical minority position on the
+  opposite side of the now-dominant reading — and the dominant reading itself is often more
+  recent than assumed.** Research surfaced that Ibn Kathir's own tafsir preserves an
+  expansive-abrogation report for 9:5 ("Ayat al-Sayf" superseding earlier tolerance verses) even
+  though the now-mainstream reading (Hanafi-associated, context-bound to specific treaty-breaking
+  polytheists) is what most modern presentations lead with — and separately, that 2:256's
+  "unabrogated general principle" reading, now the modern default, was itself one of three
+  competing classical positions, not always the consensus. The lesson generalizes past this
+  category: whenever a verse is popularly invoked as settled proof of either a harsh or a gentle
+  reading, check whether the classical record actually shows one dominant reading emerging from
+  genuine competition, and name the losing position rather than pretending it never existed.
+- **A historical document's plausibility and its precision are two different axes, and a category
+  built on treaties/covenants needs both tracked separately per document.** The Constitution of
+  Madinah is broadly accepted as substantially authentic (on internal/philological grounds, not
+  isnad) while its exact clause numbering is genuinely unfixed across scholarly editions
+  (Wellhausen/Serjeant/Watt/Lecker differ) — so a question can cite its content by substance but
+  must not cite a bare clause number as though canonical. The Muqawqis letter and the Ashtiname
+  sit at the opposite end of the same axis: specific, named paleographic/historiographical
+  arguments (an anachronistic seal; total silence in the earliest sira/tarikh sources) push
+  mainstream scholarship toward treating each as inauthentic, against one named modern dissenter
+  apiece (Hamidullah; Morrow) — a genuinely different evidentiary posture from the Constitution of
+  Madinah's "broadly accepted, imprecisely detailed" status, and worth keeping distinct rather
+  than lumping every old document under one vague "sources vary" label.
+- **A "where scholars differ today" tier needs a genuinely live, still-open disagreement, not a
+  historical dispute that has since converged** — the first draft instinct was to reuse 2:256's
+  abrogation dispute here, but research showed modern scholars across the spectrum have
+  essentially converged on rejecting abrogation, making that a poor tier-8 fit (better used in
+  tier 2/6 as a historical-range fact). The actual tier-8 material needed named contemporary
+  positions with a named modern proponent on at least one side (the dhimmah-vs-equal-citizenship
+  debate, associated with Yusuf al-Qaradawi, against a traditionalist continuity position) plus a
+  documented mixed-reception case ("A Common Word," which drew both wide endorsement and real
+  criticism) — both still genuinely unresolved, unlike the abrogation question.
+
 ### Added while authoring Islamic Finance
 
 - **A tier built around five parallel contract definitions (murabaha, mudaraba, musharaka,

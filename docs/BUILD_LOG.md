@@ -1227,6 +1227,32 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 28. Interfaith Relations (`interfaith`) — 180 / 180
+
+Verified anchors: Qur'an 2:136, 3:84, 4:163-165, 5:44, 5:46, 5:48 (shared prophets and scriptures, muhaymin correctly glossed as watcher/guardian rather than replacement); the Ahl al-Kitab designation with its genuine Zoroastrian (22:17) and Sabian edge cases; Qur'an 2:256 with its three genuinely distinct classical positions (unabrogated general principle, Ahl-al-Kitab-specific, and a real minority abrogation reading tied to Sulayman ibn Musa); the Constitution of Madinah as preserved via Ibn Ishaq/Ibn Hisham (no isnad) with a parallel Abu 'Ubayd recension carrying a real textual variant, and Serjeant's composite-document dispute; the Najran covenant (Abu Yusuf's Kitab al-Kharaj; al-Baladhuri); dhimmah's reciprocal obligations and jizyah's genuinely attested exemptions (tied to incapacity to earn, not poverty alone) via 'Umar's blind-beggar account and the Banu Taghlib negotiated alternative; the Muqawqis/Topkapi letter's mainstream-inauthentic paleographic verdict (Karabacek, Nöldeke, Öhrnberg, El Shamsy, against Hamidullah's dissent) and the Ashtiname's disputed-leaning-inauthentic status (Morrow's dissent against the early-source-silence argument); Qur'an 9:5 and 9:29 with their internal exception clauses, classical historical anchors (Meccan treaty-breakers; the Tabuk expedition), and — critically — the real abrogationist current preserved within Ibn Kathir's own tafsir and Ibn al-'Arabi's expansive claim, alongside the Hanafi-associated narrower reading; Qur'an 60:8-9, 5:5 (with its marriage-permission asymmetry), 3:64, and 29:46, each pairing a general principle with a conduct-based exception; and "A Common Word Between Us and You" (2007) alongside the genuinely live contemporary dhimmah/citizenship debate (a reformist position associated with Yusuf al-Qaradawi against a traditionalist continuity position).
+
+This category's research pass corrected several premises before drafting began: 4:163 (not 4:165) is where David/the Psalms are actually named; 2:256's scope is genuinely disputed across three classical positions rather than uniformly read as an unabrogated general principle; the Constitution of Madinah's clause numbering varies by scholarly edition (Wellhausen, Serjeant, Watt, Lecker), so no bare clause number is canonical; the Muqawqis letter/seal at Topkapi is treated by mainstream paleography as inauthentic rather than merely "disputed" in a neutral sense; and 9:5's classical reception genuinely includes an expansive abrogationist current (preserved within Ibn Kathir's own tafsir) alongside the now-dominant narrower, Hanafi-associated contextual reading — a real classical range this category presents rather than flattens in either direction.
+
+**Tiers 1-3** cover the Qur'an's own recognition of a shared chain of prophets and scriptures; the Ahl al-Kitab designation with its genuine Zoroastrian/Sabian edge cases and 2:256's three-way classical dispute; and named treaties and letters, with the Constitution of Madinah's specific provisions (religious autonomy, mutual defense, prophetic arbitration) and the Najran covenant's clergy-retention clause.
+
+**Tier 4** pairs dhimmah's reciprocal ruling with its specific conditions — jizyah's genuine exemptions tied to incapacity rather than poverty, the Banu Taghlib negotiated alternative, and 'Umar's blind-beggar account illustrating the ruling meeting its condition in practice.
+
+**Tier 5** applies source-reliability discipline to four treaties/letters: the Constitution of Madinah's isnad-free but internally well-grounded transmission, the Muqawqis letter's mainstream-inauthentic paleographic verdict, the Najran covenant's comparatively strong early juristic attestation, and the Ashtiname's disputed-leaning-inauthentic status — each graded on its own specific evidentiary merits rather than treated as uniformly certain.
+
+**Tier 6, this category's most sensitive tier,** works through 9:5 and 9:29 with full evidentiary care: each verse's own internal exception clause, its classically documented historical anchor, and — critically — the genuine classical abrogationist current attested even within Ibn Kathir's own tafsir, presented alongside rather than flattened beneath the now-dominant Hanafi-associated contextual reading.
+
+**Tier 7** works through four general-principle-and-exception verse pairs (60:8-9's hostility line, 5:5's food/marriage permission with its genuine asymmetry, 3:64's invitation with its stated fallback, and 29:46's best-manner/injustice-exception structure), each conditioning its openness on conduct rather than religious identity alone.
+
+**Tier 8** presents two genuinely live contemporary disagreements with named positions: "A Common Word Between Us and You" (2007) and its mixed scholarly reception, and the dhimmah/citizenship debate between a reformist position (associated with Yusuf al-Qaradawi) and a traditionalist continuity position, each with its specific underlying reasoning named.
+
+**Tier 9's capstone applies each of tiers 1-8's specific facts and distinctions to new, unfamiliar interfaith scenarios** (a Muslim-minority citizenship question, a public 9:5 misreading, an interfaith-council initiative, a workplace-kindness question, an asymmetric marriage question, a Constitution-of-Madinah citation caution, an Ashtiname authenticity claim, a jizyah-retention policy proposal, a false-uniformity claim about Qur'anic treatment of non-Muslims, and a false-dichotomy argument about 9:5's classical reception) rather than merely repeating prior facts.
+
+The full-category validator (tier counts, near-duplicates, answer-index balance, repeated answers, repeated stems) came back fully clean on first check — no post-insert fixes needed for this category.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1258,4 +1284,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Science in Islam | 180 / 180 |
 | Islamic Finance | 180 / 180 |
 | Marriage & Family Life | 180 / 180 |
-| **total** | **4,860 of 5,220** |
+| Interfaith Relations | 180 / 180 |
+| **total** | **5,040 of 5,220** |
