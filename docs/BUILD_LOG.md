@@ -1097,6 +1097,32 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 23. Sacred Geography (`sacred_places`) — 180 / 180
+
+Verified anchors: Makkah, Madinah, the Ka'bah, and Masjid al-Aqsa's basic identities; the qiblah change from Jerusalem to Makkah (Qur'an 2:144), with the al-Bara' ibn 'Azib narration's own hedged "sixteen or seventeen months" wording preserved rather than rounded to a single figure; the Hajj ritual site sequence (miqat/ihram, Arafat on 9 Dhul-Hijjah, Muzdalifah, Mina's Jamarat), Sa'i's genuinely variable timing across Hajj types, and historic city names (Yathrib for Madinah, Bakkah for Makkah, Iliya/Bayt al-Maqdis for Jerusalem); the haram sanctuary designation — corrected mid-research from an assumed "two or three mosques" premise to the actual three sanctuaries (Makkah unanimous, Madinah majority, Wajj near Ta'if minority-disputed), with Masjid al-Aqsa's "al-Haram al-Sharif" title identified as honorific rather than the same binding legal designation, plus the Makkah Haram's direction-varying boundary distances; the three-mosques hadith (Sahih al-Bukhari 1189/Sahih Muslim 1397, Muttafaqun 'alayh) and the prayer-multiplier hadith cluster graded by source (Bukhari 1190/Muslim 1394 for the thousand-prayers figure at Masjid an-Nabawi; Musnad Ahmad/Ibn Majah for the hundred-thousand figure at Masjid al-Haram; a separately weak/da'if fifty-thousand figure for Masjid al-Aqsa, corrected from an initially assumed "well-graded" premise); the Isra' and Mi'raj (Qur'an 17:1) with its genuinely disputed year and the customary, not textually established, "27 Rajab" date; Masjid Quba as the first mosque of Islam (Qur'an 9:108); the precise Masjid al-Aqsa/Dome of the Rock distinction, including the term's narrow-versus-loose usage; and the genuine classical debate over grave-visitation travel and the three-mosques hadith's scope (Ibn Taymiyyah's narrower restriction on dedicated travel-intention versus Qadi 'Iyad/al-Nawawi/al-Subki's broader affirming position), corrected from an initial oversimplified "Ibn Taymiyyah banned grave visitation" premise.
+
+This category's research pass corrected four separate premises before any drafting began — the haram-designation count, two of the three prayer-multiplier gradings, the "27 Rajab" date's actual evidentiary status, and Ibn Taymiyyah's real position on grave-visitation travel — each flagged explicitly rather than drafted from initial assumption.
+
+**Tiers 1-3** cover the four foundational sites, which city holds which named masjid alongside the one qiblah change, and the Hajj ritual sequence, approximate (explicitly flagged as approximate) inter-site distances, and historic city naming.
+
+**Tier 4, the scope-with-condition tier,** corrects the "two or three mosques carry haram status" premise with the researched reality: Makkah unanimous, Madinah majority-with-minor-dissent, Wajj near Ta'if minority-disputed, and Masjid al-Aqsa's honorific "al-Haram al-Sharif" title explicitly distinguished from binding legal haram status — plus the Makkah Haram's boundary markers sitting at genuinely varying, not uniform, distances by direction.
+
+**Tier 5, this category's grading-discipline tier,** grades three prayer-multiplier figures side by side: the thousand-prayers figure for Masjid an-Nabawi (Muttafaqun 'alayh, Bukhari 1190/Muslim 1394), the hundred-thousand figure for Masjid al-Haram (Ahmad/Ibn Majah via Jabir, judged authentic by later critics including al-Albani despite falling outside the two Sahihs), and the fifty-thousand figure for Masjid al-Aqsa specifically (da'if, an unidentified narrator in its chain) — the last corrected mid-research from an initially assumed "well-graded" premise to its actual weak grading.
+
+**Tier 6** traces the specific event behind each site's significance — Masjid al-Aqsa's Isra' (Qur'an 17:1) and earlier status as the first qiblah, Madinah's Hijrah, and Masjid Quba's founding (Qur'an 9:108) — while explicitly flagging that the Isra'/Mi'raj's exact year is genuinely disputed among classical scholars and that the popular "27 Rajab" date is customary rather than textually established, a correction made after the research pass flagged the premise.
+
+**Tier 7** distinguishes Masjid al-Aqsa (the mosque building, narrow sense) from the Dome of the Rock (a separate shrine over the foundation stone, built by 'Abd al-Malik ibn Marwan c. 691-692 CE), while also naming the term's common looser usage — "Al-Aqsa" referring to the entire compound — as a genuine, non-erroneous alternative usage rather than simply a mistake to correct.
+
+**Tier 8** presents the genuine classical debate over grave-visitation travel and the three-mosques hadith's scope with full evidentiary care on both sides: Ibn Taymiyyah's actual, narrower position (restricting only travel undertaken specifically and solely for grave-visitation, while affirming the grave-visit itself once present) against Qadi 'Iyad's/al-Nawawi's/al-Subki's broader affirming position (grave-visitation travel is itself permissible and recommended), including that al-Subki's own rebuttal (*Shifa' al-Siqam*) has drawn internal critique of its own — research explicitly corrected an initial "Ibn Taymiyyah banned grave visitation" oversimplification before drafting began.
+
+**Tier 9's capstone reapplies each of tiers 2-8's specific corrective principles to new, unattributed claims** (a shrine-travel misapplication of the three-mosques hadith, an unsourced fourth-haram claim, an uncorrected fifty-thousand-prayers claim, a false "27 Rajab consensus" claim, a Dome-of-the-Rock/mosque-building conflation, an overstated Ibn Taymiyyah characterization, an ihram-timing error, a uniform-boundary-distance error, and a Yathrib/Jerusalem and Bakkah/Yathrib naming confusion) rather than merely repeating prior facts.
+
+A post-insert `answer_repeated` check flagged four short place-name answers ("Makkah" 4x, "Masjid al-Haram" 3x, "Madinah" 3x, "Masjid an-Nabawi" 3x) — an outcome largely inherent to a geography category's easy tiers, where the correct answer is often just the place name itself — fixed via five targeted `UPDATE` statements adding minor qualifying text to specific choice entries; a `stem_repeated` violation ("considering this tie[r]" at 6x) was also caught and fixed via two targeted rewordings. The category re-validated clean on every check afterward.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1123,4 +1149,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Miracles & Signs | 180 / 180 |
 | Women in Islam | 180 / 180 |
 | Islamic History | 180 / 180 |
-| **total** | **3,960 of 5,220** |
+| Sacred Geography | 180 / 180 |
+| **total** | **4,140 of 5,220** |

@@ -481,3 +481,34 @@ insert; none of them is guessable from the column list.
   one. 'Uthman's assassination in the same tier got the parallel treatment for a less doctrinally
   loaded but still contested episode: presenting its circumstantial variation (grievances,
   responsibility, organization) rather than a single settled morality-tale narrative.
+
+### Added while authoring Sacred Geography
+
+- **Stating a premise explicitly before research, and inviting correction, caught four separate
+  factual errors before any drafting began.** The research request for this category stated
+  working assumptions ("I believe only two or three mosques carry haram status," "a well-graded
+  50,000-prayers figure," "27 Rajab" as an established date, "Ibn Taymiyyah opposed grave
+  visitation") and asked explicitly for correction. All four were wrong in specific, correctable
+  ways: haram status actually applies to three sanctuaries with very different degrees of
+  agreement (Makkah unanimous, Madinah majority, Wajj minority-disputed), and Masjid al-Aqsa's
+  "al-Haram al-Sharif" title is honorific rather than the same legal designation; the
+  50,000-prayers figure belongs to Masjid al-Aqsa specifically and is da'if, while a *different*
+  100,000 figure for Masjid al-Haram is the one with real (non-Sahihayn) support; "27 Rajab" is
+  customary, not textually established, and the year itself is genuinely disputed; and Ibn
+  Taymiyyah's real position permits visiting the grave itself and restricts only travel undertaken
+  specifically for that purpose, not grave-visitation as such. Stating assumptions plainly, rather
+  than only asking open questions, gave the research pass something concrete to falsify.
+- **A category built on toponymy and simple recall (tiers 1-3) will still trip the same
+  per-item-template trigram-collision pattern seen in every other category** — three-way
+  parallel constructions ("Which masjid is located in Makkah/Madinah/Jerusalem?") collide even
+  when the answer facts themselves are all different. The fix was the same as always: vary
+  sentence structure per item, not just the place name.
+- **A geography category's easy tiers will legitimately fail `answer_repeated` more than most
+  categories, because the correct answer is sometimes just a short place name with no room for
+  paraphrase** ("Makkah," "Madinah," "Masjid al-Haram," "Masjid an-Nabawi" each recurred 3-4
+  times as the literal correct-choice text across tiers 1, 2, and 4). This is not a sign of
+  padding or repeated content — the underlying questions are all distinct — and the fix is
+  correspondingly light: add a short qualifying phrase to the repeated choice text itself (e.g.
+  "Makkah, in the Hijaz" / "Madinah, as the second sanctuary") rather than rewriting the question.
+  Expect this specific check to fire in any future geography- or place-name-heavy category and
+  budget for it up front rather than treating it as a sign something went wrong.
