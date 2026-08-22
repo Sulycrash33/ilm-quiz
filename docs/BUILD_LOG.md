@@ -1201,6 +1201,32 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 27. Marriage & Family Life (`family_life`) — 180 / 180
+
+Verified anchors: Qur'an 24:32, 30:21 (marriage encouraged, mawaddah/rahmah), 17:23-24, 31:14, 4:36, 29:8, 46:15 (honoring parents); Sahih al-Bukhari 5063 (marriage as sunnah); Sahih Muslim 1421 and Sunan Ibn Majah 1873 (marital consent); Qur'an 4:4, 4:20-21, 4:19, 2:228 (mahr and mutual kindness); the Hanafi ijab/qabul-only arkan versus 'Umdat al-Salik's five-integral Shafi'i enumeration (al-Hidayah; Radd al-Muhtar); Qur'an 4:22-23's mahram list with its conditional stepdaughter and biological-sons clauses; the 'iddah lengths of 2:228 (with the corrected Hanafi+Hanbali-versus-Shafi'i+Maliki quru' split), 2:234, and 65:4; nafaqah's wealth-independent obligation; the four schools' genuinely distinct hidana mechanisms (Hanafi fixed ages 7/9; Maliki puberty/consummation milestones; Shafi'i tamyiz-based choice for both sexes; Hanbali age-7 sex-differentiated choice); Sunan Abi Dawud 2578, Jami' at-Tirmidhi 3895, and Sahih Muslim 1469 (marital-etiquette hadith with gradings) alongside a popular but weak/fabricated "Ayyub-comparison" saying; al-Wahidi's Asbab al-Nuzul on Qur'an 4:34 (Sa'd ibn al-Rabi'), the occasion of revelation for Surat al-Mujadilah (Khawla bint Tha'laba and Aws ibn al-Samit's zihar, Qur'an 58:1-4), and Sahih al-Bukhari 5273/5276 (Thabit ibn Qays's wife's khul' case); Qur'an 2:229 (khul') and 4:35 (arbitration); and the four-school wali requirement (Sunan Abi Dawud 2085/Jami' at-Tirmidhi 1101, with its genuinely disputed hasan/sahih/munqati' grading) and the classical-majority-versus-Ibn-Taymiyyah/Ibn-al-Qayyim triple-talaq dispute.
+
+This category's research pass corrected several premises before drafting began: the 2:228 quru' dispute was corrected from an assumed Hanafi-versus-Shafi'i split to the actual Hanafi+Hanbali-versus-Shafi'i+Maliki split; the "pillars of nikah" were corrected from a single cross-school enumeration to a genuine Hanafi/Shafi'i classification divergence over whether witnesses and wali count as arkan at all; hidana was corrected from a single "differs by age" framing to three genuinely distinct mechanism types (fixed age, milestone, and discernment-based choice), with an uncertain Maliki "18 years" figure explicitly dropped; the wali hadith was corrected from an assumed straightforward sahih citation to its actual disputed hasan/sahih/munqati' grading, and confirmed as absent from the Sahihayn; and the triple-talaq minority position was corrected to include its Zahiri and Shi'a precedent, rather than being presented as an Ibn Taymiyyah invention.
+
+**Tiers 1-3** cover marriage's basic encouragement and parent-honoring duty; marital consent (distinguishing the previously-married and virgin standards) and mahr as the wife's own nihlah-gift right; and marriage's technical structure — the Hanafi/Shafi'i arkan classification divergence, the conditional mahram categories of 4:22-23, and the situationally-specific 'iddah lengths including the corrected four-school quru' split.
+
+**Tier 4** pairs three named rights and roles with their specific conditions: nafaqah's wealth-independent obligation, hidana's three genuinely distinct school mechanisms (not merely three different ages), and the wali's basic guardianship role.
+
+**Tier 5, flagged by the tier map as carrying real weight given how much matching popular material is weakly graded,** works through four marital-etiquette narrations side by side — two sahih, one hasan sahih, and one popular-but-weak/fabricated "Ayyub-comparison" saying — modeling the same grading-discipline this bank has applied to hadith elsewhere.
+
+**Tier 6** traces three occasions of revelation with full source care: 4:34's reported Sa'd ibn al-Rabi' incident (with the disputed daraba term explicitly flagged rather than resolved), Surat al-Mujadilah's zihar case naming the very surah after Khawla bint Tha'laba, and the khul' case tied to Thabit ibn Qays's wife (with her name's genuine cross-narration variance flagged rather than settled).
+
+**Tier 7** works through khul' versus talaq as a general-rule-and-exception pair (khul's compensation structure and its effect of forfeiting the husband's raj'ah) alongside Qur'an 4:35's arbitration instruction, carefully framed as recommended practice for shiqaq rather than a universal precondition on every talaq's validity.
+
+**Tier 8, this category's most dispute-focused tier,** presents three genuine four-school disputes with full evidentiary care: the wali requirement (Hanafi self-contracting versus the Maliki/Shafi'i/Hanbali majority, grounded in a hadith whose grading is itself genuinely disputed across graders); triple talaq in one sitting (the classical four-school majority counting it as three, against Ibn Taymiyyah's and Ibn al-Qayyim's named one-talaq minority position with its Zahiri/Shi'a precedent, kept explicitly distinct from modern civil-code and criminalization layers); and a recap of tier 4's genuinely distinct hidana mechanisms.
+
+**Tier 9's capstone applies each of tiers 1-8's specific facts and distinctions to new, unfamiliar family-law scenarios** (a remote video-call marriage, an independently wealthy wife's nafaqah question, a cross-school custody dispute, a contested-consent case, a single-sitting-triple-talaq-by-text scenario, a no-fault khul' request, a family-arbitration scenario, an uncited paradise-promise hadith claim, a wali dispute, and a closing validity checklist) rather than merely repeating prior facts.
+
+The full-category validator (tier counts, near-duplicates, answer-index balance, repeated answers, repeated stems) came back fully clean on first check — no post-insert fixes needed for this category.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1231,4 +1257,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Islamic Arts & Culture | 180 / 180 |
 | Science in Islam | 180 / 180 |
 | Islamic Finance | 180 / 180 |
-| **total** | **4,680 of 5,220** |
+| Marriage & Family Life | 180 / 180 |
+| **total** | **4,860 of 5,220** |

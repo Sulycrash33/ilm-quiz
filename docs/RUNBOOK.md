@@ -586,6 +586,43 @@ insert; none of them is guessable from the column list.
   repeats, but the same light fix applied: add a brief qualifying phrase to one repeated
   choice-array entry rather than rewriting the question it belongs to.
 
+### Added while authoring Marriage & Family Life
+
+- **A four-madhab custody (hidana) comparison is not "the same rule, different ages" — it is three
+  genuinely different *kinds* of mechanism, and treating it as a numbers problem produces both
+  inaccurate content and a wall of colliding, near-identical questions.** The first draft wrote
+  seven parallel "In the X school, at what age does custody transfer" items and immediately
+  collided across nearly all of them (similarity 0.51-0.85) — because the underlying content
+  genuinely was identical in structure (Hanafi: fixed age; Maliki: milestone; Shafi'i:
+  discernment-based choice for both sexes; Hanbali: age-7 with sex-differentiated choice), the
+  fix required rewriting each item with a structurally distinct frame (a direct-recall question,
+  a "later than the boy's rule" comparative frame, a narrative "a girl raised under this school…"
+  frame, a scenario question), not just swapping the school name. The deeper lesson: research that
+  says "three of four schools don't even use a fixed numeric age" is telling you the quiz items
+  need three different *shapes*, not one template reused four times.
+- **A hadith cited for a school's core practice (here, the wali requirement's "la nikaha illa bi
+  waliyyin") can have a genuinely disputed grading that popular presentation glosses over** — this
+  one is hasan per al-Tirmidhi, sahih per Ibn Hibban/al-Hakim/al-Albani, and munqati' per the
+  Hanafi al-Tahawi tradition, and it does not appear in the Sahihayn at all. Presenting a school's
+  position as resting on "an authentic hadith" without naming which grader said so, and that
+  another named tradition disputes the chain, would have repeated exactly the overclaim pattern
+  this bank has flagged in other categories (Ibn al-Haytham's "invented the scientific method,"
+  the wali-al-fadl/nasi'ah conflation) — the fix is the same: name the specific graders on each
+  side rather than asserting a single settled status.
+- **A modern reform position (here, one-talaq-per-sitting) needs its layers kept separate: the
+  classical fiqh dispute itself (which has genuine premodern precedent in Zahiri and Shi'a fiqh,
+  predating Ibn Taymiyyah and Ibn al-Qayyim's Hanbali-tradition revival of it), civil-code adoption
+  of that position by modern states, and criminalization of the specific pronouncement (e.g.
+  India's 2019 law) are three different questions.** Collapsing them risks either attributing a
+  modern legal reform to classical consensus or attributing classical precedent only to modern
+  reformers — both misstatements this category's research pass explicitly flagged and corrected
+  before drafting.
+- **A category renamed mid-project from a narrower theme ("Intimacy") to a broader one (this one)
+  still needs the tier map's explicit content-boundary respected**: marital intimacy/etiquette
+  material was kept at the general-conduct level the mainstream tradition itself uses (kindness,
+  playful affection, balanced view of a spouse's character), never explicit, consistent with the
+  standing English-only/no-explicit-content constraint that applies category-wide.
+
 ### Added while authoring Islamic Finance
 
 - **A tier built around five parallel contract definitions (murabaha, mudaraba, musharaka,
