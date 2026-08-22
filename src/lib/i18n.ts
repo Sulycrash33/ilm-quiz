@@ -684,6 +684,15 @@ export interface Translations {
   learnerFallback: string
   joinedOn: string
   highestRankReachedName: string
+  dangerZone: string
+  resetProgress: string
+  resetProgressDesc: string
+  resetProgressConfirmTitle: string
+  resetProgressConfirmBody: string
+  resetProgressConfirmAction: string
+  resetProgressDone: string
+  resetProgressFailed: string
+  resetting: string
 }
 
 const enTranslations: Translations = {
@@ -1362,6 +1371,15 @@ const enTranslations: Translations = {
   learnerFallback: "Learner",
   joinedOn: "Joined {date}",
   highestRankReachedName: "Highest rank reached: {rank}",
+  dangerZone: "Danger Zone",
+  resetProgress: "Reset my progress",
+  resetProgressDesc: "Clears your XP, coins, streak, achievements and every answered question, and re-locks all levels. Your name, avatar and language are kept.",
+  resetProgressConfirmTitle: "Start again from zero?",
+  resetProgressConfirmBody: "This cannot be undone. Every level will be locked again except the first.",
+  resetProgressConfirmAction: "Yes, reset everything",
+  resetProgressDone: "Your progress has been reset.",
+  resetProgressFailed: "Could not reset your progress.",
+  resetting: "Resetting...",
 }
 
 // Malay/Indonesian translations - culturally meaningful, not direct translations
@@ -2041,6 +2059,15 @@ const msTranslations: Translations = {
   learnerFallback: "Pelajar",
   joinedOn: "Menyertai {date}",
   highestRankReachedName: "Pangkat tertinggi dicapai: {rank}",
+  dangerZone: "Zon Bahaya",
+  resetProgress: "Set semula kemajuan saya",
+  resetProgressDesc: "Mengosongkan XP, syiling, rentetan, pencapaian dan setiap soalan yang dijawab, serta mengunci semula semua tahap. Nama, avatar dan bahasa anda dikekalkan.",
+  resetProgressConfirmTitle: "Mula semula dari sifar?",
+  resetProgressConfirmBody: "Ini tidak boleh dibatalkan. Setiap tahap akan dikunci semula kecuali yang pertama.",
+  resetProgressConfirmAction: "Ya, set semula semuanya",
+  resetProgressDone: "Kemajuan anda telah ditetapkan semula.",
+  resetProgressFailed: "Tidak dapat menetapkan semula kemajuan anda.",
+  resetting: "Menetapkan semula...",
 }
 
 // Indonesian translations - culturally meaningful, adapted for Indonesian context
@@ -2720,6 +2747,15 @@ const idTranslations: Translations = {
   learnerFallback: "Pelajar",
   joinedOn: "Bergabung {date}",
   highestRankReachedName: "Peringkat tertinggi tercapai: {rank}",
+  dangerZone: "Zona Berbahaya",
+  resetProgress: "Atur ulang kemajuan saya",
+  resetProgressDesc: "Menghapus XP, koin, runtunan, pencapaian dan semua pertanyaan yang dijawab, serta mengunci ulang semua level. Nama, avatar dan bahasa Anda tetap.",
+  resetProgressConfirmTitle: "Mulai lagi dari nol?",
+  resetProgressConfirmBody: "Ini tidak dapat dibatalkan. Setiap level akan dikunci lagi kecuali yang pertama.",
+  resetProgressConfirmAction: "Ya, atur ulang semuanya",
+  resetProgressDone: "Kemajuan Anda telah diatur ulang.",
+  resetProgressFailed: "Tidak dapat mengatur ulang kemajuan Anda.",
+  resetting: "Mengatur ulang...",
 }
 
 // Hausa translations
@@ -3399,6 +3435,15 @@ const haTranslations: Translations = {
   learnerFallback: "Ɗalibi",
   joinedOn: "Ya shiga {date}",
   highestRankReachedName: "Matsayi mafi girma da aka kai: {rank}",
+  dangerZone: "Yankin Hatsari",
+  resetProgress: "Sake saita ci gabana",
+  resetProgressDesc: "Yana share XP, kuɗi, jerin kwanaki, nasarori da duk tambayoyin da aka amsa, kuma ya sake kulle dukkan matakai. Ana kiyaye sunanka, hotonka da harshenka.",
+  resetProgressConfirmTitle: "A fara daga sifili?",
+  resetProgressConfirmBody: "Ba za a iya janye wannan ba. Za a sake kulle kowane mataki sai na farko.",
+  resetProgressConfirmAction: "Eh, a sake saita komai",
+  resetProgressDone: "An sake saita ci gabanka.",
+  resetProgressFailed: "An kasa sake saita ci gabanka.",
+  resetting: "Ana sake saitawa...",
 }
 
 // French translations
@@ -4078,6 +4123,15 @@ const frTranslations: Translations = {
   learnerFallback: "Apprenant",
   joinedOn: "Inscrit en {date}",
   highestRankReachedName: "Rang le plus élevé atteint : {rank}",
+  dangerZone: "Zone sensible",
+  resetProgress: "Réinitialiser ma progression",
+  resetProgressDesc: "Efface votre XP, vos pièces, votre série, vos succès et toutes les questions répondues, et reverrouille tous les niveaux. Votre nom, avatar et langue sont conservés.",
+  resetProgressConfirmTitle: "Recommencer à zéro ?",
+  resetProgressConfirmBody: "Cette action est irréversible. Tous les niveaux seront de nouveau verrouillés, sauf le premier.",
+  resetProgressConfirmAction: "Oui, tout réinitialiser",
+  resetProgressDone: "Votre progression a été réinitialisée.",
+  resetProgressFailed: "Impossible de réinitialiser votre progression.",
+  resetting: "Réinitialisation...",
 }
 
 // Arabic translations (RTL)
@@ -4757,6 +4811,15 @@ const arTranslations: Translations = {
   learnerFallback: "متعلّم",
   joinedOn: "انضم في {date}",
   highestRankReachedName: "أعلى رتبة تم بلوغها: {rank}",
+  dangerZone: "منطقة الخطر",
+  resetProgress: "إعادة ضبط تقدّمي",
+  resetProgressDesc: "يمسح نقاط الخبرة والعملات والسلسلة والإنجازات وكل سؤال أجبت عنه، ويعيد قفل جميع المستويات. يُحتفظ باسمك وصورتك ولغتك.",
+  resetProgressConfirmTitle: "البدء من الصفر؟",
+  resetProgressConfirmBody: "لا يمكن التراجع عن هذا. سيُقفل كل مستوى من جديد عدا الأول.",
+  resetProgressConfirmAction: "نعم، أعد ضبط كل شيء",
+  resetProgressDone: "تمت إعادة ضبط تقدّمك.",
+  resetProgressFailed: "تعذّرت إعادة ضبط تقدّمك.",
+  resetting: "جارٍ إعادة الضبط...",
 }
 
 /**
