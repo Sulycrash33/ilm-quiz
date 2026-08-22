@@ -11,6 +11,7 @@ import { PremiumProgress } from "@/components/ui/premium-progress"
 import { PremiumStat } from "@/components/ui/premium-stat"
 import { AchievementCard } from "@/components/game/AchievementCard"
 import { LogoutButton } from "@/components/layout/LogoutButton"
+import { ResetProgressCard } from "@/components/profile/ResetProgressCard"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Locale, Translations } from "@/lib/i18n"
 import type { ProfileStats } from "@/lib/profile-stats"
@@ -213,6 +214,12 @@ export function ProfilePageClient({
                 </div>
               )}
             </PremiumCard>
+
+            {/* Spans both columns: this is an account-level action, not a
+                stat card sitting alongside the others. */}
+            <div className="md:col-span-2">
+              <ResetProgressCard />
+            </div>
           </motion.div>
         )}
 
