@@ -60,7 +60,11 @@ export function QuizRunner({
     );
   }
 
-  const runLength = Math.min(HUNT_RULES.runLength, questions.length);
+  // A level run covers the whole tier; the adaptive Hunt still caps at
+  // `HUNT_RULES.runLength`. Keeping these in step matters because this number
+  // is what the pre-run brief promises the player.
+  const runLength =
+    tier !== undefined ? questions.length : Math.min(HUNT_RULES.runLength, questions.length);
   const playable = questions.length > 0;
 
   return (

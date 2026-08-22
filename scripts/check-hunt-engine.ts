@@ -83,7 +83,14 @@ check('tier ladder only touches its own tier', tierRun.every((q) => q.tier === 5
 check('tier ladder has no duplicates', new Set(tierRun.map((q) => q.id)).size === tierRun.length);
 check('tier ladder stages are 1..n', tierRun.every((q, i) => q.stage === i + 1));
 check('tier ladder time limit matches the tier, not runtime drift', tierRun.every((q) => q.timeLimit === timeLimitForTier(5)));
-check('tier ladder caps at runLength', tierRun.length <= HUNT_RULES.runLength, tierRun.length);
+
+// A level run serves the WHOLE tier, not the adaptive Hunt's 10. A level only
+// completes once every question in it has been answered correctly, so a run
+// that served half the tier would leave the rest to chance.
+const fullTier = buildTierLadder(poolAtTier(6, 20), 6, { rng: makeRng(5) });
+check('tier ladder serves the whole tier, not runLength', fullTier.length === 20, fullTier.length);
+check('tier ladder is longer than the adaptive run length', fullTier.length > HUNT_RULES.runLength, fullTier.length);
+check('whole-tier ladder still has no duplicates', new Set(fullTier.map((q) => q.id)).size === 20);
 
 const emptyTier = buildTierLadder(poolAtTier(8, 0), 3, { rng: makeRng(1) });
 check('tier with nothing published yields an empty ladder, not a fallback', emptyTier.length === 0);
@@ -93,6 +100,15 @@ check('tier ladder is only as long as what exists', shortTier.length === 3, shor
 
 check('same seed -> same tier ladder', JSON.stringify(buildTierLadder(pool, 6, { rng: makeRng(9) }).map((q) => q.id))
   === JSON.stringify(buildTierLadder(pool, 6, { rng: makeRng(9) }).map((q) => q.id)));
+
+// Order must differ run to run — the player re-runs a tier many times, and a
+// fixed order would make it rote rather than a fresh draw each time.
+const orderA = buildTierLadder(poolAtTier(7, 20), 7, { rng: makeRng(101) }).map((q) => q.id);
+const orderB = buildTierLadder(poolAtTier(7, 20), 7, { rng: makeRng(202) }).map((q) => q.id);
+check('different seed -> different question order', JSON.stringify(orderA) !== JSON.stringify(orderB));
+check('reshuffle still serves every question in the tier',
+  new Set(orderA).size === 20 && new Set(orderB).size === 20 &&
+  orderA.slice().sort().join() === orderB.slice().sort().join());
 
 // --- curveTier
 check('curveTier opens one below the anchor', curveTier(0, 10, 5) === 4, curveTier(0, 10, 5));
