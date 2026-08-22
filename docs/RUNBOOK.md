@@ -775,3 +775,34 @@ cited in explanatory text (none were, deliberately, but watch for this in any fu
 date quickly. It is the one category that needs a recurring re-review schedule the other 28 do
 not — flagging this for whoever picks up the human-review phase next, since it is not otherwise
 written down anywhere but here.
+
+## Scheduled jobs (migration 0024)
+
+`pg_cron` runs four jobs. All schedules are UTC, which is what pg_cron reads —
+convert before changing one.
+
+| Job name | Schedule | Calls | Why |
+| --- | --- | --- | --- |
+| `ilm-cleanup-rooms` | `*/15 * * * *` | `cleanup_old_rooms()` | Finished rooms are deleted an hour after they end, abandoned lobbies after thirty minutes. |
+| `ilm-daily-challenge` | `5 0 * * *` | `cron_ensure_daily_challenge()` | The day's challenge exists at midnight instead of being created by whoever opens the app first. |
+| `ilm-close-league-week` | `20 0 * * 1` | `cron_close_league_week()` | Ranks the week that just ended. Promotion and relegation only happen here. |
+| `ilm-close-circle-weeks` | `30 0 * * 1` | `cron_close_circle_weeks()` | Closes every circle's finished weeks, including circles nobody visited. |
+
+Before this migration none of the first three functions had a call site
+anywhere in the app, and `close_circle_weeks` ran only if a member happened to
+open the circle page. No league week had ever been ranked.
+
+To check on them:
+
+```sql
+select jobname, schedule, active from cron.job order by jobname;
+
+select j.jobname, d.status, d.start_time, d.return_message
+from cron.job_run_details d join cron.job j on j.jobid = d.jobid
+order by d.start_time desc limit 20;
+```
+
+The three `cron_*` wrappers have `EXECUTE` revoked from `anon` and
+`authenticated` on purpose — they run only from the scheduler, which connects
+as the table owner. Nothing in the app should be able to trigger a league close
+or a bulk week roll-up.
