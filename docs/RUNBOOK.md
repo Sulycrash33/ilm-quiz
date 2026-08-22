@@ -700,3 +700,78 @@ insert; none of them is guessable from the column list.
   individual scholars (al-Zarqa, al-Khafif, Siddiqi) on the conventional-insurance question. A
   modern applied-fiqh category should expect both kinds of citation to be available and should
   use whichever is actually the more precise fit for a given claim.
+
+### Added while authoring Contemporary Issues — the final category
+
+- **A category with no classical corpus or API to query directly needs a dedicated research
+  agent pass before any drafting, and that pass should explicitly flag what it could not
+  verify rather than filling the gap with a plausible-sounding invention.** The research
+  dossier for this category named three specific unresolved items (the Tantawy/Al-Azhar
+  interest-fatwa contradiction across conflicting secondary sources; AAOIFI's exact preface
+  language on its own non-ijma' status; the Saudi Permanent Committee's organ-donation fatwa
+  number) and recommended against using any of them without a dedicated follow-up verification
+  pass. None of the three was used anywhere in this category — the discipline of reporting an
+  unverifiable fact and simply not using it, rather than softening it into a vague unattributed
+  claim, held even under the pressure of a flagged-thin tier needing material.
+- **"Which council, when, and by what majority" does not require inventing a numeric vote
+  split when no verifiable one exists — the tier map's intent (distinguishing a council
+  resolution from ijma') can be met by a scope-of-authority framing instead.** No resolution
+  surveyed in this category's research had a documented numeric majority (only FCNA's 2006
+  "board vote" came with any procedural detail, and even that carried no vote count). Rather
+  than fabricate percentages, tier 5 was built entirely around whose agreement a resolution
+  actually records — a specific council's own members at a dated session — contrasted with
+  ijma' of the whole ummah, which no single body's resolution constitutes regardless of how
+  unanimous that body's own internal vote was. This produced a genuine, non-padded 20 while
+  staying within what the research could actually verify.
+- **When a tier map explicitly flags a bucket as at-risk for definitional/reinterpreted
+  content (here, tiers 5 and 6), take the flag seriously but don't assume it's unsolvable —
+  reframe before concluding the bucket is genuinely short.** The research dossier's own honest
+  estimate for tier 6 ("what a modern term means before it can be ruled on") was 10-14
+  strictly-clean questions against a needed 20, and it explicitly suggested loosening the
+  frame to "characterizing a novel practice or technology before ruling" as a legitimate
+  fallback rather than forcing 20 narrow "define this exact term" items. Both flagged tiers
+  (5 and 6) reached a genuine, non-padded 20 this way — the flag was accurate about the naive
+  approach being thin, not about the tier being impossible.
+- **A "two councils differ" tier is richer than it first appears if a small number of genuine
+  divergences are mined from multiple angles, rather than needing twenty separate disagreements.**
+  Only three clean, well-documented divergences existed in the research (moon-sighting method
+  across IIFA/FCNA/ECFR; cryptocurrency across IIFA/Egypt/MUI/NU; mechanical-slaughter stunning
+  across AMJA and general European certification practice), but each supported six-to-eight
+  genuinely distinct sub-questions — the specific mechanical difference, the reasoning each side
+  relies on, the practical consequence for an ordinary person, whether the disagreement is
+  empirical or doctrinal, and so on — the same "mine one real disagreement from several angles"
+  discipline already established for Interfaith Relations' two-council debates, now confirmed to
+  transfer cleanly to a fully modern, non-classical category.
+- **A capstone tier reasoning toward genuinely unaddressed questions needs every citation
+  honestly marked `Method`, never dressed up as though a real resolution existed.** Tier 9's
+  ten scenarios (digital-asset inheritance, AI-authorship, spaceflight prayer, algorithmic gig
+  contracts, NFT property status, autonomous-vehicle liability, germline gene editing,
+  AI-voice-cloning fraud, suborbital-flight qasr, DNA-ancestry lineage tension, and undisclosed
+  data-monetization consent) were deliberately chosen to be scenarios no resolution surveyed in
+  this category actually covers, so that citing an invented resolution number for any of them
+  was never even a temptation. Each item's correct answer models the derivation process itself
+  (closest existing analogy, careful application, explicit flag of what remains open) rather
+  than asserting a confident final ruling — and the tier's own closing items make that
+  distinction (personal ijtihad vs. institutional resolution) an explicit lesson, not just an
+  authoring discipline invisible to the learner.
+- **This was the fourth category in a row this segment to validate fully clean on first
+  check** (after Islamic Finance, Marriage & Family Life, and Interfaith Relations) — the
+  per-item-template collision fix, the cross-tier `existing_stems` pre-flight, and the
+  deterministic `rebalance()` answer-position spread have together eliminated post-insert
+  database-level surprises as a routine occurrence; the remaining friction is entirely at the
+  pre-flight (`emit.check()`) stage, caught and fixed before a single row reaches the database.
+
+## The rebuild is complete: 5,220 of 5,220
+
+All 29 categories, all 9 tiers, all 20 questions per tier — verified against the database, not
+recalled. Every row is `source_type = 'ai_drafted'` and `review_status = 'ai_drafted'`; nothing
+in this bank has been reviewed by a human scholar or published. That review is a distinct,
+separate phase — this runbook's authoring loop does not cover it, and a fresh session should not
+assume it is implied by "the bank is done."
+
+**Contemporary Issues (`contemporary_issues`) is the one category that goes stale.** Its
+resolutions will be superseded, new councils will rule on the same questions, and prices/terms
+cited in explanatory text (none were, deliberately, but watch for this in any future edit) can
+date quickly. It is the one category that needs a recurring re-review schedule the other 28 do
+not — flagging this for whoever picks up the human-review phase next, since it is not otherwise
+written down anywhere but here.

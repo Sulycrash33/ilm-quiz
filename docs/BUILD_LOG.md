@@ -1253,7 +1253,33 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
-## Running total
+## 29. Contemporary Issues (`contemporary_issues`) — 180 / 180 — final category, rebuild complete
+
+Authored last, per `docs/CATEGORY_TIER_MAPS.md`'s explicit instruction: this is the only one of the 29 categories with no classical provenance to anchor to, and the only one that goes stale as resolutions are superseded and circumstances move. A dedicated research pass (via a background research agent, since this category has no corpus/API equivalent to query directly) produced a dossier of named contemporary fiqh bodies and their dated resolutions before any drafting began, flagging uncertain items rather than inventing them — the Tantawy/Al-Azhar interest-fatwa contradiction, AAOIFI's exact preface wording, and the Saudi Permanent Committee's organ-donation fatwa number were all identified as unverifiable in the time available and were **not used** anywhere in this category.
+
+Verified anchors: IIFA (OIC International Islamic Fiqh Academy, Jeddah) resolutions **10(10/2)** 1985 riba, **16(4/3)** and **17(5/3)** 1986 (3rd Session, Amman: IVF/artificial insemination restricted to spousal gametes; legal-death definition via irreversible cardiopulmonary arrest or total brain-function cessation), **18(6/3)** 1986 moon sighting (sighting binds one country, calculation only supports), **26(1/4)** and **28(3/4)** 1988 (4th Session, Jeddah: organ transplantation conditions; shareholder zakat by trading-vs-dividend intent), **9(9/2)** 1985 commercial-vs-cooperative insurance, **94(2/10)** 1997 human cloning, **230(1/24)** and **237(8/24)** 2019 (24th Session, Dubai: smart contracts; electronic currencies' deferred classification ruling), and the 26th Session's 2025 food/technology resolutions (265, 266, 267, 260, 262); the European Council for Fatwa and Research's Resolution 2/4 (1999, Dublin) minority-mortgage necessity fatwa with its three stated conditions, its 1999 Cologne halal-slaughter recommendation, and its 6th Session (2000) brain-stem-death position aligned with IIFA; the Muslim World League Islamic Fiqh Council's 1986 'Sixth Resolution' on high-latitude prayer; the Fiqh Council of North America's 10 June 2006 board vote adopting calculation exclusively for moon-month determination; AMJA's 9th Annual Convention (2012) mechanically-stunned-slaughter findings (beef/lamb generally not halal, poultry generally halal) and its Resident Fatwa Committee's Neeyah/Lariba diminishing-musharaka split; and the genuine three-way contemporary spread on cryptocurrency — Egypt's Dar al-Ifta al-Misriyyah (Dec 2017/Jan 2018, categorical prohibition via gambling analogy), Indonesia's Majelis Ulama Indonesia (7th Ijtima, 2021, haram-as-currency but conditionally permissible as commodity), and Nahdlatul Ulama's East Java regional bahtsul masail (24 October 2021, haram specifically as a medium of transaction).
+
+**Tiers 1-2** cover why each modern topic (cryptocurrency, IVF, organ transplantation, cloning, brain death, cultivated meat, GM foods, insects, digital games, smart contracts, cosmetic surgery, minority mortgages, shareholder zakat, insurance, broadcast jumu'ah, social media, vaccine ingredients, surrogacy, mechanical slaughter, moon sighting) falls genuinely outside the classical corpus's direct reach, and the widely held basic contemporary position on each.
+
+**Tier 3** drills named councils against their specific dated resolutions; **tier 4** pairs each ruling with its stated condition (spousal-gametes-only, the mortgage fatwa's three conditions, no-organ-sale, trading-vs-dividend zakat, and others), rather than treating any ruling as unconditional.
+
+**Tier 5 — one of the two tiers `CATEGORY_TIER_MAPS.md` flagged at risk** — required identifying which council issued a resolution, when, and distinguishing that from ijma'. Since no verifiable numeric vote-majority exists for any resolution surveyed, the tier was built around the scope-of-authority distinction instead: a council's resolution is its own members' collective ijtihad at a dated session, never the ijma' of the whole ummah, however well-reasoned. This sustained a full, non-padded 20 without inventing vote counts.
+
+**Tier 6 — the other flagged-at-risk tier** — required identifying what modern term must be precisely defined before a ruling can follow at all (legal death, istihala/chemical transformation, maysir in loot-box mechanics, darura's threshold for the mortgage exception, ru'ya's scope for moon sighting, and others). The research dossier's own honest assessment was that this tier might only sustain 12-15 first-rate questions; broadening slightly to "characterizing a novel practice before ruling" (per the dossier's own suggested fallback) reached a genuine, non-padded 20.
+
+**Tier 7** documents three genuine two/three-council divergences in depth: moon-sighting method (IIFA sighting-first vs. FCNA calculation-only vs. ECFR's Istanbul-endorsed global-calculated-visibility method), cryptocurrency (IIFA deferred vs. Egypt's blanket prohibition vs. MUI's conditional permission vs. NU's transaction-specific prohibition), and mechanically stunned slaughter (AMJA's empirical finding vs. general European halal-certification practice) — explicitly distinguishing the empirical stunning disagreement from the doctrinal moon-sighting/crypto disagreements.
+
+**Tier 8** identifies the specific usul principle each side applies across five genuine contemporary disagreements: mortgage necessity (darura vs. sadd al-dhara'i), cryptocurrency-as-currency ('urf vs. the classical thaman khilqi/thaman istilahi distinction), cosmetic surgery (taghyir khalq Allah vs. maslaha-based necessity), organ donation (hurmat al-mayyit vs. maslaha daruriyyah), and moon sighting (zahir al-nass vs. maqasid-based reasoning) — each framed so the disagreement is never mistaken for a dispute over the underlying prohibition itself (riba, gambling, etc.), which both sides of every pair accept.
+
+**Tier 9's capstone** reasons toward a position on ten genuinely unaddressed questions (digital-asset inheritance access, AI-generated content ownership, long-duration-spaceflight prayer times, algorithmic gig-economy contracts, NFT property status, autonomous-vehicle liability, germline gene editing for disease prevention, AI voice-cloning fraud, suborbital-flight qasr, DNA-ancestry-test lineage tension, and undisclosed data-monetization consent), each showing the derivation (closest analogous principle, careful application, explicit flag of what remains unresolved) rather than asserting a settled ruling — every citation in this tier is `Method`, since by construction no council resolution covers any of them.
+
+The full-category validator (tier counts, near-duplicates, answer-index balance, repeated answers, repeated stems) came back fully clean on first check — no post-insert fixes needed for this category, the fourth in a row this segment.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
+## Running total — rebuild complete
 
 | category | status |
 |---|---|
@@ -1285,4 +1311,7 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Islamic Finance | 180 / 180 |
 | Marriage & Family Life | 180 / 180 |
 | Interfaith Relations | 180 / 180 |
-| **total** | **5,040 of 5,220** |
+| Contemporary Issues | 180 / 180 |
+| **total** | **5,220 of 5,220 — complete** |
+
+All 5,220 rows across all 29 categories are `source_type = 'ai_drafted'` and `review_status = 'ai_drafted'`. Nothing in this bank has been published or reviewed by a human scholar; that review is the next, separate phase of work, not part of this rebuild.
