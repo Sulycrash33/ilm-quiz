@@ -28,6 +28,16 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
           {categories.length} {t("categories").toLowerCase()} · {totalPublished} {t("questionsAvailable")} ·{" "}
           {totalAnswered} {t("questionsAnswered")}
         </p>
+
+        {/* The way back to the rules. Every category here is nine locked
+            tiers deep, and a player who signed up before the explainer
+            existed — or who skipped it — has nowhere else to find out why. */}
+        <Link
+          href="/onboarding/how-it-works"
+          className="mt-3 inline-block text-sm text-primary underline-offset-4 hover:underline"
+        >
+          {t("howItWorksLink")}
+        </Link>
       </motion.div>
 
       {/* Stats Overview */}

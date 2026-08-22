@@ -93,7 +93,11 @@ export default function SignupPage() {
     }
     clearOnboardingSelections();
 
-    router.push("/home");
+    // Straight into the explainer, not the dashboard. A brand-new player has
+    // no idea the game is a nine-tier ladder — the dashboard shows them a row
+    // of padlocks and leaves them to work it out. The explainer marks itself
+    // seen on arrival, so this is a one-time detour.
+    router.push("/onboarding/how-it-works");
     router.refresh();
   }
 
