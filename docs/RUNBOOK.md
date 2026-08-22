@@ -553,3 +553,35 @@ insert; none of them is guessable from the column list.
   explicitly rather than reaching for a plausible-sounding but wrong tier to cite. When a
   capstone's reapplied-principle case doesn't actually have a clean home in the current
   category's own tiers, saying so is more accurate than forcing a fit.
+
+### Added while authoring Science in Islam
+
+- **The "invented X" overclaim pattern is not unique to any one figure — it recurs whenever a
+  historical contribution is popularly compressed into a single dramatic sentence.** Ibn
+  al-Haytham's popular "invented the scientific method" reputation needed the same softening
+  treatment this runbook has already recorded for other overclaims elsewhere in the bank: state
+  the popular claim, then explicitly correct it to a measured description ("an important,
+  well-documented early methodology," not a single unified invention) rather than either
+  repeating the overclaim or swinging to a flat denial that anything notable happened at all.
+- **A mathematical-parallel-with-unproven-transmission claim (Ibn al-Shatir's planetary models
+  and Copernicus) is a third, distinct flavor of historical uncertainty, alongside hadith-grading
+  disputes and i'jaz-'ilmi-style apologetics disputes.** It is a historiographical question about
+  what the documentary evidence does and does not establish — a real, checkable parallel exists,
+  but no direct transmission route has been documented — and it needs its own explicit framing
+  ("documented engagement and influence," not "direct copying") rather than being collapsed into
+  either "settled fact" or "baseless claim." Keep this bucket distinct from the George
+  Saliba-associated originality-versus-transmission debate, which is a different question (how
+  original was Islamic-world science generally) even though both concern transmission history.
+- **The i'jaz 'ilmi honesty tier needed named internal critics, not a vague gesture at
+  "some scholars disagree."** Citing Dr. Nidhal Guessoum by name, alongside the specific popularly
+  claimed verses (23:12-14, 21:30, 78:6-7/16:15) and the specific modern origin (Maurice
+  Bucaille's 1976 book, the term "Bucaillism"), kept this tier checkable rather than a
+  hand-wave. The same discipline that named-source hadith grading and named-position fiqh
+  disputes elsewhere in the bank applies here: a sensitive claim about scripture and science is
+  only honestly presented when the specific popular claim and the specific named critique are
+  both on the page together.
+- **Two answer-index-repeat violations this time were single named technical terms ("Al-jabr,"
+  "Ibn al-Haytham") reused as the correct choice across a definitional tier, a concept-in-context
+  tier, and the capstone tier** — a pattern distinct from the geography category's short-place-name
+  repeats, but the same light fix applied: add a brief qualifying phrase to one repeated
+  choice-array entry rather than rewriting the question it belongs to.

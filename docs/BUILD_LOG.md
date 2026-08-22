@@ -1149,6 +1149,32 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 25. Science in Islam (`science_in_islam`) — 180 / 180
+
+Verified anchors: Ibn Sina (c. 980-1037 CE, Hamadan and Isfahan), al-Khwarizmi (c. 780-850 CE, Baghdad under al-Ma'mun), and Ibn al-Haytham (c. 965-1040 CE, Basra and Cairo) as the category's three central scholars; al-Qanun fi al-Tibb's five-book structure and its use as a European medical textbook into the 17th century, transmitted via a Latin translation associated with Gerard of Cremona; al-Jabr wa'l-Muqabala's precise two-operation vocabulary (al-jabr as restoration, al-muqabala as balancing) and Zij al-Sindhind/Kitab Surat al-Ard as al-Khwarizmi's further named works; Kitab al-Manazir's correction of Ptolemaic extramission to intromission, transmitted via the Latin De Aspectibus; Ibn al-Haytham's Al-Shukuk 'ala Batlamyus (Doubts Concerning Ptolemy) and his specific method — i'tibar (controlled experiment), the camera obscura, the equant's physical-implausibility objection, and burhan (mathematical proof) required alongside experimental confirmation; al-Khwarizmi's arithmetic treatise surviving chiefly through the Latin Algoritmi de numero Indorum (source of "algorithm"); Ibn al-Shatir's and al-Tusi's Maragha-school critique of the Ptolemaic equant and the genuinely disputed, mathematically-parallel-but-undocumented relationship to Copernicus's later models; Fibonacci's Liber Abaci and his own account of learning Hindu-Arabic numerals from Arab teachers in North Africa; and the i'jaz 'ilmi genre (Maurice Bucaille's 1976 book, the academic term "Bucaillism," Qur'an 23:12-14/21:30/78:6-7 and 16:15 as specific popularly-cited verses) alongside Dr. Nidhal Guessoum's named internal methodological critique and George Saliba's associated originality-versus-transmission historiographical debate.
+
+This category's research pass corrected several premises before drafting began: Bayt al-Hikma's popular "grand research university" image, corrected to its better-documented reality as a library and translation institution (per Dimitri Gutas's scholarship), with the broader translation movement understood as decentralized rather than centralized in one institution; the flat claim that Ibn al-Haytham "invented the scientific method," softened to a measured description of a well-documented early methodology rather than a single unified invention; the popular framing of Ibn al-Shatir's mathematical parallel with Copernicus as direct transmission, corrected to an acknowledged parallel with an undocumented, unproven transmission route; and i'jaz 'ilmi claims, reframed throughout as popular but internally contested among Muslim scholars themselves rather than settled fact.
+
+**Tiers 1-3** cover the three scholars' basic fields (medicine, mathematics/astronomy, optics), their headline works and specific corrections (Ibn Sina's Canon, al-Khwarizmi's algebra and numerals, Ibn al-Haytham's intromission correction), and their specific dates, cities, and further named works, including the Bayt al-Hikma correction placed directly alongside the biographical material it qualifies.
+
+**Tier 4** is built entirely around Ibn al-Haytham's method: Al-Shukuk 'ala Batlamyus's critique of the Almagest, Planetary Hypotheses, and Optics; the equant's physical-implausibility objection; i'tibar and the camera obscura; the bright-light-pain argument against extramission; and burhan as a required second condition alongside experiment — with two rows explicitly correcting the "invented the scientific method" overclaim rather than repeating it.
+
+**Tier 5** traces manuscript and translation history for all three scholars: al-Khwarizmi's algebra treatise's Arabic-and-Latin textual history, his separately-surviving-only-via-Latin arithmetic treatise (Algoritmi de numero Indorum, source of "algorithm"), the Canon's Latin transmission via Gerard of Cremona, and the Book of Optics's Latin De Aspectibus and its documented-but-not-simple influence on Roger Bacon and Kepler, closing with the 12th-century Toledo-centered translation movement as the shared transmission route.
+
+**Tier 6** gives precise, non-modernized definitions of three concepts in context: humoral medicine as Ibn Sina's actual four-humor framework (explicitly distinguished from being an early version of germ theory), al-jabr and al-muqabala as two distinct named operations (worked through with concrete equation examples), and the equant's specific physical-implausibility objection (distinguished from a claim about numerical inaccuracy).
+
+**Tier 7** compares two scholars who directly engaged an earlier authority's claim: Ibn al-Haytham's resolved correction of Ptolemy on vision, set against the Maragha school's (Ibn al-Shatir, al-Tusi) equant objection and its genuinely open, mathematically-parallel-but-undocumented relationship to Copernicus — the tier's explicit point being that "scientifically resolved" and "historiographically open" are two different kinds of claim.
+
+**Tier 8, the category's most sensitive tier,** treats i'jaz 'ilmi as a popular, named genre (Bucaille's 1976 book, the term "Bucaillism") with three specific popularly-cited verses (23:12-14, 21:30, 78:6-7/16:15) each explicitly framed as internally contested among Muslim scholars rather than settled, Dr. Nidhal Guessoum's named internal methodological critique, and George Saliba's separate originality-versus-transmission historiographical debate kept analytically distinct from the i'jaz 'ilmi debate.
+
+**Tier 9's capstone draws together the whole category's corrections** (Bayt al-Hikma, the "invented the scientific method" softening, the Ibn al-Shatir/Copernicus caution, and the i'jaz 'ilmi honesty tier) alongside its verified contributions and named vocabulary (al-jabr, al-muqabala, i'tibar, burhan), closing with Fibonacci's Liber Abaci as a further worked transmission example and an explicit rejection of both "purely original" and "purely transmission" as the only two ways to characterize Islamic-world science.
+
+Post-insert, the full-category validator flagged two `answer_repeated` violations at the threshold (the correct-answer text "Al-jabr" and "Ibn al-Haytham" each used three times) — fixed via two targeted `UPDATE` statements adding brief qualifying text to one repeated choice-array entry per term — and one `stem_repeated` violation ("considering this tie[r]" at 7x) fixed via three targeted rewordings. The category re-validated clean on every check afterward (tier counts, near-duplicates, answer-index balance, repeated answers, repeated stems).
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1177,4 +1203,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Islamic History | 180 / 180 |
 | Sacred Geography | 180 / 180 |
 | Islamic Arts & Culture | 180 / 180 |
-| **total** | **4,320 of 5,220** |
+| Science in Islam | 180 / 180 |
+| **total** | **4,500 of 5,220** |
