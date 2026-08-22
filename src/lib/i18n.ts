@@ -706,6 +706,14 @@ export interface Translations {
   howItWorksRankFooter: string
   startFirstLevel: string
   skipExplainer: string
+  streakReminders: string
+  streakRemindersHint: string
+  remindersOn: string
+  remindersOff: string
+  remindersOnHint: string
+  remindersUnsupported: string
+  remindersBlocked: string
+  remindersUnavailable: string
   achievementUnlocked: string
   sound: string
   soundOn: string
@@ -1411,6 +1419,14 @@ const enTranslations: Translations = {
   howItWorksRankFooter: "{xp} XP reaches the top rank. Nobody gets there quickly — that is rather the point.",
   startFirstLevel: "Start {category}, level 1",
   skipExplainer: "Skip — take me to the app",
+  streakReminders: "Streak reminders",
+  streakRemindersHint: "One notification a day, and only on the day your streak would break.",
+  remindersOn: "Reminders on",
+  remindersOff: "Reminders off",
+  remindersOnHint: "We'll nudge you only when a streak is about to break.",
+  remindersUnsupported: "This browser can't show notifications. On iPhone, add ILM Hunt to your home screen first.",
+  remindersBlocked: "Notifications are blocked for this site. Allow them in your browser settings to switch this on.",
+  remindersUnavailable: "Reminders aren't set up on this server yet.",
   achievementUnlocked: "Achievement unlocked",
   sound: "Sound",
   soundOn: "Sound on",
@@ -2117,6 +2133,14 @@ const msTranslations: Translations = {
   howItWorksRankFooter: "{xp} XP mencapai pangkat tertinggi. Tiada siapa sampai dengan cepat — itulah maksudnya.",
   startFirstLevel: "Mulakan {category}, tahap 1",
   skipExplainer: "Langkau — bawa saya ke aplikasi",
+  streakReminders: "Peringatan rentetan",
+  streakRemindersHint: "Satu pemberitahuan sehari, dan hanya pada hari rentetan anda akan terputus.",
+  remindersOn: "Peringatan dihidupkan",
+  remindersOff: "Peringatan dimatikan",
+  remindersOnHint: "Kami hanya akan mengingatkan apabila rentetan hampir terputus.",
+  remindersUnsupported: "Pelayar ini tidak boleh menunjukkan pemberitahuan. Pada iPhone, tambah ILM Hunt ke skrin utama dahulu.",
+  remindersBlocked: "Pemberitahuan disekat untuk laman ini. Benarkannya dalam tetapan pelayar untuk menghidupkan ini.",
+  remindersUnavailable: "Peringatan belum disediakan pada pelayan ini.",
   achievementUnlocked: "Pencapaian dibuka",
   sound: "Bunyi",
   soundOn: "Bunyi dihidupkan",
@@ -2823,6 +2847,14 @@ const idTranslations: Translations = {
   howItWorksRankFooter: "{xp} XP mencapai peringkat puncak. Tak ada yang sampai dengan cepat — memang begitu maksudnya.",
   startFirstLevel: "Mulai {category}, tingkat 1",
   skipExplainer: "Lewati — bawa saya ke aplikasi",
+  streakReminders: "Pengingat runtutan",
+  streakRemindersHint: "Satu notifikasi sehari, dan hanya pada hari runtutanmu akan putus.",
+  remindersOn: "Pengingat aktif",
+  remindersOff: "Pengingat nonaktif",
+  remindersOnHint: "Kami hanya mengingatkan saat runtutan hampir putus.",
+  remindersUnsupported: "Peramban ini tidak bisa menampilkan notifikasi. Di iPhone, tambahkan ILM Hunt ke layar utama dulu.",
+  remindersBlocked: "Notifikasi diblokir untuk situs ini. Izinkan di pengaturan peramban untuk mengaktifkannya.",
+  remindersUnavailable: "Pengingat belum disiapkan di server ini.",
   achievementUnlocked: "Pencapaian terbuka",
   sound: "Suara",
   soundOn: "Suara aktif",
@@ -3529,6 +3561,14 @@ const haTranslations: Translations = {
   howItWorksRankFooter: "XP {xp} ne ke kai wa daraja mafi girma. Ba wanda ya kai wurin da sauri — hakan ne manufar.",
   startFirstLevel: "Fara {category}, mataki na 1",
   skipExplainer: "Tsallake — kai ni cikin manhajar",
+  streakReminders: "Tunatarwar jerin kwanaki",
+  streakRemindersHint: "Sanarwa ɗaya a rana, kuma kawai a ranar da jerin zai yanke.",
+  remindersOn: "An kunna tunatarwa",
+  remindersOff: "An kashe tunatarwa",
+  remindersOnHint: "Za mu tuna maka ne kawai idan jerin ya kusa yankewa.",
+  remindersUnsupported: "Wannan burauzar ba ta iya nuna sanarwa. A iPhone, sai ka fara ƙara ILM Hunt cikin allon gida.",
+  remindersBlocked: "An hana sanarwa ga wannan shafin. Ka ba da izini a saitin burauzar don kunna wannan.",
+  remindersUnavailable: "Ba a shirya tunatarwa a wannan sabar ba tukuna.",
   achievementUnlocked: "An buɗe nasara",
   sound: "Sauti",
   soundOn: "An kunna sauti",
@@ -4235,6 +4275,14 @@ const frTranslations: Translations = {
   howItWorksRankFooter: "{xp} XP pour atteindre le dernier rang. Personne n'y arrive vite — c'est justement l'idée.",
   startFirstLevel: "Commencer {category}, niveau 1",
   skipExplainer: "Passer — aller à l'application",
+  streakReminders: "Rappels de série",
+  streakRemindersHint: "Une notification par jour, et seulement le jour où votre série s'arrêterait.",
+  remindersOn: "Rappels activés",
+  remindersOff: "Rappels désactivés",
+  remindersOnHint: "Nous vous préviendrons uniquement quand une série est sur le point de s'arrêter.",
+  remindersUnsupported: "Ce navigateur ne peut pas afficher de notifications. Sur iPhone, ajoutez d'abord ILM Hunt à l'écran d'accueil.",
+  remindersBlocked: "Les notifications sont bloquées pour ce site. Autorisez-les dans les réglages du navigateur pour activer ceci.",
+  remindersUnavailable: "Les rappels ne sont pas encore configurés sur ce serveur.",
   achievementUnlocked: "Succès débloqué",
   sound: "Son",
   soundOn: "Son activé",
@@ -4941,6 +4989,14 @@ const arTranslations: Translations = {
   howItWorksRankFooter: "{xp} نقطة خبرة تبلغ المرتبة العليا. لا أحد يصلها سريعاً — وهذا هو المقصود.",
   startFirstLevel: "ابدأ {category}، المستوى الأول",
   skipExplainer: "تخطَّ — خذني إلى التطبيق",
+  streakReminders: "تذكيرات المواظبة",
+  streakRemindersHint: "إشعار واحد في اليوم، ويوم انقطاع مواظبتك فقط.",
+  remindersOn: "التذكيرات مفعّلة",
+  remindersOff: "التذكيرات متوقفة",
+  remindersOnHint: "لن ننبّهك إلا حين توشك المواظبة على الانقطاع.",
+  remindersUnsupported: "هذا المتصفح لا يعرض الإشعارات. على الآيفون، أضف ILM Hunt إلى الشاشة الرئيسية أولاً.",
+  remindersBlocked: "الإشعارات محجوبة لهذا الموقع. اسمح بها في إعدادات المتصفح لتفعيل هذا.",
+  remindersUnavailable: "التذكيرات غير مهيّأة على هذا الخادم بعد.",
   achievementUnlocked: "تم فتح إنجاز",
   sound: "الصوت",
   soundOn: "الصوت مفعّل",

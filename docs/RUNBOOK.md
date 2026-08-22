@@ -806,3 +806,69 @@ The three `cron_*` wrappers have `EXECUTE` revoked from `anon` and
 `authenticated` on purpose — they run only from the scheduler, which connects
 as the table owner. Nothing in the app should be able to trigger a league close
 or a bulk week roll-up.
+
+## Streak reminders (migrations 0026–0027)
+
+The only thing in the app that can reach a player who has closed the tab. Off
+until a player switches it on, one notification a day at most, and only on the
+day their streak would actually break.
+
+### How a reminder travels
+
+1. `ilm-streak-reminders` (pg_cron, 17:00 UTC daily) calls
+   `cron_send_streak_reminders()`.
+2. That reads two Vault secrets and POSTs to the `send-streak-reminders` edge
+   function via pg_net. It is fire-and-forget — a slow push service can never
+   hold a cron worker open.
+3. The edge function asks `streak_reminder_candidates()` who needs one, signs a
+   VAPID JWT, encrypts each payload to that subscription's own key, and sends.
+4. Each result goes back through `record_push_result()`. A 404 or 410 deletes
+   the row; the endpoint is genuinely dead and retrying it daily is pointless.
+5. `public/sw.js` receives the push and shows the notification. Tapping it
+   focuses an existing tab rather than opening a second one.
+
+### Setup, once per environment
+
+Nothing sends until all of this is in place. Until then the profile toggle
+reads "Reminders aren't set up on this server yet" — deliberately, so the
+dormant state is visible rather than silent.
+
+```bash
+npm run vapid:keys        # prints a key pair; nothing is written to disk
+```
+
+- **Vercel** — set `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to the public key.
+- **Supabase edge function secrets** — set `VAPID_PRIVATE_KEY`,
+  `VAPID_PUBLIC_KEY`, and `VAPID_SUBJECT` (a `mailto:` the push service can use
+  to report abuse).
+- **Supabase Vault** — so the cron job can reach the function:
+
+  ```sql
+  select vault.create_secret('https://<project-ref>.supabase.co/functions/v1',
+                             'functions_base_url');
+  select vault.create_secret('<service-role-key>', 'service_role_key');
+  ```
+
+The service-role key lives in Vault rather than in a migration on purpose: a
+migration is in version control forever, and that key is full database access.
+
+### Checking on it
+
+```sql
+-- Who would be messaged if the job ran right now
+select count(*) from public.streak_reminder_candidates();
+
+-- What the job did
+select j.jobname, d.status, d.start_time, d.return_message
+from cron.job_run_details d join cron.job j on j.jobid = d.jobid
+where j.jobname = 'ilm-streak-reminders'
+order by d.start_time desc limit 10;
+
+-- What the edge function replied
+select created, status_code, content from net._http_response
+order by created desc limit 5;
+```
+
+Rotating the VAPID pair invalidates every existing browser subscription — a
+push service ties a subscription to the key that created it, so every player
+has to switch reminders on again. Rotate only if the private key leaks.
