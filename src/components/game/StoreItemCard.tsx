@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 
 import type { StoreItem } from "@/data/store-items"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface StoreItemCardProps {
   item: StoreItem;
@@ -25,6 +26,7 @@ interface StoreItemCardProps {
 }
 
 export function StoreItemCard({ item, userCoins, handlePurchase, addToCart, theme }: StoreItemCardProps) {
+  const { t } = useLanguage();
   const themeStyles = {
     lifeline: {
       badgeColor: "bg-primary/10 text-primary",
@@ -80,9 +82,9 @@ export function StoreItemCard({ item, userCoins, handlePurchase, addToCart, them
             <span className="font-bold text-card-foreground">{item.price}</span>
           </div>
           {item.inStock ? (
-            <Badge className="bg-emerald-400/10 text-emerald-400">Available</Badge>
+            <Badge className="bg-emerald-400/10 text-emerald-400">{t("available")}</Badge>
           ) : (
-            <Badge variant="secondary">Out of Stock</Badge>
+            <Badge variant="secondary">{t("outOfStock")}</Badge>
           )}
         </div>
 
@@ -93,11 +95,11 @@ export function StoreItemCard({ item, userCoins, handlePurchase, addToCart, them
             className={`w-full ${themeCfg.buttonColor}`}
           >
             {themeCfg.icon}
-            {item.inStock ? "Buy Now" : "Notify Me"}
+            {item.inStock ? t("buyNow") : t("notifyMe")}
           </Button>
           {item.inStock && (
             <Button variant="outline" onClick={() => addToCart(item)} className="w-full">
-              Add to Cart
+              {t("addToCart")}
             </Button>
           )}
         </div>

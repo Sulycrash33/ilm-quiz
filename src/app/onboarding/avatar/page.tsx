@@ -10,6 +10,7 @@ import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { AVATARS, AvatarArt, type AvatarGender } from "@/components/avatars/avatar-art"
 
 /**
@@ -27,6 +28,7 @@ import { AVATARS, AvatarArt, type AvatarGender } from "@/components/avatars/avat
  */
 export default function AvatarSelectionPage() {
   const router = useRouter()
+  const { t, dir } = useLanguage()
   const [selected, setSelected] = useState<string | null>(null)
 
   const handleSelect = (id: string) => {
@@ -75,13 +77,13 @@ export default function AvatarSelectionPage() {
   )
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
+    <div dir={dir} className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
       <NamesOfAllahBackdrop />
       <div className="absolute left-4 top-4 z-20">
         <Button asChild variant="ghost">
           <Link href="/onboarding/age">
             <ArrowLeft className="mr-2 h-6 w-6" />
-            Back
+            {t("back")}
           </Link>
         </Button>
       </div>
@@ -89,16 +91,16 @@ export default function AvatarSelectionPage() {
       <div className="z-10 w-full max-w-2xl">
         <Card className="w-full bg-card/80 backdrop-blur-sm">
           <CardHeader className="space-y-3 text-center">
-            <CardTitle className="text-3xl font-bold">Choose Your Avatar</CardTitle>
-            <CardDescription>Pick the one that feels like you.</CardDescription>
+            <CardTitle className="text-3xl font-bold">{t("chooseYourAvatar")}</CardTitle>
+            <CardDescription>{t("chooseYourAvatarDesc")}</CardDescription>
             <Progress value={66} className="mx-auto w-2/3" />
-            <div className="text-sm text-muted-foreground">Step 2 of 3</div>
+            <div className="text-sm text-muted-foreground">{t("stepOf", { current: 2, total: 3 })}</div>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="female" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="female">Female</TabsTrigger>
-                <TabsTrigger value="male">Male</TabsTrigger>
+                <TabsTrigger value="female">{t("female")}</TabsTrigger>
+                <TabsTrigger value="male">{t("male")}</TabsTrigger>
               </TabsList>
               <TabsContent value="female" className="mt-6">
                 {grid("female")}
@@ -112,7 +114,7 @@ export default function AvatarSelectionPage() {
 
         <div className="mt-6 text-center">
           <Button variant="outline" onClick={() => router.push("/onboarding/name")}>
-            Skip <ArrowRight className="ml-2 h-4 w-4" />
+            {t("skip")} <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>

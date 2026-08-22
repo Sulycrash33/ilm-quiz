@@ -12,7 +12,7 @@ import { PremiumStat } from "@/components/ui/premium-stat"
 import { AchievementCard } from "@/components/game/AchievementCard"
 import { LogoutButton } from "@/components/layout/LogoutButton"
 import { useLanguage } from "@/contexts/LanguageContext"
-import type { Locale } from "@/lib/i18n"
+import type { Locale, Translations } from "@/lib/i18n"
 import type { ProfileStats } from "@/lib/profile-stats"
 
 type Tab = "overview" | "achievements" | "statistics" | "activity"
@@ -26,15 +26,17 @@ const LANGUAGE_OPTIONS: { code: Locale; label: string }[] = [
   { code: "id", label: "Bahasa Indonesia" },
 ]
 
-function timeAgo(iso: string): string {
+/** Relative time, localised. Takes `t` because it is a plain function, not a
+ * component, so it cannot reach the language context on its own. */
+function timeAgo(iso: string, t: (k: keyof Translations, p?: Record<string, string | number>) => string): string {
   const diffMs = Date.now() - new Date(iso).getTime()
   const minutes = Math.floor(diffMs / 60000)
-  if (minutes < 1) return "just now"
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 1) return t("justNow")
+  if (minutes < 60) return t("minutesAgoShort", { n: minutes })
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return t("hoursAgoShort", { n: hours })
   const days = Math.floor(hours / 24)
-  return `${days}d ago`
+  return t("daysAgoShort", { n: days })
 }
 
 export function ProfilePageClient({
@@ -54,7 +56,7 @@ export function ProfilePageClient({
   const xpIntoCurrentRank = currentRank ? profile.totalXp - currentRank.minXp : profile.totalXp
   const xpNeededForNextRank = nextRank ? nextRank.minXp - (currentRank?.minXp ?? 0) : null
 
-  const joinDate = new Date(joinedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+  const joinDate = new Date(joinedAt).toLocaleDateString(locale, { month: "short", year: "numeric" })
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "overview", label: t("overview"), icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" /></svg> },
@@ -110,7 +112,7 @@ export function ProfilePageClient({
 
           <div className="flex-1 text-center md:text-left">
             <h1 className="font-display-lg-mobile text-display-lg-mobile text-primary mb-2">
-              {profile.displayName ?? email ?? "Learner"}
+              {profile.displayName ?? email ?? t("learnerFallback")}
             </h1>
 
             <div className="flex items-center gap-4 justify-center md:justify-start mb-4 text-on-surface-variant">
@@ -118,7 +120,7 @@ export function ProfilePageClient({
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" />
                 </svg>
-                Joined {joinDate}
+                {t("joinedOn", { date: joinDate })}
               </span>
             </div>
 
@@ -133,7 +135,7 @@ export function ProfilePageClient({
               <div>
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-on-surface-variant">
-                    {nextRank ? `Progress to ${nextRank.name}` : `Highest rank reached: ${currentRank.name}`}
+                    {nextRank ? t("progressToRank", { rank: nextRank.name }) : t("highestRankReachedName", { rank: currentRank.name })}
                   </span>
                   {nextRank && xpNeededForNextRank !== null && (
                     <span className="font-bold text-on-surface">{xpIntoCurrentRank}/{xpNeededForNextRank} XP</span>
@@ -171,7 +173,7 @@ export function ProfilePageClient({
               <h3 className="font-headline-md text-headline-md text-primary mb-4">{t("learningProgress")}</h3>
               {categories.length === 0 ? (
                 <p className="text-on-surface-variant text-sm">
-                  No quizzes completed yet - your category progress will show up here once you start playing.
+                  {t("noQuizzesYet")}
                 </p>
               ) : (
                 <div className="space-y-4">
@@ -191,7 +193,7 @@ export function ProfilePageClient({
             <PremiumCard className="p-6">
               <h3 className="font-headline-md text-headline-md text-primary mb-4">{t("recentAchievements")}</h3>
               {unlockedAchievements.length === 0 ? (
-                <p className="text-on-surface-variant text-sm">No achievements unlocked yet - keep playing to earn your first one.</p>
+                <p className="text-on-surface-variant text-sm">{t("noAchievementsYet")}</p>
               ) : (
                 <div className="space-y-3">
                   {unlockedAchievements.slice(0, 3).map((achievement) => (
@@ -237,7 +239,7 @@ export function ProfilePageClient({
             <PremiumCard className="p-6">
               <h3 className="font-headline-md text-headline-md text-primary mb-4">{t("categoryPerformance")}</h3>
               {categories.length === 0 ? (
-                <p className="text-on-surface-variant text-sm">Play a few quizzes to see your accuracy by category here.</p>
+                <p className="text-on-surface-variant text-sm">{t("noAccuracyYet")}</p>
               ) : (
                 <div className="space-y-4">
                   {categories.map((category) => {
@@ -279,7 +281,7 @@ export function ProfilePageClient({
                   <span className="font-bold text-on-surface">{profile.longestStreak} days</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-on-surface-variant">Questions Answered</span>
+                  <span className="text-on-surface-variant">{t("questionsAnswered")}</span>
                   <span className="font-bold text-on-surface">{totalAttempts}</span>
                 </div>
               </div>
@@ -293,7 +295,7 @@ export function ProfilePageClient({
               <h3 className="font-headline-md text-headline-md text-primary mb-4">{t("recentActivity")}</h3>
               {recentAttempts.length === 0 ? (
                 <p className="text-on-surface-variant text-sm">
-                  Nothing here yet - your completed questions will show up as you play.
+                  {t("noActivityYet")}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -302,7 +304,7 @@ export function ProfilePageClient({
                       <span className="text-xl">{a.isCorrect ? "✅" : "❌"}</span>
                       <div className="flex-1">
                         <p className="text-on-surface text-sm">{a.questionText}</p>
-                        <p className="text-xs text-on-surface-variant">{a.categoryName} · {timeAgo(a.createdAt)}</p>
+                        <p className="text-xs text-on-surface-variant">{a.categoryName} · {timeAgo(a.createdAt, t)}</p>
                       </div>
                       {a.xpEarned > 0 && <PremiumBadge variant="primary" size="sm">+{a.xpEarned} XP</PremiumBadge>}
                     </div>

@@ -13,11 +13,13 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { getOnboardingSelections, clearOnboardingSelections } from "@/lib/onboarding-storage";
 
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { t, dir } = useLanguage();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,8 +39,8 @@ export default function SignupPage() {
     if (password !== confirmPassword) {
       toast({
         variant: "destructive",
-        title: "Passwords don't match",
-        description: "Please make sure both password fields are identical.",
+        title: t("passwordsDontMatch"),
+        description: t("passwordsDontMatchDesc"),
       });
       return;
     }
@@ -59,7 +61,7 @@ export default function SignupPage() {
     if (error) {
       toast({
         variant: "destructive",
-        title: "Couldn't create account",
+        title: t("couldntCreateAccount"),
         description: error.message,
       });
       return;
@@ -69,8 +71,8 @@ export default function SignupPage() {
     // active session yet - send them to check their inbox instead of /home.
     if (data.user && !data.session) {
       toast({
-        title: "Check your email",
-        description: "We've sent a confirmation link to finish creating your account.",
+        title: t("checkYourEmail"),
+        description: t("checkYourEmailDesc"),
       });
       router.push("/login");
       return;
@@ -96,13 +98,13 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center bg-background p-4">
+    <div dir={dir} className="relative flex min-h-[100dvh] items-center justify-center bg-background p-4">
       <NamesOfAllahBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost" size="icon">
           <Link href="/login">
             <ArrowLeft className="h-6 w-6" />
-            <span className="sr-only">Back</span>
+            <span className="sr-only">{t("back")}</span>
           </Link>
         </Button>
       </div>
@@ -114,8 +116,8 @@ export default function SignupPage() {
             </div>
             <div className="mb-2 h-px w-8 bg-primary/40" />
           </div>
-          <h1 className="mt-5 font-headline text-3xl font-bold">Create an Account</h1>
-          <p className="mt-1 text-muted-foreground">Begin your quest for knowledge.</p>
+          <h1 className="mt-5 font-headline text-3xl font-bold">{t("createAccount")}</h1>
+          <p className="mt-1 text-muted-foreground">{t("beginQuest")}</p>
           <div className="mt-4 flex items-center gap-2" aria-hidden="true">
             <span className="h-px w-10 bg-gradient-to-r from-transparent to-primary/40" />
             <IlmHuntMark className="h-3 w-3 text-primary/50" />
@@ -126,18 +128,18 @@ export default function SignupPage() {
           <CardContent className="pt-6">
             <form className="space-y-4" onSubmit={handleSignUp}>
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">{t("username")}</Label>
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Your name"
+                  placeholder={t("yourNamePlaceholder")}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -148,7 +150,7 @@ export default function SignupPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("password")}</Label>
                 <PasswordInput
                   id="password"
                   value={password}
@@ -158,7 +160,7 @@ export default function SignupPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Label htmlFor="confirm-password">{t("confirmPassword")}</Label>
                 <PasswordInput
                   id="confirm-password"
                   value={confirmPassword}
@@ -169,15 +171,15 @@ export default function SignupPage() {
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Account
+                {t("createAccount")}
               </Button>
             </form>
           </CardContent>
         </Card>
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {t("alreadyHaveAccount")}{" "}
           <Link href="/login" className="font-semibold text-primary hover:underline">
-            Sign in
+            {t("signIn")}
           </Link>
         </p>
       </div>

@@ -3,10 +3,12 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useLanguage } from "@/contexts/LanguageContext"
+import type { Translations } from "@/lib/i18n"
 
-const navItems = [
+const navItems: { labelKey: keyof Translations; href: string; icon: React.ReactNode }[] = [
   {
-    name: "Home",
+    labelKey: "home" as keyof Translations,
     href: "/home",
     icon: (
       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -15,7 +17,7 @@ const navItems = [
     ),
   },
   {
-    name: "Learning",
+    labelKey: "learning" as keyof Translations,
     href: "/quiz",
     icon: (
       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -24,7 +26,7 @@ const navItems = [
     ),
   },
   {
-    name: "Rankings",
+    labelKey: "rankings" as keyof Translations,
     href: "/leaderboard",
     icon: (
       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -33,7 +35,7 @@ const navItems = [
     ),
   },
   {
-    name: "Shop",
+    labelKey: "shop" as keyof Translations,
     href: "/store",
     icon: (
       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -42,7 +44,7 @@ const navItems = [
     ),
   },
   {
-    name: "Profile",
+    labelKey: "profile" as keyof Translations,
     href: "/profile",
     icon: (
       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -58,9 +60,10 @@ export default function AppLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const { t, dir } = useLanguage()
 
   return (
-    <div className="relative min-h-[100dvh] bg-background">
+    <div dir={dir} className="relative min-h-[100dvh] bg-background">
       {/* Background Accents */}
       <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
@@ -98,7 +101,7 @@ export default function AppLayout({
                     {item.icon}
                   </motion.div>
                   <span className="font-label-caps text-label-caps mt-1">
-                    {item.name}
+                    {t(item.labelKey)}
                   </span>
                   {isActive && (
                     <motion.div

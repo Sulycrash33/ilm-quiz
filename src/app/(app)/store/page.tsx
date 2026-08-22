@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { getStoreCatalogue } from "@/app/(app)/store/actions"
 import { StorePageClient } from "@/components/store/StorePageClient"
 
@@ -10,11 +11,7 @@ export default async function StorePage() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[100dvh]">
-        <p>Please sign in to visit the store.</p>
-      </div>
-    )
+    return <TranslatedNotice messageKey="signInToVisitStore" />
   }
 
   // Catalogue and prices come from the database, so what the page shows is what

@@ -1,6 +1,9 @@
+"use client"
+
 import Link from "next/link"
 import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
 import { IlmHuntMark } from "@/components/icons/IlmHuntMark"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 /**
  * The landing screen.
@@ -34,6 +37,7 @@ import { IlmHuntMark } from "@/components/icons/IlmHuntMark"
  * exist anywhere in the codebase.
  */
 export default function LandingScreen() {
+  const { t, dir } = useLanguage()
   return (
     <div className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-background">
       <NamesOfAllahBackdrop />
@@ -63,7 +67,7 @@ export default function LandingScreen() {
                 ILM Hunt
               </h1>
               <span className="font-label-caps text-label-caps mt-1 block uppercase tracking-widest text-on-surface-variant/70">
-                Digital Sanctuary
+                {t("digitalSanctuary")}
               </span>
             </div>
           </div>
@@ -74,12 +78,12 @@ export default function LandingScreen() {
             href="/language"
             className="btn-primary glow-effect haptic-feedback w-full max-w-xs rounded-full px-10 py-4 text-center text-lg font-bold shadow-lg"
           >
-            Begin Your Journey
+            {t("beginYourJourney")}
           </Link>
           <p className="text-sm text-on-surface-variant">
-            Already have an account?{" "}
+            {t("alreadyHaveAccount")}{" "}
             <Link href="/login" className="font-semibold text-primary hover:underline">
-              Sign in
+              {t("signIn")}
             </Link>
           </p>
         </div>

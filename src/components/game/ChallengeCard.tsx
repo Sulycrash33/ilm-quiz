@@ -2,11 +2,14 @@
 
 import { motion } from "framer-motion";
 import type { Challenge } from "@/lib/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ProgressBar } from "./ProgressBar";
 import { Calendar, Coins, Shield, Star } from "lucide-react";
 
-export const ChallengeCard: React.FC<{ challenge: Challenge; type: 'daily' | 'weekly' }> = ({ challenge, type }) => (
+export const ChallengeCard: React.FC<{ challenge: Challenge; type: 'daily' | 'weekly' }> = ({ challenge, type }) => {
+  const { t } = useLanguage();
+  return (
     <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -31,7 +34,7 @@ export const ChallengeCard: React.FC<{ challenge: Challenge; type: 'daily' | 'we
         <p className="text-sm text-muted-foreground mt-2">{challenge.description}</p>
         <div className="mt-4">
             <div className="flex justify-between text-sm mb-2">
-                <span>Progress</span>
+                <span>{t("progress")}</span>
                 <span className="font-semibold">{challenge.progress}/{challenge.target}</span>
             </div>
             <ProgressBar value={(challenge.progress / challenge.target) * 100} />
@@ -46,7 +49,7 @@ export const ChallengeCard: React.FC<{ challenge: Challenge; type: 'daily' | 'we
                 </span>
                 {challenge.reward.badge && (
                     <span className="flex items-center gap-1">
-                        <Shield className="h-3 w-3" /> Badge
+                        <Shield className="h-3 w-3" /> {t("badgeLabel")}
                     </span>
                 )}
             </div>
@@ -56,8 +59,9 @@ export const ChallengeCard: React.FC<{ challenge: Challenge; type: 'daily' | 'we
                     type === 'daily' ? 'bg-blue-400 hover:bg-blue-400/90' : 'bg-purple-400 hover:bg-purple-400/90'
                 }`}
             >
-                Start Challenge
+                {t("startChallenge")}
             </Button>
         </div>
     </motion.div>
 );
+};

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Friend {
   id: string
@@ -19,6 +20,7 @@ interface FriendsListProps {
 }
 
 export function FriendsList({ friends }: FriendsListProps) {
+  const { t } = useLanguage();
   return (
     <div className="space-y-3">
       {friends.map((friend, index) => (
@@ -45,12 +47,12 @@ export function FriendsList({ friends }: FriendsListProps) {
             <div className="text-right">
               <p className="font-bold text-primary">{friend.xp} XP</p>
               <p className="text-xs text-on-surface-variant">
-                {friend.isOnline ? "Online" : "Offline"}
+                {friend.isOnline ? t("online") : t("offline")}
               </p>
             </div>
             {friend.isOnline && (
               <PremiumBadge variant="success" size="sm">
-                LIVE
+                {t("liveLabel")}
               </PremiumBadge>
             )}
           </div>

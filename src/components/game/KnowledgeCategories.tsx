@@ -7,6 +7,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { getCategoriesWithProgress } from "@/lib/quiz-service";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Category {
   id: string;
@@ -19,6 +20,7 @@ interface Category {
 }
 
 export function KnowledgeCategories() {
+  const { t } = useLanguage();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +38,7 @@ export function KnowledgeCategories() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary">
           <BookOpen className="h-5 w-5" aria-hidden="true" />
-          Knowledge Categories
+          {t("knowledgeCategories")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -70,7 +72,7 @@ export function KnowledgeCategories() {
             <Link href="/quiz">
               <div className="flex flex-col items-center gap-1">
                 <Plus className="h-6 w-6" />
-                <span className="text-sm font-medium">More...</span>
+                <span className="text-sm font-medium">{t("moreEllipsis")}</span>
               </div>
             </Link>
           </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GLOBAL_LEADERBOARD, WEEKLY_LEADERS, CATEGORY_LEADERS } from '@/lib/leaderboard-data';
 import { LeaderboardItem } from './game/LeaderboardItem';
@@ -9,21 +10,22 @@ import { Globe, Calendar, LayoutGrid } from 'lucide-react';
 
 export function Leaderboard() {
   const [selectedTab, setSelectedTab] = useState('global');
+  const { t } = useLanguage();
 
   return (
     <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="global">
           <Globe className="h-4 w-4 mr-2" />
-          Global
+          {t("globalTab")}
         </TabsTrigger>
         <TabsTrigger value="weekly">
           <Calendar className="h-4 w-4 mr-2" />
-          This Week
+          {t("thisWeek")}
         </TabsTrigger>
         <TabsTrigger value="category">
           <LayoutGrid className="h-4 w-4 mr-2" />
-          By Category
+          {t("byCategory")}
         </TabsTrigger>
       </TabsList>
 

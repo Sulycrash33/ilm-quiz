@@ -1,27 +1,29 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Trophy, Star, Shield } from "lucide-react";
 import { ACHIEVEMENTS_DATA, DAILY_CHALLENGES_DATA, WEEKLY_CHALLENGES_DATA } from "@/lib/achievements-data";
 import { AchievementCard } from "@/components/game/AchievementCard";
 import { ChallengeCard } from "./game/ChallengeCard";
 
 export function AchievementSystem() {
+    const { t } = useLanguage();
     return (
         <div className="w-full">
             <Tabs defaultValue="achievements" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="achievements">
                     <Star className="h-4 w-4 mr-2" />
-                    Achievements
+                    {t("achievements")}
                 </TabsTrigger>
                 <TabsTrigger value="daily">
                     <Trophy className="h-4 w-4 mr-2" />
-                    Daily Challenges
+                    {t("dailyChallenges")}
                 </TabsTrigger>
                 <TabsTrigger value="weekly">
                     <Shield className="h-4 w-4 mr-2" />
-                    Weekly Challenges
+                    {t("weeklyChallenges")}
                 </TabsTrigger>
                 </TabsList>
 
