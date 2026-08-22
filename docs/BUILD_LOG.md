@@ -1049,6 +1049,28 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 21. Women in Islam (`women_in_islam`) — 180 / 180
+
+Verified anchors: Sahih al-Bukhari 3/3815/3816 (Khadijah); Qur'an 19 and 3 (Maryam, 'Imran); Qur'an 4:4/4:7/4:11-12/4:19/4:24/4:32/4:176 (mahr and inheritance); Sahih al-Bukhari 5136; Sunan Ibn Majah 1873 (marital consent); Sahih al-Bukhari 304/3331/5186, Sahih Muslim 1468 (grading-discipline tier); Jami' at-Tirmidhi 1159 (prostration saying); Qur'an 24:6-9/33:53/33:59/58:1-4 (occasions of revelation); Sahih al-Bukhari 900/1088, Sahih Muslim 442 (travel and masjid attendance); Sunan Abi Dawud 2085, Jami' at-Tirmidhi 1101, Qur'an 2:229/2:282 (four-madhab differences on wali, khul', and testimony).
+
+**Tiers 1-3** cover Khadijah, 'A'ishah, and Maryam's distinct, separately sourced bases of recognition (hadith-recorded status versus Maryam's unique Qur'anic naming and surah); inheritance, property, and marital-consent rights, each anchored to its own citation and pre-Islamic baseline; and named contributors — 'A'ishah's traditionally-cited 2,210-narration count (traced to Ibn Hazm, explicitly flagged as an estimate rather than an exact primary tally), Fatimah al-Fihri's founding of al-Qarawiyyin (859 CE, recognized by UNESCO and Guinness as the oldest continually operating degree-granting institution), and Umm al-Darda al-Sughra's documented teaching of a future caliph.
+
+**Tier 4** pairs mahr's status as the wife's own exclusive, consent-only-waivable property with inheritance's genuine variance: the widely repeated "female gets half" ratio holds for full/paternal-sibling kalalah (4:176) but is corrected by 4:12's maternal-sibling kalalah, which gives equal shares regardless of sex — an exception frequently conflated with the wrong verse.
+
+**Tier 5, where "weak material circulates from every direction,"** works through a graded cluster: Bukhari 304 ("deficient in intelligence and religion") and the "crooked rib" hadith are both genuinely sahih but widely decontextualized/misunderstood; the prostration saying (Tirmidhi 1159) is hasan gharib and read as rhetorical, not literal, permission; and "had it not been for women, Allah would truly have been worshipped," "consult women and then oppose them," and two related sayings are outright fabricated or rejected — each classified by its actual grading, never by how the wording sounds.
+
+**Tier 6** traces four occasions of revelation (4:19's widow-inheritance correction, 24:6-9's li'an case, 33:53 versus 33:59's often-conflated curtain/jilbab incidents, and 58:1-4's zihar case), explicitly flagging the Khawlah "seventh heaven" quote's disputed 'A'ishah-versus-'Umar attribution as unresolved rather than asserting one version as settled.
+
+**Tier 7** distinguishes genuine textual variation (the mahram-travel hadith's differing distance-thresholds across narrations, reflecting different questions rather than contradiction) from a still-open modern fiqh debate (safe contemporary travel), and separates the masjid-attendance hadith's own wording from 'A'ishah's own appended ijtihad in the same narration-cluster.
+
+**Tier 8** gives a careful, evidenced account of three genuine four-madhab disputes: the wali requirement (Hanafi's conditional non-requirement, evidenced by 2:230/2:232 and qiyas, against the other three schools' "no marriage except with a wali" hadith); khul's procedural mechanism (mutual-agreement versus judicial compulsion) and its talaq-versus-faskh classification; and testimony's genuine context-specificity (2:282's ratio applies only to financial-debt documentation, while a single trustworthy woman's testimony alone is accepted in matters like childbirth and breastfeeding across all four schools).
+
+**Tier 9's capstone reapplies each of tiers 1-8's specific principles to contemporary questions the classical texts never faced** (an uncited social-media hadith, a joint-account salary proposal, an online marriage contract, text-message khul', video-recorded childbirth testimony) rather than inventing new rulings or repeating prior facts.
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1073,4 +1095,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Ahl al-Bayt | 180 / 180 |
 | Other Prophets | 180 / 180 |
 | Miracles & Signs | 180 / 180 |
-| **total** | **3,600 of 5,220** |
+| Women in Islam | 180 / 180 |
+| **total** | **3,780 of 5,220** |

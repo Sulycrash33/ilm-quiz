@@ -405,3 +405,45 @@ insert; none of them is guessable from the column list.
   story, the shadowless-Prophet claim) was phrased as "what is this claim's actual grading/status,"
   never as "this happened" — worth flagging as the concrete pattern to imitate whenever a future
   category's tier map singles out a similar weak-material risk.
+
+### Added while authoring Women in Islam
+
+- **"Authentic but widely decontextualized" is a third bucket, distinct from both "sound ruling"
+  and "weak/fabricated."** Bukhari 304 ("deficient in intelligence and religion") and the
+  "crooked rib" hadith (Bukhari 3331/5186, Muslim 1468) are both genuinely sahih — the problem
+  with each is that a popular reading quotes an opening clause in isolation and draws a
+  blanket-inferiority conclusion the hadith's own internal wording (304 explicitly ties its two
+  clauses to the testimony ratio and to missed prayer/fasting during menses) or its classical
+  commentary (the rib hadith's actual point, per commentators, is a caution against harsh
+  treatment) does not support. Tier 5's fix was to always pair the hadith with its own internal
+  explanation or its commentators' actual reading, rather than either asserting the popular
+  misreading or — worse — treating the hadith's genuine authenticity as itself suspect. Don't
+  conflate "commonly misquoted" with "weak"; they call for different fixes.
+- **A single hadith can carry a real, unsettled grading dispute (hasan gharib, contested by later
+  scholars) *and* a settled non-literal reading, at the same time — these are two separate
+  questions, and a quiz item should keep them separate.** The wife-prostration saying (Tirmidhi
+  1159) is graded hasan gharib by at-Tirmidhi himself, with later muhaddithun genuinely split on
+  whether corroborating routes raise it to sahih or whether the chain stays weak — that is an
+  open grading question. Separately, and regardless of how that grading question resolves, every
+  source reads the saying as rhetorical hyperbole, not literal permission for prostration (which
+  is categorically forbidden). Tier 5 phrased this as "authentic-but-contested-grading and
+  rhetorical," not collapsing the grading dispute and the literal/figurative question into one
+  verdict.
+- **When a quote's specific attribution to a named individual is itself disputed across sources
+  (not just its isnad-strength), say so explicitly rather than picking the more dramatic
+  attribution.** Research for tier 6 flagged that the "Allah heard her from above the seven
+  heavens" line (on Khawlah bint Tha'labah's zihar case, Surah al-Mujadilah) is attributed in
+  different sources to *either* 'A'ishah or 'Umar, with the report itself sitting in tafsir
+  literature (Ibn Abi Hatim, al-Bayhaqi) rather than at Bukhari/Muslim's isnad-strength level.
+  The tier was written to flag this attribution as unresolved ("reported, variably, as...") rather
+  than asserting one name as the confirmed speaker — the same discipline as grading a hadith, just
+  applied to a report's speaker instead of its chain.
+- **A genuine four-madhab fiqh disagreement (tier 8: wali, khul', testimony) is not a "weak vs
+  sound hadith" dispute, even when named hadith are central to it.** The wali question turns on
+  two schools reading the same broadly-authenticated hadith corpus differently (usul-level
+  interpretation, plus one chain-strength sub-dispute over the stronger "her marriage is invalid"
+  wording) — not on one side citing sound material and the other citing fabrications. Framing it
+  that way would misrepresent mainstream, still-practiced Sunni fiqh as a soundness dispute it
+  isn't. The same care applies to khul's talaq-vs-faskh classification and to testimony's
+  domain-specific 2:282-vs-childbirth/breastfeeding carve-out: name each school's actual evidence,
+  and don't flatten "the schools differ" into "one school is right and the others are weak."
