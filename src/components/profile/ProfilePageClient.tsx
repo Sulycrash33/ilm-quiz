@@ -12,6 +12,7 @@ import { PremiumStat } from "@/components/ui/premium-stat"
 import { AchievementCard } from "@/components/game/AchievementCard"
 import { LogoutButton } from "@/components/layout/LogoutButton"
 import { ResetProgressCard } from "@/components/profile/ResetProgressCard"
+import { SoundToggle } from "@/components/profile/SoundToggle"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Locale, Translations } from "@/lib/i18n"
 import type { ProfileStats } from "@/lib/profile-stats"
@@ -217,7 +218,8 @@ export function ProfilePageClient({
 
             {/* Spans both columns: this is an account-level action, not a
                 stat card sitting alongside the others. */}
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 space-y-6">
+              <SoundToggle />
               <ResetProgressCard />
             </div>
           </motion.div>
