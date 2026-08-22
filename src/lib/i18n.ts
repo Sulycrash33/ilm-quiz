@@ -693,6 +693,10 @@ export interface Translations {
   resetProgressDone: string
   resetProgressFailed: string
   resetting: string
+  sound: string
+  soundOn: string
+  soundOff: string
+  soundHint: string
 }
 
 const enTranslations: Translations = {
@@ -1380,6 +1384,10 @@ const enTranslations: Translations = {
   resetProgressDone: "Your progress has been reset.",
   resetProgressFailed: "Could not reset your progress.",
   resetting: "Resetting...",
+  sound: "Sound",
+  soundOn: "Sound on",
+  soundOff: "Sound off",
+  soundHint: "Off by default, so the app stays quiet on shared devices and around prayer times.",
 }
 
 // Malay/Indonesian translations - culturally meaningful, not direct translations
@@ -2068,6 +2076,10 @@ const msTranslations: Translations = {
   resetProgressDone: "Kemajuan anda telah ditetapkan semula.",
   resetProgressFailed: "Tidak dapat menetapkan semula kemajuan anda.",
   resetting: "Menetapkan semula...",
+  sound: "Bunyi",
+  soundOn: "Bunyi dihidupkan",
+  soundOff: "Bunyi dimatikan",
+  soundHint: "Dimatikan secara lalai, supaya aplikasi kekal senyap pada peranti dikongsi dan ketika waktu solat.",
 }
 
 // Indonesian translations - culturally meaningful, adapted for Indonesian context
@@ -2756,6 +2768,10 @@ const idTranslations: Translations = {
   resetProgressDone: "Kemajuan Anda telah diatur ulang.",
   resetProgressFailed: "Tidak dapat mengatur ulang kemajuan Anda.",
   resetting: "Mengatur ulang...",
+  sound: "Suara",
+  soundOn: "Suara aktif",
+  soundOff: "Suara nonaktif",
+  soundHint: "Nonaktif secara bawaan, agar aplikasi tetap senyap di perangkat bersama dan saat waktu salat.",
 }
 
 // Hausa translations
@@ -3444,6 +3460,10 @@ const haTranslations: Translations = {
   resetProgressDone: "An sake saita ci gabanka.",
   resetProgressFailed: "An kasa sake saita ci gabanka.",
   resetting: "Ana sake saitawa...",
+  sound: "Sauti",
+  soundOn: "An kunna sauti",
+  soundOff: "An kashe sauti",
+  soundHint: "An kashe shi ta asali, don manhajar ta yi shiru a na'urorin haɗin gwiwa da lokutan sallah.",
 }
 
 // French translations
@@ -4132,6 +4152,10 @@ const frTranslations: Translations = {
   resetProgressDone: "Votre progression a été réinitialisée.",
   resetProgressFailed: "Impossible de réinitialiser votre progression.",
   resetting: "Réinitialisation...",
+  sound: "Son",
+  soundOn: "Son activé",
+  soundOff: "Son désactivé",
+  soundHint: "Désactivé par défaut, pour que l'application reste silencieuse sur un appareil partagé et aux heures de prière.",
 }
 
 // Arabic translations (RTL)
@@ -4820,6 +4844,10 @@ const arTranslations: Translations = {
   resetProgressDone: "تمت إعادة ضبط تقدّمك.",
   resetProgressFailed: "تعذّرت إعادة ضبط تقدّمك.",
   resetting: "جارٍ إعادة الضبط...",
+  sound: "الصوت",
+  soundOn: "الصوت مفعّل",
+  soundOff: "الصوت متوقف",
+  soundHint: "متوقف افتراضياً، ليبقى التطبيق صامتاً على الأجهزة المشتركة وأوقات الصلاة.",
 }
 
 /**

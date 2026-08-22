@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { RunSummary as RunSummaryData } from "@/lib/hunt-engine";
 import { rankProgress, rankUpBetween } from "@/lib/ranks";
+import { useEffect } from "react";
+import { playCue } from "@/lib/sound";
 
 interface RunSummaryProps {
   summary: RunSummaryData;
@@ -31,6 +33,12 @@ export function RunSummary({ summary, xpBefore, onPlayAgain, onExit }: RunSummar
 
   const progress = rankProgress(xpBefore + summary.xp);
   const rankedUp = rankUpBetween(xpBefore, summary.xp);
+
+  // The rarest cue in the game — nine times in a whole playthrough. Fires on
+  // mount of the summary, once, and only when the run actually promoted them.
+  useEffect(() => {
+    if (rankedUp) playCue("rankUp");
+  }, [rankedUp]);
   const RankIcon = progress.rank.icon;
 
   return (

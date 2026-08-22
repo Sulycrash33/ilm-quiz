@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { rankFor } from "@/lib/ranks";
 import { useProfile } from "@/hooks/use-profile";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { playCue } from "@/lib/sound";
 import type { GradeResult, QuizQuestion } from "@/lib/types";
 import {
   applyAnswer,
@@ -180,6 +181,9 @@ export function HuntView({
   useEffect(() => {
     if (!finished || runRecorded.current) return;
     runRecorded.current = true;
+    // Only for a level run that was actually won — losing a run is not a
+    // moment to celebrate, and the adaptive Hunt has no "level" to complete.
+    if (forceTier !== undefined && state.status === "won") playCue("levelComplete");
     const s = summarize(state);
     void recordHuntRun({
       categoryId,
@@ -221,6 +225,8 @@ export function HuntView({
       // Keep the coin counter honest: the server credits coins per answer, and
       // a header showing a stale balance is what made the old lifeline dock lie.
       void refreshProfile();
+
+      playCue(result.correct ? "correct" : "wrong");
 
       if (result.correct) {
         setParticles(true);
