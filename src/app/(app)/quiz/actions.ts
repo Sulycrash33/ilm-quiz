@@ -1,7 +1,7 @@
 ﻿'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import type { GradeResult } from '@/lib/types';
+import type { EarnedAchievement, GradeResult } from '@/lib/types';
 
 interface SubmitOptions { usedHint?: boolean; responseTimeMs?: number; doublePoints?: boolean; lifelineUsed?: string; }
 
@@ -13,7 +13,7 @@ export async function submitAnswer(
   questionId: string,
   choiceIndex: number,
   opts: SubmitOptions = {},
-): Promise<GradeResult & { streakMultiplier: number }> {
+): Promise<GradeResult & { streakMultiplier: number; newAchievements: EarnedAchievement[] }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('You must be signed in to answer.');
@@ -43,7 +43,38 @@ export async function submitAnswer(
     citation: row.o_citation ?? '',
     xpEarned: row.o_xp_earned,
     streakMultiplier: row.o_streak_multiplier,
+    newAchievements: await awardAchievements(supabase),
   };
+}
+
+/**
+ * Hands the database the job of deciding what has just been earned.
+ *
+ * This runs after every graded answer, which is the whole point: achievements
+ * used to be detected only when someone happened to open the profile page, so
+ * a badge could arrive days after the run that earned it — or never. The
+ * criteria live in `award_achievements()` (migration 0023) rather than being
+ * re-implemented here, because two copies of the rules is how they drift.
+ *
+ * Best-effort by design. The answer is already graded and the XP already
+ * banked by the time this is called, so a failure here costs a congratulation,
+ * not a point. Never let it throw into the answer path.
+ */
+async function awardAchievements(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+): Promise<EarnedAchievement[]> {
+  try {
+    const { data, error } = await supabase.rpc('award_achievements');
+    if (error || !Array.isArray(data)) return [];
+    return data.map((row: { o_slug: string; o_name: string; o_description: string | null; o_icon: string | null }) => ({
+      slug: row.o_slug,
+      name: row.o_name,
+      description: row.o_description ?? '',
+      icon: row.o_icon ?? '\u2b50',
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function fiftyFifty(questionId: string): Promise<number[]> {

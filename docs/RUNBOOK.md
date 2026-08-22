@@ -775,3 +775,100 @@ cited in explanatory text (none were, deliberately, but watch for this in any fu
 date quickly. It is the one category that needs a recurring re-review schedule the other 28 do
 not — flagging this for whoever picks up the human-review phase next, since it is not otherwise
 written down anywhere but here.
+
+## Scheduled jobs (migration 0024)
+
+`pg_cron` runs four jobs. All schedules are UTC, which is what pg_cron reads —
+convert before changing one.
+
+| Job name | Schedule | Calls | Why |
+| --- | --- | --- | --- |
+| `ilm-cleanup-rooms` | `*/15 * * * *` | `cleanup_old_rooms()` | Finished rooms are deleted an hour after they end, abandoned lobbies after thirty minutes. |
+| `ilm-daily-challenge` | `5 0 * * *` | `cron_ensure_daily_challenge()` | The day's challenge exists at midnight instead of being created by whoever opens the app first. |
+| `ilm-close-league-week` | `20 0 * * 1` | `cron_close_league_week()` | Ranks the week that just ended. Promotion and relegation only happen here. |
+| `ilm-close-circle-weeks` | `30 0 * * 1` | `cron_close_circle_weeks()` | Closes every circle's finished weeks, including circles nobody visited. |
+
+Before this migration none of the first three functions had a call site
+anywhere in the app, and `close_circle_weeks` ran only if a member happened to
+open the circle page. No league week had ever been ranked.
+
+To check on them:
+
+```sql
+select jobname, schedule, active from cron.job order by jobname;
+
+select j.jobname, d.status, d.start_time, d.return_message
+from cron.job_run_details d join cron.job j on j.jobid = d.jobid
+order by d.start_time desc limit 20;
+```
+
+The three `cron_*` wrappers have `EXECUTE` revoked from `anon` and
+`authenticated` on purpose — they run only from the scheduler, which connects
+as the table owner. Nothing in the app should be able to trigger a league close
+or a bulk week roll-up.
+
+## Streak reminders (migrations 0026–0027)
+
+The only thing in the app that can reach a player who has closed the tab. Off
+until a player switches it on, one notification a day at most, and only on the
+day their streak would actually break.
+
+### How a reminder travels
+
+1. `ilm-streak-reminders` (pg_cron, 17:00 UTC daily) calls
+   `cron_send_streak_reminders()`.
+2. That reads two Vault secrets and POSTs to the `send-streak-reminders` edge
+   function via pg_net. It is fire-and-forget — a slow push service can never
+   hold a cron worker open.
+3. The edge function asks `streak_reminder_candidates()` who needs one, signs a
+   VAPID JWT, encrypts each payload to that subscription's own key, and sends.
+4. Each result goes back through `record_push_result()`. A 404 or 410 deletes
+   the row; the endpoint is genuinely dead and retrying it daily is pointless.
+5. `public/sw.js` receives the push and shows the notification. Tapping it
+   focuses an existing tab rather than opening a second one.
+
+### Setup, once per environment
+
+Nothing sends until all of this is in place. Until then the profile toggle
+reads "Reminders aren't set up on this server yet" — deliberately, so the
+dormant state is visible rather than silent.
+
+```bash
+npm run vapid:keys        # prints a key pair; nothing is written to disk
+```
+
+- **Vercel** — set `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to the public key.
+- **Supabase edge function secrets** — set `VAPID_PRIVATE_KEY`,
+  `VAPID_PUBLIC_KEY`, and `VAPID_SUBJECT` (a `mailto:` the push service can use
+  to report abuse).
+- **Supabase Vault** — so the cron job can reach the function:
+
+  ```sql
+  select vault.create_secret('https://<project-ref>.supabase.co/functions/v1',
+                             'functions_base_url');
+  select vault.create_secret('<service-role-key>', 'service_role_key');
+  ```
+
+The service-role key lives in Vault rather than in a migration on purpose: a
+migration is in version control forever, and that key is full database access.
+
+### Checking on it
+
+```sql
+-- Who would be messaged if the job ran right now
+select count(*) from public.streak_reminder_candidates();
+
+-- What the job did
+select j.jobname, d.status, d.start_time, d.return_message
+from cron.job_run_details d join cron.job j on j.jobid = d.jobid
+where j.jobname = 'ilm-streak-reminders'
+order by d.start_time desc limit 10;
+
+-- What the edge function replied
+select created, status_code, content from net._http_response
+order by created desc limit 5;
+```
+
+Rotating the VAPID pair invalidates every existing browser subscription — a
+push service ties a subscription to the key that created it, so every player
+has to switch reminders on again. Rotate only if the private key leaks.

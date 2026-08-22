@@ -63,6 +63,18 @@ export interface GradeResult {
   xpEarned: number;
 }
 
+/**
+ * An achievement that was earned *by this answer* — not one already held.
+ * `submitAnswer` returns these so the game can congratulate the player in the
+ * run itself, which is the only moment the reward means anything.
+ */
+export interface EarnedAchievement {
+  slug: string;
+  name: string;
+  description: string;
+  icon: string;
+}
+
 // Achievement System Types
 export interface Reward {
   coins: number;
