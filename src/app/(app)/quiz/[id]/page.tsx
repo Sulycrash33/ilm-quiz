@@ -1,13 +1,17 @@
 import { notFound } from "next/navigation";
-import { getCategoryBySlug, getPublishedQuizQuestions } from "@/lib/quiz-service";
-import { getLifelinePrices } from "@/app/(app)/quiz/actions";
-import { QuizRunner } from "@/components/game/QuizRunner";
+import { getCategoryBySlug, getCategoryLevels } from "@/lib/quiz-service";
+import { LevelPath } from "@/components/game/LevelPath";
 
-interface CategoryDetailPageProps {
+interface CategoryLevelMapPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
+/**
+ * The adventure path for one category: nine level nodes, locked in sequence.
+ * A run itself lives at `/quiz/[id]/[tier]`; this page only shows what is
+ * unlocked and lets a seeker choose where to start.
+ */
+export default async function CategoryLevelMapPage({ params }: CategoryLevelMapPageProps) {
   const { id } = await params;
 
   const category = await getCategoryBySlug(id);
@@ -15,21 +19,15 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
     notFound();
   }
 
-  // Prices come from the database, not from a constant baked into the client
-  // bundle, so the number on a lifeline button is the number the server charges.
-  const [questions, lifelinePrices] = await Promise.all([
-    getPublishedQuizQuestions(id),
-    getLifelinePrices(),
-  ]);
+  const levels = await getCategoryLevels(id);
 
   return (
-    <QuizRunner
+    <LevelPath
+      categorySlug={id}
       categoryName={category.name}
       categoryDescription={category.description}
       categoryIcon={category.icon}
-      categoryId={category.id}
-      questions={questions}
-      lifelinePrices={lifelinePrices}
+      levels={levels}
     />
   );
 }

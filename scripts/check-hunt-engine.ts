@@ -9,7 +9,7 @@
  */
 
 import {
-  buildLadder, initialState, applyAnswer, applyTimeout, applySkip, summarize,
+  buildLadder, buildTierLadder, initialState, applyAnswer, applyTimeout, applySkip, summarize,
   comboMultiplier, speedBonus, currentQuestion, makeRng, HUNT_RULES, curveDifficulty,
   curveTier, clampTier, timeLimitForTier, TIER_MIN, TIER_MAX,
 } from '../src/lib/hunt-engine';
@@ -74,6 +74,25 @@ check('bottom rank clamps to 1', bottomRun.every((q) => q.tier >= TIER_MIN), bot
 const sparse = buildLadder(poolAtTier(8), { rng: makeRng(3), startTier: 1 });
 check('sparse category still fills a run', sparse.length === HUNT_RULES.runLength, sparse.length);
 check('sparse category falls back to what exists', sparse.every((q) => q.tier === 8));
+
+// --- buildTierLadder — the level-locked adventure path's run mode. Unlike
+// buildLadder, it must NEVER cross into a neighboring tier: borrowing there
+// would let a player "complete" a level without its own material.
+const tierRun = buildTierLadder(pool, 5, { rng: makeRng(11) });
+check('tier ladder only touches its own tier', tierRun.every((q) => q.tier === 5), tierRun.map((q) => q.tier));
+check('tier ladder has no duplicates', new Set(tierRun.map((q) => q.id)).size === tierRun.length);
+check('tier ladder stages are 1..n', tierRun.every((q, i) => q.stage === i + 1));
+check('tier ladder time limit matches the tier, not runtime drift', tierRun.every((q) => q.timeLimit === timeLimitForTier(5)));
+check('tier ladder caps at runLength', tierRun.length <= HUNT_RULES.runLength, tierRun.length);
+
+const emptyTier = buildTierLadder(poolAtTier(8, 0), 3, { rng: makeRng(1) });
+check('tier with nothing published yields an empty ladder, not a fallback', emptyTier.length === 0);
+
+const shortTier = buildTierLadder(poolAtTier(4, 3), 4, { rng: makeRng(2) });
+check('tier ladder is only as long as what exists', shortTier.length === 3, shortTier.length);
+
+check('same seed -> same tier ladder', JSON.stringify(buildTierLadder(pool, 6, { rng: makeRng(9) }).map((q) => q.id))
+  === JSON.stringify(buildTierLadder(pool, 6, { rng: makeRng(9) }).map((q) => q.id)));
 
 // --- curveTier
 check('curveTier opens one below the anchor', curveTier(0, 10, 5) === 4, curveTier(0, 10, 5));

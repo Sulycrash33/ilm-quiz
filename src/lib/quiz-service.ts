@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { timeLimitForTier, clampTier } from '@/lib/hunt-engine';
+import { timeLimitForTier, clampTier, TIER_MIN, TIER_MAX } from '@/lib/hunt-engine';
 import type { QuizQuestion } from '@/lib/types';
 
 /**
@@ -127,4 +127,110 @@ export async function getCategoriesWithProgress(): Promise<QuizCategory[]> {
     publishedCount: publishedByCat.get(c.id) ?? 0,
     answeredCount: answeredByCat.get(c.id)?.size ?? 0,
   }));
+}
+
+/** Published questions from exactly one tier of a category — the level-run's
+ * question pool, as opposed to `getPublishedQuizQuestions`'s whole-category,
+ * every-tier pool used by the adaptive Hunt. */
+export async function getPublishedQuizQuestionsForTier(slug: string, tier: number): Promise<QuizQuestion[]> {
+  const supabase = await createClient();
+  const category = await getCategoryBySlug(slug);
+  if (!category) return [];
+  const wantedTier = clampTier(tier);
+
+  const { data, error } = await supabase
+    .from('questions')
+    .select('id, question_text, choices, difficulty, tier')
+    .eq('category_id', category.id)
+    .eq('tier', wantedTier)
+    .eq('review_status', 'published')
+    .order('created_at', { ascending: true });
+
+  if (error || !data) return [];
+
+  return data.map((row: any) => {
+    const t = clampTier(row.tier ?? wantedTier);
+    return {
+      id: row.id as string,
+      text: row.question_text as string,
+      options: (row.choices ?? []) as string[],
+      difficulty: labelDifficulty(row.difficulty),
+      tier: t,
+      points: POINTS_BY_DIFFICULTY[row.difficulty as DbDifficulty] ?? 10,
+      timeLimit: timeLimitForTier(t),
+    };
+  });
+}
+
+export interface CategoryLevel {
+  tier: number;
+  publishedCount: number;
+  /** Distinct published questions in this tier the player has ever answered
+   * correctly — the level is "complete" once this reaches publishedCount. */
+  correctCount: number;
+  completed: boolean;
+  /** Whether the player may play this level yet. Tier 1 always is; tier N+1
+   * requires tier N complete. */
+  unlocked: boolean;
+}
+
+/**
+ * The nine-level adventure path for one category.
+ *
+ * A level is "complete" once every published question in that tier has been
+ * answered correctly at least once (checked against `attempts`, the
+ * server-graded record — never against anything the client self-reports).
+ * The next level is unlocked only once the one before it is complete.
+ *
+ * A tier with zero published questions can't be completed, but it also must
+ * not permanently wall off every level after it while content is still being
+ * reviewed — so an empty tier counts as "satisfied" for unlock purposes
+ * (nothing to finish) while still showing honestly as not completed.
+ */
+export async function getCategoryLevels(slug: string): Promise<CategoryLevel[]> {
+  const supabase = await createClient();
+  const category = await getCategoryBySlug(slug);
+  if (!category) return [];
+
+  const { data: qs } = await supabase
+    .from('questions')
+    .select('id, tier')
+    .eq('category_id', category.id)
+    .eq('review_status', 'published');
+
+  const idsByTier = new Map<number, string[]>();
+  for (let t = TIER_MIN; t <= TIER_MAX; t += 1) idsByTier.set(t, []);
+  (qs ?? []).forEach((q: any) => {
+    idsByTier.get(clampTier(q.tier ?? TIER_MIN))!.push(q.id as string);
+  });
+
+  const correctIds = new Set<string>();
+  const allIds = (qs ?? []).map((q: any) => q.id as string);
+  if (allIds.length > 0) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: attempts } = await supabase
+        .from('attempts')
+        .select('question_id')
+        .eq('user_id', user.id)
+        .eq('is_correct', true)
+        .in('question_id', allIds);
+      (attempts ?? []).forEach((a: any) => correctIds.add(a.question_id as string));
+    }
+  }
+
+  const levels: CategoryLevel[] = [];
+  let previousSatisfied = true; // level 1 is always open
+  for (let t = TIER_MIN; t <= TIER_MAX; t += 1) {
+    const ids = idsByTier.get(t)!;
+    const publishedCount = ids.length;
+    const correctCount = ids.filter((id) => correctIds.has(id)).length;
+    const completed = publishedCount > 0 && correctCount >= publishedCount;
+
+    levels.push({ tier: t, publishedCount, correctCount, completed, unlocked: previousSatisfied });
+    previousSatisfied = completed || publishedCount === 0;
+  }
+  return levels;
 }

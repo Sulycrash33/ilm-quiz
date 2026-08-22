@@ -10,6 +10,7 @@ import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { PremiumProgress } from "@/components/ui/premium-progress"
 import { PremiumStat } from "@/components/ui/premium-stat"
 import { AchievementCard } from "@/components/game/AchievementCard"
+import { LogoutButton } from "@/components/layout/LogoutButton"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Locale } from "@/lib/i18n"
 import type { ProfileStats } from "@/lib/profile-stats"
@@ -74,22 +75,25 @@ export function ProfilePageClient({
             {t("back")}
           </PremiumButton>
         </Link>
-        <label className="flex items-center gap-2 text-sm text-on-surface-variant">
-          {/* `hidden sm:inline` removed the word entirely on phones, which
-              also removed the select's accessible name — and `sm` is 640px, so
-              that meant every phone. `sr-only` keeps the label for assistive
-              technology while still freeing the space visually. */}
-          <span className="sr-only sm:not-sr-only sm:inline">{t("language")}</span>
-          <select
-            value={locale}
-            onChange={(e) => setLocale(e.target.value as Locale)}
-            className="bg-surface-container-high border border-white/10 rounded-lg px-3 py-1.5 text-on-surface text-sm"
-          >
-            {LANGUAGE_OPTIONS.map((opt) => (
-              <option key={opt.code} value={opt.code}>{opt.label}</option>
-            ))}
-          </select>
-        </label>
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm text-on-surface-variant">
+            {/* `hidden sm:inline` removed the word entirely on phones, which
+                also removed the select's accessible name — and `sm` is 640px, so
+                that meant every phone. `sr-only` keeps the label for assistive
+                technology while still freeing the space visually. */}
+            <span className="sr-only sm:not-sr-only sm:inline">{t("language")}</span>
+            <select
+              value={locale}
+              onChange={(e) => setLocale(e.target.value as Locale)}
+              className="bg-surface-container-high border border-white/10 rounded-lg px-3 py-1.5 text-on-surface text-sm"
+            >
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <option key={opt.code} value={opt.code}>{opt.label}</option>
+              ))}
+            </select>
+          </label>
+          <LogoutButton showLabel className="flex items-center gap-2 rounded-lg border border-white/10 bg-surface-container-high px-3 py-1.5 text-sm text-on-surface-variant transition-colors hover:bg-error/15 hover:text-error" />
+        </div>
       </motion.div>
 
       {/* Profile Card */}

@@ -14,6 +14,7 @@ import {
   applySkip,
   applyTimeout,
   buildLadder,
+  buildTierLadder,
   currentQuestion,
   initialState,
   makeRng,
@@ -42,6 +43,10 @@ interface HuntViewProps {
   categoryId: string | null;
   lifelinePrices: LifelinePrice[];
   onExit: () => void;
+  /** Set for a level-locked adventure run: confines the ladder to exactly this
+   * tier via `buildTierLadder` instead of the adaptive, rank-anchored
+   * `buildLadder` used by the whole-category Hunt. */
+  forceTier?: number;
 }
 
 /** How long the reveal stays on screen before the next stage. */
@@ -65,6 +70,7 @@ export function HuntView({
   categoryId,
   lifelinePrices,
   onExit,
+  forceTier,
 }: HuntViewProps) {
   const { t, dir } = useLanguage();
   const { toast } = useToast();
@@ -77,11 +83,15 @@ export function HuntView({
   // The ladder is anchored to the seeker's own rank, so a Faqih is asked
   // Faqih-level questions rather than starting every run at Mubtadi. `rankFor`
   // uses the same thresholds as `rank_tiers`, which is what the database
-  // derives `profiles.current_rank_id` from.
+  // derives `profiles.current_rank_id` from. A level-locked run ignores rank
+  // entirely — `forceTier` pins the ladder to exactly the level being played.
   const startTier = rankFor(profile?.totalXp ?? 0).level;
   const ladder = useMemo(
-    () => buildLadder(questions, { rng: makeRng(seed), startTier }),
-    [questions, seed, startTier],
+    () =>
+      forceTier !== undefined
+        ? buildTierLadder(questions, forceTier, { rng: makeRng(seed) })
+        : buildLadder(questions, { rng: makeRng(seed), startTier }),
+    [questions, seed, startTier, forceTier],
   );
 
   const [state, setState] = useState<HuntState>(() => initialState(ladder));
@@ -329,6 +339,11 @@ export function HuntView({
   if (finished) {
     return (
       <div dir={dir} className="py-4">
+        {forceTier !== undefined && state.status === "won" && (
+          <p className="mb-4 rounded-xl bg-primary/10 px-4 py-3 text-center text-sm font-semibold text-primary">
+            🔓 {t("levelComplete")}
+          </p>
+        )}
         <RunSummary
           summary={summarize(state)}
           xpBefore={xpAtStart.current ?? 0}

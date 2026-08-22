@@ -18,6 +18,13 @@ interface QuizRunnerProps {
   categoryId: string | null;
   questions: QuizQuestion[];
   lifelinePrices: LifelinePrice[];
+  /** Set for a level-locked run: which tier (1-9) this run is confined to.
+   * Passed straight through to `HuntView` as `forceTier`. */
+  tier?: number;
+  /** Where the header's back link goes. Defaults to the category grid; a
+   * tier run points it at that category's level map instead, and the label
+   * follows automatically (see below) rather than needing its own prop. */
+  backHref?: string;
 }
 
 /**
@@ -32,6 +39,8 @@ export function QuizRunner({
   categoryId,
   questions,
   lifelinePrices,
+  tier,
+  backHref,
 }: QuizRunnerProps) {
   const [started, setStarted] = useState(false);
   const { t, dir } = useLanguage();
@@ -45,6 +54,7 @@ export function QuizRunner({
           categoryId={categoryId}
           lifelinePrices={lifelinePrices}
           onExit={() => setStarted(false)}
+          forceTier={tier}
         />
       </div>
     );
@@ -57,9 +67,9 @@ export function QuizRunner({
     <div dir={dir} className="container mx-auto max-w-3xl px-4 py-6">
       <header className="mb-8">
         <Button asChild variant="ghost" size="sm">
-          <Link href="/quiz">
+          <Link href={backHref ?? "/quiz"}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("backToCategories")}
+            {backHref ? t("backToLevels") : t("backToCategories")}
           </Link>
         </Button>
       </header>
@@ -73,6 +83,11 @@ export function QuizRunner({
           <div className="text-6xl" aria-hidden="true">
             {categoryIcon ?? "📚"}
           </div>
+          {tier !== undefined && (
+            <p className="font-label-caps text-label-caps uppercase tracking-widest text-primary">
+              {t("levelLabel")} {tier}
+            </p>
+          )}
           <h1 className="font-headline text-3xl text-primary">{categoryName}</h1>
           {categoryDescription && (
             <p className="mx-auto max-w-prose text-on-surface-variant">{categoryDescription}</p>
