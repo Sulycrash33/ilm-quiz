@@ -1071,6 +1071,32 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 
 ---
 
+## 22. Islamic History (`islamic_history`) — 180 / 180
+
+Verified anchors: the Prophet's ﷺ birth (~570 CE) and first revelation (~610 CE); the Hijrah (622 CE) and the Hijri calendar's later, retroactive institution under 'Umar; the conquest of Makkah (630 CE) and the Prophet's ﷺ death (632 CE); the Rashidun order (Abu Bakr, 'Umar, 'Uthman, 'Ali) and the Umayyad (661-750 CE, Damascus) and Abbasid (750 CE onward, Baghdad) dynasties, with the surviving Umayyad branch in al-Andalus; the Battle of Yarmouk (~636 CE, against Byzantium), al-Qadisiyyah (mid-630s CE, against Sassanid Persia, exact year not fixed across sources), the negotiated surrender of Jerusalem (~637-638 CE), and the Battle of Tours/Poitiers (commonly 732 CE, some dating disagreement); the Byzantine-Sassanid War's mutual exhaustion, Sassanid succession instability, provincial religious tension, and administrative continuity as the conquests' commonly cited contributing factors; al-Tabari's *Tarikh al-Rusul wa'l-Muluk*, al-Baladhuri's *Futuh al-Buldan*, and Ibn al-Athir's *al-Kamil fi'l-Tarikh*; the Ridda Wars, 'Umar's Sawad land policy, and 'Uthman's Qur'anic standardization; the Saqifah succession and 'Uthman's assassination; and Sayf ibn 'Umar as a widely-quoted but critically unreliable narrator.
+
+This category is built on two distinct forms of caution the tier map called for: flagging genuinely disputed dates honestly instead of asserting false precision, and presenting a Sunni-Shia historical divergence (Saqifah) as a real, evidenced disagreement between two traditions rather than adjudicating a winner.
+
+**Tiers 1-3** cover Islam's Makkah-to-Madinah origin and the Rashidun succession; the Rashidun-Umayyad-Abbasid dynastic sequence anchored to each dynasty's capital city (Damascus versus Baghdad), with the al-Andalus branch as a separate continuation; and the early conquests' battles and dates, with Qadisiyyah's exact year and Tours/Poitiers' commonly-cited-732-CE figure both explicitly flagged as not universally agreed rather than stated as settled.
+
+**Tier 4** surveys the commonly cited combination of factors behind the conquests' rapid success — prior Byzantine-Sassanid exhaustion, Sassanid succession instability, provincial religious tension, administrative continuity, and disciplined mobility — explicitly rejecting any single-cause explanation (sheer numbers alone, pure chance) as an oversimplification.
+
+**Tier 5** introduces the three chroniclers by their distinct scope and method: al-Tabari's universal history preserving multiple, sometimes contradictory transmitted reports side by side rather than settling on one; al-Baladhuri's narrower focus on the conquests and their administrative aftermath; and Ibn al-Athir's later synthesis condensing both into a more streamlined narrative — establishing that a chronicle's inclusion of a report is not itself a certification of that report's reliability, a point tier 8 builds directly on.
+
+**Tier 6** works through three early administrative and religious decisions — the Ridda Wars (Abu Bakr's view that allegiance could not be selectively withdrawn), 'Umar's Sawad land policy (retaining conquered land under collective administration rather than distributing it as booty, against some soldiers' expectations), and 'Uthman's Qur'anic standardization (prompted by growing regional recitation variance) — as a common thread of holding a rapidly expanding community together.
+
+**Tier 7** presents the Saqifah succession and 'Uthman's assassination side by side as the category's two-accounts-of-one-event tier: the Saqifah succession is given both the mainstream Sunni characterization (a legitimate consultative process) and the mainstream Shia characterization (bypassing the Prophet's ﷺ own explicit designation of 'Ali) without adjudicating between them, while 'Uthman's assassination is presented with its contested circumstantial detail (grievances, responsibility, organization) rather than as a settled morality tale.
+
+**Tier 8** builds its entire content around Sayf ibn 'Umar as a single worked case in historical source criticism: a widely quoted 8th-century narrator whose isnad and content were found unreliable by later critics, whose material nonetheless appears extensively in al-Tabari because chronicle inclusion reflects compilation method rather than certification of reliability — teaching the same isnad-and-matn toolkit used for hadith grading, applied instead to historical reports (akhbar), and the distinction between judging a narrator unreliable and assuming every event he described never happened.
+
+**Tier 9's capstone reapplies each of tiers 1-8's specific principles to new, unattributed claims** (a scrambled Rashidun order, reversed dynastic capitals, an overstated Tours/Poitiers date, a single-cause conquests claim, a misdescribed al-Tabari method, a false Sawad-distribution claim, an incomplete Saqifah presentation, an uncritical Sayf ibn 'Umar anecdote, a reversed First Fitna transition, and a misdescribed Jerusalem siege) rather than merely repeating prior facts.
+
+A `stem_repeated` violation was caught in the full-category validator after all nine tiers were inserted (the 20-character opening "considering this tie[r]" used five times across tiers 1, 2, 4, 5, and 8) and fixed via two targeted `UPDATE` statements rewording the tier 1 and tier 2 instances; the category re-validated clean afterward on every check (tier counts, near-duplicates, answer-index balance, repeated answers, repeated stems).
+
+All 180 rows are `review_status = 'ai_drafted'`. None is published.
+
+---
+
 ## Running total
 
 | category | status |
@@ -1096,4 +1122,5 @@ All 180 rows are `review_status = 'ai_drafted'`. None is published.
 | Other Prophets | 180 / 180 |
 | Miracles & Signs | 180 / 180 |
 | Women in Islam | 180 / 180 |
-| **total** | **3,780 of 5,220** |
+| Islamic History | 180 / 180 |
+| **total** | **3,960 of 5,220** |

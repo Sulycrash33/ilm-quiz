@@ -447,3 +447,37 @@ insert; none of them is guessable from the column list.
   isn't. The same care applies to khul's talaq-vs-faskh classification and to testimony's
   domain-specific 2:282-vs-childbirth/breastfeeding carve-out: name each school's actual evidence,
   and don't flatten "the schools differ" into "one school is right and the others are weak."
+
+### Added while authoring Islamic History
+
+- **Historical source criticism (isnad/matn applied to akhbar) is the same toolkit as hadith
+  grading, but it is not the same stakes, and a tier should say so.** Sayf ibn 'Umar is a widely
+  quoted 8th-century narrator whose transmission chains and report content were found unreliable
+  by later critics, yet his material still appears extensively in al-Tabari's history — because
+  al-Tabari's compilation method preserves transmitted reports broadly rather than pre-filtering
+  for reliability. Tier 8 used this to teach that a chronicle's *inclusion* of a report is not
+  itself a certification of that report's reliability, and that judging one narrator unreliable
+  does not license concluding that every event he described never happened. Keep the historical
+  version of this lesson distinct from the religious-ruling version already established for
+  hadith: getting a historical detail wrong has different consequences than misgrounding a fiqh
+  ruling in a da'if narration, even though the critical method (tracing to a named narrator,
+  checking that narrator's standing) is identical.
+- **A genuinely disputed date should be flagged as disputed, not smoothed into false precision.**
+  Al-Qadisiyyah's exact year and the Battle of Tours/Poitiers' commonly-cited 732 CE both carry
+  real dating disagreement across sources — the tier map's research explicitly flagged both with
+  confidence levels rather than treating either as settled. Tiers 3 and 9 were written to state
+  the commonly cited figure while explicitly noting it is not universally agreed, rather than
+  picking one number and presenting it as beyond dispute. This is the historical-dating analogue
+  of the grading-dispute lesson already established for hadith and quote-attribution: say what is
+  actually agreed upon, and say plainly where it isn't.
+- **A sectarian divergence in historical narrative (Saqifah) gets the same non-adjudicating,
+  both-sides-evidenced treatment already established for doctrinal disputes — it is not a special
+  case.** Tier 7 presents the Saqifah succession with both the mainstream Sunni characterization
+  (a legitimate consultative process yielding a rightful successor) and the mainstream Shia
+  characterization (bypassing the Prophet's ﷺ own explicit designation of 'Ali) as genuine,
+  evidenced positions, without declaring either side simply mistaken — the same discipline used
+  for the Ahl al-Bayt category's fiqh-scope disputes and Women in Islam's four-madhab
+  disagreements, just applied to a foundational historical-succession question instead of a fiqh
+  one. 'Uthman's assassination in the same tier got the parallel treatment for a less doctrinally
+  loaded but still contested episode: presenting its circumstantial variation (grievances,
+  responsibility, organization) rather than a single settled morality-tale narrative.
