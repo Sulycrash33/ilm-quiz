@@ -228,6 +228,22 @@ export function HuntView({
 
       playCue(result.correct ? "correct" : "wrong");
 
+      // Congratulate in the run, not days later on the profile page. The cue
+      // is deliberately the rank-up one — an achievement is rare enough to
+      // deserve the fuller sound, and it is staggered behind the answer cue so
+      // the two don't collide.
+      if (result.newAchievements.length > 0) {
+        result.newAchievements.forEach((earned, i) => {
+          setTimeout(() => {
+            toast({
+              title: `${earned.icon} ${t("achievementUnlocked")}`,
+              description: `${earned.name} — ${earned.description}`,
+            });
+          }, 450 + i * 900);
+        });
+        setTimeout(() => playCue("rankUp"), 450);
+      }
+
       if (result.correct) {
         setParticles(true);
         setTimeout(() => setParticles(false), 1000);

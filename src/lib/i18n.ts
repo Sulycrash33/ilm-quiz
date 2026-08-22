@@ -693,6 +693,7 @@ export interface Translations {
   resetProgressDone: string
   resetProgressFailed: string
   resetting: string
+  achievementUnlocked: string
   sound: string
   soundOn: string
   soundOff: string
@@ -1384,6 +1385,7 @@ const enTranslations: Translations = {
   resetProgressDone: "Your progress has been reset.",
   resetProgressFailed: "Could not reset your progress.",
   resetting: "Resetting...",
+  achievementUnlocked: "Achievement unlocked",
   sound: "Sound",
   soundOn: "Sound on",
   soundOff: "Sound off",
@@ -2076,6 +2078,7 @@ const msTranslations: Translations = {
   resetProgressDone: "Kemajuan anda telah ditetapkan semula.",
   resetProgressFailed: "Tidak dapat menetapkan semula kemajuan anda.",
   resetting: "Menetapkan semula...",
+  achievementUnlocked: "Pencapaian dibuka",
   sound: "Bunyi",
   soundOn: "Bunyi dihidupkan",
   soundOff: "Bunyi dimatikan",
@@ -2768,6 +2771,7 @@ const idTranslations: Translations = {
   resetProgressDone: "Kemajuan Anda telah diatur ulang.",
   resetProgressFailed: "Tidak dapat mengatur ulang kemajuan Anda.",
   resetting: "Mengatur ulang...",
+  achievementUnlocked: "Pencapaian terbuka",
   sound: "Suara",
   soundOn: "Suara aktif",
   soundOff: "Suara nonaktif",
@@ -3460,6 +3464,7 @@ const haTranslations: Translations = {
   resetProgressDone: "An sake saita ci gabanka.",
   resetProgressFailed: "An kasa sake saita ci gabanka.",
   resetting: "Ana sake saitawa...",
+  achievementUnlocked: "An buɗe nasara",
   sound: "Sauti",
   soundOn: "An kunna sauti",
   soundOff: "An kashe sauti",
@@ -4152,6 +4157,7 @@ const frTranslations: Translations = {
   resetProgressDone: "Votre progression a été réinitialisée.",
   resetProgressFailed: "Impossible de réinitialiser votre progression.",
   resetting: "Réinitialisation...",
+  achievementUnlocked: "Succès débloqué",
   sound: "Son",
   soundOn: "Son activé",
   soundOff: "Son désactivé",
@@ -4844,6 +4850,7 @@ const arTranslations: Translations = {
   resetProgressDone: "تمت إعادة ضبط تقدّمك.",
   resetProgressFailed: "تعذّرت إعادة ضبط تقدّمك.",
   resetting: "جارٍ إعادة الضبط...",
+  achievementUnlocked: "تم فتح إنجاز",
   sound: "الصوت",
   soundOn: "الصوت مفعّل",
   soundOff: "الصوت متوقف",

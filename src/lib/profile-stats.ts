@@ -230,6 +230,14 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
     .select("id, slug, name, description, icon, criteria")
     .order("id")
 
+  // Award first, then read. Deciding what has been earned is the database's
+  // job now (migration 0023) — this page used to be the *only* place that
+  // ever wrote `user_achievements`, which is why badges arrived late. The RPC
+  // is idempotent, so calling it on every page load is free once everything
+  // earned is already stored, and best-effort: a failure here must not blank
+  // the profile.
+  await supabase.rpc("award_achievements")
+
   const { data: userAchievementRows } = await supabase
     .from("user_achievements")
     .select("achievement_id, earned_at")
@@ -248,15 +256,17 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
     rankSortOrder: currentRank?.sortOrder ?? 0,
   }
 
-  const newlyEarnedIds: number[] = []
   const achievements: AchievementView[] = []
 
   for (const def of achievementDefs ?? []) {
-    let unlocked = earnedMap.has(def.id)
-    if (!unlocked) {
-      unlocked = evaluateCriteria(def.criteria as Record<string, unknown>, criteriaStats, rankSortOrderBySlug)
-      if (unlocked) newlyEarnedIds.push(def.id)
-    }
+    // `earnedMap` is now the whole truth: the RPC above has already stored
+    // anything newly met, so an achievement missing from it is genuinely
+    // still locked. `evaluateCriteria` survives only to answer "is this one
+    // met?" for the rare case where the RPC could not run — it no longer
+    // grants anything, so it cannot disagree with the database on the record.
+    const unlocked =
+      earnedMap.has(def.id) ||
+      evaluateCriteria(def.criteria as Record<string, unknown>, criteriaStats, rankSortOrderBySlug)
     const { progress, target } = computeProgress(def.criteria as Record<string, unknown>, criteriaStats)
     achievements.push({
       slug: def.slug,
@@ -268,14 +278,6 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
       progress: unlocked ? target : progress,
       target,
     })
-  }
-
-  // Persist newly-met achievements for real, so `earned_at` reflects when
-  // they were actually first detected rather than being recomputed forever.
-  if (newlyEarnedIds.length > 0) {
-    await supabase
-      .from("user_achievements")
-      .insert(newlyEarnedIds.map((id) => ({ user_id: userId, achievement_id: id })))
   }
 
   const { count: higherCount } = await supabase
