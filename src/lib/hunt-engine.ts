@@ -200,7 +200,12 @@ export function buildTierLadder(
     pool.filter((q) => clampTier(q.tier) === t),
     rng,
   );
-  const target = Math.min(opts.length ?? HUNT_RULES.runLength, bucket.length);
+  // A level run is the WHOLE tier — all 20 questions — not the 10-question
+  // `HUNT_RULES.runLength` the adaptive Hunt uses. A level is only complete
+  // once every question in it has been answered correctly, so serving half
+  // the tier per run would mean the other half could only ever turn up by
+  // chance on some later run. `length` stays overridable for tests.
+  const target = Math.min(opts.length ?? bucket.length, bucket.length);
   return bucket.slice(0, target).map((q, i) => ({
     ...q,
     stage: i + 1,
