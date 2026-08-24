@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar"
 import type { Translations } from "@/lib/i18n"
 
 const navItems: { labelKey: keyof Translations; href: string; icon: React.ReactNode }[] = [
@@ -64,6 +65,8 @@ export default function AppLayout({
 
   return (
     <div dir={dir} className="relative min-h-[100dvh] bg-background">
+      <ServiceWorkerRegistrar />
+
       {/* Background Accents */}
       <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />

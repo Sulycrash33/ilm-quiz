@@ -91,32 +91,21 @@ export async function getCategoriesWithProgress(): Promise<QuizCategory[]> {
     .order('name');
   if (!cats) return [];
 
-  const { data: published } = await supabase
-    .from('questions')
-    .select('category_id')
-    .eq('review_status', 'published');
+  // Both tallies are counted in the database — see migration 0029. Counting
+  // them here instead meant fetching one row per published question, and
+  // PostgREST stops at 1,000 of them: with 5,220 questions, twenty-three of
+  // the twenty-nine categories came back as zero and rendered "Coming soon"
+  // over a bank that was complete. The answered tally had the same ceiling
+  // waiting for the first player to pass a thousand answers.
+  const { data: progress } = await supabase.rpc('category_progress');
 
-  const publishedByCat = new Map<string, number>();
-  (published ?? []).forEach((q: any) => {
-    publishedByCat.set(q.category_id, (publishedByCat.get(q.category_id) ?? 0) + 1);
-  });
-
-  const answeredByCat = new Map<string, Set<string>>();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    const { data: attempts } = await supabase
-      .from('attempts')
-      .select('question_id, questions(category_id)')
-      .eq('user_id', user.id);
-    (attempts ?? []).forEach((a: any) => {
-      const catId = a.questions?.category_id;
-      if (!catId) return;
-      if (!answeredByCat.has(catId)) answeredByCat.set(catId, new Set());
-      answeredByCat.get(catId)!.add(a.question_id);
+  const progressByCat = new Map<string, { published: number; answered: number }>();
+  (progress ?? []).forEach((p: any) => {
+    progressByCat.set(p.category_id, {
+      published: p.published_count ?? 0,
+      answered: p.answered_count ?? 0,
     });
-  }
+  });
 
   return cats.map((c: any) => ({
     id: c.id as string,
@@ -124,8 +113,8 @@ export async function getCategoriesWithProgress(): Promise<QuizCategory[]> {
     name: c.name as string,
     description: c.description as string | null,
     icon: c.icon as string | null,
-    publishedCount: publishedByCat.get(c.id) ?? 0,
-    answeredCount: answeredByCat.get(c.id)?.size ?? 0,
+    publishedCount: progressByCat.get(c.id)?.published ?? 0,
+    answeredCount: progressByCat.get(c.id)?.answered ?? 0,
   }));
 }
 
