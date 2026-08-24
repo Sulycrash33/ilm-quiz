@@ -8,6 +8,7 @@ import { ShopItem } from "@/components/game/ShopItem"
 import { purchaseStoreItem, type StoreCatalogueItem } from "@/app/(app)/store/actions"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { CountUp } from "@/components/ui/count-up"
+import { LifeBuoy, Zap, Sparkles, Package } from "lucide-react"
 import type { Translations } from "@/lib/i18n"
 
 type StoreTab = "lifelines" | "powerups" | "cosmetics" | "bundles"
@@ -44,10 +45,14 @@ export function StorePageClient({ initialCoins, catalogue }: StorePageClientProp
   )
 
   const tabs: { id: StoreTab; label: string; icon: React.ReactNode }[] = [
-    { id: "lifelines", label: t("lifelines"), icon: <span className="text-lg">🎯</span> },
-    { id: "powerups", label: t("powerups"), icon: <span className="text-lg">⚡</span> },
-    { id: "cosmetics", label: t("cosmetics"), icon: <span className="text-lg">✨</span> },
-    { id: "bundles", label: t("bundles"), icon: <span className="text-lg">📦</span> },
+    // Line icons rather than emoji, to match the quick actions on the home
+    // screen. Emoji render differently on every platform and sit at a
+    // different weight to the text beside them; these inherit the tab's own
+    // colour, so a selected tab's icon goes gold with its label.
+    { id: "lifelines", label: t("lifelines"), icon: <LifeBuoy className="h-4 w-4" aria-hidden="true" /> },
+    { id: "powerups", label: t("powerups"), icon: <Zap className="h-4 w-4" aria-hidden="true" /> },
+    { id: "cosmetics", label: t("cosmetics"), icon: <Sparkles className="h-4 w-4" aria-hidden="true" /> },
+    { id: "bundles", label: t("bundles"), icon: <Package className="h-4 w-4" aria-hidden="true" /> },
   ]
 
   const handlePurchase = async (id: string, name: string) => {
