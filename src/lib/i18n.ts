@@ -115,6 +115,9 @@ export interface Translations {
   levelComplete: string
   xpToRank: string
   maxRankReached: string
+  /** Shown once when a run promotes the player to a new rank — the rarest
+   * moment in the game, nine times in a whole playthrough. */
+  rankUpTitle: string
 
   // Leagues + daily challenge
   leagueTitle: string
@@ -829,6 +832,7 @@ const enTranslations: Translations = {
   levelComplete: "Level complete! The next level is unlocked.",
   xpToRank: "{xp} XP to {rank}",
   maxRankReached: "Highest rank reached",
+  rankUpTitle: "New rank",
 
   // Leagues + daily challenge
   leagueTitle: "Weekly league",
@@ -1543,6 +1547,7 @@ const msTranslations: Translations = {
   levelComplete: "Tahap selesai! Tahap seterusnya telah dibuka.",
   xpToRank: "{xp} XP ke {rank}",
   maxRankReached: "Pangkat tertinggi dicapai",
+  rankUpTitle: "Pangkat baharu",
 
   // Leagues + daily challenge
   leagueTitle: "Liga mingguan",
@@ -2257,6 +2262,7 @@ const idTranslations: Translations = {
   levelComplete: "Level selesai! Level berikutnya telah terbuka.",
   xpToRank: "{xp} XP menuju {rank}",
   maxRankReached: "Peringkat tertinggi tercapai",
+  rankUpTitle: "Pangkat baru",
 
   // Leagues + daily challenge
   leagueTitle: "Liga mingguan",
@@ -2971,6 +2977,7 @@ const haTranslations: Translations = {
   levelComplete: "An kammala matakin! An buɗe matakin gaba.",
   xpToRank: "{xp} XP zuwa {rank}",
   maxRankReached: "An kai matsayi mafi girma",
+  rankUpTitle: "Sabon matsayi",
 
   // Leagues + daily challenge
   leagueTitle: "Gasar mako",
@@ -3685,6 +3692,7 @@ const frTranslations: Translations = {
   levelComplete: "Niveau terminé ! Le niveau suivant est débloqué.",
   xpToRank: "{xp} XP jusqu'à {rank}",
   maxRankReached: "Rang le plus élevé atteint",
+  rankUpTitle: "Nouveau rang",
 
   // Leagues + daily challenge
   leagueTitle: "Ligue hebdomadaire",
@@ -4399,6 +4407,7 @@ const arTranslations: Translations = {
   levelComplete: "اكتمل المستوى! تم فتح المستوى التالي.",
   xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
   maxRankReached: "تم بلوغ أعلى رتبة",
+  rankUpTitle: "رتبة جديدة",
 
   // Leagues + daily challenge
   leagueTitle: "دوري الأسبوع",

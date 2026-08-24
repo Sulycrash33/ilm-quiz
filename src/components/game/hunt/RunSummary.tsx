@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Trophy, HeartCrack, Flame, Target, Gauge, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,7 @@ interface RunSummaryProps {
 export function RunSummary({ summary, xpBefore, onPlayAgain, onExit }: RunSummaryProps) {
   const { t } = useLanguage();
   const won = summary.status === "won";
+  const reduce = useReducedMotion();
 
   const progress = rankProgress(xpBefore + summary.xp);
   const rankedUp = rankUpBetween(xpBefore, summary.xp);
@@ -72,6 +73,40 @@ export function RunSummary({ summary, xpBefore, onPlayAgain, onExit }: RunSummar
         )}
       </div>
 
+      {/* Promotion, at the size of the thing.
+
+          A rank-up happens nine times in an entire playthrough — the rarest
+          event the game has. It used to be announced by a sound cue that is
+          off by default and a small pill in the corner of the card below, so
+          for most players the biggest moment in ILM Hunt passed without
+          anything on screen changing much. It gets its own panel now: the new
+          rank's own icon and colour, arriving with weight.
+
+          Deliberately a celebration and not a nag — it marks what was earned
+          and says nothing about what is at stake if they stop. */}
+      {rankedUp && (
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={reduce ? { duration: 0.2 } : { type: "spring", stiffness: 180, damping: 15, delay: 0.25 }}
+          className="relative overflow-hidden rounded-2xl border border-tertiary/40 bg-gradient-to-br from-tertiary/20 via-tertiary/5 to-transparent p-5 text-center"
+        >
+          <motion.div
+            initial={reduce ? false : { scale: 0.3, rotate: -14 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.35 }}
+            className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-tertiary/20 shadow-[0_0_34px_-4px_rgba(255,138,76,0.7)]"
+          >
+            <RankIcon className={cn("h-8 w-8", progress.rank.theme)} aria-hidden="true" />
+          </motion.div>
+
+          <p className="font-label-caps text-label-caps uppercase tracking-[0.2em] text-tertiary">
+            {t("rankUpTitle")}
+          </p>
+          <p className="font-headline text-2xl text-on-surface">{progress.rank.title}</p>
+        </motion.div>
+      )}
+
       {/* What the run actually earned. `xp` is server-credited; `speedScore`
           is a run score and is labelled as pace, never as XP. */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -103,15 +138,9 @@ export function RunSummary({ summary, xpBefore, onPlayAgain, onExit }: RunSummar
                 : t("xpToRank", { xp: progress.xpToNext, rank: progress.next!.title })}
             </p>
           </div>
-          {rankedUp && (
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="rounded-full bg-tertiary/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-tertiary"
-            >
-              {progress.rank.title}
-            </motion.span>
-          )}
+          {/* The promotion is announced by the panel above; repeating it here
+              as a pill said the same thing twice on the one screen where it
+              needed saying once, loudly. */}
         </div>
 
         <div className="h-2 w-full overflow-hidden rounded-full bg-surface-container-highest">
