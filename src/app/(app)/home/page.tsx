@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
+import { PremiumAvatar } from "@/components/ui/premium-avatar"
+import { CountUp } from "@/components/ui/count-up"
 import { ProgressRing } from "@/components/game/ProgressRing"
 import { PrayerTimesCard } from "@/components/game/PrayerTimesCard"
 import { SalaamGreeting } from "@/components/game/SalaamGreeting"
@@ -58,7 +60,11 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [])
 
+  const reduceMotion = useReducedMotion()
   const dailyProgress = Math.min((questionsToday / 10) * 100, 100)
+  const streakAlive = (profile?.streakCount ?? 0) > 0
+  /** Nothing earned, nothing answered, no streak: the cold-start screen. */
+  const coldStart = !loading && !continueCard && questionsToday === 0 && !streakAlive
 
   return (
     <div dir={dir} className="relative min-h-[100dvh] bg-background pb-32">
@@ -76,30 +82,46 @@ export default function HomePage() {
         className="fixed top-0 left-0 right-0 z-50 bg-surface/60 backdrop-blur-xl border-b border-white/5 h-16"
       >
         <div className="flex justify-between items-center px-5 h-full max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full border-2 border-primary overflow-hidden shadow-sm">
-              <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center">
-                <svg className="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                </svg>
-              </div>
-            </div>
+          {/* The player's own face, linking to their profile. This used to be a
+              hardcoded silhouette: onboarding asked everyone to choose an
+              avatar, stored the choice, and then no screen in the app ever drew
+              it. Showing it here is the cheapest identity win available — the
+              first thing you see on opening the app is you. */}
+          <Link href="/profile" className="flex items-center gap-3 group min-w-0">
+            <PremiumAvatar
+              size="sm"
+              ring
+              ringColor="primary"
+              avatarId={profile?.avatarId}
+              className="shrink-0 transition-transform group-active:scale-95"
+            />
             {/* The greeting moved into <main> as <SalaamGreeting />. It used to
                 live here behind `hidden sm:block`, a 640px width breakpoint no
                 phone reaches in portrait, so no phone user ever saw it. The
                 wordmark stays and is shown at every size. */}
-            <h1 className="font-headline-md text-headline-md text-primary">ILM Hunt</h1>
-          </div>
+            <h1 className="font-headline-md text-headline-md bg-gradient-to-br from-[#f6dfa0] via-primary to-[#c9962f] bg-clip-text text-transparent drop-shadow-[0_1px_6px_rgba(240,205,109,0.25)]">
+              ILM Hunt
+            </h1>
+          </Link>
+          {/* Streak and coins. Both numbers climb rather than snap, and the
+              flame only breathes while a streak is actually alive — a cold
+              streak sitting still is information, not an oversight. */}
           <div className="flex items-center gap-4 bg-surface-container-high/40 px-4 py-1.5 rounded-full border border-white/5">
             <div className="flex items-center gap-1.5">
-              <span className="text-tertiary">{profile?.streakCount ?? 0}</span>
-              <svg className="w-4 h-4 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
+              <CountUp value={profile?.streakCount ?? 0} className="text-tertiary tabular-nums" />
+              <motion.svg
+                className={`w-4 h-4 ${streakAlive ? "text-tertiary drop-shadow-[0_0_6px_rgba(255,138,76,0.55)]" : "text-tertiary/40"}`}
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                animate={streakAlive && !reduceMotion ? { scale: [1, 1.14, 1] } : { scale: 1 }}
+                transition={{ duration: 1.7, repeat: streakAlive && !reduceMotion ? Infinity : 0, ease: "easeInOut" }}
+              >
                 <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" />
-              </svg>
+              </motion.svg>
             </div>
             <div className="w-px h-4 bg-white/10" />
             <div className="flex items-center gap-1.5">
-              <span className="text-primary-fixed">{profile?.coins ?? 0}</span>
+              <CountUp value={profile?.coins ?? 0} className="text-primary-fixed tabular-nums" />
               <svg className="w-4 h-4 text-primary-fixed" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
               </svg>
@@ -123,48 +145,74 @@ export default function HomePage() {
         {/* What is due for spaced review. Renders nothing when the queue is empty. */}
         <ReviewCallout />
 
-        {/* Daily Progress Section */}
+        {/* Today, in one band instead of one screenful.
+
+            This was a 288px ring centred in its own full-width section, with
+            two stats stranded below it. On a phone that spent most of the fold
+            drawing a large circle whose only message, for a new player, was
+            "0%" — the emptiest possible thing to lead with. The ring is still
+            here because it is genuinely satisfying once it fills; it is now
+            sized to sit beside the numbers rather than instead of them, and
+            the whole band costs about a third of the height it used to. */}
         <motion.section
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col items-center py-6"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="glass-card p-4 sm:p-5"
         >
-          {/* Sized base-first. At 288px inside a 256px box the ring overflowed
-              and the stats beneath sat on top of its stroke; it now fills the
-              box, and the box itself is small enough to leave room on a 360px
-              screen. */}
-          <div className="relative w-52 h-52 xs:w-56 xs:h-56 sm:w-64 sm:h-64 md:w-72 md:h-72">
-            <ProgressRing progress={dailyProgress} size={288} strokeWidth={8} />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="font-display-lg-mobile text-display-lg-mobile text-primary">
-                {Math.round(dailyProgress)}%
-              </span>
-              <p className="font-label-caps text-label-caps text-on-surface-variant">{t("todayProgress").toUpperCase()}</p>
-            </div>
-          </div>
-          <div className="flex gap-12 mt-4">
-            <div className="text-center">
-              <div className="flex items-center gap-1 justify-center mb-1">
-                <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z" />
-                </svg>
-                <span className="font-bold text-headline-md text-on-surface">{profile?.totalXp ?? 0}</span>
-              </div>
-              <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">{t("xpGained")}</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center gap-1 justify-center mb-1">
-                <svg className="w-5 h-5 text-secondary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.66 7.93L12 2.27 6.34 7.93c-3.12 3.12-3.12 8.19 0 11.31C7.9 20.8 9.95 21.58 12 21.58c2.05 0 4.1-.78 5.66-2.34 3.12-3.12 3.12-8.19 0-11.31zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59s.62-3.11 1.76-4.24L12 5.1v14.49z" />
-                </svg>
-                {/* `accuracy` is null until a question has been answered.
-                    Interpolating it rendered a bare "%" with no number. */}
-                <span className="font-bold text-headline-md text-on-surface">
-                  {accuracy === null ? "—" : `${accuracy}%`}
+          <div className="flex items-center gap-4 sm:gap-5">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0">
+              <ProgressRing progress={dailyProgress} size={96} strokeWidth={7} />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="font-headline-md text-headline-md text-primary tabular-nums">
+                  <CountUp value={Math.round(dailyProgress)} format={(n) => `${n}%`} />
                 </span>
               </div>
-              <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">{t("focusLevel")}</p>
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
+                {t("todayProgress")}
+              </p>
+              {/* Same shape LevelPath already uses, so this needs no new
+                  string in any of the six locales. */}
+              <p className="font-bold text-headline-md text-on-surface tabular-nums mt-0.5">
+                {questionsToday}/10{" "}
+                <span className="font-normal text-body-md text-on-surface-variant">
+                  {t("questions").toLowerCase()}
+                </span>
+              </p>
+
+              <div className="flex gap-6 mt-3">
+                <div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z" />
+                    </svg>
+                    <span className="font-bold text-title-md text-on-surface tabular-nums">
+                      <CountUp value={profile?.totalXp ?? 0} />
+                    </span>
+                  </div>
+                  <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">
+                    {t("xpGained")}
+                  </p>
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4 text-secondary" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.66 7.93L12 2.27 6.34 7.93c-3.12 3.12-3.12 8.19 0 11.31C7.9 20.8 9.95 21.58 12 21.58c2.05 0 4.1-.78 5.66-2.34 3.12-3.12 3.12-8.19 0-11.31zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59s.62-3.11 1.76-4.24L12 5.1v14.49z" />
+                    </svg>
+                    {/* `accuracy` is null until a question has been answered.
+                        Interpolating it rendered a bare "%" with no number. */}
+                    <span className="font-bold text-title-md text-on-surface tabular-nums">
+                      {accuracy === null ? "\u2014" : `${accuracy}%`}
+                    </span>
+                  </div>
+                  <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">
+                    {t("focusLevel")}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </motion.section>
@@ -187,9 +235,15 @@ export default function HomePage() {
             animate="visible"
             className="md:col-span-8"
           >
+            {/* On a cold start this is the only thing on the page worth
+                tapping, so it says so: a warm ring and a slow breath draw the
+                eye to the one action that begins everything. Once there is any
+                history at all it settles down to an ordinary card. */}
             <Link
               href={continueCard ? `/quiz/${continueCard.slug}` : "/quiz"}
-              className="glass-card p-6 relative overflow-hidden group block transition-transform active:scale-[0.98]"
+              className={`glass-card p-6 relative overflow-hidden group block transition-transform active:scale-[0.98] ${
+                coldStart ? "ring-1 ring-primary/40 shadow-[0_0_28px_-6px_rgba(240,205,109,0.35)]" : ""
+              } ${coldStart && !reduceMotion ? "animate-pulse-slow" : ""}`}
             >
               <div className="absolute bottom-0 right-0 mashrabiya-pattern w-32 h-32 rotate-12" />
               <div className="relative z-10">

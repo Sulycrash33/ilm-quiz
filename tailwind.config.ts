@@ -170,6 +170,14 @@ export default {
           '0%, 100%': {transform: 'translateY(0)'},
           '50%': {transform: 'translateY(-10px)'},
         },
+        // A slow gold breath for the one call to action on an empty home
+        // screen. `glow` below is green and belongs to success states; this is
+        // the brand gold, and it is deliberately slower than `animate-pulse`,
+        // which flickers too fast to read as an invitation.
+        'pulse-slow': {
+          '0%, 100%': {boxShadow: '0 0 22px -8px rgba(240, 205, 109, 0.35)'},
+          '50%': {boxShadow: '0 0 34px -4px rgba(240, 205, 109, 0.6)'},
+        },
         'glow': {
           '0%, 100%': {boxShadow: '0 0 20px rgba(78, 222, 163, 0.3)'},
           '50%': {boxShadow: '0 0 40px rgba(78, 222, 163, 0.6)'},
@@ -182,6 +190,7 @@ export default {
         'loading': 'loading 2s ease-in-out infinite',
         'float': 'float 3s ease-in-out infinite',
         'glow': 'glow 2s ease-in-out infinite',
+        'pulse-slow': 'pulse-slow 2.8s ease-in-out infinite',
       },
     },
   },

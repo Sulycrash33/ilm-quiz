@@ -105,7 +105,7 @@ export function ProfilePageClient({
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8 mb-8">
         <div className="flex flex-col md:flex-row items-center gap-8">
           <div className="relative">
-            <PremiumAvatar size="xl" ring ringColor="primary" />
+            <PremiumAvatar size="xl" ring ringColor="primary" avatarId={profile.avatarId} />
             {currentRank && (
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }} className="absolute -top-2 -right-2">
                 <PremiumBadge variant="warning" size="sm">{currentRank.name.toUpperCase()}</PremiumBadge>
