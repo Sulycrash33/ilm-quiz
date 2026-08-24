@@ -3,7 +3,19 @@
 import { createClient } from '@/lib/supabase/server';
 import type { EarnedAchievement, GradeResult } from '@/lib/types';
 
-interface SubmitOptions { usedHint?: boolean; responseTimeMs?: number; doublePoints?: boolean; lifelineUsed?: string; }
+interface SubmitOptions {
+  usedHint?: boolean;
+  responseTimeMs?: number;
+  doublePoints?: boolean;
+  lifelineUsed?: string;
+  /**
+   * The run this answer belongs to, from `startGameRun`. The server reads the
+   * *mode* off that row and applies its XP multiplier; it never takes a
+   * multiplier from here. A run id that is closed, or someone else's, is
+   * ignored rather than rejected — see migration 0030.
+   */
+  runId?: string | null;
+}
 
 /** Server-authoritative grading and reward calculation - delegated to a
  * SECURITY DEFINER Postgres function (submit_quiz_answer) so the actual
@@ -26,6 +38,7 @@ export async function submitAnswer(
     p_response_time_ms: opts.responseTimeMs ?? null,
     p_double_points: opts.doublePoints ?? false,
     p_lifeline_used: opts.lifelineUsed ?? null,
+    p_run_id: opts.runId ?? null,
   });
 
   if (error) throw new Error(error.message || 'Could not submit your answer.');
@@ -250,4 +263,65 @@ export async function recordHuntRun(run: HuntRunRecord): Promise<{ recorded: boo
   });
 
   return { recorded: !error };
+}
+
+
+/**
+ * Opens a run in a game mode and returns its id, plus the shape of the run.
+ *
+ * The id is the only thing that makes a mode's XP multiplier real: the client
+ * cannot name a multiplier, only a run, and the server decides what that run is
+ * worth. Starting a run also closes any the player left open, so an abandoned
+ * survival run cannot be re-used later to double the XP of ordinary answers.
+ */
+export interface GameModeRules {
+  mode: string;
+  lives: number | null;
+  runSeconds: number | null;
+  perQuestionTimer: boolean;
+  endless: boolean;
+  /** Display only — the server applies its own copy of this. */
+  xpMultiplier: number;
+}
+
+export async function startGameRun(
+  mode: string,
+  categoryId?: string | null,
+): Promise<{ runId: string; rules: GameModeRules } | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const [{ data: runId, error: runError }, { data: ruleRows }] = await Promise.all([
+    supabase.rpc('start_game_run', { p_mode: mode, p_category_id: categoryId ?? null }),
+    supabase.rpc('game_mode_rules_for', { p_mode: mode }),
+  ]);
+
+  if (runError || !runId) return null;
+  const rule = Array.isArray(ruleRows) ? ruleRows[0] : ruleRows;
+  if (!rule) return null;
+
+  return {
+    runId: runId as string,
+    rules: {
+      mode: rule.o_mode as string,
+      lives: rule.o_lives as number | null,
+      runSeconds: rule.o_run_seconds as number | null,
+      perQuestionTimer: rule.o_per_question_timer as boolean,
+      endless: rule.o_endless as boolean,
+      xpMultiplier: (rule.o_xp_numerator as number) / (rule.o_xp_denominator as number),
+    },
+  };
+}
+
+/** Closes a run. Best-effort: the XP is already banked answer by answer. */
+export async function endGameRun(runId: string): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.rpc('end_game_run', { p_run_id: runId });
 }

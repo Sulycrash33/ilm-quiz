@@ -40,7 +40,8 @@ const gameModes: GameMode[] = [
     color: "tertiary",
     difficultyKey: "difficultyIntermediate",
     xpMultiplier: "1.5x",
-    available: false,
+    available: true,
+    href: "/play/timed",
   },
   {
     id: "survival",
@@ -50,7 +51,8 @@ const gameModes: GameMode[] = [
     color: "secondary",
     difficultyKey: "difficultyAdvanced",
     xpMultiplier: "2x",
-    available: false,
+    available: true,
+    href: "/play/survival",
   },
   {
     id: "practice",
@@ -60,7 +62,8 @@ const gameModes: GameMode[] = [
     color: "primary",
     difficultyKey: "difficultyBeginner",
     xpMultiplier: "0.5x",
-    available: false,
+    available: true,
+    href: "/play/practice",
   },
   {
     id: "tournament",

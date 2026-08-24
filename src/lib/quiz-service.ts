@@ -151,6 +151,50 @@ export async function getPublishedQuizQuestionsForTier(slug: string, tier: numbe
   });
 }
 
+/**
+ * A pool for the mode runs, drawn from every category rather than one.
+ *
+ * Speed Round, Survival and Practice are not about a subject — they are about
+ * how you play — so confining them to a category would make them a slower way
+ * of doing what the level path already does. The pool is centred on the
+ * player's own tier band so a Mubtadi is not handed Mujaddid questions in
+ * Survival, where a wrong answer is expensive.
+ *
+ * Capped well under PostgREST's 1,000-row ceiling on purpose: the category
+ * grid spent a release counting to 1,000 and reporting it as the whole bank,
+ * and an unbounded select here would be the same mistake in a new place. A
+ * cap of 300 is far more than the longest realistic run.
+ */
+export async function getModeQuestionPool(centreTier: number, limit = 300): Promise<QuizQuestion[]> {
+  const supabase = await createClient();
+  const tier = clampTier(centreTier);
+  const low = clampTier(tier - 1);
+  const high = clampTier(tier + 1);
+
+  const { data, error } = await supabase
+    .from('questions')
+    .select('id, question_text, choices, difficulty, tier')
+    .eq('review_status', 'published')
+    .gte('tier', low)
+    .lte('tier', high)
+    .limit(limit);
+
+  if (error || !data) return [];
+
+  return data.map((row: any) => {
+    const t = clampTier(row.tier ?? tier);
+    return {
+      id: row.id as string,
+      text: row.question_text as string,
+      options: (row.choices ?? []) as string[],
+      difficulty: labelDifficulty(row.difficulty),
+      tier: t,
+      points: POINTS_BY_DIFFICULTY[row.difficulty as DbDifficulty] ?? 10,
+      timeLimit: timeLimitForTier(t),
+    };
+  });
+}
+
 export interface CategoryLevel {
   tier: number;
   publishedCount: number;

@@ -36,7 +36,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isAppRoute = request.nextUrl.pathname.startsWith("/(app)") ||
-    ["/home", "/quiz", "/leaderboard", "/achievements", "/challenges",
+    ["/home", "/quiz", "/play", "/leaderboard", "/achievements", "/challenges",
       "/community", "/profile", "/rewards", "/store"].some((p) =>
       request.nextUrl.pathname.startsWith(p)
     );

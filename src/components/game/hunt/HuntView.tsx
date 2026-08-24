@@ -21,7 +21,10 @@ import {
   makeRng,
   spendLifeline as markLifelineSpent,
   summarize,
+  endRun,
+  CLASSIC_RULES,
   type HuntState,
+  type ModeRules,
 } from "@/lib/hunt-engine";
 import {
   fiftyFifty,
@@ -48,6 +51,18 @@ interface HuntViewProps {
    * tier via `buildTierLadder` instead of the adaptive, rank-anchored
    * `buildLadder` used by the whole-category Hunt. */
   forceTier?: number;
+  /**
+   * How this mode plays. Absent means the classic hunt, which is why every
+   * existing caller needed no change: `CLASSIC_RULES` is exactly what the
+   * engine did before modes existed.
+   */
+  modeRules?: ModeRules;
+  /**
+   * The server-side run this play belongs to. Passed through to grading, where
+   * the *server* reads the mode off it and decides the XP multiplier. Nothing
+   * here can name a multiplier.
+   */
+  runId?: string | null;
 }
 
 /** How long the reveal stays on screen before the next stage. */
@@ -72,7 +87,10 @@ export function HuntView({
   lifelinePrices,
   onExit,
   forceTier,
+  modeRules,
+  runId,
 }: HuntViewProps) {
+  const rules = modeRules ?? CLASSIC_RULES;
   const { t, dir } = useLanguage();
   const { toast } = useToast();
   const { profile, refresh: refreshProfile } = useProfile();
@@ -91,12 +109,22 @@ export function HuntView({
     () =>
       forceTier !== undefined
         ? buildTierLadder(questions, forceTier, { rng: makeRng(seed) })
-        : buildLadder(questions, { rng: makeRng(seed), startTier }),
-    [questions, seed, startTier, forceTier],
+        : buildLadder(questions, {
+            rng: makeRng(seed),
+            startTier,
+            // An endless mode is only endless if the ladder outlasts the
+            // player. Survival ends on lives and Speed Round on the clock, so
+            // the ladder has to be long enough that neither run walks off the
+            // end of it — the whole pool, rather than the classic ten.
+            length: rules.endless ? questions.length : undefined,
+          }),
+    [questions, seed, startTier, forceTier, rules.endless],
   );
 
-  const [state, setState] = useState<HuntState>(() => initialState(ladder));
+  const [state, setState] = useState<HuntState>(() => initialState(ladder, rules));
   const [remaining, setRemaining] = useState(() => ladder[0]?.timeLimit ?? 30);
+  /** Seconds left on the whole-run clock. Only Speed Round has one. */
+  const [runRemaining, setRunRemaining] = useState(() => rules.runSeconds ?? 0);
   const [selected, setSelected] = useState<number | null>(null);
   const [grade, setGrade] = useState<GradeResult | null>(null);
   const [grading, setGrading] = useState(false);
@@ -164,8 +192,12 @@ export function HuntView({
     [toast, t],
   );
 
-  /** The clock. Paused while a reveal is on screen or the run is over. */
+  /** The clock. Paused while a reveal is on screen or the run is over, and
+   *  absent entirely in modes that do not time individual questions — Practice
+   *  has no pressure at all, and Speed Round times the run rather than the
+   *  question. */
   useEffect(() => {
+    if (!rules.perQuestionTimer) return;
     if (!question || locked) return;
     if (remaining <= 0) {
       handleTimeout(question.stage);
@@ -173,7 +205,26 @@ export function HuntView({
     }
     const id = setInterval(() => setRemaining((r) => Math.max(0, r - 1)), 1000);
     return () => clearInterval(id);
-  }, [question, locked, remaining, handleTimeout]);
+  }, [question, locked, remaining, handleTimeout, rules.perQuestionTimer]);
+
+  /**
+   * The run clock, for Speed Round.
+   *
+   * It runs regardless of the reveal, because the whole point of the mode is
+   * that hesitating costs you — but it stops the moment the run is over so a
+   * finished summary does not keep counting down behind it. When it reaches
+   * zero the run ends as `won`: the player did not fail at anything, they ran
+   * out of time, and everything they answered still counts.
+   */
+  useEffect(() => {
+    if (rules.runSeconds === null || finished) return;
+    if (runRemaining <= 0) {
+      setState((prev) => endRun(prev, "won"));
+      return;
+    }
+    const id = setInterval(() => setRunRemaining((r) => Math.max(0, r - 1)), 1000);
+    return () => clearInterval(id);
+  }, [rules.runSeconds, runRemaining, finished]);
 
   /** File the run in the journal once, when it ends. Best-effort: the XP is
    * already banked server-side by then, so a failure here changes nothing the
@@ -219,6 +270,9 @@ export function HuntView({
         usedHint,
         responseTimeMs: elapsedMs,
         doublePoints,
+        // The server reads this run's mode and applies its multiplier. Null in
+        // the classic hunt, which is what keeps that path byte-identical.
+        runId,
       });
       setGrade(result);
       setGrading(false);
@@ -339,8 +393,9 @@ export function HuntView({
   // A fresh seed rebuilds the ladder; reset the run to match it. Stage numbers
   // restart at 1 on a replay, so the timeout guard has to be cleared too.
   useEffect(() => {
-    setState(initialState(ladder));
+    setState(initialState(ladder, rules));
     setRemaining(ladder[0]?.timeLimit ?? 30);
+    setRunRemaining(rules.runSeconds ?? 0);
     timedOutStage.current = -1;
   }, [ladder]);
 
@@ -427,12 +482,16 @@ export function HuntView({
         stage={state.stage}
         totalStages={state.ladder.length}
         lives={state.lives}
+        maxLives={rules.lives}
+        /* The run clock never freezes for the reveal: hesitating is exactly
+           what Speed Round charges for. The per-question clock still does. */
+        clock={rules.runSeconds !== null ? "run" : rules.perQuestionTimer ? "question" : "none"}
         coins={coins}
         combo={state.combo}
         tier={question.difficulty}
-        remaining={remaining}
-        timeLimit={question.timeLimit}
-        frozen={locked}
+        remaining={rules.runSeconds !== null ? runRemaining : remaining}
+        timeLimit={rules.runSeconds ?? question.timeLimit}
+        frozen={rules.runSeconds !== null ? false : locked}
       />
 
       <QuestionCard text={question.text} questionId={question.id} />

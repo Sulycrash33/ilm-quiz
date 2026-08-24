@@ -289,12 +289,47 @@ export function speedBonus(basePoints: number, msLeft: number, limitSeconds: num
   return Math.round(basePoints * speedBonusMax * scale);
 }
 
-export function initialState(ladder: HuntQuestion[]): HuntState {
+/**
+ * How a mode changes the run.
+ *
+ * These come from `game_mode_rules` in the database, not from here, because the
+ * XP multiplier on the same row is what the server applies and the two must not
+ * be able to disagree. What the client is trusted with is the *shape* of the
+ * run — how many lives, whether there is a clock — none of which decides what
+ * lands on a profile.
+ */
+export interface ModeRules {
+  /** Lives, or null for a mode a wrong answer cannot end. */
+  lives: number | null;
+  /** Seconds on a whole-run clock, or null when only questions are timed. */
+  runSeconds: number | null;
+  /** Whether each question carries its own countdown. */
+  perQuestionTimer: boolean;
+  /** Whether the run is meant to continue past a fixed-length ladder. */
+  endless: boolean;
+}
+
+/** The classic hunt, as it played before modes existed. */
+export const CLASSIC_RULES: ModeRules = {
+  lives: HUNT_RULES.startingLives,
+  runSeconds: null,
+  perQuestionTimer: true,
+  endless: false,
+};
+
+/**
+ * A mode without lives still needs a number, because the engine subtracts from
+ * it on every miss. This is large enough that no realistic run reaches zero,
+ * which is what "cannot be lost" means in practice.
+ */
+export const UNLIMITED_LIVES = 9_999;
+
+export function initialState(ladder: HuntQuestion[], rules: ModeRules = CLASSIC_RULES): HuntState {
   return {
     ladder,
     stage: 0,
     status: ladder.length === 0 ? 'idle' : 'playing',
-    lives: HUNT_RULES.startingLives,
+    lives: rules.lives ?? UNLIMITED_LIVES,
     combo: 0,
     bestCombo: 0,
     xp: 0,
@@ -376,6 +411,19 @@ export function applyTimeout(state: HuntState): HuntState {
 export function applySkip(state: HuntState): HuntState {
   if (state.status !== 'playing' || !currentQuestion(state)) return state;
   return advance({ ...state, lifelinesUsed: [...state.lifelinesUsed] });
+}
+
+/**
+ * End a run from outside the question loop.
+ *
+ * Speed Round is decided by a clock that belongs to the whole run rather than
+ * to any question, so something has to be able to stop the run without an
+ * answer or a timeout having happened. Everything the run scored is kept — the
+ * player earned it — only the status changes.
+ */
+export function endRun(state: HuntState, status: Extract<HuntStatus, 'won' | 'lost'>): HuntState {
+  if (state.status !== 'playing') return state;
+  return { ...state, status };
 }
 
 export function spendLifeline(state: HuntState, lifelineId: string): HuntState {
