@@ -13,6 +13,8 @@
  * should surface as an error the player has to deal with.
  */
 
+import { registerServiceWorker } from "@/lib/service-worker"
+
 export type PushSupport = "ready" | "unsupported" | "denied" | "no-key"
 
 /** The VAPID public key identifies this server to the push service. It is
@@ -44,17 +46,11 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
   return output
 }
 
-async function registration(): Promise<ServiceWorkerRegistration | null> {
-  try {
-    // `register` resolves as soon as the worker is registered, which can be
-    // before it is active. `ready` is what guarantees a controller exists to
-    // subscribe with.
-    await navigator.serviceWorker.register("/sw.js")
-    return await navigator.serviceWorker.ready
-  } catch {
-    return null
-  }
-}
+// Registration itself lives in `service-worker.ts`, because the worker is no
+// longer push's alone — it registers on load for every player, whether or not
+// reminders are configured. Calling it again here is harmless and keeps the
+// subscribe path working when a player enables reminders mid-session.
+const registration = registerServiceWorker
 
 export interface PushKeys {
   endpoint: string
