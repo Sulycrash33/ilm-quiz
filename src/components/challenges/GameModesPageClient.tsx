@@ -141,7 +141,16 @@ export function GameModesPageClient({
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
         <h2 className="font-headline-md text-headline-md text-on-surface mb-6">{t("allGameModesTitle")}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {gameModes.map((mode, index) => (
+          {/* Playable modes first. Three of the five are not built yet, and
+              interleaving them — Classic, then three greyed cards, then
+              Tournament — made a page with two working modes read as a page
+              with none. They are still listed, still honestly labelled
+              "coming soon"; they just stop separating the things a player can
+              actually press. `sort` on a copy, so the source order stays the
+              declaration order. */}
+          {[...gameModes]
+            .sort((a, b) => Number(b.available) - Number(a.available))
+            .map((mode, index) => (
             <motion.div key={mode.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
               <PremiumCard hover={mode.available} className={`p-6 h-full ${!mode.available ? "opacity-60" : ""}`}>
                 <div className="flex items-start justify-between mb-4">

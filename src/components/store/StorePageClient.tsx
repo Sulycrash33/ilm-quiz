@@ -7,6 +7,8 @@ import { PremiumButton } from "@/components/ui/premium-button"
 import { ShopItem } from "@/components/game/ShopItem"
 import { purchaseStoreItem, type StoreCatalogueItem } from "@/app/(app)/store/actions"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { CountUp } from "@/components/ui/count-up"
+import { LifeBuoy, Zap, Sparkles, Package } from "lucide-react"
 import type { Translations } from "@/lib/i18n"
 
 type StoreTab = "lifelines" | "powerups" | "cosmetics" | "bundles"
@@ -43,10 +45,14 @@ export function StorePageClient({ initialCoins, catalogue }: StorePageClientProp
   )
 
   const tabs: { id: StoreTab; label: string; icon: React.ReactNode }[] = [
-    { id: "lifelines", label: t("lifelines"), icon: <span className="text-lg">🎯</span> },
-    { id: "powerups", label: t("powerups"), icon: <span className="text-lg">⚡</span> },
-    { id: "cosmetics", label: t("cosmetics"), icon: <span className="text-lg">✨</span> },
-    { id: "bundles", label: t("bundles"), icon: <span className="text-lg">📦</span> },
+    // Line icons rather than emoji, to match the quick actions on the home
+    // screen. Emoji render differently on every platform and sit at a
+    // different weight to the text beside them; these inherit the tab's own
+    // colour, so a selected tab's icon goes gold with its label.
+    { id: "lifelines", label: t("lifelines"), icon: <LifeBuoy className="h-4 w-4" aria-hidden="true" /> },
+    { id: "powerups", label: t("powerups"), icon: <Zap className="h-4 w-4" aria-hidden="true" /> },
+    { id: "cosmetics", label: t("cosmetics"), icon: <Sparkles className="h-4 w-4" aria-hidden="true" /> },
+    { id: "bundles", label: t("bundles"), icon: <Package className="h-4 w-4" aria-hidden="true" /> },
   ]
 
   const handlePurchase = async (id: string, name: string) => {
@@ -88,7 +94,9 @@ export function StorePageClient({ initialCoins, catalogue }: StorePageClientProp
             <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
             </svg>
-            <span className="font-bold text-tertiary">{coins.toLocaleString()}</span>
+            {/* Counts down as you buy, so spending is something you watch happen
+                rather than a number that was different a moment ago. */}
+            <CountUp value={coins} className="font-bold text-tertiary tabular-nums" />
           </div>
         </div>
       </motion.div>

@@ -2,9 +2,19 @@
 
 import { motion } from "framer-motion"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { AvatarArt } from "@/components/avatars/avatar-art"
 
 interface PremiumAvatarProps {
   src?: string
+  /**
+   * The avatar chosen during onboarding, e.g. "m-3".
+   *
+   * Until now this component never received one. Onboarding stored the choice
+   * in `profiles.avatar_id` and nothing ever read it back, so every player —
+   * including those who had picked a face — saw the generic silhouette below.
+   * The art was there the whole time; nothing drew it.
+   */
+  avatarId?: string | null
   alt?: string
   size?: "sm" | "md" | "lg" | "xl"
   ring?: boolean
@@ -15,6 +25,7 @@ interface PremiumAvatarProps {
 
 export function PremiumAvatar({
   src,
+  avatarId,
   alt,
   size = "md",
   ring = false,
@@ -60,6 +71,10 @@ export function PremiumAvatar({
       >
         {src ? (
           <img src={src} alt={altText} className="w-full h-full object-cover" />
+        ) : avatarId ? (
+          // `AvatarArt` falls back to its own mark for an unknown id, which is
+          // what an account still holding a pre-migration remote URL will hit.
+          <AvatarArt id={avatarId} role="img" aria-label={altText} className="w-full h-full" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary-container/20 flex items-center justify-center">
             <svg

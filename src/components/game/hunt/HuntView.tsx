@@ -391,6 +391,30 @@ export function HuntView({
     <div dir={dir} className="relative space-y-6">
       <StarParticles isEmitting={particles} />
 
+      {/* What the answer was worth, said out loud.
+          The gold particles already fired on a correct answer, but nothing
+          ever showed the number: XP moved silently in the header and the
+          player never saw the one figure the whole run is scored on. It rises
+          and fades over the question, keyed to the question so a fresh one
+          re-fires it. Digits and a plus sign carry across all six locales, so
+          this needs no new string. */}
+      <AnimatePresence>
+        {grade?.correct && grade.xpEarned > 0 && (
+          <motion.div
+            key={`xp-${question?.id ?? "none"}`}
+            initial={{ opacity: 0, y: 8, scale: 0.85 }}
+            animate={{ opacity: [0, 1, 1, 0], y: -34, scale: 1 }}
+            transition={{ duration: 1.5, times: [0, 0.15, 0.7, 1], ease: "easeOut" }}
+            className="pointer-events-none absolute left-1/2 top-16 z-30 -translate-x-1/2 select-none"
+            aria-hidden="true"
+          >
+            <span className="rounded-full bg-primary/15 px-3 py-1 font-bold text-headline-md text-primary tabular-nums drop-shadow-[0_0_14px_rgba(240,205,109,0.6)]">
+              +{grade.xpEarned}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex items-center justify-between gap-4">
         <Button variant="ghost" size="sm" onClick={onExit}>
           <ArrowLeft className="mr-2 h-4 w-4" />

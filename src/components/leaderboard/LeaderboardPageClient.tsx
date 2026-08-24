@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { useState } from "react"
 import { LeaderboardCard } from "@/components/game/LeaderboardCard"
+import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -12,6 +13,9 @@ interface Entry {
   rank: number
   userId: string
   name: string
+  /** The avatar chosen at onboarding. The leaderboard never selected it, so
+   *  the one screen where players compare themselves showed no faces. */
+  avatarId: string | null
   xp: number
   streak: number
   isCurrentUser: boolean
@@ -75,42 +79,46 @@ export function LeaderboardPageClient({
         <>
           {podium.length === 3 && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex justify-center items-end gap-4 mb-12">
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center border-4 border-gray-300 mx-auto mb-2">
-                  <span className="text-3xl font-bold text-white">2</span>
-                </div>
-                <p className="font-bold text-on-surface text-sm">{podium[1].name.split(" ")[0]}</p>
-                <p className="text-xs text-on-surface-variant">{podium[1].xp.toLocaleString()} XP</p>
-                <div className="w-24 h-24 bg-gradient-to-b from-gray-300/20 to-transparent rounded-t-xl mt-2" />
-              </div>
+              <PodiumSlot
+                entry={podium[1]}
+                place={2}
+                avatarClass="w-20 h-20 border-gray-300 bg-gradient-to-br from-gray-300/40 to-gray-400/30"
+                badgeClass="bg-gray-300 text-gray-900"
+                nameClass="text-sm"
+                plinthClass="w-24 h-24 bg-gradient-to-b from-gray-300/20 to-transparent"
+              />
 
-              <div className="text-center">
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center border-4 border-yellow-400 mx-auto mb-2 shadow-[0_0_30px_rgba(255,200,0,0.5)]"
-                >
-                  <span className="text-4xl font-bold text-white">1</span>
-                </motion.div>
-                <p className="font-bold text-on-surface">{podium[0].name.split(" ")[0]}</p>
-                <p className="text-sm text-on-surface-variant">{podium[0].xp.toLocaleString()} XP</p>
-                <div className="w-28 h-32 bg-gradient-to-b from-yellow-400/20 to-transparent rounded-t-xl mt-2" />
-              </div>
+              <PodiumSlot
+                entry={podium[0]}
+                place={1}
+                float
+                avatarClass="w-24 h-24 border-yellow-400 bg-gradient-to-br from-yellow-400/40 to-yellow-600/30 shadow-[0_0_30px_rgba(255,200,0,0.5)]"
+                badgeClass="bg-yellow-400 text-yellow-950"
+                nameClass=""
+                plinthClass="w-28 h-32 bg-gradient-to-b from-yellow-400/20 to-transparent"
+              />
 
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-700 to-amber-800 flex items-center justify-center border-4 border-amber-700 mx-auto mb-2">
-                  <span className="text-3xl font-bold text-white">3</span>
-                </div>
-                <p className="font-bold text-on-surface text-sm">{podium[2].name.split(" ")[0]}</p>
-                <p className="text-xs text-on-surface-variant">{podium[2].xp.toLocaleString()} XP</p>
-                <div className="w-24 h-16 bg-gradient-to-b from-amber-700/20 to-transparent rounded-t-xl mt-2" />
-              </div>
+              <PodiumSlot
+                entry={podium[2]}
+                place={3}
+                avatarClass="w-20 h-20 border-amber-700 bg-gradient-to-br from-amber-700/40 to-amber-800/30"
+                badgeClass="bg-amber-700 text-amber-50"
+                nameClass="text-sm"
+                plinthClass="w-24 h-16 bg-gradient-to-b from-amber-700/20 to-transparent"
+              />
             </motion.div>
           )}
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <LeaderboardCard
-              entries={entries.map((e) => ({ rank: e.rank, name: e.name, xp: e.xp, streak: e.streak, isCurrentUser: e.isCurrentUser }))}
+              entries={entries.map((e) => ({
+                rank: e.rank,
+                name: e.name,
+                avatarId: e.avatarId,
+                xp: e.xp,
+                streak: e.streak,
+                isCurrentUser: e.isCurrentUser,
+              }))}
               title={timeFrame === "allTime" ? t("allTimeRankings") : t("weeklyRankings")}
             />
           </motion.div>
@@ -135,6 +143,66 @@ export function LeaderboardPageClient({
           </div>
         </motion.div>
       )}
+    </div>
+  )
+}
+
+/**
+ * One place on the podium.
+ *
+ * The three slots used to be near-identical blocks of markup differing only in
+ * size and colour, each showing a large "1", "2" or "3" where the player's face
+ * should be. The leaderboard is the one screen in the game whose entire purpose
+ * is comparing yourself to other people, and it was the screen with no people
+ * on it. The avatar takes the circle; the placing moves to a badge, which is
+ * also where a podium puts it in real life.
+ */
+function PodiumSlot({
+  entry,
+  place,
+  float = false,
+  avatarClass,
+  badgeClass,
+  nameClass,
+  plinthClass,
+}: {
+  entry: Entry
+  place: number
+  float?: boolean
+  avatarClass: string
+  badgeClass: string
+  nameClass: string
+  plinthClass: string
+}) {
+  const circle = (
+    <div className={`relative rounded-full border-4 mx-auto mb-2 overflow-visible ${avatarClass}`}>
+      <PremiumAvatar
+        avatarId={entry.avatarId}
+        size="lg"
+        className="!block h-full w-full [&>div]:h-full [&>div]:w-full [&>div]:shadow-none"
+      />
+      <span
+        className={`absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold ring-2 ring-background ${badgeClass}`}
+      >
+        {place}
+      </span>
+    </div>
+  )
+
+  return (
+    <div className="text-center">
+      {float ? (
+        <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+          {circle}
+        </motion.div>
+      ) : (
+        circle
+      )}
+      <p className={`font-bold text-on-surface ${nameClass}`}>{entry.name.split(" ")[0]}</p>
+      <p className={`text-on-surface-variant ${nameClass ? "text-xs" : "text-sm"}`}>
+        {entry.xp.toLocaleString()} XP
+      </p>
+      <div className={`rounded-t-xl mt-2 ${plinthClass}`} />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,14 +28,42 @@ interface OptionTileProps {
 export function OptionTile({ label, index, state, disabled, onSelect }: OptionTileProps) {
   const letter = String.fromCharCode(65 + index);
   const interactive = state === "idle" && !disabled;
+  const reduce = useReducedMotion();
+
+  /**
+   * The reveal, felt rather than only read.
+   *
+   * The states already said right and wrong in colour and glyph; they said it
+   * without moving, which made getting one right feel the same as reading a
+   * table. A correct answer now pops once, and a wrong one shakes — the two
+   * motions every quiz game has used for decades because they map onto what
+   * the player already feels.
+   *
+   * `missed` deliberately does not move. It is the answer the player did not
+   * choose, shown beside their mistake; animating it would compete with the
+   * shake that is telling them what they did.
+   */
+  const feedback = reduce
+    ? undefined
+    : state === "correct"
+      ? { scale: [1, 1.035, 1] }
+      : state === "wrong"
+        ? { x: [0, -7, 6, -4, 3, 0] }
+        : undefined;
 
   return (
     <motion.button
       type="button"
       disabled={disabled || state === "eliminated"}
       onClick={onSelect}
-      whileHover={interactive ? { scale: 1.01 } : undefined}
-      whileTap={interactive ? { scale: 0.99 } : undefined}
+      whileHover={interactive && !reduce ? { scale: 1.02 } : undefined}
+      whileTap={interactive && !reduce ? { scale: 0.97 } : undefined}
+      animate={feedback}
+      transition={
+        state === "correct"
+          ? { duration: 0.34, ease: "easeOut" }
+          : { duration: 0.4, ease: "easeInOut" }
+      }
       aria-label={`${letter}. ${label}`}
       className={cn(
         "flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-colors",
@@ -43,7 +71,10 @@ export function OptionTile({ label, index, state, disabled, onSelect }: OptionTi
         state === "idle" &&
           "border-transparent bg-surface-container hover:border-primary/50 hover:bg-surface-container-high",
         state === "eliminated" && "border-transparent bg-surface-container opacity-30",
-        state === "correct" && "border-primary bg-primary/10",
+        // The glow is what carries the win at a glance, before the eye reaches
+        // the tick.
+        state === "correct" &&
+          "border-primary bg-primary/10 shadow-[0_0_26px_-6px_rgba(240,205,109,0.65)]",
         state === "wrong" && "border-error bg-error/10",
         state === "missed" && "border-primary/60 bg-primary/5",
         disabled && state === "idle" && "opacity-70",

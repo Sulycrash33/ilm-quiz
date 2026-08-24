@@ -115,6 +115,9 @@ export interface Translations {
   levelComplete: string
   xpToRank: string
   maxRankReached: string
+  /** Shown once when a run promotes the player to a new rank — the rarest
+   * moment in the game, nine times in a whole playthrough. */
+  rankUpTitle: string
 
   // Leagues + daily challenge
   leagueTitle: string
@@ -829,6 +832,7 @@ const enTranslations: Translations = {
   levelComplete: "Level complete! The next level is unlocked.",
   xpToRank: "{xp} XP to {rank}",
   maxRankReached: "Highest rank reached",
+  rankUpTitle: "New rank",
 
   // Leagues + daily challenge
   leagueTitle: "Weekly league",
@@ -995,7 +999,7 @@ const enTranslations: Translations = {
   catBadge: "BADGE",
   owned: "Owned",
   processingLabel: "Processing...",
-  storeFootnote: "Purchases spend your real coin balance. Item effects (like actually applying a lifeline in-quiz) aren't wired up yet - coming soon.",
+  storeFootnote: "Purchases spend your real coin balance and are saved to your inventory. A lifeline you own is used instead of coins during a hunt.",
   purchasedMsg: "{name} purchased for {price} coins.",
   purchaseFailedMsg: "Purchase failed.",
   storeItem1Name: "50/50",
@@ -1543,6 +1547,7 @@ const msTranslations: Translations = {
   levelComplete: "Tahap selesai! Tahap seterusnya telah dibuka.",
   xpToRank: "{xp} XP ke {rank}",
   maxRankReached: "Pangkat tertinggi dicapai",
+  rankUpTitle: "Pangkat baharu",
 
   // Leagues + daily challenge
   leagueTitle: "Liga mingguan",
@@ -1709,7 +1714,7 @@ const msTranslations: Translations = {
   catBadge: "LENCANA",
   owned: "Dimiliki",
   processingLabel: "Memproses...",
-  storeFootnote: "Pembelian membelanjakan baki syiling sebenar anda. Kesan item (seperti benar-benar menggunakan lifeline dalam kuiz) belum disambungkan lagi - akan datang.",
+  storeFootnote: "Pembelian membelanjakan baki syiling sebenar anda dan disimpan dalam inventori. Lifeline yang anda miliki digunakan dan bukannya syiling semasa perburuan.",
   purchasedMsg: "{name} dibeli dengan {price} syiling.",
   purchaseFailedMsg: "Pembelian gagal.",
   storeItem1Name: "50/50",
@@ -2257,6 +2262,7 @@ const idTranslations: Translations = {
   levelComplete: "Level selesai! Level berikutnya telah terbuka.",
   xpToRank: "{xp} XP menuju {rank}",
   maxRankReached: "Peringkat tertinggi tercapai",
+  rankUpTitle: "Pangkat baru",
 
   // Leagues + daily challenge
   leagueTitle: "Liga mingguan",
@@ -2423,7 +2429,7 @@ const idTranslations: Translations = {
   catBadge: "LENCANA",
   owned: "Dimiliki",
   processingLabel: "Memproses...",
-  storeFootnote: "Pembelian menggunakan saldo koin nyata Anda. Efek item (seperti benar-benar menerapkan lifeline dalam kuis) belum tersambung - segera hadir.",
+  storeFootnote: "Pembelian menggunakan saldo koin nyata Anda dan disimpan di inventaris. Lifeline yang Anda miliki dipakai alih-alih koin selama perburuan.",
   purchasedMsg: "{name} dibeli seharga {price} koin.",
   purchaseFailedMsg: "Pembelian gagal.",
   storeItem1Name: "50/50",
@@ -2971,6 +2977,7 @@ const haTranslations: Translations = {
   levelComplete: "An kammala matakin! An buɗe matakin gaba.",
   xpToRank: "{xp} XP zuwa {rank}",
   maxRankReached: "An kai matsayi mafi girma",
+  rankUpTitle: "Sabon matsayi",
 
   // Leagues + daily challenge
   leagueTitle: "Gasar mako",
@@ -3137,7 +3144,7 @@ const haTranslations: Translations = {
   catBadge: "BAJI",
   owned: "Mallakarka",
   processingLabel: "Ana Aiwatarwa...",
-  storeFootnote: "Sayayya na kashe tsabar kudinka na ainihi. Tasirin abubuwa (kamar amfani da taimako a jarabawa) ba a haɗa su ba tukuna - suna zuwa.",
+  storeFootnote: "Sayayya na kashe tsabar kudinka na ainihi kuma ana ajiye su a cikin kayanka. Ana amfani da taimakon da kake da shi maimakon tsabar kudi lokacin farauta.",
   purchasedMsg: "An sayi {name} akan tsabar kudi {price}.",
   purchaseFailedMsg: "Sayayya ta kasa.",
   storeItem1Name: "50/50",
@@ -3685,6 +3692,7 @@ const frTranslations: Translations = {
   levelComplete: "Niveau terminé ! Le niveau suivant est débloqué.",
   xpToRank: "{xp} XP jusqu'à {rank}",
   maxRankReached: "Rang le plus élevé atteint",
+  rankUpTitle: "Nouveau rang",
 
   // Leagues + daily challenge
   leagueTitle: "Ligue hebdomadaire",
@@ -3851,7 +3859,7 @@ const frTranslations: Translations = {
   catBadge: "BADGE",
   owned: "Possédé",
   processingLabel: "Traitement...",
-  storeFootnote: "Les achats dépensent votre solde de pièces réel. Les effets des objets (comme l'application réelle d'une aide en quiz) ne sont pas encore connectés - à venir.",
+  storeFootnote: "Les achats dépensent votre solde de pièces réel et sont enregistrés dans votre inventaire. Une aide que vous possédez est utilisée à la place des pièces pendant une chasse.",
   purchasedMsg: "{name} acheté pour {price} pièces.",
   purchaseFailedMsg: "Échec de l'achat.",
   storeItem1Name: "50/50",
@@ -4399,6 +4407,7 @@ const arTranslations: Translations = {
   levelComplete: "اكتمل المستوى! تم فتح المستوى التالي.",
   xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
   maxRankReached: "تم بلوغ أعلى رتبة",
+  rankUpTitle: "رتبة جديدة",
 
   // Leagues + daily challenge
   leagueTitle: "دوري الأسبوع",
@@ -4565,7 +4574,7 @@ const arTranslations: Translations = {
   catBadge: "شارة",
   owned: "مملوك",
   processingLabel: "جارٍ المعالجة...",
-  storeFootnote: "تُنفق المشتريات من رصيدك الحقيقي من العملات. تأثيرات العناصر (مثل تطبيق وسيلة مساعدة فعلياً في الاختبار) غير مفعّلة بعد - قريباً.",
+  storeFootnote: "تُنفق المشتريات من رصيدك الحقيقي من العملات وتُحفظ في مخزونك. تُستخدم وسيلة المساعدة التي تملكها بدلاً من العملات أثناء الرحلة.",
   purchasedMsg: "تم شراء {name} مقابل {price} عملة.",
   purchaseFailedMsg: "فشل الشراء.",
   storeItem1Name: "50/50",

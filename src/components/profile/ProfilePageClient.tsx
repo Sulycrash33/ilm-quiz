@@ -7,6 +7,7 @@ import { PremiumCard } from "@/components/ui/premium-card"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
+import { CountUp } from "@/components/ui/count-up"
 import { PremiumProgress } from "@/components/ui/premium-progress"
 import { PremiumStat } from "@/components/ui/premium-stat"
 import { AchievementCard } from "@/components/game/AchievementCard"
@@ -105,7 +106,7 @@ export function ProfilePageClient({
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8 mb-8">
         <div className="flex flex-col md:flex-row items-center gap-8">
           <div className="relative">
-            <PremiumAvatar size="xl" ring ringColor="primary" />
+            <PremiumAvatar size="xl" ring ringColor="primary" avatarId={profile.avatarId} />
             {currentRank && (
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }} className="absolute -top-2 -right-2">
                 <PremiumBadge variant="warning" size="sm">{currentRank.name.toUpperCase()}</PremiumBadge>
@@ -128,8 +129,11 @@ export function ProfilePageClient({
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <PremiumStat label={t("totalXp")} value={profile.totalXp.toLocaleString()} />
-              <PremiumStat label={t("dayStreak")} value={profile.streakCount} />
+              {/* The two figures a player actually watches climb. The rank and
+                  accuracy beside them are not counts — a rank counting up from
+                  zero would read as losing places — so they arrive as they are. */}
+              <PremiumStat label={t("totalXp")} value={<CountUp value={profile.totalXp} />} />
+              <PremiumStat label={t("dayStreak")} value={<CountUp value={profile.streakCount} />} />
               <PremiumStat label={t("globalRank")} value={globalRank ? `#${globalRank}` : "—"} />
               <PremiumStat label={t("accuracy")} value={totalAttempts > 0 ? `${accuracyPct}%` : "—"} />
             </div>

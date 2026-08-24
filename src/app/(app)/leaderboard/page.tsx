@@ -12,7 +12,7 @@ export default async function LeaderboardPage() {
 
   const { data: allTimeRows } = await supabase
     .from("profiles")
-    .select("id, display_name, total_xp, streak_count")
+    .select("id, display_name, avatar_id, total_xp, streak_count")
     .order("total_xp", { ascending: false })
     .limit(20)
 
@@ -25,18 +25,23 @@ export default async function LeaderboardPage() {
 
   const { data: weeklyRows } = await supabase
     .from("weekly_xp")
-    .select("user_id, xp, profiles(display_name, streak_count)")
+    .select("user_id, xp, profiles(display_name, avatar_id, streak_count)")
     .eq("week_start", weekStartStr)
     .order("xp", { ascending: false })
     .limit(20)
 
-  type WeeklyRow = { user_id: string; xp: number; profiles: { display_name: string | null; streak_count: number } | null }
+  type WeeklyRow = {
+    user_id: string
+    xp: number
+    profiles: { display_name: string | null; avatar_id: string | null; streak_count: number } | null
+  }
   const weeklyRowsTyped = (weeklyRows ?? []) as unknown as WeeklyRow[]
 
   const allTime = (allTimeRows ?? []).map((p, i) => ({
     rank: i + 1,
     userId: p.id,
     name: p.display_name ?? "Learner",
+    avatarId: p.avatar_id,
     xp: p.total_xp,
     streak: p.streak_count,
     isCurrentUser: user ? p.id === user.id : false,
@@ -46,6 +51,7 @@ export default async function LeaderboardPage() {
     rank: i + 1,
     userId: w.user_id,
     name: w.profiles?.display_name ?? "Learner",
+    avatarId: w.profiles?.avatar_id ?? null,
     xp: w.xp,
     streak: w.profiles?.streak_count ?? 0,
     isCurrentUser: user ? w.user_id === user.id : false,

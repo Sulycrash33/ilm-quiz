@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 export interface ProfileGameState {
   id: string;
   displayName: string | null;
+  /** The avatar picked at onboarding, e.g. "m-3". Rendered by PremiumAvatar. */
+  avatarId: string | null;
   coins: number;
   highScore: number;
   streakCount: number;
@@ -44,7 +46,7 @@ export function useProfile() {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, display_name, coins, high_score, streak_count, last_spin_at, total_xp")
+      .select("id, display_name, avatar_id, coins, high_score, streak_count, last_spin_at, total_xp")
       .eq("id", user.id)
       .single();
 
@@ -52,6 +54,7 @@ export function useProfile() {
       setProfile({
         id: data.id,
         displayName: data.display_name,
+        avatarId: data.avatar_id,
         coins: data.coins,
         highScore: data.high_score,
         streakCount: data.streak_count,
