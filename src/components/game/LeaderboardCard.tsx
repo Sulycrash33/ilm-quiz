@@ -8,7 +8,10 @@ import { useLanguage } from "@/contexts/LanguageContext"
 interface LeaderboardEntry {
   rank: number
   name: string
+  /** Legacy remote URL. Kept because multiplayer still passes one. */
   avatar?: string
+  /** The onboarding avatar id, e.g. "m-3" — what profiles actually store. */
+  avatarId?: string | null
   xp: number
   streak: number
   isCurrentUser?: boolean
@@ -82,7 +85,7 @@ export function LeaderboardCard({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-8 flex justify-center">{getRankIcon(entry.rank)}</div>
-                <PremiumAvatar src={entry.avatar} size="md" />
+                <PremiumAvatar src={entry.avatar} avatarId={entry.avatarId} size="md" />
                 <div>
                   <p className="font-bold text-on-surface">{entry.name}</p>
                   {showStreak && (
