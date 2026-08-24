@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Play, BookOpen, Heart, Flame, Timer } from "lucide-react";
 import type { QuizQuestion } from "@/lib/types";
-import { HUNT_RULES } from "@/lib/hunt-engine";
+import { HUNT_RULES, type ModeRules } from "@/lib/hunt-engine";
 import type { LifelinePrice } from "@/app/(app)/quiz/actions";
 import { HuntView } from "./hunt/HuntView";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -25,6 +25,11 @@ interface QuizRunnerProps {
    * tier run points it at that category's level map instead, and the label
    * follows automatically (see below) rather than needing its own prop. */
   backHref?: string;
+  /** Set for a mode run (Speed Round, Survival, Practice). Absent means the
+   *  classic hunt, which is why the level path needed no change here. */
+  modeRules?: ModeRules;
+  /** The server-side run these answers belong to; see migration 0030. */
+  runId?: string | null;
 }
 
 /**
@@ -41,6 +46,8 @@ export function QuizRunner({
   lifelinePrices,
   tier,
   backHref,
+  modeRules,
+  runId,
 }: QuizRunnerProps) {
   const [started, setStarted] = useState(false);
   const { t, dir } = useLanguage();
@@ -55,6 +62,8 @@ export function QuizRunner({
           lifelinePrices={lifelinePrices}
           onExit={() => setStarted(false)}
           forceTier={tier}
+          modeRules={modeRules}
+          runId={runId}
         />
       </div>
     );
@@ -65,6 +74,13 @@ export function QuizRunner({
   // is what the pre-run brief promises the player.
   const runLength =
     tier !== undefined ? questions.length : Math.min(HUNT_RULES.runLength, questions.length);
+
+  // The brief has to describe the mode being played, not the classic hunt. It
+  // promised three lives and a fixed question count for every mode, which was
+  // wrong twice over for Practice — no lives, no end — and wrong for Survival,
+  // where the whole point is that the run does not stop at a set number.
+  const briefLives = modeRules ? modeRules.lives : HUNT_RULES.startingLives;
+  const briefLength = modeRules?.endless ? "\u221e" : runLength;
   const playable = questions.length > 0;
 
   return (
@@ -108,20 +124,26 @@ export function QuizRunner({
         ) : (
           <>
             {/* What a run demands, before committing to it. */}
-            <div className="mx-auto grid max-w-md grid-cols-3 gap-3">
+            <div
+              className={`mx-auto grid max-w-md gap-3 ${
+                briefLives === null ? "grid-cols-2" : "grid-cols-3"
+              }`}
+            >
               <Brief
                 icon={<BookOpen className="h-4 w-4" />}
-                value={runLength}
+                value={briefLength}
                 label={t("questions")}
               />
-              <Brief
-                icon={<Heart className="h-4 w-4" />}
-                value={HUNT_RULES.startingLives}
-                label={t("livesLabel")}
-              />
+              {briefLives !== null && (
+                <Brief
+                  icon={<Heart className="h-4 w-4" />}
+                  value={briefLives}
+                  label={t("livesLabel")}
+                />
+              )}
               <Brief
                 icon={<Flame className="h-4 w-4" />}
-                value={`${HUNT_RULES.maxCombo}×`}
+                value={`${HUNT_RULES.maxCombo}\u00d7`}
                 label={t("comboLabel")}
               />
             </div>
@@ -133,7 +155,10 @@ export function QuizRunner({
               </Button>
               <p className="flex items-center justify-center gap-1.5 text-xs text-on-surface-variant">
                 <Timer className="h-3 w-3" aria-hidden="true" />
-                {t("questionHunt", { count: runLength })}
+                {/* Suppressed in the endless modes, where the brief above
+                    already says the run has no set length and this line would
+                    contradict it with a number. */}
+                {modeRules?.endless ? null : t("questionHunt", { count: runLength })}
               </p>
             </div>
           </>

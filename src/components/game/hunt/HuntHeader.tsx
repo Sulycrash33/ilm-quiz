@@ -17,6 +17,21 @@ interface HuntHeaderProps {
   remaining: number;
   timeLimit: number;
   frozen: boolean;
+  /**
+   * What the clock is counting.
+   *
+   * "question" is the classic per-question countdown. "run" is Speed Round's
+   * single clock for the whole run. "none" is Practice, which has no clock at
+   * all — and showing a ring stopped at 25 was worse than showing nothing,
+   * because a frozen countdown reads as a bug rather than as an absence.
+   */
+  clock?: "question" | "run" | "none";
+  /**
+   * How many hearts to draw, or null in a mode with no lives. It was hardcoded
+   * to three, which drew three hearts for Practice and Speed Round — modes a
+   * wrong answer cannot end.
+   */
+  maxLives?: number | null;
 }
 
 const TIER_STYLE: Record<Difficulty, string> = {
@@ -41,6 +56,8 @@ export function HuntHeader({
   remaining,
   timeLimit,
   frozen,
+  clock = "question",
+  maxLives = HUNT_RULES.startingLives,
 }: HuntHeaderProps) {
   const { t } = useLanguage();
   const multiplier = comboMultiplier(combo);
@@ -66,7 +83,9 @@ export function HuntHeader({
           </span>
         </div>
 
-        <TimerRing remaining={remaining} total={timeLimit} frozen={frozen} />
+        {clock !== "none" && (
+          <TimerRing remaining={remaining} total={timeLimit} frozen={frozen} />
+        )}
       </div>
 
       <div
@@ -85,18 +104,20 @@ export function HuntHeader({
       </div>
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-        <span className="flex items-center gap-1.5" aria-label={`${lives} ${t("livesLabel")}`}>
-          {Array.from({ length: HUNT_RULES.startingLives }).map((_, i) => (
-            <Heart
-              key={i}
-              aria-hidden="true"
-              className={cn(
-                "h-4 w-4 transition-colors",
-                i < lives ? "fill-error text-error" : "text-surface-container-highest",
-              )}
-            />
-          ))}
-        </span>
+        {maxLives !== null && (
+          <span className="flex items-center gap-1.5" aria-label={`${lives} ${t("livesLabel")}`}>
+            {Array.from({ length: maxLives }).map((_, i) => (
+              <Heart
+                key={i}
+                aria-hidden="true"
+                className={cn(
+                  "h-4 w-4 transition-colors",
+                  i < lives ? "fill-error text-error" : "text-surface-container-highest",
+                )}
+              />
+            ))}
+          </span>
+        )}
 
         <span className="flex items-center gap-1.5 text-tertiary">
           <Coins className="h-4 w-4" aria-hidden="true" />
