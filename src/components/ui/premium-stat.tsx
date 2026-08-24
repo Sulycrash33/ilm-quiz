@@ -5,7 +5,7 @@ import { ReactNode } from "react"
 
 interface PremiumStatProps {
   label: string
-  value: string | number
+  value: string | number | React.ReactNode
   icon?: ReactNode
   trend?: "up" | "down" | "neutral"
   trendValue?: string
