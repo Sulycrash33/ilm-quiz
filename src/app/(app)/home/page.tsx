@@ -38,13 +38,31 @@ export default function HomePage() {
   const [continueCard, setContinueCard] = useState<ContinueCard | null>(null)
   const [challenge, setChallenge] = useState<DailyChallengeView | null>(null)
 
+  /**
+   * Until this resolves, both cards below have nothing to show — and "nothing
+   * to show" is not the same claim as "there is nothing".
+   *
+   * Both used to start at `null` and render their empty state immediately, so
+   * the most prominent card on the front door announced "No challenge today"
+   * for the whole time the request was in flight, then flipped to a real
+   * challenge when it landed. On a slow connection — which is most of the
+   * people this app is for — that is what the home screen says for seconds,
+   * and if the request fails it is what it says forever. There is in fact a
+   * challenge nearly every day: a cron job materialises one at 00:05.
+   */
+  const [cardsLoading, setCardsLoading] = useState(true)
+
   useEffect(() => {
     let cancelled = false
     void (async () => {
-      const [c, d] = await Promise.all([getContinueCard(), getDailyChallenge()])
-      if (cancelled) return
-      setContinueCard(c)
-      setChallenge(d)
+      try {
+        const [c, d] = await Promise.all([getContinueCard(), getDailyChallenge()])
+        if (cancelled) return
+        setContinueCard(c)
+        setChallenge(d)
+      } finally {
+        if (!cancelled) setCardsLoading(false)
+      }
     })()
     return () => {
       cancelled = true
@@ -65,7 +83,8 @@ export default function HomePage() {
   const dailyProgress = Math.min((questionsToday / 10) * 100, 100)
   const streakAlive = (profile?.streakCount ?? 0) > 0
   /** Nothing earned, nothing answered, no streak: the cold-start screen. */
-  const coldStart = !loading && !continueCard && questionsToday === 0 && !streakAlive
+  const coldStart =
+    !loading && !cardsLoading && !continueCard && questionsToday === 0 && !streakAlive
 
   return (
     <div dir={dir} className="relative min-h-[100dvh] bg-background pb-32">
@@ -256,14 +275,25 @@ export default function HomePage() {
                     <h2 className="font-headline-md text-headline-md text-on-surface mt-1 break-words">
                       {continueCard ? continueCard.name : t("pickACategory")}
                     </h2>
-                    <p className="text-on-surface-variant text-sm mt-1">
-                      {continueCard
-                        ? t("continueAnswered", {
-                            answered: continueCard.answered,
-                            total: continueCard.total,
-                          })
-                        : t("noProgressYet")}
-                    </p>
+                    {/* Same reason as the challenge card: telling someone they
+                        have never answered anything, while the request that
+                        would say otherwise is still running, is a guess
+                        dressed as a fact. */}
+                    {cardsLoading ? (
+                      <span
+                        className="mt-2 block h-4 w-36 max-w-full animate-pulse rounded bg-surface-container-highest"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <p className="text-on-surface-variant text-sm mt-1">
+                        {continueCard
+                          ? t("continueAnswered", {
+                              answered: continueCard.answered,
+                              total: continueCard.total,
+                            })
+                          : t("noProgressYet")}
+                      </p>
+                    )}
                   </div>
                   <svg className="w-8 h-8 shrink-0 text-primary" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
@@ -289,8 +319,10 @@ export default function HomePage() {
           {/* Daily Mission. The title used to read "Complete 3 Arabic
               Quizzes" regardless of what today's challenge actually was; only
               the progress number was real. Both now come from
-              `getDailyChallenge`, which materialises the day's challenge on
-              first read since this project has no scheduler. */}
+              `getDailyChallenge`. It calls `ensure_daily_challenge`, which
+              is belt and braces: the `ilm-daily-challenge` cron job already
+              materialises the day's challenge at 00:05, and this covers the
+              case where a reader arrives before it has run. */}
           <motion.div
             variants={cardVariants}
             initial="hidden"
@@ -309,16 +341,26 @@ export default function HomePage() {
                     ? t("challengeQuestions", { count: challenge.questionCount })
                     : t("dailyChallengeTitle")}
                 </h3>
-                <p className="text-on-surface-variant">
-                  {challenge
-                    ? challenge.completed
-                      ? t("challengeDone")
-                      : t("currentProgress", {
-                          answered: challenge.answered,
-                          total: challenge.questionCount,
-                        })
-                    : t("noChallengeToday")}
-                </p>
+                {/* While the request is in flight this stays a shimmer rather
+                    than an answer. A skeleton needs no copy, so the honest
+                    loading state costs nothing in six locales. */}
+                {cardsLoading ? (
+                  <span
+                    className="mt-1 block h-4 w-40 max-w-full animate-pulse rounded bg-surface-container-highest"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <p className="text-on-surface-variant">
+                    {challenge
+                      ? challenge.completed
+                        ? t("challengeDone")
+                        : t("currentProgress", {
+                            answered: challenge.answered,
+                            total: challenge.questionCount,
+                          })
+                      : t("noChallengeToday")}
+                  </p>
+                )}
               </div>
             </div>
             {challenge && (
