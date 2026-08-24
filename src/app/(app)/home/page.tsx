@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, useReducedMotion } from "framer-motion"
+import { Trophy, Zap, Users, Gamepad2 } from "lucide-react"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { CountUp } from "@/components/ui/count-up"
 import { ProgressRing } from "@/components/game/ProgressRing"
@@ -349,24 +350,46 @@ export default function HomePage() {
           </Link>
         </motion.div>
 
-        {/* Explore - the only entry point to these pages besides typing the URL */}
-        <motion.div variants={cardVariants} initial="hidden" animate="visible" className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-          <Link href="/achievements" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
-            <span className="text-2xl">🏆</span>
-            <span className="text-sm font-bold text-on-surface">{t("achievements")}</span>
-          </Link>
-          <Link href="/challenges" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
-            <span className="text-2xl">⚡</span>
-            <span className="text-sm font-bold text-on-surface">{t("challenges")}</span>
-          </Link>
-          <Link href="/community" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
-            <span className="text-2xl">👥</span>
-            <span className="text-sm font-bold text-on-surface">{t("communityHub")}</span>
-          </Link>
-          <Link href="/multiplayer" className="glass-card p-4 flex flex-col items-center text-center gap-2 hover:bg-white/5 transition-colors">
-            <span className="text-2xl">🎮</span>
-            <span className="text-sm font-bold text-on-surface">{t("multiplayerQuiz")}</span>
-          </Link>
+        {/* Explore - the only entry point to these pages besides typing the URL.
+
+            These were four flat emoji on four identical grey cards, which made
+            the four most interesting rooms in the game — achievements, daily
+            challenges, the community, live multiplayer — read as a row of
+            filing cabinets. Each now has its own colour and a real icon, lifts
+            under the cursor and presses under a thumb, and they arrive in
+            sequence rather than all at once. Same four links, same four
+            strings; only the invitation changed. */}
+        <motion.div
+          variants={cardVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"
+        >
+          {[
+            { href: "/achievements", label: t("achievements"), Icon: Trophy, tint: "from-amber-400/25 to-amber-600/10", fg: "text-amber-300" },
+            { href: "/challenges", label: t("challenges"), Icon: Zap, tint: "from-violet-400/25 to-violet-600/10", fg: "text-violet-300" },
+            { href: "/community", label: t("communityHub"), Icon: Users, tint: "from-sky-400/25 to-sky-600/10", fg: "text-sky-300" },
+            { href: "/multiplayer", label: t("multiplayerQuiz"), Icon: Gamepad2, tint: "from-emerald-400/25 to-emerald-600/10", fg: "text-emerald-300" },
+          ].map(({ href, label, Icon, tint, fg }, i) => (
+            <motion.div
+              key={href}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * i, duration: 0.35 }}
+            >
+              <Link
+                href={href}
+                className="glass-card p-4 h-full flex flex-col items-center text-center gap-2 transition-all hover:bg-white/5 hover:-translate-y-0.5 active:scale-[0.97]"
+              >
+                <span
+                  className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${tint} ring-1 ring-white/10`}
+                >
+                  <Icon className={`h-5 w-5 ${fg}`} aria-hidden="true" />
+                </span>
+                <span className="text-sm font-bold text-on-surface">{label}</span>
+              </Link>
+            </motion.div>
+          ))}
         </motion.div>
       </main>
 

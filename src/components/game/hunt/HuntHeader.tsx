@@ -104,17 +104,34 @@ export function HuntHeader({
           <span className="sr-only">{t("coinsWord")}</span>
         </span>
 
+        {/* The combo escalates instead of holding still.
+            It used to read the same at a run of two and a run of eight: same
+            size, same flame, same glow. A streak that is building should look
+            like it is building, so each new answer punches the badge and the
+            heat behind the flame rises with the multiplier — capped, so a long
+            run stays readable rather than turning into a lamp. */}
         {combo > 0 && (
           <motion.span
             key={combo}
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{ scale: [0.8, 1.18, 1], opacity: 1 }}
+            transition={{ duration: 0.34, ease: "easeOut" }}
             className={cn(
               "flex items-center gap-1.5 font-semibold",
               multiplier > 1 ? "text-tertiary" : "text-primary",
             )}
+            style={{
+              filter: `drop-shadow(0 0 ${Math.min(4 + combo * 1.6, 14)}px rgba(255,138,76,${Math.min(
+                0.22 + combo * 0.07,
+                0.7,
+              )}))`,
+            }}
           >
-            <Flame className="h-4 w-4" aria-hidden="true" />
+            <Flame
+              className="h-4 w-4"
+              style={{ transform: `scale(${Math.min(1 + combo * 0.05, 1.35)})` }}
+              aria-hidden="true"
+            />
             {multiplier > 1 ? t("comboX", { multiplier }) : `${combo} ${t("comboLabel")}`}
           </motion.span>
         )}
