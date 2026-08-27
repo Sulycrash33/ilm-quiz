@@ -1,9 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isPublicPath } from "@/lib/auth-routes";
 
 /**
  * Refreshes the Supabase auth session on every request and redirects
- * unauthenticated users away from protected (app) routes.
+ * unauthenticated users away from anything that is not public.
  */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -35,13 +36,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAppRoute = request.nextUrl.pathname.startsWith("/(app)") ||
-    ["/home", "/quiz", "/play", "/leaderboard", "/achievements", "/challenges",
-      "/community", "/profile", "/rewards", "/store"].some((p) =>
-      request.nextUrl.pathname.startsWith(p)
-    );
-
-  if (!user && isAppRoute) {
+  if (!user && !isPublicPath(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
