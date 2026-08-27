@@ -1,0 +1,154 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { createClient } from '@/lib/supabase/server';
+
+/**
+ * The question console.
+ *
+ * The page this replaces selected every question with no limit. PostgREST
+ * caps an unbounded response at 1,000 rows, so an administrator saw 1,000 of
+ * 5,220 and nothing said so. Everything here is counted and sliced in the
+ * database (`admin_list_questions`, migration 0033), which is the same fix
+ * migration 0029 applied to the category grid.
+ */
+
+export interface AdminQuestion {
+  id: string;
+  text: string;
+  category: string | null;
+  categoryId: string | null;
+  tier: number | null;
+  difficulty: string;
+  status: string;
+  sourceType: string;
+  choices: string[];
+  correctIndex: number;
+  explanation: string | null;
+  citation: string | null;
+  scholarApproved: boolean;
+  reviewedAt: string | null;
+}
+
+export interface QuestionFilters {
+  search?: string;
+  categoryId?: string;
+  tier?: number;
+  status?: string;
+  /** 'scholar' or 'unreviewed' — whether a person has vouched for it. */
+  source?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export type ListQuestionsResult =
+  | { ok: true; questions: AdminQuestion[]; total: number }
+  | { ok: false; error: string };
+
+async function requireAdmin() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not signed in.');
+
+  const { data: profile } = await supabase
+    .from('profiles').select('role').eq('id', user.id).single();
+
+  if (profile?.role !== 'admin') {
+    throw new Error('Not authorized. This page is restricted to administrators.');
+  }
+  return { supabase };
+}
+
+export async function listQuestions(f: QuestionFilters = {}): Promise<ListQuestionsResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    const { data, error } = await supabase.rpc('admin_list_questions', {
+      p_search: f.search?.trim() || null,
+      p_category_id: f.categoryId || null,
+      p_tier: f.tier ?? null,
+      p_status: f.status || null,
+      p_source: f.source || null,
+      p_limit: f.limit ?? 25,
+      p_offset: f.offset ?? 0,
+    });
+    if (error) return { ok: false, error: error.message };
+
+    const rows = (data ?? []) as Array<Record<string, unknown>>;
+    return {
+      ok: true,
+      total: rows.length > 0 ? Number(rows[0].o_total ?? 0) : 0,
+      questions: rows.map((r) => ({
+        id: String(r.o_id),
+        text: String(r.o_question_text ?? ''),
+        category: (r.o_category as string | null) ?? null,
+        categoryId: (r.o_category_id as string | null) ?? null,
+        tier: r.o_tier === null ? null : Number(r.o_tier),
+        difficulty: String(r.o_difficulty ?? ''),
+        status: String(r.o_status ?? ''),
+        sourceType: String(r.o_source_type ?? ''),
+        choices: (r.o_choices as string[]) ?? [],
+        correctIndex: Number(r.o_correct_index ?? 0),
+        explanation: (r.o_explanation as string | null) ?? null,
+        citation: (r.o_citation as string | null) ?? null,
+        scholarApproved: Boolean(r.o_scholar_ok),
+        reviewedAt: (r.o_reviewed_at as string | null) ?? null,
+      })),
+    };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Could not load questions.' };
+  }
+}
+
+export interface QuestionSummary {
+  total: number;
+  by_status: Record<string, number>;
+  by_source: Record<string, number>;
+  categories: Array<{ id: string; name: string; total: number; scholar_approved: number }>;
+}
+
+export type SummaryResult =
+  | { ok: true; summary: QuestionSummary }
+  | { ok: false; error: string };
+
+export async function getQuestionSummary(): Promise<SummaryResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    const { data, error } = await supabase.rpc('admin_question_summary');
+    if (error) return { ok: false, error: error.message };
+    return { ok: true, summary: data as QuestionSummary };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Could not load the summary.' };
+  }
+}
+
+export type ReviewResult = { ok: true } | { ok: false; error: string };
+
+/**
+ * Marks a question reviewed.
+ *
+ * `scholarApproved` is a separate fact from `status` on purpose. Setting
+ * `review_status` to the enum's `scholar_approved` value would make the
+ * question unplayable — `submit_quiz_answer` accepts only `published` — so
+ * approval is recorded in its own column and the question stays in the game.
+ * See migration 0033.
+ */
+export async function reviewQuestion(
+  questionId: string,
+  opts: { status?: 'published' | 'rejected'; scholarApproved?: boolean },
+): Promise<ReviewResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    const { error } = await supabase.rpc('admin_set_question_status', {
+      p_question_id: questionId,
+      p_status: opts.status ?? null,
+      p_scholar_approved: opts.scholarApproved ?? null,
+    });
+    if (error) return { ok: false, error: error.message };
+
+    revalidatePath('/admin/questions');
+    revalidatePath('/admin');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Could not update that question.' };
+  }
+}
