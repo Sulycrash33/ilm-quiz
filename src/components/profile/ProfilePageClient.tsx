@@ -13,6 +13,7 @@ import { PremiumStat } from "@/components/ui/premium-stat"
 import { AchievementCard } from "@/components/game/AchievementCard"
 import { LogoutButton } from "@/components/layout/LogoutButton"
 import { ResetProgressCard } from "@/components/profile/ResetProgressCard"
+import { GameMasterCard } from "@/components/profile/GameMasterCard"
 import { SoundToggle } from "@/components/profile/SoundToggle"
 import { StreakReminderToggle } from "@/components/profile/StreakReminderToggle"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -47,10 +48,15 @@ export function ProfilePageClient({
   stats,
   email,
   joinedAt,
+  isAdmin = false,
 }: {
   stats: ProfileStats
   email: string | null
   joinedAt: string
+  /** Decides whether the way in to `/admin` is drawn. Passed from the server
+   * page, which already knows the role — `ProfileStats` does not carry it and
+   * widening it for one card would touch every caller. */
+  isAdmin?: boolean
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("overview")
   const { locale, setLocale, t, dir } = useLanguage()
@@ -224,6 +230,7 @@ export function ProfilePageClient({
             {/* Spans both columns: this is an account-level action, not a
                 stat card sitting alongside the others. */}
             <div className="md:col-span-2 space-y-6">
+              {isAdmin && <GameMasterCard />}
               <SoundToggle />
               <StreakReminderToggle />
               <ResetProgressCard />

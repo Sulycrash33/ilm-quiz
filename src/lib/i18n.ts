@@ -687,6 +687,9 @@ export interface Translations {
   learnerFallback: string
   joinedOn: string
   highestRankReachedName: string
+  gameMasterTitle: string
+  gameMasterDesc: string
+  gameMasterOpen: string
   dangerZone: string
   resetProgress: string
   resetProgressDesc: string
@@ -1401,6 +1404,9 @@ const enTranslations: Translations = {
   learnerFallback: "Learner",
   joinedOn: "Joined {date}",
   highestRankReachedName: "Highest rank reached: {rank}",
+  gameMasterTitle: "Game master",
+  gameMasterDesc: "Manage the player register, the question bank and the moderation queue.",
+  gameMasterOpen: "Open the admin area",
   dangerZone: "Danger Zone",
   resetProgress: "Reset my progress",
   resetProgressDesc: "Clears your XP, coins, streak, achievements and every answered question, and re-locks all levels. Your name, avatar and language are kept.",
@@ -2116,6 +2122,9 @@ const msTranslations: Translations = {
   learnerFallback: "Pelajar",
   joinedOn: "Menyertai {date}",
   highestRankReachedName: "Pangkat tertinggi dicapai: {rank}",
+  gameMasterTitle: "Ketua permainan",
+  gameMasterDesc: "Urus daftar pemain, bank soalan dan barisan moderasi.",
+  gameMasterOpen: "Buka kawasan pentadbir",
   dangerZone: "Zon Bahaya",
   resetProgress: "Set semula kemajuan saya",
   resetProgressDesc: "Mengosongkan XP, syiling, rentetan, pencapaian dan setiap soalan yang dijawab, serta mengunci semula semua tahap. Nama, avatar dan bahasa anda dikekalkan.",
@@ -2831,6 +2840,9 @@ const idTranslations: Translations = {
   learnerFallback: "Pelajar",
   joinedOn: "Bergabung {date}",
   highestRankReachedName: "Peringkat tertinggi tercapai: {rank}",
+  gameMasterTitle: "Pengelola permainan",
+  gameMasterDesc: "Kelola daftar pemain, bank soal, dan antrean moderasi.",
+  gameMasterOpen: "Buka area admin",
   dangerZone: "Zona Berbahaya",
   resetProgress: "Atur ulang kemajuan saya",
   resetProgressDesc: "Menghapus XP, koin, runtunan, pencapaian dan semua pertanyaan yang dijawab, serta mengunci ulang semua level. Nama, avatar dan bahasa Anda tetap.",
@@ -3546,6 +3558,9 @@ const haTranslations: Translations = {
   learnerFallback: "Ɗalibi",
   joinedOn: "Ya shiga {date}",
   highestRankReachedName: "Matsayi mafi girma da aka kai: {rank}",
+  gameMasterTitle: "Shugaban wasa",
+  gameMasterDesc: "Sarrafa rajistar 'yan wasa, ma'ajin tambayoyi da jerin sa ido.",
+  gameMasterOpen: "Buɗe sashen gudanarwa",
   dangerZone: "Yankin Hatsari",
   resetProgress: "Sake saita ci gabana",
   resetProgressDesc: "Yana share XP, kuɗi, jerin kwanaki, nasarori da duk tambayoyin da aka amsa, kuma ya sake kulle dukkan matakai. Ana kiyaye sunanka, hotonka da harshenka.",
@@ -4261,6 +4276,9 @@ const frTranslations: Translations = {
   learnerFallback: "Apprenant",
   joinedOn: "Inscrit en {date}",
   highestRankReachedName: "Rang le plus élevé atteint : {rank}",
+  gameMasterTitle: "Maître du jeu",
+  gameMasterDesc: "Gérez le registre des joueurs, la banque de questions et la file de modération.",
+  gameMasterOpen: "Ouvrir l'espace d'administration",
   dangerZone: "Zone sensible",
   resetProgress: "Réinitialiser ma progression",
   resetProgressDesc: "Efface votre XP, vos pièces, votre série, vos succès et toutes les questions répondues, et reverrouille tous les niveaux. Votre nom, avatar et langue sont conservés.",
@@ -4976,6 +4994,9 @@ const arTranslations: Translations = {
   learnerFallback: "متعلّم",
   joinedOn: "انضم في {date}",
   highestRankReachedName: "أعلى رتبة تم بلوغها: {rank}",
+  gameMasterTitle: "مدير اللعبة",
+  gameMasterDesc: "أدر سجل اللاعبين وبنك الأسئلة وقائمة المراجعة.",
+  gameMasterOpen: "افتح لوحة الإدارة",
   dangerZone: "منطقة الخطر",
   resetProgress: "إعادة ضبط تقدّمي",
   resetProgressDesc: "يمسح نقاط الخبرة والعملات والسلسلة والإنجازات وكل سؤال أجبت عنه، ويعيد قفل جميع المستويات. يُحتفظ باسمك وصورتك ولغتك.",
