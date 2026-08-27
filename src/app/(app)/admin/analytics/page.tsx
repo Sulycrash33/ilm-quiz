@@ -20,31 +20,22 @@ export default async function AnalyticsPage() {
     return <div className="flex items-center justify-center min-h-[100dvh]"><p>Access denied. Admin only.</p></div>
   }
 
-  // Fetch real analytics data
-  const [
-    { count: totalAttempts },
-    { data: categoryStats },
-    { data: recentAttempts },
-  ] = await Promise.all([
-    supabase.from('attempts').select('*', { count: 'exact', head: true }),
-    supabase.from('categories')
-      .select('id, name, questions(count)')
-      .order('name'),
-    supabase.from('attempts')
-      .select('is_correct, created_at')
-      .order('created_at', { ascending: false })
-      .limit(100),
-  ])
+  // Accuracy came from the most recent hundred attempts and was labelled as
+  // though it covered all of them. It is counted over the whole table now, in
+  // the database, alongside the rest of the dashboard numbers.
+  const { data: statsJson } = await supabase.rpc('admin_dashboard_stats')
+  const s = (statsJson ?? {}) as Record<string, number>
 
-  // Calculate accuracy
-  const correctAttempts = recentAttempts?.filter(a => a.is_correct).length ?? 0
-  const accuracy = recentAttempts?.length ? Math.round((correctAttempts / recentAttempts.length) * 100) : 0
+  const { data: categoryStats } = await supabase
+    .from('categories')
+    .select('id, name, questions(count)')
+    .order('name')
 
   return (
     <AnalyticsPageClient
       stats={{
-        totalAttempts: totalAttempts ?? 0,
-        accuracy,
+        totalAttempts: s.total_attempts ?? 0,
+        accuracy: s.accuracy_pct ?? 0,
       }}
       categoryStats={categoryStats ?? []}
     />

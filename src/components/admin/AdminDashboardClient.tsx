@@ -3,17 +3,19 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { PremiumCard } from "@/components/ui/premium-card"
-import { PremiumBadge } from "@/components/ui/premium-badge"
 
 interface AdminDashboardClientProps {
   stats: {
     totalUsers: number
+    suspendedUsers: number
     activeToday: number
+    activeWeek: number
     totalQuestions: number
+    scholarApproved: number
     totalAttempts: number
+    accuracyPct: number
   }
   recentAttempts: any[]
-  topCategories: any[]
   alerts?: { reports: number; applications: number }
 }
 
@@ -53,12 +55,25 @@ const quickActions = [
     icon: "🛡️",
     color: "secondary",
   },
+  {
+    title: "Economy",
+    description: "Prices, rewards and XP multipliers",
+    href: "/admin/economy",
+    icon: "🪙",
+    color: "tertiary",
+  },
+  {
+    title: "Audit Log",
+    description: "Every administrative action, with who and when",
+    href: "/admin/audit",
+    icon: "📜",
+    color: "primary",
+  },
 ]
 
 export function AdminDashboardClient({
   stats,
   recentAttempts,
-  topCategories,
   alerts,
 }: AdminDashboardClientProps) {
   // One number on the card: everything waiting on a decision. Splitting reports
@@ -84,10 +99,28 @@ export function AdminDashboardClient({
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Users", value: stats.totalUsers.toLocaleString(), icon: "👥" },
-          { label: "Active Today", value: stats.activeToday.toLocaleString(), icon: "📱" },
-          { label: "Questions", value: stats.totalQuestions.toLocaleString(), icon: "❓" },
-          { label: "Quizzes Taken", value: stats.totalAttempts.toLocaleString(), icon: "📝" },
+          {
+            label: stats.suspendedUsers > 0 ? `Accounts (${stats.suspendedUsers} suspended)` : "Accounts",
+            value: stats.totalUsers.toLocaleString(),
+            icon: "👥",
+          },
+          {
+            label: "Players today",
+            value: stats.activeToday.toLocaleString(),
+            icon: "📱",
+            hint: `${stats.activeWeek.toLocaleString()} this week`,
+          },
+          {
+            label: "Scholar approved",
+            value: `${stats.scholarApproved.toLocaleString()} / ${stats.totalQuestions.toLocaleString()}`,
+            icon: "❓",
+          },
+          {
+            label: "Answers given",
+            value: stats.totalAttempts.toLocaleString(),
+            icon: "📝",
+            hint: `${stats.accuracyPct}% correct`,
+          },
         ].map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -98,9 +131,12 @@ export function AdminDashboardClient({
             <PremiumCard className="p-4">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{stat.icon}</span>
-                <div>
+                <div className="min-w-0">
                   <p className="font-bold text-2xl text-primary">{stat.value}</p>
                   <p className="text-sm text-on-surface-variant">{stat.label}</p>
+                  {"hint" in stat && stat.hint && (
+                    <p className="text-xs text-on-surface-variant/70">{stat.hint}</p>
+                  )}
                 </div>
               </div>
             </PremiumCard>
@@ -136,30 +172,6 @@ export function AdminDashboardClient({
               </PremiumCard>
             </Link>
           ))}
-        </div>
-      </motion.div>
-
-      {/* Top Categories */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="mb-8"
-      >
-        <h2 className="font-headline-md text-headline-md text-on-surface mb-4">Categories</h2>
-        <div className="glass-card p-6">
-          {topCategories.length === 0 ? (
-            <p className="text-on-surface-variant text-center py-4">No categories yet.</p>
-          ) : (
-            <div className="space-y-3">
-              {topCategories.map((category) => (
-                <div key={category.id} className="flex items-center justify-between p-3 bg-surface-container/50 rounded-lg">
-                  <span className="font-medium text-on-surface">{category.name}</span>
-                  <PremiumBadge variant="secondary">{category.questions?.[0]?.count ?? 0} questions</PremiumBadge>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </motion.div>
 
