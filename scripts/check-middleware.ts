@@ -11,6 +11,7 @@
  * middleware itself uses, so this cannot pass against a policy the app has
  * stopped using.
  */
+import { readFileSync } from 'node:fs';
 import { isPublicPath, MIDDLEWARE_MATCHER } from '../src/lib/auth-routes';
 
 let failures = 0;
@@ -86,6 +87,23 @@ for (const asset of [
 // Real pages must still go through it, or the deny-by-default does nothing.
 for (const page of ['/home', '/admin', '/admin/users', '/profile', '/quiz/a/1']) {
   check(`page goes through middleware: ${page}`, runs(page), true);
+}
+
+// --- the matcher must be an inline literal in src/middleware.ts ------------
+// Next.js reads `config` by static analysis and cannot follow an import. When
+// it could not, it dropped the matcher and ran the middleware on everything,
+// redirecting every static asset — including the JS chunks the login page
+// needs — to /login for signed-out visitors. The build only warned and still
+// exited 0, so nothing failed. This is that missing failure.
+{
+  const src = readFileSync(new URL('../src/middleware.ts', import.meta.url), 'utf8');
+
+  const literalPresent = src.includes(JSON.stringify(MIDDLEWARE_MATCHER));
+  check('middleware.ts inlines the matcher literal', literalPresent, true);
+
+  const configBlock = src.slice(src.indexOf('export const config'));
+  const referencesIdentifier = /matcher:\s*\[\s*[A-Za-z_$]/.test(configBlock);
+  check('config.matcher is not an imported identifier', referencesIdentifier, false);
 }
 
 console.log(failures === 0 ? '\nALL PASS' : `\n${failures} FAILURE(S)`);
