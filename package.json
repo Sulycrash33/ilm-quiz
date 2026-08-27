@@ -13,7 +13,8 @@
     "test:engine": "tsx scripts/check-hunt-engine.ts",
     "test:i18n": "tsx scripts/check-i18n.ts",
     "seed:build": "tsx scripts/seed-content/emit.ts",
-    "vapid:keys": "node scripts/vapid-keys.mjs"
+    "vapid:keys": "node scripts/vapid-keys.mjs",
+    "test:middleware": "tsx scripts/check-middleware.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
