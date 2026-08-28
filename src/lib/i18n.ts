@@ -709,6 +709,11 @@ export interface Translations {
   howItWorksRuleRandom: string
   howItWorksRankTitle: string
   howItWorksRankBody: string
+  howItWorksRunTitle: string
+  howItWorksRunBody: string
+  howItWorksRuleLives: string
+  howItWorksRuleTimeout: string
+  howItWorksRulePace: string
   howItWorksRankFooter: string
   startFirstLevel: string
   skipExplainer: string
@@ -1426,6 +1431,11 @@ const enTranslations: Translations = {
   howItWorksRuleRandom: "The order is shuffled every run, so you learn the answer, not the position",
   howItWorksRankTitle: "What you are climbing toward",
   howItWorksRankBody: "XP carries across every category and moves you up nine ranks, from {first} to {last}.",
+  howItWorksRunTitle: "Every question is timed",
+  howItWorksRunBody: "The clock starts the moment a question appears. Level 1 allows {seconds} seconds; the ninth level allows {max}.",
+  howItWorksRuleLives: "{lives} lives. A wrong answer costs one.",
+  howItWorksRuleTimeout: "Letting the clock run out costs a life as well, and counts as a miss.",
+  howItWorksRulePace: "Answering quickly raises your pace score for the run. It does not change the XP a correct answer earns.",
   howItWorksRankFooter: "{xp} XP reaches the top rank. Nobody gets there quickly — that is rather the point.",
   startFirstLevel: "Start {category}, level 1",
   skipExplainer: "Skip — take me to the app",
@@ -2144,6 +2154,11 @@ const msTranslations: Translations = {
   howItWorksRuleRandom: "Susunan dikocok setiap kali, supaya anda belajar jawapannya, bukan kedudukannya",
   howItWorksRankTitle: "Apa yang anda daki",
   howItWorksRankBody: "XP terkumpul merentas semua kategori dan menaikkan anda sembilan pangkat, dari {first} ke {last}.",
+  howItWorksRunTitle: "Setiap soalan berjadual masa",
+  howItWorksRunBody: "Jam bermula sebaik soalan muncul. Tahap 1 memberi {seconds} saat; tahap kesembilan memberi {max}.",
+  howItWorksRuleLives: "{lives} nyawa. Jawapan salah mengurangkan satu.",
+  howItWorksRuleTimeout: "Membiarkan masa habis juga mengurangkan satu nyawa, dan dikira sebagai tersilap.",
+  howItWorksRulePace: "Menjawab dengan pantas menaikkan skor rentak anda bagi pusingan itu. Ia tidak mengubah XP yang diperoleh daripada jawapan betul.",
   howItWorksRankFooter: "{xp} XP mencapai pangkat tertinggi. Tiada siapa sampai dengan cepat — itulah maksudnya.",
   startFirstLevel: "Mulakan {category}, tahap 1",
   skipExplainer: "Langkau — bawa saya ke aplikasi",
@@ -2862,6 +2877,11 @@ const idTranslations: Translations = {
   howItWorksRuleRandom: "Urutannya diacak setiap kali, jadi kamu menghafal jawabannya, bukan posisinya",
   howItWorksRankTitle: "Yang sedang kamu daki",
   howItWorksRankBody: "XP terkumpul lintas kategori dan menaikkan kamu sembilan peringkat, dari {first} ke {last}.",
+  howItWorksRunTitle: "Setiap soal punya batas waktu",
+  howItWorksRunBody: "Waktu mulai begitu soal muncul. Tingkat 1 memberi {seconds} detik; tingkat kesembilan memberi {max}.",
+  howItWorksRuleLives: "{lives} nyawa. Jawaban salah mengurangi satu.",
+  howItWorksRuleTimeout: "Membiarkan waktu habis juga mengurangi satu nyawa, dan dihitung sebagai salah.",
+  howItWorksRulePace: "Menjawab cepat menaikkan skor tempo untuk ronde itu. Itu tidak mengubah XP dari jawaban benar.",
   howItWorksRankFooter: "{xp} XP mencapai peringkat puncak. Tak ada yang sampai dengan cepat — memang begitu maksudnya.",
   startFirstLevel: "Mulai {category}, tingkat 1",
   skipExplainer: "Lewati — bawa saya ke aplikasi",
@@ -3580,6 +3600,11 @@ const haTranslations: Translations = {
   howItWorksRuleRandom: "Ana gauraya tsarin kowane lokaci, don ka koyi amsar, ba wurinta ba",
   howItWorksRankTitle: "Abin da kake hawa zuwa gare shi",
   howItWorksRankBody: "XP na tarawa a duk kashi kuma yana ɗaga ka darajoji tara, daga {first} zuwa {last}.",
+  howItWorksRunTitle: "Kowace tambaya tana da lokaci",
+  howItWorksRunBody: "Agogo yana farawa daidai lokacin da tambaya ta bayyana. Mataki na 1 yana ba da daƙiƙa {seconds}; mataki na tara yana ba da {max}.",
+  howItWorksRuleLives: "Rayuka {lives}. Amsa mara daidai tana rage ɗaya.",
+  howItWorksRuleTimeout: "Barin lokaci ya ƙare shi ma yana rage rai ɗaya, kuma ana ƙidaya shi a matsayin kuskure.",
+  howItWorksRulePace: "Amsa da sauri yana ɗaga makin gudunka a wannan zagaye. Ba ya canza XP da amsa daidai take samu.",
   howItWorksRankFooter: "XP {xp} ne ke kai wa daraja mafi girma. Ba wanda ya kai wurin da sauri — hakan ne manufar.",
   startFirstLevel: "Fara {category}, mataki na 1",
   skipExplainer: "Tsallake — kai ni cikin manhajar",
@@ -4298,6 +4323,11 @@ const frTranslations: Translations = {
   howItWorksRuleRandom: "L'ordre change à chaque partie : vous apprenez la réponse, pas sa position",
   howItWorksRankTitle: "Ce que vous gravissez",
   howItWorksRankBody: "L'XP se cumule sur toutes les catégories et vous fait monter de neuf rangs, de {first} à {last}.",
+  howItWorksRunTitle: "Chaque question est chronométrée",
+  howItWorksRunBody: "Le compte à rebours démarre dès que la question apparaît. Le niveau 1 accorde {seconds} secondes ; le neuvième en accorde {max}.",
+  howItWorksRuleLives: "{lives} vies. Une mauvaise réponse en coûte une.",
+  howItWorksRuleTimeout: "Laisser le temps s'écouler coûte également une vie et compte comme une erreur.",
+  howItWorksRulePace: "Répondre vite augmente votre score de rythme pour la manche. Cela ne change pas l'XP qu'une bonne réponse rapporte.",
   howItWorksRankFooter: "{xp} XP pour atteindre le dernier rang. Personne n'y arrive vite — c'est justement l'idée.",
   startFirstLevel: "Commencer {category}, niveau 1",
   skipExplainer: "Passer — aller à l'application",
@@ -5016,6 +5046,11 @@ const arTranslations: Translations = {
   howItWorksRuleRandom: "يُخلط الترتيب في كل جولة، فتحفظ الإجابة لا موضعها",
   howItWorksRankTitle: "إلى أين ترتقي",
   howItWorksRankBody: "تتراكم نقاط الخبرة عبر الفئات كلها وترفعك تسع مراتب، من {first} إلى {last}.",
+  howItWorksRunTitle: "كل سؤال موقوت",
+  howItWorksRunBody: "يبدأ العد لحظة ظهور السؤال. المستوى الأول يمنحك {seconds} ثانية، والمستوى التاسع يمنحك {max}.",
+  howItWorksRuleLives: "لديك {lives} محاولات. الإجابة الخاطئة تكلفك واحدة.",
+  howItWorksRuleTimeout: "نفاد الوقت يكلفك محاولة أيضاً، ويُحتسب خطأً.",
+  howItWorksRulePace: "الإجابة السريعة ترفع نقاط إيقاعك في الجولة. ولا تغيّر نقاط الخبرة التي تمنحها الإجابة الصحيحة.",
   howItWorksRankFooter: "{xp} نقطة خبرة تبلغ المرتبة العليا. لا أحد يصلها سريعاً — وهذا هو المقصود.",
   startFirstLevel: "ابدأ {category}، المستوى الأول",
   skipExplainer: "تخطَّ — خذني إلى التطبيق",

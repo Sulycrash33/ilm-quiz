@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { AVATARS, AvatarArt, type AvatarGender } from "@/components/avatars/avatar-art"
+import { SoundToggle } from "@/components/profile/SoundToggle"
 
 /**
  * Avatar picker.
@@ -78,6 +79,11 @@ export default function AvatarSelectionPage() {
 
   return (
     <div dir={dir} className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
+      {/* Sound is off by default, so the only way to turn it on was to find
+          the profile — after onboarding has already started playing cues. */}
+      <div className="absolute top-4 right-4 z-20">
+        <SoundToggle compact />
+      </div>
       <NamesOfAllahBackdrop />
       <div className="absolute left-4 top-4 z-20">
         <Button asChild variant="ghost">

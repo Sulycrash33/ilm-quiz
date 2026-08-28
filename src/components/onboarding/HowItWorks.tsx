@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, CheckCircle2, Lock, Play } from "lucide-react";
+import { ArrowRight, CheckCircle2, Heart, Lock, Play, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RANKS } from "@/lib/constants";
+import { HUNT_RULES, TIER_MAX, TIER_MIN, timeLimitForTier } from "@/lib/hunt-engine";
+import { SoundToggle } from "@/components/profile/SoundToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { markOnboardingSeen } from "@/app/onboarding/how-it-works/actions";
 
@@ -19,7 +21,7 @@ interface HowItWorksProps {
   tierOneCount: number;
 }
 
-const PANELS = 3;
+const PANELS = 4;
 
 /**
  * The three screens that explain the game.
@@ -29,10 +31,16 @@ const PANELS = 3;
  * A new player saw a dashboard and a row of padlocks and had to infer the
  * rules from them. Progression that nobody notices may as well not exist.
  *
- * Three panels, in the order the questions actually occur to someone:
- * what is this shape, what does it take to move, and what am I climbing
- * toward. Then straight into the first level rather than back to a dashboard,
- * because the fastest way to understand a ladder is to stand on it.
+ * Four panels, in the order the questions actually occur to someone:
+ * what is this shape, what does it take to move, what happens during a run,
+ * and what am I climbing toward. Then straight into the first level rather
+ * than back to a dashboard, because the fastest way to understand a ladder is
+ * to stand on it.
+ *
+ * The run panel was added after a tester reported not realising the questions
+ * were timed until "Time's up!" appeared. Nothing here had ever mentioned the
+ * clock or the three lives — the explainer described the ladder and the ranks
+ * and skipped the part the player actually experiences.
  */
 export function HowItWorks({ startSlug, startName, startIcon, tierOneCount }: HowItWorksProps) {
   const { t, dir } = useLanguage();
@@ -61,6 +69,12 @@ export function HowItWorks({ startSlug, startName, startIcon, tierOneCount }: Ho
       dir={dir}
       className="relative flex min-h-[100dvh] flex-col items-center justify-between bg-background px-4 py-8"
     >
+      {/* The explainer is where a player first hears a cue, so it is also the
+          first place the switch is any use. */}
+      <div className="absolute end-4 top-4 z-20">
+        <SoundToggle compact />
+      </div>
+
       <div className="flex w-full max-w-md flex-1 flex-col justify-center">
         <AnimatePresence mode="wait">
           <motion.div
@@ -73,7 +87,8 @@ export function HowItWorks({ startSlug, startName, startIcon, tierOneCount }: Ho
           >
             {panel === 0 && <LadderPanel />}
             {panel === 1 && <ClearingPanel count={tierOneCount} />}
-            {panel === 2 && <RankPanel />}
+            {panel === 2 && <RunPanel />}
+            {panel === 3 && <RankPanel />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -189,7 +204,39 @@ function Rule({ icon, text }: { icon: React.ReactNode; text: string }) {
   );
 }
 
-/** Panel 3 — the destination: the rank ladder the XP is climbing. */
+/**
+ * Panel 3 — what a run is actually like: a clock and three lives.
+ *
+ * The numbers come from `HUNT_RULES` rather than the copy, so the screen
+ * cannot promise a timer the engine does not give. A tester played a whole
+ * run without realising it was timed, which is a failure of this screen, not
+ * of their attention.
+ */
+function RunPanel() {
+  const { t } = useLanguage();
+  return (
+    <>
+      <h1 className="font-headline text-3xl text-primary">{t("howItWorksRunTitle")}</h1>
+      <p className="mx-auto max-w-prose text-on-surface-variant">
+        {t("howItWorksRunBody", {
+          seconds: timeLimitForTier(TIER_MIN),
+          max: timeLimitForTier(TIER_MAX),
+        })}
+      </p>
+
+      <div className="mx-auto max-w-xs space-y-2 text-start">
+        <Rule
+          icon={<Heart className="h-4 w-4 text-error" />}
+          text={t("howItWorksRuleLives", { lives: HUNT_RULES.startingLives })}
+        />
+        <Rule icon={<Timer className="h-4 w-4 text-tertiary" />} text={t("howItWorksRuleTimeout")} />
+        <Rule icon={<CheckCircle2 className="h-4 w-4 text-primary" />} text={t("howItWorksRulePace")} />
+      </div>
+    </>
+  );
+}
+
+/** Panel 4 — the destination: the rank ladder the XP is climbing. */
 function RankPanel() {
   const { t } = useLanguage();
   const first = RANKS[0];

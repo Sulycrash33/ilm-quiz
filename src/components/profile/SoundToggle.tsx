@@ -17,8 +17,14 @@ import { isSoundEnabled, setSoundEnabled, playCue } from "@/lib/sound"
  * confirms the switch worked and lets the player hear the volume before they
  * are mid-run, and the tap itself is the user gesture browsers require before
  * an AudioContext may start.
+ *
+ * `compact` renders the same control as a single icon button for the corner of
+ * a setup page. Sound is off by default, so a player who wants it on had to
+ * find the profile to say so — which is the wrong order, because the first
+ * thing the app does after onboarding is play cues at them. One component with
+ * two shapes rather than two components, so the storage rule has one home.
  */
-export function SoundToggle() {
+export function SoundToggle({ compact = false }: { compact?: boolean }) {
   const { t } = useLanguage()
   const [enabled, setEnabled] = useState(false)
   const [ready, setReady] = useState(false)
@@ -33,6 +39,28 @@ export function SoundToggle() {
     setEnabled(next)
     setSoundEnabled(next)
     if (next) playCue("correct")
+  }
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        role="switch"
+        aria-checked={enabled}
+        aria-label={enabled ? t("soundOn") : t("soundOff")}
+        title={enabled ? t("soundOn") : t("soundOff")}
+        onClick={toggle}
+        className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-surface-container/80 backdrop-blur-sm transition-colors hover:bg-surface-container-highest ${
+          ready ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {enabled ? (
+          <Volume2 className="h-5 w-5 text-primary" aria-hidden="true" />
+        ) : (
+          <VolumeX className="h-5 w-5 text-on-surface-variant" aria-hidden="true" />
+        )}
+      </button>
+    )
   }
 
   return (
