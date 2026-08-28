@@ -1,19 +1,34 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Trophy, HeartCrack, Flame, Target, Gauge, Sparkles } from "lucide-react";
+import { Trophy, HeartCrack, Flame, Target, Gauge, Sparkles, BookOpen, Check, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { RunSummary as RunSummaryData } from "@/lib/hunt-engine";
 import { rankProgress, rankUpBetween } from "@/lib/ranks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { playCue } from "@/lib/sound";
+
+/** One question as the summary retells it. Mirrors the shape HuntView keeps. */
+export interface RunReviewEntry {
+  stage: number;
+  text: string;
+  options: string[];
+  chosenIndex: number | null;
+  correctIndex: number | null;
+  explanation: string;
+  citation: string;
+  timedOut: boolean;
+}
 
 interface RunSummaryProps {
   summary: RunSummaryData;
   /** Profile XP before this run, used to work out the rank climb. */
   xpBefore: number;
+  /** Every question of the run, in order, so the screen can teach from it
+   *  rather than only score it. Empty for a run that answered nothing. */
+  review?: RunReviewEntry[];
   onPlayAgain: () => void;
   onExit: () => void;
 }
@@ -27,8 +42,9 @@ interface RunSummaryProps {
  * — the part that makes a run feel like progress rather than a score — where
  * the run left the seeker on the nine-rank climb.
  */
-export function RunSummary({ summary, xpBefore, onPlayAgain, onExit }: RunSummaryProps) {
+export function RunSummary({ summary, xpBefore, review = [], onPlayAgain, onExit }: RunSummaryProps) {
   const { t } = useLanguage();
+  const [showReview, setShowReview] = useState(false);
   const won = summary.status === "won";
   const reduce = useReducedMotion();
 
@@ -153,6 +169,39 @@ export function RunSummary({ summary, xpBefore, onPlayAgain, onExit }: RunSummar
         </div>
       </div>
 
+      {/* The round review.
+          A tester asked for "an overview of scores after each round and the
+          correct answers to each question as well as an explanation" — the
+          scores were already here, the questions were not. Collapsed by
+          default so the screen still reads as a payoff first; a run of twenty
+          would otherwise bury the rank bar under a wall of text. */}
+      {review.length > 0 && (
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => setShowReview((v) => !v)}
+            aria-expanded={showReview}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-on-surface transition-colors hover:bg-white/5"
+          >
+            <BookOpen className="h-4 w-4 text-secondary" aria-hidden="true" />
+            {showReview ? t("roundReviewHide") : t("roundReviewShow")}
+          </button>
+
+          {showReview && (
+            <div className="space-y-3">
+              <div className="text-center">
+                <h3 className="font-headline text-lg text-on-surface">{t("roundReviewTitle")}</h3>
+                <p className="text-xs text-on-surface-variant">{t("roundReviewHint")}</p>
+              </div>
+
+              {review.map((entry) => (
+                <ReviewCard key={`${entry.stage}-${entry.text.slice(0, 24)}`} entry={entry} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button size="lg" className="flex-1" onClick={onPlayAgain}>
           {t("playAgain")}
@@ -200,6 +249,87 @@ function Row({ label, value }: { label: string; value: string | number }) {
     <div>
       <dt className="text-xs text-on-surface-variant">{label}</dt>
       <dd className="font-semibold tabular-nums text-on-surface">{value}</dd>
+    </div>
+  );
+}
+
+/**
+ * One question, retold.
+ *
+ * A timed-out question shows the text and says so rather than revealing the
+ * answer. The client is only ever told the right answer by a graded
+ * submission, and a run-over endpoint that handed answers back for any
+ * question would be a lookup table for the whole bank — a worse trade than
+ * the one life a wrong guess currently costs.
+ */
+function ReviewCard({ entry }: { entry: RunReviewEntry }) {
+  const { t } = useLanguage();
+  const gotIt = entry.correctIndex !== null && entry.chosenIndex === entry.correctIndex;
+
+  return (
+    <div
+      className={cn(
+        "space-y-2 rounded-xl border p-4",
+        entry.timedOut
+          ? "border-white/10 bg-surface-container"
+          : gotIt
+            ? "border-primary/30 bg-primary/5"
+            : "border-error/30 bg-error/5",
+      )}
+    >
+      <div className="flex items-start gap-2">
+        <span className="mt-0.5 shrink-0">
+          {entry.timedOut ? (
+            <Clock className="h-4 w-4 text-on-surface-variant" aria-hidden="true" />
+          ) : gotIt ? (
+            <Check className="h-4 w-4 text-primary" aria-hidden="true" />
+          ) : (
+            <X className="h-4 w-4 text-error" aria-hidden="true" />
+          )}
+        </span>
+        <p className="text-sm font-medium text-on-surface">{entry.text}</p>
+      </div>
+
+      <ol className="space-y-1 ps-6">
+        {entry.options.map((option, i) => {
+          const isCorrect = entry.correctIndex === i;
+          const isChosen = entry.chosenIndex === i;
+          return (
+            <li
+              key={i}
+              className={cn(
+                "text-sm",
+                isCorrect
+                  ? "font-semibold text-primary"
+                  : isChosen
+                    ? "text-error line-through"
+                    : "text-on-surface-variant",
+              )}
+            >
+              {String.fromCharCode(65 + i)}. {option}
+              {isCorrect && ` — ${t("roundReviewCorrectAnswer")}`}
+              {isChosen && !isCorrect && ` — ${t("roundReviewYourAnswer")}`}
+            </li>
+          );
+        })}
+      </ol>
+
+      {entry.timedOut ? (
+        <p className="ps-6 text-xs italic text-on-surface-variant">
+          {t("roundReviewNotAnswered")}. {t("roundReviewTimedOutNote")}
+        </p>
+      ) : (
+        entry.explanation && (
+          <div className="ps-6">
+            <p className="text-sm leading-relaxed text-on-surface-variant">{entry.explanation}</p>
+            {entry.citation && (
+              <p className="mt-1 text-xs italic text-on-surface-variant/80">
+                {t("sourceLabel")}: {entry.citation}
+              </p>
+            )}
+          </div>
+        )
+      )}
     </div>
   );
 }

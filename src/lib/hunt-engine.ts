@@ -318,6 +318,25 @@ export const CLASSIC_RULES: ModeRules = {
 };
 
 /**
+ * Whether a mode exists to teach rather than to pressure.
+ *
+ * Two things hang off this: the reveal is held until the player dismisses it
+ * rather than vanishing after 2.6 seconds, and a run can be paused. Both would
+ * be exploits in a mode that scores hesitation — Speed Round charges for the
+ * time you spend thinking, and Survival is meant to be relentless — so neither
+ * gets them.
+ *
+ * Derived rather than stored. `runSeconds` marks a mode that times the whole
+ * run, and `endless` marks one that is meant to grind you down; a mode with
+ * neither is one where stopping to read costs nothing anyone is scoring. That
+ * picks out classic and practice exactly, and keeps the rule in one place
+ * instead of a column that would have to be kept in step with four rows.
+ */
+export function isLearningMode(rules: ModeRules): boolean {
+  return rules.runSeconds === null && !rules.endless;
+}
+
+/**
  * A mode without lives still needs a number, because the engine subtracts from
  * it on every miss. This is large enough that no realistic run reaches zero,
  * which is what "cannot be lost" means in practice.

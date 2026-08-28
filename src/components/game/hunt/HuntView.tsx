@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Lightbulb } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { ArrowLeft, Lightbulb, Pause, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { rankFor } from "@/lib/ranks";
@@ -18,6 +18,8 @@ import {
   buildTierLadder,
   currentQuestion,
   initialState,
+  isLearningMode,
+  type HuntQuestion,
   makeRng,
   spendLifeline as markLifelineSpent,
   summarize,
@@ -39,7 +41,7 @@ import { HuntHeader } from "./HuntHeader";
 import { QuestionCard } from "./QuestionCard";
 import { OptionTile, type OptionState } from "./OptionTile";
 import { LifelineDock } from "./LifelineDock";
-import { RunSummary } from "./RunSummary";
+import { RunSummary, type RunReviewEntry } from "./RunSummary";
 
 interface HuntViewProps {
   questions: QuizQuestion[];
@@ -94,6 +96,7 @@ export function HuntView({
   const { t, dir } = useLanguage();
   const { toast } = useToast();
   const { profile, refresh: refreshProfile } = useProfile();
+  const reduceMotion = useReducedMotion();
 
   // A run is seeded once per mount (and once per "play again"), so the ladder
   // is stable across re-renders but different every time you play.
@@ -134,6 +137,15 @@ export function HuntView({
   const [pendingLifeline, setPendingLifeline] = useState<string | null>(null);
   const [showImam, setShowImam] = useState(false);
   const [particles, setParticles] = useState(false);
+  /** Set while the reveal is waiting to be dismissed by hand. Only ever true
+   *  in a learning mode; elsewhere the reveal still advances on a timer. */
+  const [holding, setHolding] = useState(false);
+  /** A deliberate stop, offered only where hesitating costs nobody anything. */
+  const [paused, setPaused] = useState(false);
+  /** Every question of the run, kept so the summary can teach from it. The
+   *  engine does not carry this: it is presentation, and `HuntState` should
+   *  stay the smallest thing that decides a run. */
+  const [review, setReview] = useState<RunReviewEntry[]>([]);
   const [coins, setCoins] = useState(0);
   // Owned lifeline stock, seeded from the server and decremented as it is spent
   // (migration 0008: a stocked lifeline is consumed instead of charged).
@@ -147,10 +159,25 @@ export function HuntView({
 
   const question = currentQuestion(state);
   const finished = state.status === "won" || state.status === "lost";
-  const locked = selected !== null || grading || finished;
+  const locked = selected !== null || grading || finished || paused;
+
+  /** Whether this run holds the reveal and offers a pause. Practice and the
+   *  classic level runs do; Survival and Speed Round do not, because both
+   *  score the time a player spends thinking. */
+  const learning = isLearningMode(rules);
+  /** A pause is only meaningful where a question clock is running. */
+  const canPause = learning && rules.perQuestionTimer && !finished && !holding;
 
   const questionStartedAt = useRef(Date.now());
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** The graded outcome waiting on a dismissal, in a mode that holds the
+   *  reveal. Kept in a ref because it is not rendered — only applied. */
+  const pendingAdvance = useRef<{ correct: boolean; xpEarned: number; msLeft: number } | null>(null);
+  /** When the current pause started, so the time spent paused can be given
+   *  back. The question is hidden while paused, so that time was never
+   *  thinking time — counting it would quietly forfeit the pace bonus and
+   *  record a response time of several minutes on an attempt. */
+  const pausedAt = useRef<number | null>(null);
   const runRecorded = useRef(false);
   /**
    * Stage the clock has already run out on. Without this the timeout can fire
@@ -174,6 +201,9 @@ export function HuntView({
     setEliminated([]);
     setDoublePoints(false);
     setUsedHint(false);
+    setHolding(false);
+    setPaused(false);
+    pausedAt.current = null;
     setRemaining(question.timeLimit);
     questionStartedAt.current = Date.now();
   }, [question?.id, question?.stage]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -183,9 +213,27 @@ export function HuntView({
   }, []);
 
   const handleTimeout = useCallback(
-    (stage: number) => {
-      if (timedOutStage.current === stage) return;
-      timedOutStage.current = stage;
+    (expired: HuntQuestion) => {
+      if (timedOutStage.current === expired.stage) return;
+      timedOutStage.current = expired.stage;
+
+      // Recorded here rather than inside the updater below: a state updater
+      // must stay pure, and React may call it twice — which would put this
+      // question in the review list twice.
+      setReview((r) => [
+        ...r,
+        {
+          stage: expired.stage,
+          text: expired.text,
+          options: expired.options,
+          chosenIndex: null,
+          correctIndex: null,
+          explanation: "",
+          citation: "",
+          timedOut: true,
+        },
+      ]);
+
       setState((prev) => applyTimeout(prev));
       toast({ title: t("timesUp"), variant: "destructive" });
     },
@@ -223,7 +271,7 @@ export function HuntView({
     if (!rules.perQuestionTimer) return;
     if (!question || locked) return;
     if (remaining > 0) return;
-    handleTimeout(question.stage);
+    handleTimeout(question);
   }, [remaining, question, locked, handleTimeout, rules.perQuestionTimer]);
 
   /**
@@ -322,7 +370,29 @@ export function HuntView({
         setTimeout(() => setParticles(false), 1000);
       }
 
-      // Hold the reveal, then let the engine decide what happens next.
+      setReview((prev) => [
+        ...prev,
+        {
+          stage: question.stage,
+          text: question.text,
+          options: question.options,
+          chosenIndex: index,
+          correctIndex: result.correctIndex,
+          explanation: result.explanation,
+          citation: result.citation,
+          timedOut: false,
+        },
+      ]);
+
+      // In a learning mode the reveal waits for the player. Everywhere else it
+      // still advances on its own, because a mode that scores hesitation
+      // cannot also let you stop the world to read.
+      if (learning) {
+        setHolding(true);
+        pendingAdvance.current = { correct: result.correct, xpEarned: result.xpEarned, msLeft };
+        return;
+      }
+
       advanceTimer.current = setTimeout(() => {
         setState((prev) =>
           applyAnswer(prev, { correct: result.correct, xpEarned: result.xpEarned, msLeft }),
@@ -403,9 +473,40 @@ export function HuntView({
     void refreshProfile();
   };
 
+  /**
+   * Dismisses a held reveal and lets the run continue.
+   *
+   * The outcome was decided the moment the answer was graded; this only
+   * releases it. Reading for a minute cannot change what the run scored,
+   * which is why holding the reveal is safe in the first place.
+   */
+  const setPausedTracking = (next: boolean) => {
+    if (next) {
+      pausedAt.current = Date.now();
+    } else if (pausedAt.current !== null) {
+      // Hand the paused span back to the question's clock reading.
+      questionStartedAt.current += Date.now() - pausedAt.current;
+      pausedAt.current = null;
+    }
+    setPaused(next);
+  };
+
+  const dismissReveal = () => {
+    const pending = pendingAdvance.current;
+    pendingAdvance.current = null;
+    setHolding(false);
+    if (!pending) return;
+    setState((prev) => applyAnswer(prev, pending));
+  };
+
   const playAgain = () => {
     runRecorded.current = false;
     xpAtStart.current = profile?.totalXp ?? xpAtStart.current;
+    setReview([]);
+    setHolding(false);
+    setPaused(false);
+    pausedAt.current = null;
+    pendingAdvance.current = null;
     setSeed(Math.floor(Math.random() * 2 ** 31));
   };
 
@@ -416,6 +517,11 @@ export function HuntView({
     setRemaining(ladder[0]?.timeLimit ?? 30);
     setRunRemaining(rules.runSeconds ?? 0);
     timedOutStage.current = -1;
+    setReview([]);
+    setHolding(false);
+    setPaused(false);
+    pausedAt.current = null;
+    pendingAdvance.current = null;
   }, [ladder]);
 
   if (ladder.length === 0) {
@@ -442,6 +548,7 @@ export function HuntView({
         )}
         <RunSummary
           summary={summarize(state)}
+          review={review}
           xpBefore={xpAtStart.current ?? 0}
           onPlayAgain={playAgain}
           onExit={onExit}
@@ -513,7 +620,24 @@ export function HuntView({
         frozen={rules.runSeconds !== null ? false : locked}
       />
 
-      <QuestionCard text={question.text} questionId={question.id} />
+      {paused ? (
+        /* The question is hidden, not just frozen. A pause that leaves it on
+           screen is free thinking time, which is the one thing the clock
+           exists to price. */
+        <div className="flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-white/10 bg-surface-container p-8 text-center">
+          <Pause className="h-10 w-10 text-primary" aria-hidden="true" />
+          <div className="space-y-1">
+            <h2 className="font-headline text-2xl text-on-surface">{t("pausedTitle")}</h2>
+            <p className="max-w-prose text-sm text-on-surface-variant">{t("pausedBody")}</p>
+          </div>
+          <Button onClick={() => setPausedTracking(false)} className="h-11 px-8">
+            <Play className="me-2 h-4 w-4" aria-hidden="true" />
+            {t("resumeLabel")}
+          </Button>
+        </div>
+      ) : (
+        <QuestionCard text={question.text} questionId={question.id} />
+      )}
 
       {doublePoints && (
         <p className="text-center text-sm font-semibold text-tertiary">
@@ -521,7 +645,7 @@ export function HuntView({
         </p>
       )}
 
-      <div className="grid gap-3">
+      <div className={`grid gap-3 ${paused ? "hidden" : ""}`}>
         {question.options.map((option, index) => (
           <OptionTile
             key={`${question.id}-${index}`}
@@ -534,26 +658,60 @@ export function HuntView({
         ))}
       </div>
 
+      {canPause && !paused && (
+        <button
+          type="button"
+          onClick={() => setPausedTracking(true)}
+          className="mx-auto inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-on-surface-variant transition-colors hover:bg-white/5"
+        >
+          <Pause className="h-4 w-4" aria-hidden="true" />
+          {t("pauseLabel")}
+        </button>
+      )}
+
       <AnimatePresence>
         {grade && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            initial={reduceMotion ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
             className="overflow-hidden rounded-xl border border-secondary/30 bg-secondary/10 p-4"
           >
             <div className="flex items-start gap-3">
               <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-secondary" aria-hidden="true" />
-              <div className="min-w-0 space-y-1">
+              <div className="min-w-0 flex-1 space-y-1">
                 <p className="font-semibold text-secondary">{t("whyItsRight")}</p>
-                <p className="text-sm leading-relaxed text-on-surface">{grade.explanation}</p>
-                {grade.citation && (
-                  <p className="text-xs italic text-on-surface-variant">
-                    {t("sourceLabel")}: {grade.citation}
-                  </p>
-                )}
+                {/* Capped and scrollable so a long explanation can be read in
+                    place instead of pushing the Continue button off screen. */}
+                <div className="max-h-56 overflow-y-auto pe-1">
+                  <p className="text-sm leading-relaxed text-on-surface">{grade.explanation}</p>
+                  {grade.citation && (
+                    <p className="mt-1 text-xs italic text-on-surface-variant">
+                      {t("sourceLabel")}: {grade.citation}
+                    </p>
+                  )}
+                </div>
               </div>
+
+              {/* The X only exists where the reveal waits. In a timed mode it
+                  would promise a control over a panel that is leaving anyway. */}
+              {holding && (
+                <button
+                  type="button"
+                  onClick={dismissReveal}
+                  aria-label={t("dismissExplanation")}
+                  className="-me-1 -mt-1 shrink-0 rounded-lg p-1.5 text-on-surface-variant transition-colors hover:bg-white/10 hover:text-on-surface"
+                >
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </button>
+              )}
             </div>
+
+            {holding && (
+              <Button onClick={dismissReveal} className="mt-4 h-11 w-full">
+                {t("continueLabel")}
+              </Button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

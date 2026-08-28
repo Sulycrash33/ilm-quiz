@@ -9,9 +9,26 @@
  */
 
 import {
-  buildLadder, buildTierLadder, initialState, applyAnswer, applyTimeout, applySkip, summarize,
-  comboMultiplier, speedBonus, currentQuestion, makeRng, HUNT_RULES, curveDifficulty,
-  curveTier, clampTier, timeLimitForTier, TIER_MIN, TIER_MAX,
+  buildLadder,
+  buildTierLadder,
+  initialState,
+  applyAnswer,
+  applyTimeout,
+  applySkip,
+  summarize,
+  comboMultiplier,
+  speedBonus,
+  currentQuestion,
+  makeRng,
+  HUNT_RULES,
+  curveDifficulty,
+  curveTier,
+  clampTier,
+  timeLimitForTier,
+  TIER_MIN,
+  TIER_MAX,
+  isLearningMode,
+  CLASSIC_RULES,
 } from '../src/lib/hunt-engine';
 import type { QuizQuestion } from '../src/lib/types';
 
@@ -221,6 +238,20 @@ const a = buildLadder(pool, { rng: makeRng(123) }).map((q) => q.id).join(',');
 const b = buildLadder(pool, { rng: makeRng(123) }).map((q) => q.id).join(',');
 check('same seed -> same ladder', a === b);
 check('different seed -> different ladder', a !== buildLadder(pool, { rng: makeRng(124) }).map((q) => q.id).join(','));
+
+// --- which modes hold the reveal and allow a pause
+// Derived from the rules rather than a mode name, so these assert the real
+// four rows in `game_mode_rules` as they stand.
+check('classic is a learning mode', isLearningMode(CLASSIC_RULES) === true);
+check('practice is a learning mode', isLearningMode({
+  lives: null, runSeconds: null, perQuestionTimer: false, endless: false,
+}) === true);
+check('survival is not a learning mode', isLearningMode({
+  lives: 3, runSeconds: null, perQuestionTimer: true, endless: true,
+}) === false);
+check('speed round is not a learning mode', isLearningMode({
+  lives: null, runSeconds: 120, perQuestionTimer: false, endless: true,
+}) === false);
 
 console.log(failures === 0 ? '\nALL PASS' : `\n${failures} FAILURE(S)`);
 process.exit(failures === 0 ? 0 : 1);
