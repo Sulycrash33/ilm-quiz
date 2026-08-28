@@ -9,6 +9,7 @@ import { motion } from "framer-motion"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 import type { Locale } from "@/lib/i18n"
+import { SoundToggle } from "@/components/profile/SoundToggle"
 
 const languages = [
   { name: "English", code: "en", flag: "gb", dir: "ltr" },
@@ -24,6 +25,11 @@ export default function LanguageSelectionPage() {
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4 py-6">
+      {/* Sound is off by default, so the only way to turn it on was to find
+          the profile — after onboarding has already started playing cues. */}
+      <div className="absolute top-4 right-4 z-20">
+        <SoundToggle compact />
+      </div>
       {/* Background */}
       <NamesOfAllahBackdrop />
       <div className="fixed inset-0 pointer-events-none z-0">

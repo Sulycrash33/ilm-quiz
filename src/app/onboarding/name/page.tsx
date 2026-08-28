@@ -12,6 +12,7 @@ import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
 import { Progress } from "@/components/ui/progress"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
+import { SoundToggle } from "@/components/profile/SoundToggle"
 
 export default function NameSelectionPage() {
   const router = useRouter()
@@ -28,6 +29,11 @@ export default function NameSelectionPage() {
 
   return (
     <div dir={dir} className="relative flex min-h-[100dvh] flex-col items-center justify-center bg-background p-4">
+      {/* Sound is off by default, so the only way to turn it on was to find
+          the profile — after onboarding has already started playing cues. */}
+      <div className="absolute top-4 right-4 z-20">
+        <SoundToggle compact />
+      </div>
       <NamesOfAllahBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost">

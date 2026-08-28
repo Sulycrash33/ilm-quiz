@@ -195,17 +195,36 @@ export function HuntView({
   /** The clock. Paused while a reveal is on screen or the run is over, and
    *  absent entirely in modes that do not time individual questions — Practice
    *  has no pressure at all, and Speed Round times the run rather than the
-   *  question. */
+   *  question.
+   *
+   *  `remaining` is deliberately NOT a dependency. It used to be, which meant
+   *  the interval was torn down and recreated on every tick: each new interval
+   *  started counting from whenever that render happened, so a tick was never
+   *  a whole second after the last one and the error accumulated. `TimerRing`
+   *  animates its arc with a 1000ms linear CSS transition, so the ring and the
+   *  number drifted apart and the arc visibly stuttered — it would finish its
+   *  sweep, sit still, then jump. That is the twitching a tester reported.
+   *
+   *  One interval per question now, using the functional update so it never
+   *  needs to read `remaining`. Reaching zero is watched separately below —
+   *  a state updater must stay pure, and React may call it twice. */
   useEffect(() => {
     if (!rules.perQuestionTimer) return;
     if (!question || locked) return;
-    if (remaining <= 0) {
-      handleTimeout(question.stage);
-      return;
-    }
+
     const id = setInterval(() => setRemaining((r) => Math.max(0, r - 1)), 1000);
     return () => clearInterval(id);
-  }, [question, locked, remaining, handleTimeout, rules.perQuestionTimer]);
+  }, [question, locked, rules.perQuestionTimer]);
+
+  /** Reaching zero, watched apart from the interval that causes it. This does
+   *  re-run as `remaining` changes, which is fine: it creates no timer, so
+   *  there is nothing to drift. `handleTimeout` is idempotent per stage. */
+  useEffect(() => {
+    if (!rules.perQuestionTimer) return;
+    if (!question || locked) return;
+    if (remaining > 0) return;
+    handleTimeout(question.stage);
+  }, [remaining, question, locked, handleTimeout, rules.perQuestionTimer]);
 
   /**
    * The run clock, for Speed Round.
