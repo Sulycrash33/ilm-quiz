@@ -29,6 +29,23 @@ import { NAMES_OF_ALLAH } from "@/data/names-of-allah"
  * second sits precisely where the first began.
  */
 
+/**
+ * How visible the names are.
+ *
+ * These are the dial. They were 0.10 and 0.07, which on a dark background
+ * read as almost nothing — the names were there but you had to look for
+ * them. Roughly doubled so they register the way a patterned wallpaper does:
+ * present, clearly the ninety-nine names, and still well under the contrast
+ * where they would compete with the text in front of them.
+ *
+ * Applied as inline opacity rather than a Tailwind opacity suffix on purpose.
+ * Tailwind only generates classes it can find as literal strings in the
+ * source, so `text-primary/[${SOMETHING}]` would silently produce no CSS at
+ * all. A number in a style attribute cannot fail that way.
+ */
+const ARABIC_OPACITY = 0.22
+const LATIN_OPACITY = 0.13
+
 /** How many independent drifting columns to lay down. Rendered at every size;
  * CSS hides the ones that will not fit. */
 const COLUMNS = [
@@ -72,11 +89,15 @@ export function NamesOfAllahBackdrop() {
                       <span
                         dir="rtl"
                         lang="ar"
-                        className="whitespace-nowrap text-xl leading-loose text-primary/[0.10]"
+                        className="whitespace-nowrap text-xl leading-loose text-primary"
+                        style={{ opacity: ARABIC_OPACITY }}
                       >
                         {name.arabic}
                       </span>
-                      <span className="whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-on-surface/[0.07]">
+                      <span
+                        className="whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-on-surface"
+                        style={{ opacity: LATIN_OPACITY }}
+                      >
                         {name.transliteration}
                       </span>
                     </div>

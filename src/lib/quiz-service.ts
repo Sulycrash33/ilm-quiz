@@ -88,7 +88,13 @@ export async function getCategoriesWithProgress(): Promise<QuizCategory[]> {
   const { data: cats } = await supabase
     .from('categories')
     .select('id, slug, name, description, icon')
-    .order('name');
+    // The curriculum order, not the alphabet. `sort_order` has always held a
+    // deliberate sequence — creed, then the names of Allah, then the pillars,
+    // then the Qur'an and the seerah, out through law and character to the
+    // contemporary questions last — and this grid ignored it, so a seeker met
+    // twenty-nine categories in an order that told them nothing about where to
+    // begin. It is NOT NULL, so every category has a place in it.
+    .order('sort_order');
   if (!cats) return [];
 
   // Both tallies are counted in the database — see migration 0029. Counting

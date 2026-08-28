@@ -27,7 +27,7 @@ export default async function ReviewPage() {
   const { data: categories } = await supabase
     .from('categories')
     .select('id, name')
-    .order('name');
+    .order('sort_order');
 
   const { data: pending } = await supabase
     .from('questions')
