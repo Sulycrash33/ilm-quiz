@@ -23,8 +23,9 @@ export default async function CategoriesPage() {
   // Fetch real categories with question counts
   const { data: categories } = await supabase
     .from('categories')
-    .select('id, name, slug, description, icon, questions(count)')
-    .order('name')
+    .select('id, name, slug, description, icon, sort_order, questions(count)')
+    // Same order the player sees, so a change here is judged in context.
+    .order('sort_order')
 
   return <CategoriesPageClient categories={categories ?? []} />
 }

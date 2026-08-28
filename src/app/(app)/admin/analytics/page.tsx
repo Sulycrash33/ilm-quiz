@@ -29,7 +29,7 @@ export default async function AnalyticsPage() {
   const { data: categoryStats } = await supabase
     .from('categories')
     .select('id, name, questions(count)')
-    .order('name')
+    .order('sort_order')
 
   return (
     <AnalyticsPageClient
