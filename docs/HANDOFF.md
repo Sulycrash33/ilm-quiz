@@ -21,7 +21,7 @@ ten-minute credential task only the owner can do, and the three holes below.
 | Average explanation | **125 characters, ~20 words** |
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | 5 |
-| Migrations | through **`0038`**, disk and database in step |
+| Migrations | through **`0039`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, **`test:middleware`** |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -116,24 +116,26 @@ exploit itself is an assertion in every one of them.
   can be removed and suspended from `/admin/users`, but nothing stops the same
   address signing up again.
 
-### The one thing to remove
+### The shim is gone
 
-Migration 0034 leaves a **deploy-window shim**: the old seven-argument
-`submit_quiz_answer` still resolves, so the client deployed at the time the
-migration landed kept working. It discards the two arguments that were the
-vulnerability and delegates, so calling it with `p_double_points => true`
-earns exactly single XP — but it should not become permanent. Drop it once
-production runs the deployed client:
+Migration 0034 left a deploy-window shim — the old seven-argument
+`submit_quiz_answer`, still resolving and delegating to the real one — so the
+client deployed at the moment the migration landed kept answering instead of
+failing with `PGRST202`. It discarded the two arguments that were the
+vulnerability, so it never earned anyone a doubled point.
 
-```sql
-drop function public.submit_quiz_answer(uuid, integer, boolean, integer, boolean, text, uuid);
-```
+**Migration 0039 removed it**, once `fe1cf88` was live on production and calling
+the four-argument signature. Verified against the live API: the old call now
+returns `PGRST202`, and the surviving signature is the one four-argument
+SECURITY DEFINER function, which `anon` is refused on. There is nothing left to
+remove here — the note is kept only so the next reader knows the shim existed
+and why, rather than finding its absence in a diff.
 
-`spend_lifeline_rpc` needed no shim: its two new parameters default to null,
-so an old one-argument call still resolves and simply writes no ledger row —
-which means the lifeline it buys earns nothing. Failing closed is the point.
-A one-argument overload beside it would have made that call *ambiguous* and
-broken it outright, which is the 0030 trap wearing the opposite face.
+`spend_lifeline_rpc` never needed a shim: its two new parameters default to
+null, so an old one-argument call still resolves and simply writes no ledger
+row — which means the lifeline it buys earns nothing. Failing closed is the
+point. A one-argument overload beside it would have made that call *ambiguous*
+and broken it outright, which is the 0030 trap wearing the opposite face.
 
 ## The traps that will cost you a day
 

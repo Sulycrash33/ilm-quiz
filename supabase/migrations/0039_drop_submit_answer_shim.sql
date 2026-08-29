@@ -1,0 +1,23 @@
+-- Migration 0039: the deploy-window shim comes out.
+--
+-- Migration 0034 removed `p_double_points` and `p_lifeline_used` from
+-- `submit_quiz_answer` and left the old seven-argument signature resolving
+-- beside the new one, delegating to it. That was for the deploy window only:
+-- the migration lands on the live database before the client that calls the
+-- new shape is deployed, and without the shim every answer in production would
+-- have failed with `PGRST202` for as long as that gap lasted.
+--
+-- The gap is closed. `fe1cf88` is live on production and calls the four-argument
+-- signature, so nothing calls the old one any more.
+--
+-- The shim was never a second grader — it discarded the two arguments that
+-- were the vulnerability and delegated, so calling it with
+-- `p_double_points => true` earned exactly single XP. Removing it is not a
+-- security fix. It is the removal of a signature that *looks* like it takes a
+-- reward from the caller, which is the same reason 0034 deleted those
+-- parameters instead of ignoring them: the next person reading this schema
+-- should not have to work out that an argument named `p_double_points` does
+-- nothing. A compatibility surface that outlives its window stops being
+-- compatibility and becomes folklore.
+
+drop function if exists public.submit_quiz_answer(uuid, integer, boolean, integer, boolean, text, uuid);
