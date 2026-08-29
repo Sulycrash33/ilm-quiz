@@ -186,7 +186,7 @@ export default function MultiplayerPage() {
     if (!joinCode.trim() || !currentUserId || !currentUserName) return
 
     try {
-      const joinedRoom = await joinRoom({ roomCode: joinCode.toUpperCase() }, currentUserId, currentUserName)
+      const joinedRoom = await joinRoom({ roomCode: joinCode.toUpperCase() })
       setRoomId(joinedRoom.id)
       setRoom(joinedRoom)
       setRoomCode(joinedRoom.code)
@@ -402,7 +402,7 @@ export default function MultiplayerPage() {
           players={players.map((p) => ({
             id: p.userId,
             userName: p.userName,
-            avatar: p.avatarUrl,
+            avatarId: p.avatarId,
             isHost: p.isHost,
             isReady: p.isReady,
             score: p.score,
@@ -477,7 +477,7 @@ export default function MultiplayerPage() {
           players={players.map((p) => ({
             id: p.userId,
             userName: p.userName,
-            avatar: p.avatarUrl,
+            avatarId: p.avatarId,
             score: p.score,
             correctAnswers: p.correctAnswers,
             totalAnswers: p.totalAnswers,

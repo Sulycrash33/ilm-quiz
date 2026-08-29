@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { getModeQuestionPool } from "@/lib/quiz-service";
 import { getLifelinePrices, startGameRun } from "@/app/(app)/quiz/actions";
 import { ModeRunner } from "@/components/game/ModeRunner";
-import { rankFor } from "@/lib/ranks";
 
 /**
  * Speed Round, Survival and Practice.
@@ -35,26 +34,19 @@ export default async function ModePlayPage({ params }: ModePageProps) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // The pool is centred on the player's own rank so Survival, where a wrong
-  // answer is expensive, does not open with questions from four tiers above.
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("total_xp")
-    .eq("id", user.id)
-    .single();
-
-  const centreTier = rankFor(profile?.total_xp ?? 0).level;
-
-  const [questions, lifelinePrices, run] = await Promise.all([
-    getModeQuestionPool(centreTier),
-    getLifelinePrices(),
-    startGameRun(mode),
-  ]);
+  // The run is opened first because it is what decides the difficulty. Since
+  // migration 0035 `start_game_run` records the tier band on the run itself,
+  // derived in the database from this player's own XP, and the grader pays the
+  // mode multiplier only inside it. Fetching the pool from that same band is
+  // what makes the offer and the reward describe one set of questions.
+  const [lifelinePrices, run] = await Promise.all([getLifelinePrices(), startGameRun(mode)]);
 
   // Without a run there is no mode multiplier, and a run in the wrong mode
   // would pay the wrong amount — so this fails rather than quietly playing a
   // classic hunt wearing a Survival label.
   if (!run) redirect("/challenges");
+
+  const questions = await getModeQuestionPool(run.tierMin, run.tierMax);
   if (questions.length === 0) redirect("/challenges");
 
   return (

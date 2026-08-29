@@ -142,7 +142,6 @@ export function HuntView({
   const [grading, setGrading] = useState(false);
   const [eliminated, setEliminated] = useState<number[]>([]);
   const [doublePoints, setDoublePoints] = useState(false);
-  const [usedHint, setUsedHint] = useState(false);
   const [pendingLifeline, setPendingLifeline] = useState<string | null>(null);
   const [showImam, setShowImam] = useState(false);
   const [particles, setParticles] = useState(false);
@@ -209,7 +208,6 @@ export function HuntView({
     setGrade(null);
     setEliminated([]);
     setDoublePoints(false);
-    setUsedHint(false);
     setHolding(false);
     setPaused(false);
     pausedAt.current = null;
@@ -364,10 +362,12 @@ export function HuntView({
     const msLeft = Math.max(0, budgetMs - elapsedMs);
 
     try {
+      // Neither the hint nor the double-points power-up is reported here any
+      // more. The server reads both off the lifeline ledger it wrote itself
+      // when the spend was charged (migration 0034) — `doublePoints` below is
+      // now only what the *screen* shows, and cannot pay anyone.
       const result = await submitAnswer(question.id, index, {
-        usedHint,
         responseTimeMs: elapsedMs,
-        doublePoints,
         // The server reads this run's mode and applies its multiplier. Null in
         // the classic hunt, which is what keeps that path byte-identical.
         runId,
@@ -458,7 +458,7 @@ export function HuntView({
     }
 
     setPendingLifeline(id);
-    const spend = await spendLifeline(id);
+    const spend = await spendLifeline(id, question.id, runId);
     setPendingLifeline(null);
 
     if (!spend.success) {
@@ -487,7 +487,6 @@ export function HuntView({
         }
         break;
       case "ask-imam":
-        setUsedHint(true);
         setShowImam(true);
         break;
       case "skip":

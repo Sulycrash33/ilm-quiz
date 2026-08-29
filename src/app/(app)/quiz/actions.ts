@@ -5,10 +5,7 @@ import type { EarnedAchievement, GradeResult } from '@/lib/types';
 import { getCategoryLevels } from '@/lib/quiz-service';
 
 interface SubmitOptions {
-  usedHint?: boolean;
   responseTimeMs?: number;
-  doublePoints?: boolean;
-  lifelineUsed?: string;
   /**
    * The run this answer belongs to, from `startGameRun`. The server reads the
    * *mode* off that row and applies its XP multiplier; it never takes a
@@ -21,7 +18,12 @@ interface SubmitOptions {
 /** Server-authoritative grading and reward calculation - delegated to a
  * SECURITY DEFINER Postgres function (submit_quiz_answer) so the actual
  * coin/XP mutation can't be replayed or forged by a direct client call;
- * see supabase/migrations for details. */
+ * see supabase/migrations for details.
+ *
+ * There is deliberately no "I used double points" argument any more. Migration
+ * 0034 removed it: the server reads the lifeline ledger, which only
+ * `spend_lifeline_rpc` can write, and consumes the row. Whether the hint was
+ * used is read from the same ledger rather than claimed here. */
 export async function submitAnswer(
   questionId: string,
   choiceIndex: number,
@@ -35,10 +37,7 @@ export async function submitAnswer(
   const { data, error } = await supabase.rpc('submit_quiz_answer', {
     p_question_id: questionId,
     p_choice_index: choiceIndex,
-    p_used_hint: opts.usedHint ?? false,
     p_response_time_ms: opts.responseTimeMs ?? null,
-    p_double_points: opts.doublePoints ?? false,
-    p_lifeline_used: opts.lifelineUsed ?? null,
     p_run_id: opts.runId ?? null,
   });
 
@@ -180,7 +179,9 @@ export interface SpendResult {
   newBalance?: number;
   cost?: number;
   /** 'inventory' when a stocked copy was consumed, 'coins' when it was bought. */
-  paidWith?: 'inventory' | 'coins';
+  /** 'already' means this lifeline was bought for this question before; the
+   * spend stands and nothing was charged a second time. */
+  paidWith?: 'inventory' | 'coins' | 'already';
   /** Copies of this lifeline still on the shelf afterwards. */
   remaining?: number;
 }
@@ -197,12 +198,23 @@ export interface SpendResult {
  * treat the lifeline as unavailable — granting the effect anyway would put the
  * free-lifeline bug straight back.
  */
-export async function spendLifeline(lifelineId: string): Promise<SpendResult> {
+export async function spendLifeline(
+  lifelineId: string,
+  questionId: string,
+  runId?: string | null,
+): Promise<SpendResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'You must be signed in.' };
 
-  const { data, error } = await supabase.rpc('spend_lifeline_rpc', { p_lifeline_id: lifelineId });
+  // The question is not optional here even though the RPC allows null: a spend
+  // with no question writes no ledger row, and a double-points row that does
+  // not exist is a double-points power-up that silently does nothing.
+  const { data, error } = await supabase.rpc('spend_lifeline_rpc', {
+    p_lifeline_id: lifelineId,
+    p_question_id: questionId,
+    p_run_id: runId ?? null,
+  });
   if (error) return { success: false, error: error.message || 'Could not use that lifeline.' };
 
   const row = Array.isArray(data) ? data[0] : data;
@@ -288,7 +300,7 @@ export interface GameModeRules {
 export async function startGameRun(
   mode: string,
   categoryId?: string | null,
-): Promise<{ runId: string; rules: GameModeRules } | null> {
+): Promise<{ runId: string; rules: GameModeRules; tierMin: number; tierMax: number } | null> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -304,8 +316,19 @@ export async function startGameRun(
   const rule = Array.isArray(ruleRows) ? ruleRows[0] : ruleRows;
   if (!rule) return null;
 
+  // The difficulty band is read back off the run rather than worked out here.
+  // The server chose it when the run opened, and it is the same band the
+  // grader will pay the multiplier inside — so the questions this page goes on
+  // to fetch are exactly the questions the mode's bargain covers. See
+  // migration 0035.
+  const { data: bandRows } = await supabase.rpc('game_run_band', { p_run_id: runId as string });
+  const band = Array.isArray(bandRows) ? bandRows[0] : bandRows;
+  if (!band) return null;
+
   return {
     runId: runId as string,
+    tierMin: band.o_tier_min as number,
+    tierMax: band.o_tier_max as number,
     rules: {
       mode: rule.o_mode as string,
       lives: rule.o_lives as number | null,
