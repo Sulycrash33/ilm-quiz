@@ -78,7 +78,14 @@ The explanations you are replacing almost all restate the correct answer in diff
 That teaches nothing. A learner who answered correctly gains no new fact, and one who answered wrongly is simply told the right answer a second time. Never write an explanation that a reader could have produced by rephrasing the correct choice.
 
 WHAT TO WRITE INSTEAD
-Four to five sentences. Roughly 450 to 700 characters. That range is measured rather than guessed: a first pass of twenty hand-written explanations for this bank averaged 628 characters, and squeezing them shorter cost the sentence explaining why a wrong choice was tempting every time.
+Length follows the question, not the tier number.
+
+- A simple question, where the answer is a fact or a term and the reasoning is one step: TWO TO THREE sentences, roughly 250 to 400 characters. "What is the meal that breaks the fast at sunset called?" is this. Padding it to five sentences produces filler, and filler is what makes an explanation feel written by a machine.
+- A complex question, where the reasoning is layered, scholars genuinely differ, or the question assumes an argument it does not restate: FIVE TO SIX sentences, roughly 550 to 800 characters.
+
+Judge each question on its own. Tier is a weak signal: a tier 1 question can be conceptually heavy, and the twenty Contemporary Issues tier 1 explanations already written run long for exactly that reason, while a tier 1 vocabulary question in Five Pillars needs three sentences at most.
+
+Even a short explanation must still teach. Three sentences is not one sentence padded; it is the answer, one fact the learner did not have, and one connection worth making.
 
 1. Confirm what is correct in one short clause, then move past it immediately.
 2. Give the actual reason, evidence or mechanism. This is the sentence the old explanations were missing.
@@ -88,7 +95,7 @@ Four to five sentences. Roughly 450 to 700 characters. That range is measured ra
 
 RULES
 - Plain, warm, direct prose for a general audience that includes children and adults. No sales language, no "delve", no rhetorical questions.
-- Do not use em dashes or en dashes. Use full stops, commas, colons or parentheses.
+- Do not use em dashes or en dashes, and do not use a spaced hyphen or a double hyphen as a dash either. Use full stops, commas, colons or parentheses. This is not a stylistic preference: the whole player-facing copy of this app had those dashes removed deliberately, and reintroducing them through 5,220 explanations would undo it.
 - Never fabricate a citation, a hadith number, a surah verse, a name or a date. If you cannot recall a specific real citation, omit citationReference entirely rather than inventing one. Omitting is correct behaviour and costs you nothing.
 - If you are not fully confident the content is accurate, set confidenceFlag to "needs_scholar_verification". Use it freely. A flagged draft is useful; a confident wrong one is damaging.
 - Do not address the reader as "you" more than once, and never open with "Great question" or similar.
