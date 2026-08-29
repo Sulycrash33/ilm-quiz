@@ -21,7 +21,7 @@ ten-minute credential task only the owner can do, and the three holes below.
 | Average explanation | **125 characters, ~20 words** |
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | 5 |
-| Migrations | through **`0039`**, disk and database in step |
+| Migrations | through **`0043`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, **`test:middleware`** |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -183,11 +183,39 @@ and broken it outright, which is the 0030 trap wearing the opposite face.
 
 ## Open items
 
-1. **Richer explanations — held at the owner's instruction, and the big one.**
-   At 125 characters average this is a content project across 5,220 questions,
-   not a UI change. The persistent panel built in #40 will happily scroll; it
-   has nothing to scroll yet. Whatever produces the new text must go through
-   review rather than repeating the ai-drafted-and-published pattern.
+1. **Richer explanations — the pipeline is built, and the first level is
+   drafted and waiting.** The problem was never only the 125 character average.
+   Most of the existing explanations restate the correct answer in different
+   words, so a player who answered correctly learns nothing and one who
+   answered wrongly is told the right answer a second time.
+
+   Migration 0042 adds `questions.explanation_draft`, which nothing
+   player-facing reads: `submit_quiz_answer` returns `explanation` and does not
+   know the column exists. A draft reaches a player only when a person presses
+   publish at `/admin/explanations`, one question at a time, and there is
+   deliberately no publish-all. Publishing keeps scholar approval, for the
+   reason 0041 gives.
+
+   **Contemporary Issues tier 1, all 20 questions, is staged and waiting for
+   review.** Those twenty were composed directly and staged through
+   `admin_stage_explanation`, with no model call and no `GEMINI_API_KEY`. That
+   is worth knowing: `src/ai/flows/draft-explanations.ts` exists and mirrors
+   the question-drafting flow, but the staging column does not care what wrote
+   a draft, so the project is not blocked on an API key.
+
+   They average 628 characters against a first guess of 350 to 600. The guess
+   was wrong and the prompt now says 450 to 700, because forcing them shorter
+   cost the sentence explaining why a wrong choice was tempting.
+
+   Five tier 9 questions from the same category are staged too, deliberately
+   sampling the hard end rather than adding more of the easy one. The register
+   holds there, but writing them turned up the content problem below.
+
+   `admin_explanation_progress()` reports how far this has got. Note the trap it
+   was written to avoid: `explanation.lt.300` as a PostgREST filter compares
+   text lexicographically rather than by length, and would put a confident
+   meaningless number on the dashboard.
+
 2. **Scholar review — still zero.** Now actually possible: `/admin/questions`
    filters to "Awaiting review" and approves in place without unpublishing.
    Take one category end to end — Contemporary Issues is the riskiest and so
@@ -213,6 +241,43 @@ and broken it outright, which is the 0030 trap wearing the opposite face.
    route is recording a timeout as an attempt so the server grades it — that
    changes accuracy stats, so it is a decision, not a fix.
 7. Agreed but unbuilt: bulk actions, Excel export, a read-only auditor role.
+
+## A content problem found while writing explanations
+
+**Sixteen published questions refer to a question the player may never have
+seen.** They open with phrases like "Extending that spaceflight derivation",
+"This gig-economy derivation echoes an idea already established earlier in this
+category", or "Continuing that AI-authorship derivation".
+
+`buildTierLadder` shuffles the tier bucket on every run, so any of these can be
+served **first**, with nothing before it. Measured against the live bank:
+
+| shape | questions | categories | tiers |
+|---|---|---|---|
+| refers to a prior derivation | 10 | 4 | 1 to 9 |
+| opens by continuing a chain | 3 | 3 | 4 to 9 |
+| refers to earlier in this category | 2 | 2 | 6 to 9 |
+| refers to a previous conclusion | 1 | 1 | 6 |
+| **total** | **16** | **8** | **1 to 9** |
+
+Sixteen of 5,220 is small, and none of them is wrong: each has a correct answer
+that a strong reader can reach. But a player meeting one cold is being asked to
+continue an argument nobody has made to them yet.
+
+**This has deliberately not been fixed.** Repairing it means rewriting question
+text, and the rule above is that a fresh session which finds itself authoring
+questions should stop. The new explanations for the five tier 9 ones mitigate
+it as far as an explanation can, by restating the chain before naming the gap
+in it, but that arrives only after the answer has been given.
+
+Three ways out, for whoever decides:
+
+1. Rewrite the sixteen to stand alone. Most need one clause of context.
+2. Leave them and accept that a shuffled run sometimes asks a question out of
+   order.
+3. Give a question an optional prerequisite and have `buildTierLadder` order
+   those few deterministically, which is more machinery than sixteen questions
+   are probably worth.
 
 ## Things a fresh session gets wrong
 
