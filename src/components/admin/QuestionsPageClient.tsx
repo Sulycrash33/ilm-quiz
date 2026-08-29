@@ -146,8 +146,8 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
         <PremiumCard className="mb-6 border-amber-400/30 bg-amber-400/5 p-4">
           <p className="text-sm text-on-surface">
             No question has been approved by a scholar yet. Filter to{" "}
-            <strong>Awaiting review</strong> and work a category at a time — approving a
-            question keeps it published and playable, it only records that a person
+            <strong>Awaiting review</strong> and work a category at a time. Approving a
+            question keeps it published and playable; it only records that a person
             vouched for it.
           </p>
         </PremiumCard>

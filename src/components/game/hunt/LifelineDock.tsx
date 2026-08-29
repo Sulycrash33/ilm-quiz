@@ -58,8 +58,8 @@ export function LifelineDock({ prices, coins, used, locked, pending, onUse }: Li
               title={t(meta.descKey)}
               aria-label={
                 inStock
-                  ? `${t(meta.nameKey)} — ${t("ownedCount", { count: lifeline.owned })}`
-                  : `${t(meta.nameKey)} — ${lifeline.cost} ${t("coinsWord")}`
+                  ? `${t(meta.nameKey)} · ${t("ownedCount", { count: lifeline.owned })}`
+                  : `${t(meta.nameKey)} · ${lifeline.cost} ${t("coinsWord")}`
               }
               className={cn(
                 "flex flex-col items-center gap-1 rounded-xl border p-3 transition-colors",

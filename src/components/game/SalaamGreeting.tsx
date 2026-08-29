@@ -64,7 +64,7 @@ export function SalaamGreeting() {
           title={
             isMax
               ? rank.title
-              : `${rank.title} — ${xpToNext} XP to ${next?.title ?? ""}`
+              : `${rank.title} · ${xpToNext} XP to ${next?.title ?? ""}`
           }
         >
           <RankIcon className="h-3.5 w-3.5 text-primary" aria-hidden />

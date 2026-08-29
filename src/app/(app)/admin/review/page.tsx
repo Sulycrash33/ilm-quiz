@@ -55,7 +55,7 @@ export default async function ReviewPage() {
         <h1 className="text-xl font-bold">Content review</h1>
       </div>
       <p className="text-sm text-muted-foreground -mt-4">
-        AI-drafted questions land here first. Nothing reaches players until a reviewer approves it — check every citation before publishing.
+        AI-drafted questions land here first. Nothing reaches players until a reviewer approves it. Check every citation before publishing.
       </p>
 
       <GenerateForm categories={categories ?? []} />
@@ -65,7 +65,7 @@ export default async function ReviewPage() {
           Pending review ({reviewQuestions.length})
         </h2>
         {reviewQuestions.length === 0 && (
-          <p className="text-sm text-muted-foreground italic">Nothing waiting — draft a batch above to get started.</p>
+          <p className="text-sm text-muted-foreground italic">Nothing waiting. Draft a batch above to get started.</p>
         )}
         {reviewQuestions.map(q => (
           <QuestionReviewCard key={q.id} q={q} />

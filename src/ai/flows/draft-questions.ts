@@ -52,11 +52,11 @@ These drafts will be reviewed by a qualified human scholar before anything is sh
 
 1. Every question must be answerable from well-established, mainstream Islamic sources: the Quran, authentic Hadith collections (Bukhari, Muslim, Abu Dawud, Tirmidhi, Nasa'i, Ibn Majah, Muwatta), or widely agreed seerah/history.
 2. citationReference must be a SPECIFIC real reference (surah name + number:ayah, or hadith collection + number). If you are not confident the exact number is correct, still give your best real citation but set confidenceFlag to "needs_scholar_verification".
-3. NEVER fabricate a citation to sound authoritative. If you cannot recall a real specific citation for a fact, do not include that question at all — produce fewer questions rather than an invented one.
+3. NEVER fabricate a citation to sound authoritative. If you cannot recall a real specific citation for a fact, do not include that question at all. Produce fewer questions rather than an invented one.
 4. For Fiqh questions specifically: if the ruling is agreed upon by all four Sunni madhabs, tag madhabTag as "agreed". If the ruling genuinely differs by school (e.g. some positions in Maliki vs Shafi'i fiqh), write the question so it is explicit about WHICH school's position is being asked about, and tag madhabTag accordingly. Do not present one school's ruling as universal.
 5. For non-Fiqh categories, set madhabTag to "na".
 6. Write the question, choices, and explanation in {{language}}. Keep tone respectful and educational, suitable for a general audience including children.
-7. Draft up to {{count}} questions. It is fine to return fewer if you run out of citable, verifiable facts — quality and honesty over hitting the count.
+7. Draft up to {{count}} questions. It is fine to return fewer if you run out of citable, verifiable facts. Quality and honesty over hitting the count.
 
 Return only the structured output.`,
 });

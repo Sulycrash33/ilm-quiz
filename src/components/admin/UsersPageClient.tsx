@@ -260,7 +260,7 @@ export function UsersPageClient({ users }: UsersPageClientProps) {
                       </p>
                     </div>
                     <p className="text-sm text-on-surface-variant">
-                      This deletes the sign-in and everything attached to it — {user.attempts} answered{" "}
+                      This deletes the sign-in and everything attached to it: {user.attempts} answered{" "}
                       {user.attempts === 1 ? "question" : "questions"}, every run, {user.totalXp} XP,
                       achievements and league standing. It cannot be undone. Suspending keeps all of it
                       and still stops them signing in.
