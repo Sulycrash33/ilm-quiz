@@ -198,3 +198,36 @@ export async function editQuestion(edit: QuestionEdit): Promise<ReviewResult> {
     return { ok: false, error: e instanceof Error ? e.message : 'Could not save that question.' };
   }
 }
+
+/**
+ * Rewriting the explanation, and nothing else.
+ *
+ * Kept apart from `editQuestion` because the two are different acts.
+ * `admin_update_question` can change the question, the choices and which one
+ * is correct, so it withdraws scholar approval. This one cannot reach any of
+ * those, so approval survives it (migration 0041).
+ *
+ * That distinction is what lets the explanations project and the review
+ * project run in either order. Putting a rewrite of all 5,220 explanations
+ * through the full editor would quietly un-approve every question it passed.
+ */
+export async function setQuestionExplanation(
+  questionId: string,
+  explanation: string,
+  citation?: string,
+): Promise<ReviewResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    const { error } = await supabase.rpc('admin_set_question_explanation', {
+      p_question_id: questionId,
+      p_explanation: explanation,
+      p_citation: citation ?? null,
+    });
+    if (error) return { ok: false, error: error.message };
+
+    revalidatePath('/admin/questions');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Could not save that explanation.' };
+  }
+}

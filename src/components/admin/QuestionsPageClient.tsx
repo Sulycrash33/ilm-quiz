@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast"
 import {
   editQuestion,
   listQuestions,
+  setQuestionExplanation,
   reviewQuestion,
   type AdminQuestion,
   type QuestionSummary,
@@ -155,15 +156,30 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
   async function saveEdit(q: AdminQuestion) {
     if (!draft || busy) return
     setBusy(q.id)
-    const r = await editQuestion({
-      id: q.id,
-      text: draft.text,
-      choices: draft.choices,
-      correctIndex: draft.correctIndex,
-      explanation: draft.explanation,
-      citation: draft.citation,
-      tier: draft.tier ? Number(draft.tier) : undefined,
-    })
+
+    // Which of the two paths this is depends on what actually changed. If only
+    // the explanation or the citation moved, the narrow function is used and
+    // scholar approval survives; approval is about the question and its
+    // answer, and neither has been touched. Anything else goes through the
+    // full editor, which withdraws approval on purpose.
+    const onlyProse =
+      draft.text === q.text &&
+      draft.correctIndex === q.correctIndex &&
+      draft.choices.length === q.choices.length &&
+      draft.choices.every((c, i) => c === q.choices[i]) &&
+      (!draft.tier || Number(draft.tier) === q.tier)
+
+    const r = onlyProse
+      ? await setQuestionExplanation(q.id, draft.explanation, draft.citation)
+      : await editQuestion({
+          id: q.id,
+          text: draft.text,
+          choices: draft.choices,
+          correctIndex: draft.correctIndex,
+          explanation: draft.explanation,
+          citation: draft.citation,
+          tier: draft.tier ? Number(draft.tier) : undefined,
+        })
     setBusy(null)
     if (!r.ok) {
       // The database validates this too, and its message names the actual
@@ -183,10 +199,11 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
               explanation: draft.explanation || null,
               citation: draft.citation || null,
               tier: draft.tier ? Number(draft.tier) : x.tier,
-              // Editing withdraws scholar approval, because what was vouched
-              // for is no longer what the question says. The server does this;
-              // the row is updated to match rather than to decide it.
-              scholarApproved: false,
+              // Editing the question withdraws scholar approval, because what
+              // was vouched for is no longer what the question says. Rewriting
+              // only the explanation does not. The server decides this; the row
+              // is updated to match, not to decide it.
+              scholarApproved: onlyProse ? x.scholarApproved : false,
             }
           : x,
       ),
@@ -501,8 +518,14 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                     </div>
 
                     <p className="text-xs text-on-surface-variant">
-                      Saving withdraws scholar approval, because what was approved is no longer what
-                      the question says. The question stays published and playable throughout.
+                      {draft.text === q.text &&
+                      draft.correctIndex === q.correctIndex &&
+                      draft.choices.length === q.choices.length &&
+                      draft.choices.every((c, i) => c === q.choices[i]) &&
+                      (!draft.tier || Number(draft.tier) === q.tier)
+                        ? "Only the explanation or citation has changed, so scholar approval is kept: approval is about the question and its answer, and neither has moved."
+                        : "Changing the question, its choices, the correct answer or the tier withdraws scholar approval, because what was approved is no longer what the question says."}
+                      {" The question stays published and playable throughout."}
                     </p>
 
                     <div className="flex gap-2">
