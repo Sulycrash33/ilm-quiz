@@ -152,3 +152,49 @@ export async function reviewQuestion(
     return { ok: false, error: e instanceof Error ? e.message : 'Could not update that question.' };
   }
 }
+
+export interface QuestionEdit {
+  id: string;
+  text: string;
+  choices: string[];
+  correctIndex: number;
+  explanation?: string;
+  citation?: string;
+  tier?: number;
+  categoryId?: string;
+}
+
+/**
+ * Correcting a question in place.
+ *
+ * Until this existed the console could publish, reject and record scholar
+ * approval, but could not fix a typo: a reviewer who spotted a wrong answer
+ * could only reject the whole question.
+ *
+ * Editing clears scholar approval, in `admin_update_question` rather than
+ * here, because what a scholar vouched for is no longer what the question
+ * says. It does not unpublish: the question stays playable throughout, which
+ * is the rule migration 0033 set and the reason approval got its own column.
+ */
+export async function editQuestion(edit: QuestionEdit): Promise<ReviewResult> {
+  try {
+    const { supabase } = await requireAdmin();
+    const { error } = await supabase.rpc('admin_update_question', {
+      p_question_id: edit.id,
+      p_text: edit.text,
+      p_choices: edit.choices,
+      p_correct_index: edit.correctIndex,
+      p_explanation: edit.explanation ?? null,
+      p_citation: edit.citation ?? null,
+      p_tier: edit.tier ?? null,
+      p_category_id: edit.categoryId ?? null,
+    });
+    if (error) return { ok: false, error: error.message };
+
+    revalidatePath('/admin/questions');
+    revalidatePath('/admin');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Could not save that question.' };
+  }
+}

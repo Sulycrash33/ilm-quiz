@@ -2,10 +2,11 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import { useEffect, useState, useTransition } from "react"
-import { BadgeCheck, ChevronLeft, ChevronRight, Loader2, X } from "lucide-react"
+import { BadgeCheck, ChevronLeft, ChevronRight, Loader2, Pencil, X } from "lucide-react"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { useToast } from "@/hooks/use-toast"
 import {
+  editQuestion,
   listQuestions,
   reviewQuestion,
   type AdminQuestion,
@@ -57,6 +58,18 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
   const [expanded, setExpanded] = useState<string | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  /** The question being corrected, held as a draft so an abandoned edit
+   *  changes nothing and a saved one replaces the row in place. */
+  const [editing, setEditing] = useState<string | null>(null)
+  const [draft, setDraft] = useState<{
+    text: string
+    choices: string[]
+    correctIndex: number
+    explanation: string
+    citation: string
+    tier: string
+  } | null>(null)
 
   // Typing a search term should not fire a query per keystroke against a
   // 5,220-row table.
@@ -123,6 +136,64 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
           : x,
       ),
     )
+    startTransition(() => {})
+  }
+
+  function beginEdit(q: AdminQuestion) {
+    setEditing(q.id)
+    setExpanded(q.id)
+    setDraft({
+      text: q.text,
+      choices: [...q.choices],
+      correctIndex: q.correctIndex,
+      explanation: q.explanation ?? "",
+      citation: q.citation ?? "",
+      tier: q.tier != null ? String(q.tier) : "",
+    })
+  }
+
+  async function saveEdit(q: AdminQuestion) {
+    if (!draft || busy) return
+    setBusy(q.id)
+    const r = await editQuestion({
+      id: q.id,
+      text: draft.text,
+      choices: draft.choices,
+      correctIndex: draft.correctIndex,
+      explanation: draft.explanation,
+      citation: draft.citation,
+      tier: draft.tier ? Number(draft.tier) : undefined,
+    })
+    setBusy(null)
+    if (!r.ok) {
+      // The database validates this too, and its message names the actual
+      // problem — an index past the last choice, a blank option, a tier
+      // outside 1 to 9 — so it is shown rather than replaced with a generic.
+      toast({ variant: "destructive", title: "That did not save", description: r.error })
+      return
+    }
+    setQuestions((prev) =>
+      prev.map((x) =>
+        x.id === q.id
+          ? {
+              ...x,
+              text: draft.text,
+              choices: draft.choices,
+              correctIndex: draft.correctIndex,
+              explanation: draft.explanation || null,
+              citation: draft.citation || null,
+              tier: draft.tier ? Number(draft.tier) : x.tier,
+              // Editing withdraws scholar approval, because what was vouched
+              // for is no longer what the question says. The server does this;
+              // the row is updated to match rather than to decide it.
+              scholarApproved: false,
+            }
+          : x,
+      ),
+    )
+    setEditing(null)
+    setDraft(null)
+    toast({ title: "Question saved" })
     startTransition(() => {})
   }
 
@@ -260,6 +331,17 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                     <button
                       type="button"
                       disabled={busy !== null}
+                      onClick={() => (editing === q.id ? (setEditing(null), setDraft(null)) : beginEdit(q))}
+                      aria-label="Edit this question"
+                      className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm font-semibold text-on-surface transition-colors hover:bg-white/5 disabled:opacity-50"
+                    >
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
+                      {editing === q.id ? "Cancel" : "Edit"}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={busy !== null}
                       onClick={() => act(q, { scholarApproved: !q.scholarApproved })}
                       className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
                         q.scholarApproved
@@ -287,7 +369,7 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                   </div>
                 </div>
 
-                {expanded === q.id && (
+                {expanded === q.id && editing !== q.id && (
                   <div className="mt-4 space-y-3 rounded-lg border border-white/10 bg-surface-container/50 p-4">
                     <ol className="space-y-1">
                       {q.choices.map((c, i) => (
@@ -310,6 +392,137 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                         <span className="text-on-surface">Citation: </span>{q.citation}
                       </p>
                     )}
+                  </div>
+                )}
+
+                {editing === q.id && draft && (
+                  <div className="mt-4 space-y-4 rounded-lg border border-primary/30 bg-surface-container/50 p-4">
+                    <label className="block text-sm">
+                      <span className="mb-1 block text-on-surface-variant">Question</span>
+                      <textarea
+                        value={draft.text}
+                        onChange={(e) => setDraft({ ...draft, text: e.target.value })}
+                        rows={2}
+                        className="w-full rounded-lg border border-white/10 bg-surface-container-high px-3 py-2 text-on-surface"
+                      />
+                    </label>
+
+                    <div className="space-y-2">
+                      <span className="block text-sm text-on-surface-variant">
+                        Choices. The selected one is the correct answer.
+                      </span>
+                      {draft.choices.map((c, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name={`correct-${q.id}`}
+                            checked={draft.correctIndex === i}
+                            onChange={() => setDraft({ ...draft, correctIndex: i })}
+                            aria-label={`Mark choice ${String.fromCharCode(65 + i)} correct`}
+                            className="h-4 w-4 accent-emerald-400"
+                          />
+                          <span className="w-5 text-sm text-on-surface-variant">
+                            {String.fromCharCode(65 + i)}
+                          </span>
+                          <input
+                            value={c}
+                            onChange={(e) => {
+                              const next = [...draft.choices]
+                              next[i] = e.target.value
+                              setDraft({ ...draft, choices: next })
+                            }}
+                            className="flex-1 rounded-lg border border-white/10 bg-surface-container-high px-3 py-2 text-sm text-on-surface"
+                          />
+                          <button
+                            type="button"
+                            aria-label={`Remove choice ${String.fromCharCode(65 + i)}`}
+                            disabled={draft.choices.length <= 2}
+                            title={draft.choices.length <= 2 ? "A question needs at least two choices" : "Remove this choice"}
+                            onClick={() => {
+                              const next = draft.choices.filter((_, j) => j !== i)
+                              // Removing a choice shifts every later one down,
+                              // so the correct index moves with it or it ends
+                              // up pointing at the wrong answer.
+                              const correct =
+                                draft.correctIndex === i
+                                  ? 0
+                                  : draft.correctIndex > i
+                                    ? draft.correctIndex - 1
+                                    : draft.correctIndex
+                              setDraft({ ...draft, choices: next, correctIndex: correct })
+                            }}
+                            className="rounded-lg border border-white/10 px-2 py-1.5 text-xs text-on-surface-variant hover:bg-white/5 disabled:opacity-30"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setDraft({ ...draft, choices: [...draft.choices, ""] })}
+                        className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-on-surface-variant hover:bg-white/5"
+                      >
+                        Add a choice
+                      </button>
+                    </div>
+
+                    <label className="block text-sm">
+                      <span className="mb-1 block text-on-surface-variant">Explanation</span>
+                      <textarea
+                        value={draft.explanation}
+                        onChange={(e) => setDraft({ ...draft, explanation: e.target.value })}
+                        rows={3}
+                        className="w-full rounded-lg border border-white/10 bg-surface-container-high px-3 py-2 text-on-surface"
+                      />
+                    </label>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label className="block text-sm">
+                        <span className="mb-1 block text-on-surface-variant">Citation</span>
+                        <input
+                          value={draft.citation}
+                          onChange={(e) => setDraft({ ...draft, citation: e.target.value })}
+                          className="w-full rounded-lg border border-white/10 bg-surface-container-high px-3 py-2 text-on-surface"
+                        />
+                      </label>
+                      <label className="block text-sm">
+                        <span className="mb-1 block text-on-surface-variant">Tier (1 to 9)</span>
+                        <select
+                          value={draft.tier}
+                          onChange={(e) => setDraft({ ...draft, tier: e.target.value })}
+                          className="w-full rounded-lg border border-white/10 bg-surface-container-high px-3 py-2 text-on-surface"
+                        >
+                          <option value="">Leave unchanged</option>
+                          {Array.from({ length: 9 }, (_, i) => i + 1).map((t) => (
+                            <option key={t} value={t}>{t}</option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+
+                    <p className="text-xs text-on-surface-variant">
+                      Saving withdraws scholar approval, because what was approved is no longer what
+                      the question says. The question stays published and playable throughout.
+                    </p>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        disabled={busy !== null}
+                        onClick={() => saveEdit(q)}
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50"
+                      >
+                        {busy === q.id && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+                        Save changes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setEditing(null); setDraft(null) }}
+                        className="rounded-lg border border-white/10 px-4 py-2 text-sm text-on-surface-variant hover:bg-white/5"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 )}
               </PremiumCard>
