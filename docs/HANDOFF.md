@@ -22,6 +22,7 @@ ten-minute credential task only the owner can do, and the three holes below.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | 5 |
 | Migrations | through **`0043`**, disk and database in step |
+| Explanations staged | **28** awaiting review, 0 published |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, **`test:middleware`** |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -29,20 +30,25 @@ Overview → the **Game master** card.
 
 ## What changed since the last note
 
-Five PRs, #36 through #40.
+Seven PRs, #43 through #49.
 
-- **#36** — the admin console. It existed and was unreachable: nothing linked
-  to `/admin`, `/admin/users` selected an `email` column that `profiles` does
-  not have, and the page was read-only. Now: a door on the profile, a register
-  with roles, suspend and delete, a paginated question console, economy tuning,
-  an audit log, and dashboard numbers that are true.
-- **#37** — the invalid Gemini model id, the auto-publish bypass, and a dead
-  auth check whose allow-by-default list had four routes missing.
-- **#38** — a regression #37 caused, live for minutes: see the warning below.
-- **#39** — the explainer never mentioned the clock or lives; the sound switch
-  was only on the profile; the countdown rebuilt its interval every tick.
-- **#40** — the reveal now waits to be dismissed, the run is reviewed
-  question by question, and a classic level run can be paused.
+- **#43** — the "Next level" CTA, and the three security holes. Double points
+  was taken on trust from the client; it now needs a ledgered purchase that the
+  grader consumes. A run id was a bearer token for the multiplier alone, so
+  Survival paid 2x on tier 1 questions; the run now records the tier band it
+  was opened at. Room identity was client-supplied through three separate
+  doors; a trigger stamps name and avatar from the profile.
+- **#44** — removed the deploy-window shim #43 had left behind.
+- **#45** — the mechanical dashes, and a password reset that did not exist.
+  `forgotPassword` had been translated into all six locales since long before
+  and nothing rendered it.
+- **#46** — the admin pages became editable: categories add, rename, delete and
+  reorder; questions edit in place; back and forward navigation.
+- **#47** — rewriting an explanation stopped counting as editing the question,
+  so the explanations project and the review project can run in either order.
+- **#48** — the explanations pipeline: staging column, review screen, progress
+  counting.
+- **#49** — the first 25 explanations, written and staged.
 
 ## The three warnings this codebase has earned
 
@@ -178,43 +184,62 @@ and broken it outright, which is the 0030 trap wearing the opposite face.
 - **i18n has zero drift and a guard.** Add every new string to all six locales
   in the same edit, matching each locale's own vocabulary and diacritics.
   Admin pages are exempt and are English.
+- **No dash is used as punctuation in player-facing copy.** Not em, not en, not
+  a spaced hyphen, not a double hyphen. #45 removed 16 such strings across all
+  six locales plus seven pieces of admin prose, and the explanations project
+  must not put them back. Two uses are deliberate and stay: a bare placeholder
+  glyph standing in for an empty value in a table, and an en dash inside a
+  numeric range such as a date span. Check with a character-aware search, not
+  `grep -oE '[-]'`: grep matches bytes, so a multibyte letter can collide with
+  a dash and report a clean file as dirty.
 - **Motion respects `prefers-reduced-motion`.**
 - **Never hand-retype SQL.** Read the staged `.sql` file and paste it exactly.
 
 ## Open items
 
-1. **Richer explanations — the pipeline is built, and the first level is
-   drafted and waiting.** The problem was never only the 125 character average.
-   Most of the existing explanations restate the correct answer in different
-   words, so a player who answered correctly learns nothing and one who
-   answered wrongly is told the right answer a second time.
+1. **Richer explanations — pipeline built, 28 drafts staged, register agreed.**
+   The problem was never only the 125 character average. Most existing
+   explanations restate the correct answer in different words, so a player who
+   answered correctly learns nothing and one who answered wrongly is told the
+   right answer a second time.
 
-   Migration 0042 adds `questions.explanation_draft`, which nothing
-   player-facing reads: `submit_quiz_answer` returns `explanation` and does not
-   know the column exists. A draft reaches a player only when a person presses
-   publish at `/admin/explanations`, one question at a time, and there is
-   deliberately no publish-all. Publishing keeps scholar approval, for the
-   reason 0041 gives.
+   Drafts land in `questions.explanation_draft`, which nothing player-facing
+   reads: `submit_quiz_answer` returns `explanation` and does not know the
+   column exists. A draft reaches a player only when a person presses publish
+   at `/admin/explanations`, one at a time. There is deliberately no
+   publish-all. Publishing keeps scholar approval, for the reason 0041 gives.
 
-   **Contemporary Issues tier 1, all 20 questions, is staged and waiting for
-   review.** Those twenty were composed directly and staged through
-   `admin_stage_explanation`, with no model call and no `GEMINI_API_KEY`. That
-   is worth knowing: `src/ai/flows/draft-explanations.ts` exists and mirrors
-   the question-drafting flow, but the staging column does not care what wrote
-   a draft, so the project is not blocked on an API key.
+   **Staged and waiting: 28.** Contemporary Issues tier 1 (all 20), five from
+   Contemporary Issues tier 9, and three from Five Pillars tier 1. All written
+   directly and staged through `admin_stage_explanation`, with no model call
+   and no `GEMINI_API_KEY`. That matters: `src/ai/flows/draft-explanations.ts`
+   exists and mirrors the question-drafting flow, but **the project is not
+   blocked on an API key** and never was.
 
-   They average 628 characters against a first guess of 350 to 600. The guess
-   was wrong and the prompt now says 450 to 700, because forcing them shorter
-   cost the sentence explaining why a wrong choice was tempting.
+   **The agreed length rule is complexity, not tier.** A simple question, where
+   the answer is a fact or a term, gets two to three sentences (250 to 400
+   characters). A complex one, where reasoning is layered or scholars genuinely
+   differ, gets five to six (550 to 800). Judge per question: tier is a weak
+   signal, which the staged set demonstrates. The Contemporary Issues tier 1
+   explanations run 575 to 681 characters because those questions are
+   conceptual, while "What is the meal that breaks the fast at sunset called?"
+   is answered properly in 256.
 
-   Five tier 9 questions from the same category are staged too, deliberately
-   sampling the hard end rather than adding more of the easy one. The register
-   holds there, but writing them turned up the content problem below.
+   **No dashes.** Not em, not en, not a spaced hyphen, not a double hyphen. The
+   whole player-facing copy had them removed deliberately in #45; putting them
+   back through 5,220 explanations would undo that. All 28 staged drafts were
+   checked and contain none.
 
-   `admin_explanation_progress()` reports how far this has got. Note the trap it
-   was written to avoid: `explanation.lt.300` as a PostgREST filter compares
-   text lexicographically rather than by length, and would put a confident
+   Never invent a citation, a hadith number or a verse reference. Where an
+   argument rests on a text, describe it instead. A wrong number in a religious
+   app is worse than no number.
+
+   `admin_explanation_progress()` reports how far this has got. The trap it
+   avoids: `explanation.lt.300` as a PostgREST filter compares text
+   lexicographically rather than by length and would put a confident
    meaningless number on the dashboard.
+
+   **Remaining: 5,192 across 29 categories and 9 tiers.**
 
 2. **Scholar review — still zero.** Now actually possible: `/admin/questions`
    filters to "Awaiting review" and approves in place without unpublishing.
@@ -318,7 +343,7 @@ app working, and this codebase has now proven that twice.
 
 ## Working agreement
 
-- Develop on `claude/ilm-hunt-quiz-continuation-bu3fh7`, branched fresh from
+- Develop on a fresh `claude/...` branch, branched fresh from
   `origin/main`. Open a draft PR; the owner says "merge" when ready.
 - Migrations are applied to the live database **and** written to
   `supabase/migrations/`. Keep the two in step.
