@@ -48,7 +48,7 @@ export default function AvatarSelectionPage() {
             type="button"
             onClick={() => handleSelect(avatar.id)}
             aria-pressed={isSelected}
-            title={`${avatar.letterName} — ${avatar.style}`}
+            title={`${avatar.letterName} · ${avatar.style}`}
             className={`group relative flex flex-col items-center gap-2 rounded-xl border-2 p-2 transition-all ${
               isSelected
                 ? "border-primary bg-primary/10"

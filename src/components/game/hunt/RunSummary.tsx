@@ -346,8 +346,8 @@ function ReviewCard({ entry }: { entry: RunReviewEntry }) {
               )}
             >
               {String.fromCharCode(65 + i)}. {option}
-              {isCorrect && ` — ${t("roundReviewCorrectAnswer")}`}
-              {isChosen && !isCorrect && ` — ${t("roundReviewYourAnswer")}`}
+              {isCorrect && ` · ${t("roundReviewCorrectAnswer")}`}
+              {isChosen && !isCorrect && ` · ${t("roundReviewYourAnswer")}`}
             </li>
           );
         })}

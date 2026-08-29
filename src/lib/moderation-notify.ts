@@ -83,7 +83,7 @@ export async function notifyModeratorsOfReport(input: {
           ``,
           `Reason given: ${reason}`,
           ``,
-          `This is the first report on that item — later reports on the same one`,
+          `This is the first report on that item. Later reports on the same one`,
           `will not send another email, but they will still show in the queue.`,
           ``,
           queue ? `Review it: ${queue}` : `Review it in the admin area, under Moderation.`,

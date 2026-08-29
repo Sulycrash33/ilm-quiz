@@ -105,9 +105,21 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">{t("password")}</Label>
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="password">{t("password")}</Label>
+                  {/* The one way back in for someone who cannot sign in. The
+                      label has been translated into all six locales since long
+                      before the route existed, and nothing rendered it. */}
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    {t("forgotPassword")}
+                  </Link>
+                </div>
                 <PasswordInput
                   id="password"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required

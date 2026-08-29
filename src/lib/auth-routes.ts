@@ -33,7 +33,18 @@
  * Those pages write through RLS, so a signed-out visitor can look and not much
  * else.
  */
-export const PUBLIC_PREFIXES = ['/login', '/signup', '/onboarding', '/language'] as const;
+export const PUBLIC_PREFIXES = [
+  '/login',
+  '/signup',
+  '/onboarding',
+  '/language',
+  // Both halves of password recovery. `/reset-password` in particular is
+  // reached from an email by someone who cannot sign in, which is the whole
+  // reason they are there: gating it behind a session would send them to the
+  // login page they are locked out of.
+  '/forgot-password',
+  '/reset-password',
+] as const;
 
 /** `/` is public exactly; the rest match as a prefix but only on a boundary,
  * so `/loginsomething` is not mistaken for `/login`. */

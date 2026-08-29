@@ -389,7 +389,7 @@ export function HuntView({
           setTimeout(() => {
             toast({
               title: `${earned.icon} ${t("achievementUnlocked")}`,
-              description: `${earned.name} — ${earned.description}`,
+              description: `${earned.name}: ${earned.description}`,
             });
           }, 450 + i * 900);
         });

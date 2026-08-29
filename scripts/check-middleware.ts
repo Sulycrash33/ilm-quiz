@@ -33,6 +33,11 @@ const PUBLIC: string[] = [
   '/onboarding/age',
   '/onboarding/avatar',
   '/onboarding/how-it-works',
+  // Password recovery. Someone following a reset link cannot sign in by
+  // definition, so gating either of these would send them to the login page
+  // they are locked out of.
+  '/forgot-password',
+  '/reset-password',
 ];
 
 const PRIVATE: string[] = [
@@ -63,7 +68,7 @@ for (const p of PUBLIC) check(`public: ${p}`, isPublicPath(p), true);
 for (const p of PRIVATE) check(`private: ${p}`, isPublicPath(p), false);
 
 // A prefix must only match on a path boundary, or `/loginbait` becomes public.
-for (const p of ['/loginsomething', '/signupfake', '/languages', '/onboardingx']) {
+for (const p of ['/loginsomething', '/signupfake', '/languages', '/onboardingx', '/reset-passwordx']) {
   check(`prefix does not over-match: ${p}`, isPublicPath(p), false);
 }
 
