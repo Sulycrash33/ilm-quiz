@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+import { AdminTopBar } from "@/components/admin/AdminTopBar"
 
 const adminNavItems = [
   {
@@ -164,6 +165,7 @@ export default function AdminLayout({
         style={{ marginLeft: sidebarOpen ? 256 : 72 }}
       >
         <div className="p-6 max-w-7xl mx-auto">
+          <AdminTopBar />
           {children}
         </div>
       </main>
