@@ -41,7 +41,7 @@ function transformPlayer(db: QuizRoomPlayerDB): QuizRoomPlayer {
     roomId: db.room_id,
     userId: db.user_id,
     userName: db.user_name,
-    avatarUrl: db.avatar_url,
+    avatarId: db.avatar_id,
     score: db.score,
     correctAnswers: db.correct_answers,
     totalAnswers: db.total_answers,
@@ -104,13 +104,17 @@ export async function createRoom(
 
   if (roomError || !room) throw new Error("Failed to create room")
 
-  // Add host as first player
+  // Add host as first player.
+  //
+  // The name and avatar are deliberately not sent. Since migration 0036 a
+  // trigger stamps both from `profiles`, so whatever this insert claimed would
+  // be overwritten anyway — and sending them would suggest, to the next
+  // reader, that a client gets to choose who it plays as. It does not.
   const { error: playerError } = await supabase
     .from("quiz_room_players")
     .insert({
       room_id: room.id,
       user_id: hostId,
-      user_name: hostName,
       is_ready: true,
       is_host: true,
     })
@@ -125,16 +129,14 @@ export async function createRoom(
 // player-count increment (which the joining player has no RLS permission
 // to do directly) and the "room is full" check happen atomically and
 // correctly. See supabase/migrations.
-export async function joinRoom(
-  input: JoinRoomInput,
-  userId: string,
-  userName: string
-): Promise<QuizRoom> {
+export async function joinRoom(input: JoinRoomInput): Promise<QuizRoom> {
   const supabase = createClient()
 
+  // The code is the only thing a joining player gets to say. `p_user_name` was
+  // removed in migration 0036: the room reads the name off the account, so a
+  // player can no longer walk into a lobby wearing someone else's.
   const { data: roomId, error } = await supabase.rpc("join_room_rpc", {
     p_room_code: input.roomCode.toUpperCase(),
-    p_user_name: userName,
   })
   if (error) throw new Error(error.message || "Failed to join room")
 

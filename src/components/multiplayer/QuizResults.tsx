@@ -10,7 +10,11 @@ import { useLanguage } from "@/contexts/LanguageContext"
 interface Player {
   id: string
   userName: string
-  avatar?: string
+  /** The avatar chosen in onboarding, e.g. "m-3". `PremiumAvatar` draws
+   * the art from it; there is no URL and never was. Until migration 0036
+   * nothing wrote this at all, so every face in a room was the generic
+   * silhouette. */
+  avatarId?: string | null
   score: number
   correctAnswers: number
   totalAnswers: number
@@ -73,7 +77,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
         {/* 2nd Place */}
         {sortedPlayers[1] && (
           <div className="text-center">
-            <PremiumAvatar src={sortedPlayers[1].avatar} size="lg" />
+            <PremiumAvatar avatarId={sortedPlayers[1].avatarId} size="lg" />
             <p className="font-bold text-on-surface mt-2 text-sm">{sortedPlayers[1].userName}</p>
             <p className="text-xs text-on-surface-variant">{sortedPlayers[1].score} XP</p>
             <div className="w-20 h-20 bg-gradient-to-b from-gray-300/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
@@ -88,7 +92,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <PremiumAvatar src={winner.avatar} size="xl" ring ringColor="primary" />
+            <PremiumAvatar avatarId={winner.avatarId} size="xl" ring ringColor="primary" />
           </motion.div>
           <p className="font-bold text-on-surface mt-2">{winner.userName}</p>
           <p className="text-sm text-primary font-bold">{winner.score} XP</p>
@@ -100,7 +104,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
         {/* 3rd Place */}
         {sortedPlayers[2] && (
           <div className="text-center">
-            <PremiumAvatar src={sortedPlayers[2].avatar} size="lg" />
+            <PremiumAvatar avatarId={sortedPlayers[2].avatarId} size="lg" />
             <p className="font-bold text-on-surface mt-2 text-sm">{sortedPlayers[2].userName}</p>
             <p className="text-xs text-on-surface-variant">{sortedPlayers[2].score} XP</p>
             <div className="w-20 h-16 bg-gradient-to-b from-amber-700/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
@@ -137,7 +141,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl w-10 text-center">{getMedal(index + 1)}</span>
-                  <PremiumAvatar src={player.avatar} size="sm" />
+                  <PremiumAvatar avatarId={player.avatarId} size="sm" />
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-on-surface">{player.userName}</span>

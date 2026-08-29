@@ -54,6 +54,7 @@ export default async function LevelRunPage({ params }: LevelRunPageProps) {
       questions={questions}
       lifelinePrices={lifelinePrices}
       tier={tier}
+      categorySlug={id}
       backHref={`/quiz/${id}`}
     />
   );

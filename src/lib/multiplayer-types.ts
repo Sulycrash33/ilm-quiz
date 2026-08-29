@@ -21,7 +21,7 @@ export interface QuizRoomPlayerDB {
   room_id: string
   user_id: string
   user_name: string
-  avatar_url?: string
+  avatar_id?: string | null
   score: number
   correct_answers: number
   total_answers: number
@@ -80,7 +80,9 @@ export interface QuizRoomPlayer {
   roomId: string
   userId: string
   userName: string
-  avatarUrl?: string
+  /** The avatar chosen in onboarding, e.g. "m-3" — an id, not a URL.
+   * Stamped from the profile by trigger; see migration 0036. */
+  avatarId?: string | null
   score: number
   correctAnswers: number
   totalAnswers: number
@@ -171,7 +173,7 @@ export function transformPlayer(db: QuizRoomPlayerDB): QuizRoomPlayer {
     roomId: db.room_id,
     userId: db.user_id,
     userName: db.user_name,
-    avatarUrl: db.avatar_url,
+    avatarId: db.avatar_id,
     score: db.score,
     correctAnswers: db.correct_answers,
     totalAnswers: db.total_answers,

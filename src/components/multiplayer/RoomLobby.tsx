@@ -10,7 +10,11 @@ import { useLanguage } from "@/contexts/LanguageContext"
 interface Player {
   id: string
   userName: string
-  avatar?: string
+  /** The avatar chosen in onboarding, e.g. "m-3". `PremiumAvatar` draws
+   * the art from it; there is no URL and never was. Until migration 0036
+   * nothing wrote this at all, so every face in a room was the generic
+   * silhouette. */
+  avatarId?: string | null
   isHost: boolean
   isReady: boolean
   score: number
@@ -96,7 +100,7 @@ export function RoomLobby({
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <PremiumAvatar src={player.avatar} size="sm" />
+                  <PremiumAvatar avatarId={player.avatarId} size="sm" />
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-on-surface">{player.userName}</span>

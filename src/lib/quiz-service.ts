@@ -162,20 +162,28 @@ export async function getPublishedQuizQuestionsForTier(slug: string, tier: numbe
  *
  * Speed Round, Survival and Practice are not about a subject — they are about
  * how you play — so confining them to a category would make them a slower way
- * of doing what the level path already does. The pool is centred on the
- * player's own tier band so a Mubtadi is not handed Mujaddid questions in
- * Survival, where a wrong answer is expensive.
+ * of doing what the level path already does.
+ *
+ * The band arrives from the run itself rather than being worked out here.
+ * Since migration 0035 the run records the tiers it was opened for, and the
+ * grader pays the mode multiplier only inside them; drawing the pool from the
+ * same two numbers is what keeps the questions offered and the questions paid
+ * for the same set. Deriving the band twice — once in TypeScript from `RANKS`,
+ * once in SQL from `rank_tiers` — is how the two would drift apart.
  *
  * Capped well under PostgREST's 1,000-row ceiling on purpose: the category
  * grid spent a release counting to 1,000 and reporting it as the whole bank,
  * and an unbounded select here would be the same mistake in a new place. A
  * cap of 300 is far more than the longest realistic run.
  */
-export async function getModeQuestionPool(centreTier: number, limit = 300): Promise<QuizQuestion[]> {
+export async function getModeQuestionPool(
+  tierMin: number,
+  tierMax: number,
+  limit = 300,
+): Promise<QuizQuestion[]> {
   const supabase = await createClient();
-  const tier = clampTier(centreTier);
-  const low = clampTier(tier - 1);
-  const high = clampTier(tier + 1);
+  const low = clampTier(tierMin);
+  const high = clampTier(Math.max(tierMin, tierMax));
 
   const { data, error } = await supabase
     .from('questions')
@@ -188,7 +196,7 @@ export async function getModeQuestionPool(centreTier: number, limit = 300): Prom
   if (error || !data) return [];
 
   return data.map((row: any) => {
-    const t = clampTier(row.tier ?? tier);
+    const t = clampTier(row.tier ?? low);
     return {
       id: row.id as string,
       text: row.question_text as string,

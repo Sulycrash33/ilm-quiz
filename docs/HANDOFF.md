@@ -21,7 +21,7 @@ ten-minute credential task only the owner can do, and the three holes below.
 | Average explanation | **125 characters, ~20 words** |
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | 5 |
-| Migrations | through **`0033`**, disk and database in step |
+| Migrations | through **`0038`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, **`test:middleware`** |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -78,23 +78,62 @@ the truth was a wire between two working halves.
 
 ## Known holes, disclosed rather than hidden
 
-- **`submit_quiz_answer(p_double_points)` is client-supplied and validated
-  against nothing.** Any caller can take 2× XP without owning the power-up.
-  Fixing it means recording a lifeline spend against the question it was spent
-  on: `spend_lifeline_rpc` charges and writes no ledger row at all, and
-  `submit_quiz_answer` takes a `p_lifeline_used` argument its body never reads.
-  The parameter for the join already exists and is dead.
-- **A game mode is trustworthy; a run's difficulty is not.** A player can open
-  Survival and answer tier-1 questions for 2×. Closing it means the server
-  choosing a run's questions.
-- **Multiplayer avatars never render.** They read
-  `quiz_room_players.avatar_url`, which nothing writes. `join_room_rpc` also
-  takes `p_user_name` from the client, so a player can enter a room under any
-  name. Both are one migration on a subsystem that has still never been run:
-  `quiz_rooms` and `study_circles` are at zero rows, always have been.
-- **Signup is open.** `/auth/v1/settings` reports `disable_signup: false`.
-  Accounts can be removed and suspended from `/admin/users`, but nothing stops
-  the same address signing up again. Dashboard setting, not code.
+Three of the four are closed, in migrations 0034 to 0038. Each was verified in
+a rolled-back transaction against the live database, negative cases first — the
+exploit itself is an assertion in every one of them.
+
+- **Double points is real now.** `submit_quiz_answer` took
+  `p_double_points boolean` from the caller and doubled the award on trust; a
+  single crafted call took 2x XP forever. Migration 0034 adds
+  `lifeline_spends`, written only inside `spend_lifeline_rpc` after the charge
+  succeeds, and the grader reads and *consumes* a row from it instead of
+  believing an argument. One purchase pays once. `p_double_points` and the
+  long-dead `p_lifeline_used` are removed rather than ignored — a discarded
+  parameter reads, to the next person, as a parameter that works, which is
+  exactly how this one survived.
+- **A run's difficulty is server-chosen.** 0030 made the *mode* trustworthy and
+  left the run id a bearer token for the multiplier alone: open Survival, then
+  answer tier-1 questions for 2x. Migration 0035 records on the run the tier
+  band it was opened at, derived in the database from the player's own
+  `total_xp` against `rank_tiers`, and pays the mode multiplier only inside it.
+  Outside the band is not refused — that would break the classic hunt and the
+  level path, which have no run at all — it simply pays the ordinary rate.
+  `/play/[mode]` now draws its pool from that same band via `game_run_band`,
+  so the questions offered and the questions paid for are one set rather than
+  two copies of the rank thresholds agreeing.
+- **A player enters a room as themselves.** `join_room_rpc` took the display
+  name from the client, `createRoom` inserted the host's row with a
+  client-chosen name, and `quiz_rooms.host_name` was client-written too —
+  three doors, one room. Migrations 0036 and 0037 stamp the name and avatar
+  from `profiles` by trigger on insert *and* update, so no caller can name
+  itself through any of them. `p_user_name` is gone from the RPC.
+  `avatar_url` — never written by anything, which is why every face in a lobby
+  was the generic silhouette — is now `avatar_id`, holding what onboarding
+  actually stores, and `PremiumAvatar` receives it. 0038 revokes `execute` on
+  the two trigger functions, which the advisor caught as reachable by `anon`.
+- **Signup is still open.** Re-checked against `/auth/v1/settings` on
+  2026-08-29: `disable_signup: false`. Dashboard setting, owner only. Accounts
+  can be removed and suspended from `/admin/users`, but nothing stops the same
+  address signing up again.
+
+### The one thing to remove
+
+Migration 0034 leaves a **deploy-window shim**: the old seven-argument
+`submit_quiz_answer` still resolves, so the client deployed at the time the
+migration landed kept working. It discards the two arguments that were the
+vulnerability and delegates, so calling it with `p_double_points => true`
+earns exactly single XP — but it should not become permanent. Drop it once
+production runs the deployed client:
+
+```sql
+drop function public.submit_quiz_answer(uuid, integer, boolean, integer, boolean, text, uuid);
+```
+
+`spend_lifeline_rpc` needed no shim: its two new parameters default to null,
+so an old one-argument call still resolves and simply writes no ledger row —
+which means the lifeline it buys earns nothing. Failing closed is the point.
+A one-argument overload beside it would have made that call *ambiguous* and
+broken it outright, which is the 0030 trap wearing the opposite face.
 
 ## The traps that will cost you a day
 
@@ -151,11 +190,14 @@ the truth was a wire between two working halves.
    filters to "Awaiting review" and approves in place without unpublishing.
    Take one category end to end — Contemporary Issues is the riskiest and so
    the most informative — before committing to all 29.
-3. **The "Next level" CTA.** The smallest change with the largest effect.
-   Winning a level shows a `🔓 Level complete` banner and two buttons: **Play
-   again** and **Exit**. `playAgain` only reseeds the same tier. The most
-   engaged tester cleared tier 1 twice, unlocked tier 2, and never saw it —
-   they ground 55 attempts against the same 20 questions. No human has ever
+3. **The "Next level" CTA — built.** The summary now offers the next level as
+   its primary action, and the server decides whether to. Winning a run is not
+   clearing a level: `getCategoryLevels` unlocks the next tier only once every
+   published question in this one has been answered correctly, and a run can be
+   won with one dropped. So `getLevelOutcome` asks, and the banner says what is
+   true — the next level is open, how many of the tier are still unanswered, or
+   that this was the last level. The old banner told *every* winner the next
+   level was unlocked. Still true and still worth watching: no human has ever
    answered a tier-2 question.
 4. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
    The service worker now registers for every player, so there is something for
@@ -209,7 +251,7 @@ app working, and this codebase has now proven that twice.
 
 ## Working agreement
 
-- Develop on `claude/ilm-hunt-continuation-ap2a40`, branched fresh from
+- Develop on `claude/ilm-hunt-quiz-continuation-bu3fh7`, branched fresh from
   `origin/main`. Open a draft PR; the owner says "merge" when ready.
 - Migrations are applied to the live database **and** written to
   `supabase/migrations/`. Keep the two in step.

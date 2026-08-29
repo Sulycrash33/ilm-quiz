@@ -113,6 +113,14 @@ export interface Translations {
   completeLevelToUnlock: string
   backToLevels: string
   levelComplete: string
+  /** The CTA that was missing: after clearing a level, the way into the next
+   * one. Nothing linked forward, so testers replayed the same tier instead. */
+  nextLevel: string
+  /** Shown when the run was won but the level is not mastered — the next tier
+   * stays locked until every question in this one has been answered right. */
+  levelUnlockProgress: string
+  /** Tier 9: there is no next level to offer. */
+  finalLevelComplete: string
   xpToRank: string
   maxRankReached: string
   /** Shown once when a run promotes the player to a new rank — the rarest
@@ -852,6 +860,9 @@ const enTranslations: Translations = {
   completeLevelToUnlock: "Complete this level to unlock the next one",
   backToLevels: "Back to Levels",
   levelComplete: "Level complete! The next level is unlocked.",
+  nextLevel: "Next level",
+  levelUnlockProgress: "{correct} of {total} answered correctly. Get them all right to unlock the next level.",
+  finalLevelComplete: "Final level complete. You have cleared every level in this category.",
   xpToRank: "{xp} XP to {rank}",
   maxRankReached: "Highest rank reached",
   rankUpTitle: "New rank",
@@ -1589,6 +1600,9 @@ const msTranslations: Translations = {
   completeLevelToUnlock: "Selesaikan tahap ini untuk membuka tahap seterusnya",
   backToLevels: "Kembali ke Tahap",
   levelComplete: "Tahap selesai! Tahap seterusnya telah dibuka.",
+  nextLevel: "Tahap seterusnya",
+  levelUnlockProgress: "{correct} daripada {total} dijawab dengan betul. Jawab semuanya dengan betul untuk membuka tahap seterusnya.",
+  finalLevelComplete: "Tahap terakhir selesai. Anda telah menamatkan setiap tahap dalam kategori ini.",
   xpToRank: "{xp} XP ke {rank}",
   maxRankReached: "Pangkat tertinggi dicapai",
   rankUpTitle: "Pangkat baharu",
@@ -2326,6 +2340,9 @@ const idTranslations: Translations = {
   completeLevelToUnlock: "Selesaikan level ini untuk membuka level berikutnya",
   backToLevels: "Kembali ke Level",
   levelComplete: "Level selesai! Level berikutnya telah terbuka.",
+  nextLevel: "Level berikutnya",
+  levelUnlockProgress: "{correct} dari {total} dijawab dengan benar. Jawab semuanya dengan benar untuk membuka level berikutnya.",
+  finalLevelComplete: "Level terakhir selesai. Anda telah menuntaskan setiap level dalam kategori ini.",
   xpToRank: "{xp} XP menuju {rank}",
   maxRankReached: "Peringkat tertinggi tercapai",
   rankUpTitle: "Pangkat baru",
@@ -3063,6 +3080,9 @@ const haTranslations: Translations = {
   completeLevelToUnlock: "Kammala wannan matakin domin buɗe na gaba",
   backToLevels: "Koma zuwa Matakai",
   levelComplete: "An kammala matakin! An buɗe matakin gaba.",
+  nextLevel: "Mataki na gaba",
+  levelUnlockProgress: "An amsa {correct} daga cikin {total} daidai. Ka amsa dukkansu daidai don buɗe mataki na gaba.",
+  finalLevelComplete: "An kammala mataki na ƙarshe. Ka kammala kowane mataki a wannan rukunin.",
   xpToRank: "{xp} XP zuwa {rank}",
   maxRankReached: "An kai matsayi mafi girma",
   rankUpTitle: "Sabon matsayi",
@@ -3800,6 +3820,9 @@ const frTranslations: Translations = {
   completeLevelToUnlock: "Terminez ce niveau pour débloquer le suivant",
   backToLevels: "Retour aux niveaux",
   levelComplete: "Niveau terminé ! Le niveau suivant est débloqué.",
+  nextLevel: "Niveau suivant",
+  levelUnlockProgress: "{correct} sur {total} de bonnes réponses. Répondez correctement à toutes pour débloquer le niveau suivant.",
+  finalLevelComplete: "Dernier niveau terminé. Vous avez terminé tous les niveaux de cette catégorie.",
   xpToRank: "{xp} XP jusqu'à {rank}",
   maxRankReached: "Rang le plus élevé atteint",
   rankUpTitle: "Nouveau rang",
@@ -4537,6 +4560,9 @@ const arTranslations: Translations = {
   completeLevelToUnlock: "أكمل هذا المستوى لفتح المستوى التالي",
   backToLevels: "العودة إلى المستويات",
   levelComplete: "اكتمل المستوى! تم فتح المستوى التالي.",
+  nextLevel: "المستوى التالي",
+  levelUnlockProgress: "أجبت عن {correct} من {total} إجابة صحيحة. أجب عنها جميعًا بشكل صحيح لفتح المستوى التالي.",
+  finalLevelComplete: "اكتمل المستوى الأخير. لقد أنهيت كل مستويات هذه الفئة.",
   xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
   maxRankReached: "تم بلوغ أعلى رتبة",
   rankUpTitle: "رتبة جديدة",
