@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import type { EarnedAchievement, GradeResult } from '@/lib/types';
+import { getCategoryLevels } from '@/lib/quiz-service';
 
 interface SubmitOptions {
   usedHint?: boolean;
@@ -324,4 +325,42 @@ export async function endGameRun(runId: string): Promise<void> {
   } = await supabase.auth.getUser();
   if (!user) return;
   await supabase.rpc('end_game_run', { p_run_id: runId });
+}
+
+/**
+ * What finishing a level actually earned, decided by the server.
+ *
+ * Winning a run is not the same as clearing a level: `getCategoryLevels`
+ * unlocks the next tier only once *every* published question in this one has
+ * been answered correctly at least once, and a run can be won with a wrong
+ * answer or two still on the board. So the summary must ask rather than
+ * assume — the old banner told every winner the next level was open, which
+ * was false for anyone who dropped a question on the way.
+ *
+ * `next` is null on the last tier, or when the next tier has no published
+ * questions and so is nothing to walk into.
+ */
+export interface LevelOutcome {
+  current: { tier: number; correctCount: number; publishedCount: number; completed: boolean };
+  next: { tier: number; unlocked: boolean } | null;
+}
+
+export async function getLevelOutcome(slug: string, tier: number): Promise<LevelOutcome | null> {
+  const levels = await getCategoryLevels(slug);
+  const current = levels.find((l) => l.tier === tier);
+  if (!current) return null;
+
+  const nextLevel = levels.find((l) => l.tier === tier + 1);
+  return {
+    current: {
+      tier: current.tier,
+      correctCount: current.correctCount,
+      publishedCount: current.publishedCount,
+      completed: current.completed,
+    },
+    next:
+      nextLevel && nextLevel.publishedCount > 0
+        ? { tier: nextLevel.tier, unlocked: nextLevel.unlocked }
+        : null,
+  };
 }

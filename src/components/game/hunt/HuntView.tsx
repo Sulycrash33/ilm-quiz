@@ -30,9 +30,11 @@ import {
 } from "@/lib/hunt-engine";
 import {
   fiftyFifty,
+  getLevelOutcome,
   recordHuntRun,
   spendLifeline,
   submitAnswer,
+  type LevelOutcome,
   type LifelinePrice,
 } from "@/app/(app)/quiz/actions";
 import { AskTheImamDialog } from "../AskTheImamDialog";
@@ -53,6 +55,12 @@ interface HuntViewProps {
    * tier via `buildTierLadder` instead of the adaptive, rank-anchored
    * `buildLadder` used by the whole-category Hunt. */
   forceTier?: number;
+  /**
+   * The category's URL slug. Only a level run has one, and only a level run
+   * can offer a next level — that is why this is optional rather than derived
+   * from `categoryId`, which is a uuid and not routable.
+   */
+  categorySlug?: string;
   /**
    * How this mode plays. Absent means the classic hunt, which is why every
    * existing caller needed no change: `CLASSIC_RULES` is exactly what the
@@ -89,6 +97,7 @@ export function HuntView({
   lifelinePrices,
   onExit,
   forceTier,
+  categorySlug,
   modeRules,
   runId,
 }: HuntViewProps) {
@@ -292,6 +301,28 @@ export function HuntView({
     const id = setInterval(() => setRunRemaining((r) => Math.max(0, r - 1)), 1000);
     return () => clearInterval(id);
   }, [rules.runSeconds, runRemaining, finished]);
+
+  /**
+   * What clearing this level actually earned, asked of the server once the run
+   * ends. `null` while it is still being asked, so the banner can wait rather
+   * than flash a claim it has not checked — the old one asserted "the next
+   * level is unlocked" to every winner, including the ones for whom it wasn't.
+   */
+  const [outcome, setOutcome] = useState<LevelOutcome | null>(null);
+
+  useEffect(() => {
+    if (!finished || state.status !== "won" || forceTier === undefined || !categorySlug) return;
+    let live = true;
+    // The attempts this run wrote are already in the database — every answer
+    // was graded server-side as it was given — so the unlock this reads is the
+    // same one `/quiz/[id]/[tier]` will enforce on the way in.
+    void getLevelOutcome(categorySlug, forceTier).then((next) => {
+      if (live) setOutcome(next);
+    });
+    return () => {
+      live = false;
+    };
+  }, [finished, state.status, forceTier, categorySlug]);
 
   /** File the run in the journal once, when it ends. Best-effort: the XP is
    * already banked server-side by then, so a failure here changes nothing the
@@ -501,6 +532,7 @@ export function HuntView({
 
   const playAgain = () => {
     runRecorded.current = false;
+    setOutcome(null);
     xpAtStart.current = profile?.totalXp ?? xpAtStart.current;
     setReview([]);
     setHolding(false);
@@ -514,6 +546,7 @@ export function HuntView({
   // restart at 1 on a replay, so the timeout guard has to be cleared too.
   useEffect(() => {
     setState(initialState(ladder, rules));
+    setOutcome(null);
     setRemaining(ladder[0]?.timeLimit ?? 30);
     setRunRemaining(rules.runSeconds ?? 0);
     timedOutStage.current = -1;
@@ -538,12 +571,32 @@ export function HuntView({
     );
   }
 
+  const isLevelWin = forceTier !== undefined && state.status === "won" && !!categorySlug;
+  // The link appears only when the server says the next tier is open. A won
+  // run is not a cleared level: the unlock wants every question in the tier
+  // answered correctly, and this run may have dropped one.
+  const nextLevelHref =
+    isLevelWin && outcome?.next?.unlocked ? `/quiz/${categorySlug}/${outcome.next.tier}` : null;
+
   if (finished) {
     return (
       <div dir={dir} className="py-4">
-        {forceTier !== undefined && state.status === "won" && (
-          <p className="mb-4 rounded-xl bg-primary/10 px-4 py-3 text-center text-sm font-semibold text-primary">
-            🔓 {t("levelComplete")}
+        {isLevelWin && outcome && (
+          <p
+            className={`mb-4 rounded-xl px-4 py-3 text-center text-sm font-semibold ${
+              nextLevelHref
+                ? "bg-primary/10 text-primary"
+                : "bg-surface-container-high text-on-surface-variant"
+            }`}
+          >
+            {nextLevelHref
+              ? `\u{1F513} ${t("levelComplete")}`
+              : outcome.next === null
+                ? `\u{1F3C1} ${t("finalLevelComplete")}`
+                : t("levelUnlockProgress", {
+                    correct: outcome.current.correctCount,
+                    total: outcome.current.publishedCount,
+                  })}
           </p>
         )}
         <RunSummary
@@ -552,6 +605,7 @@ export function HuntView({
           xpBefore={xpAtStart.current ?? 0}
           onPlayAgain={playAgain}
           onExit={onExit}
+          nextLevelHref={nextLevelHref}
         />
       </div>
     );

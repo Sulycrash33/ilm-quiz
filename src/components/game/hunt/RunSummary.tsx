@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Trophy, HeartCrack, Flame, Target, Gauge, Sparkles, BookOpen, Check, X, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Trophy, HeartCrack, Flame, Target, Gauge, Sparkles, BookOpen, Check, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -31,6 +32,15 @@ interface RunSummaryProps {
   review?: RunReviewEntry[];
   onPlayAgain: () => void;
   onExit: () => void;
+  /**
+   * The way forward out of a cleared level. Absent for the classic hunt and
+   * for the modes, which have no next level to point at, and absent on a level
+   * whose next tier is still locked — the server decides which, not this
+   * component. When present it takes the primary slot and demotes "play
+   * again", because replaying a beaten tier is what testers did for want of
+   * anywhere else to go.
+   */
+  nextLevelHref?: string | null;
 }
 
 /**
@@ -42,9 +52,18 @@ interface RunSummaryProps {
  * — the part that makes a run feel like progress rather than a score — where
  * the run left the seeker on the nine-rank climb.
  */
-export function RunSummary({ summary, xpBefore, review = [], onPlayAgain, onExit }: RunSummaryProps) {
-  const { t } = useLanguage();
+export function RunSummary({
+  summary,
+  xpBefore,
+  review = [],
+  onPlayAgain,
+  onExit,
+  nextLevelHref = null,
+}: RunSummaryProps) {
+  const { t, dir } = useLanguage();
   const [showReview, setShowReview] = useState(false);
+  // The arrow means "onward", so it follows the script rather than the screen.
+  const Onward = dir === "rtl" ? ArrowLeft : ArrowRight;
   const won = summary.status === "won";
   const reduce = useReducedMotion();
 
@@ -202,13 +221,33 @@ export function RunSummary({ summary, xpBefore, review = [], onPlayAgain, onExit
         </div>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button size="lg" className="flex-1" onClick={onPlayAgain}>
-          {t("playAgain")}
-        </Button>
-        <Button size="lg" variant="outline" className="flex-1" onClick={onExit}>
-          {t("backToCategories")}
-        </Button>
+      <div className="space-y-3">
+        {nextLevelHref && (
+          <Button asChild size="lg" className="w-full">
+            <Link href={nextLevelHref}>
+              {t("nextLevel")}
+              <Onward className="ms-2 h-5 w-5" aria-hidden="true" />
+            </Link>
+          </Button>
+        )}
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button
+            size="lg"
+            variant={nextLevelHref ? "outline" : "default"}
+            className="flex-1"
+            onClick={onPlayAgain}
+          >
+            {t("playAgain")}
+          </Button>
+          <Button
+            size="lg"
+            variant={nextLevelHref ? "ghost" : "outline"}
+            className="flex-1"
+            onClick={onExit}
+          >
+            {t("backToCategories")}
+          </Button>
+        </div>
       </div>
     </motion.div>
   );

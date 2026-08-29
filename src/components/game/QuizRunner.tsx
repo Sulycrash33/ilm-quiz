@@ -21,6 +21,9 @@ interface QuizRunnerProps {
   /** Set for a level-locked run: which tier (1-9) this run is confined to.
    * Passed straight through to `HuntView` as `forceTier`. */
   tier?: number;
+  /** The category's URL slug, so a cleared level can link to the next one.
+   * Level runs only — the modes and the classic hunt have no level path. */
+  categorySlug?: string;
   /** Where the header's back link goes. Defaults to the category grid; a
    * tier run points it at that category's level map instead, and the label
    * follows automatically (see below) rather than needing its own prop. */
@@ -45,6 +48,7 @@ export function QuizRunner({
   questions,
   lifelinePrices,
   tier,
+  categorySlug,
   backHref,
   modeRules,
   runId,
@@ -62,6 +66,7 @@ export function QuizRunner({
           lifelinePrices={lifelinePrices}
           onExit={() => setStarted(false)}
           forceTier={tier}
+          categorySlug={categorySlug}
           modeRules={modeRules}
           runId={runId}
         />
