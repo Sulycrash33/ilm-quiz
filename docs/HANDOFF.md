@@ -21,7 +21,7 @@ ten-minute credential task only the owner can do, and the three holes below.
 | Average explanation | **125 characters, ~20 words** |
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | 5 |
-| Migrations | through **`0039`**, disk and database in step |
+| Migrations | through **`0043`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, **`test:middleware`** |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -183,11 +183,35 @@ and broken it outright, which is the 0030 trap wearing the opposite face.
 
 ## Open items
 
-1. **Richer explanations — held at the owner's instruction, and the big one.**
-   At 125 characters average this is a content project across 5,220 questions,
-   not a UI change. The persistent panel built in #40 will happily scroll; it
-   has nothing to scroll yet. Whatever produces the new text must go through
-   review rather than repeating the ai-drafted-and-published pattern.
+1. **Richer explanations — the pipeline is built, and the first level is
+   drafted and waiting.** The problem was never only the 125 character average.
+   Most of the existing explanations restate the correct answer in different
+   words, so a player who answered correctly learns nothing and one who
+   answered wrongly is told the right answer a second time.
+
+   Migration 0042 adds `questions.explanation_draft`, which nothing
+   player-facing reads: `submit_quiz_answer` returns `explanation` and does not
+   know the column exists. A draft reaches a player only when a person presses
+   publish at `/admin/explanations`, one question at a time, and there is
+   deliberately no publish-all. Publishing keeps scholar approval, for the
+   reason 0041 gives.
+
+   **Contemporary Issues tier 1, all 20 questions, is staged and waiting for
+   review.** Those twenty were composed directly and staged through
+   `admin_stage_explanation`, with no model call and no `GEMINI_API_KEY`. That
+   is worth knowing: `src/ai/flows/draft-explanations.ts` exists and mirrors
+   the question-drafting flow, but the staging column does not care what wrote
+   a draft, so the project is not blocked on an API key.
+
+   They average 628 characters against a first guess of 350 to 600. The guess
+   was wrong and the prompt now says 450 to 700, because forcing them shorter
+   cost the sentence explaining why a wrong choice was tempting.
+
+   `admin_explanation_progress()` reports how far this has got. Note the trap it
+   was written to avoid: `explanation.lt.300` as a PostgREST filter compares
+   text lexicographically rather than by length, and would put a confident
+   meaningless number on the dashboard.
+
 2. **Scholar review — still zero.** Now actually possible: `/admin/questions`
    filters to "Awaiting review" and approves in place without unpublishing.
    Take one category end to end — Contemporary Issues is the riskiest and so

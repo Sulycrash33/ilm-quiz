@@ -12,6 +12,13 @@
  * The register is fixed deliberately. English only, because the question bank
  * is English only. Four to five sentences, because the reveal panel scrolls
  * but a player is mid-run and will not read an essay.
+ *
+ * This flow is one way to fill the staging column, not the only one. Neither
+ * the column nor the review screen cares what wrote a draft, so an explanation
+ * can equally be composed directly and staged through
+ * `admin_stage_explanation`, with no model call and no API key. The twenty
+ * drafts seeding Contemporary Issues tier 1 were written that way, which is
+ * also why the length guidance below is measured rather than assumed.
  */
 
 import { ai } from '@/ai/genkit';
@@ -71,7 +78,7 @@ The explanations you are replacing almost all restate the correct answer in diff
 That teaches nothing. A learner who answered correctly gains no new fact, and one who answered wrongly is simply told the right answer a second time. Never write an explanation that a reader could have produced by rephrasing the correct choice.
 
 WHAT TO WRITE INSTEAD
-Four to five sentences. Roughly 350 to 600 characters. Aim to do these things, in whatever order suits the question:
+Four to five sentences. Roughly 450 to 700 characters. That range is measured rather than guessed: a first pass of twenty hand-written explanations for this bank averaged 628 characters, and squeezing them shorter cost the sentence explaining why a wrong choice was tempting every time.
 
 1. Confirm what is correct in one short clause, then move past it immediately.
 2. Give the actual reason, evidence or mechanism. This is the sentence the old explanations were missing.
