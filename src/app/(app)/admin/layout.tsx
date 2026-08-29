@@ -44,6 +44,15 @@ const adminNavItems = [
     ),
   },
   {
+    name: "Explanations",
+    href: "/admin/explanations",
+    icon: (
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M3 5h18v2H3V5zm0 4h18v2H3V9zm0 4h12v2H3v-2zm0 4h12v2H3v-2z" />
+      </svg>
+    ),
+  },
+  {
     name: "Review Queue",
     href: "/admin/review",
     icon: (
