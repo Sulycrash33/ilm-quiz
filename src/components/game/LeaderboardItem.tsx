@@ -4,13 +4,21 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Flame } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { LeaderboardUser } from "@/lib/types";
 
 export const LeaderboardItem = ({ user, index, isPodium = false }: { user: LeaderboardUser; index: number; isPodium?: boolean }) => {
-  const podiumStyles = isPodium 
-    ? index === 0 ? "border-primary bg-primary/10" 
-    : index === 1 ? "border-muted-foreground/30 bg-muted" 
-    : "border-warning bg-warning/10" 
+  const { t } = useLanguage();
+
+  // Medal tokens, not the warning ramp. First place was drawn in the brand
+  // `primary` and third in `warning`, which are both warm golds, so the podium
+  // said gold, grey, gold. Same fault the multiplayer podium had.
+  const podiumStyles = isPodium
+    ? index === 0
+      ? "border-medal-gold bg-medal-gold/10"
+      : index === 1
+        ? "border-medal-silver bg-medal-silver/10"
+        : "border-medal-bronze bg-medal-bronze/10"
     : "";
 
   return (
@@ -40,7 +48,7 @@ export const LeaderboardItem = ({ user, index, isPodium = false }: { user: Leade
         </div>
       </div>
       <div className="text-right">
-        <div className="text-base font-bold text-primary">{user.points.toLocaleString()} pts</div>
+        <div className="text-base font-bold text-primary">{t("pointsShort", { points: user.points.toLocaleString() })}</div>
         {user.streak && (
           <div className="flex items-center justify-end gap-1 text-sm text-primary">
             <Flame className="h-3 w-3" />
@@ -48,7 +56,7 @@ export const LeaderboardItem = ({ user, index, isPodium = false }: { user: Leade
           </div>
         )}
         {user.questionsAnswered && (
-          <div className="text-sm text-muted-foreground">{user.questionsAnswered} questions</div>
+          <div className="text-sm text-muted-foreground">{t("questionsCount", { count: user.questionsAnswered })}</div>
         )}
       </div>
     </motion.div>

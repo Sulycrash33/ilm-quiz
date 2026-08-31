@@ -1,31 +1,51 @@
-﻿"use client";
+"use client";
 
+import { Quote } from "lucide-react";
 import { DAILY_HADITH } from "@/lib/constants";
-import { Card, CardContent } from "@/components/ui/card";
+import { IslamicPattern } from "@/components/islamic-pattern";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+/**
+ * The opening word on the home screen.
+ *
+ * This component existed and was **imported by the home page without ever
+ * being rendered**, the same fault `StreakCounter` had on the same file. So the
+ * app had a hadith card built, styled and translated, and nobody ever saw it.
+ *
+ * Given room here because it is the one part of the home screen that is not a
+ * number: a page that opens with progress rings and streak counts is a
+ * scoreboard, and this is meant to be a place of study. The quote is set in the
+ * serif at quote size, the attribution sits under it as a `cite` rather than
+ * being joined on with a dash, and the khatim runs behind it.
+ *
+ * ── On the word "daily" ───────────────────────────────────────────────────
+ * `DAILY_HADITH` is a single hardcoded constant, so this shows the same hadith
+ * every day forever. The heading is therefore the honest one, not a promise of
+ * rotation. Making it genuinely daily means a set of verified narrations with
+ * their references, which is content work for the owner or a scholar to supply:
+ * this project's rule is that a citation is never invented, and a wrong hadith
+ * number in a religious app is worse than no number.
+ */
 export function DailyHadith() {
   const { t } = useLanguage();
+
   return (
-    <Card className="h-full bg-tertiary/10 border-tertiary/30">
-      <CardContent className="pt-6 flex items-center justify-center h-full">
-        <div className="text-center">
-          <h3 className="font-semibold font-headline text-tertiary mb-3">{t("dailyHadith")}</h3>
-          {/*
-            The attribution used to be joined on with a spaced hyphen, which the
-            copy rule forbids in anything a player reads. A citation does not
-            need a dash to be a citation: `cite` is the element the sentence was
-            asking for, and putting it on its own line reads as an attribution
-            without punctuation doing the work.
-          */}
-          <blockquote className="font-quote-italic text-quote-italic italic text-on-surface/80">
-            "{DAILY_HADITH.text}"
-          </blockquote>
-          <cite className="mt-2 block font-label-caps text-label-caps not-italic text-on-surface-variant">
-            {DAILY_HADITH.source}
-          </cite>
-        </div>
-      </CardContent>
-    </Card>
+    <section className="glass-card relative overflow-hidden rounded-xl p-6 text-center">
+      <IslamicPattern variant="flat" />
+
+      <div className="relative z-10 flex flex-col items-center gap-3">
+        <Quote className="h-8 w-8 text-primary/40" aria-hidden="true" />
+
+        <h2 className="sr-only">{t("dailyHadith")}</h2>
+
+        <blockquote className="font-quote-italic text-quote-italic italic text-on-surface">
+          {DAILY_HADITH.text}
+        </blockquote>
+
+        <cite className="font-label-caps text-label-caps uppercase not-italic tracking-widest text-primary">
+          {DAILY_HADITH.source}
+        </cite>
+      </div>
+    </section>
   );
 }

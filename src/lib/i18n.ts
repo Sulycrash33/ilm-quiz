@@ -789,6 +789,13 @@ export interface Translations {
   rarityRare: string
   rarityEpic: string
   rarityLegendary: string
+  knowledgeBreakdown: string
+  questionsCount: string
+  accuracyOfPct: string
+  daysCount: string
+  pointsShort: string
+  percentOff: string
+  barakahShort: string
 }
 
 const enTranslations: Translations = {
@@ -826,7 +833,7 @@ const enTranslations: Translations = {
 
   // Home Dashboard
   todayProgress: "Today's Progress",
-  xpGained: "XP Gained",
+  xpGained: "Barakah gained",
   focusLevel: "Focus Level",
   inProgress: "In Progress",
   lessonOf: "Lesson {current} of {total}",
@@ -853,7 +860,7 @@ const enTranslations: Translations = {
   tryAgain: "Try Again",
   questionsBeingPrepared: "Questions for the \u201c{category}\u201d category are being prepared.",
   backToCategories: "Back to Categories",
-  xpThisRound: "XP this round",
+  xpThisRound: "Barakah this round",
   coinsWord: "Coins",
   bestTotal: "Best total",
   playAgain: "Play again",
@@ -900,7 +907,7 @@ const enTranslations: Translations = {
   nextLevel: "Next level",
   levelUnlockProgress: "{correct} of {total} answered correctly. Get them all right to unlock the next level.",
   finalLevelComplete: "Final level complete. You have cleared every level in this category.",
-  xpToRank: "{xp} XP to {rank}",
+  xpToRank: "{xp} Barakah to {rank}",
   maxRankReached: "Highest rank reached",
   rankUpTitle: "New rank",
 
@@ -1041,7 +1048,7 @@ const enTranslations: Translations = {
   achievements: "Achievements",
   statistics: "Statistics",
   activity: "Activity",
-  totalXp: "Total XP",
+  totalXp: "Total Barakah",
   dayStreak: "Day Streak",
   globalRank: "Global Rank",
   progressTo: "Progress to Level {level}",
@@ -1111,7 +1118,7 @@ const enTranslations: Translations = {
   achievementsAndChallenges: "Achievements & Challenges",
   trackProgress: "Track your progress and earn rewards",
   unlocked: "UNLOCKED",
-  xpEarned: "XP EARNED",
+  xpEarned: "BARAKAH EARNED",
   activeChallenges: "ACTIVE CHALLENGES",
   weeklyChallenge: "Weekly Challenge",
   monthMaster: "Month Master",
@@ -1562,6 +1569,13 @@ const enTranslations: Translations = {
   rarityRare: "Rare",
   rarityEpic: "Epic",
   rarityLegendary: "Legendary",
+  knowledgeBreakdown: "Knowledge Breakdown",
+  questionsCount: "{count} questions",
+  accuracyOfPct: "{pct}% accuracy",
+  daysCount: "{count} days",
+  pointsShort: "{points} pts",
+  percentOff: "{pct}% off",
+  barakahShort: "Barakah",
 }
 
 // Malay/Indonesian translations - culturally meaningful, not direct translations
@@ -1600,7 +1614,7 @@ const msTranslations: Translations = {
 
   // Home Dashboard
   todayProgress: "Kemajuan Hari Ini",
-  xpGained: "XP Diperoleh",
+  xpGained: "Barakah diperoleh",
   focusLevel: "Tahap Fokus",
   inProgress: "Sedang Berjalan",
   lessonOf: "Pelajaran {current} daripada {total}",
@@ -1627,7 +1641,7 @@ const msTranslations: Translations = {
   tryAgain: "Cuba Lagi",
   questionsBeingPrepared: "Soalan untuk kategori \u201c{category}\u201d sedang disediakan.",
   backToCategories: "Kembali ke Kategori",
-  xpThisRound: "XP pusingan ini",
+  xpThisRound: "Barakah pusingan ini",
   coinsWord: "Syiling",
   bestTotal: "Jumlah terbaik",
   playAgain: "Main semula",
@@ -1674,7 +1688,7 @@ const msTranslations: Translations = {
   nextLevel: "Tahap seterusnya",
   levelUnlockProgress: "{correct} daripada {total} dijawab dengan betul. Jawab semuanya dengan betul untuk membuka tahap seterusnya.",
   finalLevelComplete: "Tahap terakhir selesai. Anda telah menamatkan setiap tahap dalam kategori ini.",
-  xpToRank: "{xp} XP ke {rank}",
+  xpToRank: "{xp} Barakah ke {rank}",
   maxRankReached: "Pangkat tertinggi dicapai",
   rankUpTitle: "Pangkat baharu",
 
@@ -1815,7 +1829,7 @@ const msTranslations: Translations = {
   achievements: "Pencapaian",
   statistics: "Statistik",
   activity: "Aktiviti",
-  totalXp: "Jumlah XP",
+  totalXp: "Jumlah Barakah",
   dayStreak: "Lega Hari",
   globalRank: "Penarafan Global",
   progressTo: "Kemajuan ke Tahap {level}",
@@ -1885,7 +1899,7 @@ const msTranslations: Translations = {
   achievementsAndChallenges: "Pencapaian & Cabaran",
   trackProgress: "Jejak kemajuan anda dan dapatkan ganjaran",
   unlocked: "DIBUKA",
-  xpEarned: "XP DIPEROLEH",
+  xpEarned: "BARAKAH DIPEROLEH",
   activeChallenges: "CABARAN AKTIF",
   weeklyChallenge: "Cabaran Mingguan",
   monthMaster: "Tuan Bulanan",
@@ -2336,6 +2350,13 @@ const msTranslations: Translations = {
   rarityRare: "Langka",
   rarityEpic: "Hebat",
   rarityLegendary: "Legenda",
+  knowledgeBreakdown: "Pecahan Pengetahuan",
+  questionsCount: "{count} soalan",
+  accuracyOfPct: "ketepatan {pct}%",
+  daysCount: "{count} hari",
+  pointsShort: "{points} mata",
+  percentOff: "diskaun {pct}%",
+  barakahShort: "Barakah",
 }
 
 // Indonesian translations - culturally meaningful, adapted for Indonesian context
@@ -2374,7 +2395,7 @@ const idTranslations: Translations = {
 
   // Home Dashboard
   todayProgress: "Kemajuan Hari Ini",
-  xpGained: "XP Diperoleh",
+  xpGained: "Berkah diperoleh",
   focusLevel: "Tingkat Fokus",
   inProgress: "Sedang Berlangsung",
   lessonOf: "Pelajaran {current} dari {total}",
@@ -2401,7 +2422,7 @@ const idTranslations: Translations = {
   tryAgain: "Coba Lagi",
   questionsBeingPrepared: "Pertanyaan untuk kategori \u201c{category}\u201d sedang disiapkan.",
   backToCategories: "Kembali ke Kategori",
-  xpThisRound: "XP putaran ini",
+  xpThisRound: "Berkah putaran ini",
   coinsWord: "Koin",
   bestTotal: "Total terbaik",
   playAgain: "Main lagi",
@@ -2448,7 +2469,7 @@ const idTranslations: Translations = {
   nextLevel: "Level berikutnya",
   levelUnlockProgress: "{correct} dari {total} dijawab dengan benar. Jawab semuanya dengan benar untuk membuka level berikutnya.",
   finalLevelComplete: "Level terakhir selesai. Anda telah menuntaskan setiap level dalam kategori ini.",
-  xpToRank: "{xp} XP menuju {rank}",
+  xpToRank: "{xp} Berkah menuju {rank}",
   maxRankReached: "Peringkat tertinggi tercapai",
   rankUpTitle: "Pangkat baru",
 
@@ -2589,7 +2610,7 @@ const idTranslations: Translations = {
   achievements: "Pencapaian",
   statistics: "Statistik",
   activity: "Aktivitas",
-  totalXp: "Total XP",
+  totalXp: "Total Berkah",
   dayStreak: "Runtutan Hari",
   globalRank: "Peringkat Global",
   progressTo: "Kemajuan ke Level {level}",
@@ -2659,7 +2680,7 @@ const idTranslations: Translations = {
   achievementsAndChallenges: "Pencapaian & Tantangan",
   trackProgress: "Pantau kemajuan Anda dan dapatkan hadiah",
   unlocked: "TERBUKA",
-  xpEarned: "XP DIPEROLEH",
+  xpEarned: "BERKAH DIPEROLEH",
   activeChallenges: "TANTANGAN AKTIF",
   weeklyChallenge: "Tantangan Mingguan",
   monthMaster: "Tuan Bulanan",
@@ -3110,6 +3131,13 @@ const idTranslations: Translations = {
   rarityRare: "Langka",
   rarityEpic: "Epik",
   rarityLegendary: "Legendaris",
+  knowledgeBreakdown: "Rincian Pengetahuan",
+  questionsCount: "{count} pertanyaan",
+  accuracyOfPct: "akurasi {pct}%",
+  daysCount: "{count} hari",
+  pointsShort: "{points} poin",
+  percentOff: "diskon {pct}%",
+  barakahShort: "Berkah",
 }
 
 // Hausa translations
@@ -3148,7 +3176,7 @@ const haTranslations: Translations = {
 
   // Home Dashboard
   todayProgress: "Ci gaban Yau",
-  xpGained: "XP da Aka Samu",
+  xpGained: "Albarkar da aka samu",
   focusLevel: "Matakin Mayar da Hankali",
   inProgress: "Ana Ci Gaba",
   lessonOf: "Darasi {current} na {total}",
@@ -3175,7 +3203,7 @@ const haTranslations: Translations = {
   tryAgain: "Sake Gwadawa",
   questionsBeingPrepared: "Ana shirya tambayoyi don rukunin \u201c{category}\u201d.",
   backToCategories: "Koma zuwa Rukunoni",
-  xpThisRound: "XP na wannan zagaye",
+  xpThisRound: "Albarka na wannan zagaye",
   coinsWord: "Tsabar Kudi",
   bestTotal: "Jimlar Mafi Kyau",
   playAgain: "Sake Wasa",
@@ -3222,7 +3250,7 @@ const haTranslations: Translations = {
   nextLevel: "Mataki na gaba",
   levelUnlockProgress: "An amsa {correct} daga cikin {total} daidai. Ka amsa dukkansu daidai don buɗe mataki na gaba.",
   finalLevelComplete: "An kammala mataki na ƙarshe. Ka kammala kowane mataki a wannan rukunin.",
-  xpToRank: "{xp} XP zuwa {rank}",
+  xpToRank: "Albarka {xp} zuwa {rank}",
   maxRankReached: "An kai matsayi mafi girma",
   rankUpTitle: "Sabon matsayi",
 
@@ -3363,7 +3391,7 @@ const haTranslations: Translations = {
   achievements: "Nasarori",
   statistics: "Kididdiga",
   activity: "Ayyuka",
-  totalXp: "Jimlar XP",
+  totalXp: "Jimlar albarka",
   dayStreak: "Kwanakin Jere",
   globalRank: "Matsayi na Duniya",
   progressTo: "Ci gaba zuwa Mataki {level}",
@@ -3433,7 +3461,7 @@ const haTranslations: Translations = {
   achievementsAndChallenges: "Nasarori & Kalubale",
   trackProgress: "Bibiyi ci gabanka ka sami lada",
   unlocked: "AN BUDE",
-  xpEarned: "XP DA AKA SAMU",
+  xpEarned: "ALBARKAR DA AKA SAMU",
   activeChallenges: "KALUBALE MASU AIKI",
   weeklyChallenge: "Kalubalen Mako",
   monthMaster: "Gwanin Wata",
@@ -3884,6 +3912,13 @@ const haTranslations: Translations = {
   rarityRare: "Wuya",
   rarityEpic: "Babba",
   rarityLegendary: "Almara",
+  knowledgeBreakdown: "Rarraba Ilimi",
+  questionsCount: "tambayoyi {count}",
+  accuracyOfPct: "daidaito {pct}%",
+  daysCount: "kwanaki {count}",
+  pointsShort: "maki {points}",
+  percentOff: "ragi {pct}%",
+  barakahShort: "Albarka",
 }
 
 // French translations
@@ -3922,7 +3957,7 @@ const frTranslations: Translations = {
 
   // Home Dashboard
   todayProgress: "Progrès du jour",
-  xpGained: "XP gagnés",
+  xpGained: "Barakah gagnée",
   focusLevel: "Niveau de concentration",
   inProgress: "En cours",
   lessonOf: "Leçon {current} sur {total}",
@@ -3949,7 +3984,7 @@ const frTranslations: Translations = {
   tryAgain: "Réessayer",
   questionsBeingPrepared: "Les questions de la cat\u00e9gorie \u00ab\u00a0{category}\u00a0\u00bb sont en pr\u00e9paration.",
   backToCategories: "Retour aux cat\u00e9gories",
-  xpThisRound: "XP de cette manche",
+  xpThisRound: "Barakah de cette manche",
   coinsWord: "Pi\u00e8ces",
   bestTotal: "Meilleur total",
   playAgain: "Rejouer",
@@ -3996,7 +4031,7 @@ const frTranslations: Translations = {
   nextLevel: "Niveau suivant",
   levelUnlockProgress: "{correct} sur {total} de bonnes réponses. Répondez correctement à toutes pour débloquer le niveau suivant.",
   finalLevelComplete: "Dernier niveau terminé. Vous avez terminé tous les niveaux de cette catégorie.",
-  xpToRank: "{xp} XP jusqu'à {rank}",
+  xpToRank: "{xp} Barakah jusqu'à {rank}",
   maxRankReached: "Rang le plus élevé atteint",
   rankUpTitle: "Nouveau rang",
 
@@ -4137,7 +4172,7 @@ const frTranslations: Translations = {
   achievements: "Succès",
   statistics: "Statistiques",
   activity: "Activité",
-  totalXp: "XP total",
+  totalXp: "Barakah totale",
   dayStreak: "Série de jours",
   globalRank: "Classement mondial",
   progressTo: "Progression vers le niveau {level}",
@@ -4207,7 +4242,7 @@ const frTranslations: Translations = {
   achievementsAndChallenges: "Succès et défis",
   trackProgress: "Suivez votre progression et gagnez des récompenses",
   unlocked: "DÉBLOQUÉS",
-  xpEarned: "XP GAGNÉS",
+  xpEarned: "BARAKAH GAGNÉE",
   activeChallenges: "DÉFIS ACTIFS",
   weeklyChallenge: "Défi hebdomadaire",
   monthMaster: "Maître du mois",
@@ -4658,6 +4693,13 @@ const frTranslations: Translations = {
   rarityRare: "Rare",
   rarityEpic: "Épique",
   rarityLegendary: "Légendaire",
+  knowledgeBreakdown: "Répartition des connaissances",
+  questionsCount: "{count} questions",
+  accuracyOfPct: "{pct}% de précision",
+  daysCount: "{count} jours",
+  pointsShort: "{points} pts",
+  percentOff: "{pct}% de remise",
+  barakahShort: "Barakah",
 }
 
 // Arabic translations (RTL)
@@ -4696,7 +4738,7 @@ const arTranslations: Translations = {
 
   // Home Dashboard
   todayProgress: "تقدّم اليوم",
-  xpGained: "نقاط الخبرة المكتسبة",
+  xpGained: "البركة المكتسبة",
   focusLevel: "مستوى التركيز",
   inProgress: "قيد التقدم",
   lessonOf: "الدرس {current} من {total}",
@@ -4723,7 +4765,7 @@ const arTranslations: Translations = {
   tryAgain: "حاول مرة أخرى",
   questionsBeingPrepared: "يتم إعداد أسئلة فئة \u201c{category}\u201d.",
   backToCategories: "العودة إلى الفئات",
-  xpThisRound: "نقاط الخبرة لهذه الجولة",
+  xpThisRound: "بركة هذه الجولة",
   coinsWord: "العملات",
   bestTotal: "أفضل مجموع",
   playAgain: "العب مرة أخرى",
@@ -4770,7 +4812,7 @@ const arTranslations: Translations = {
   nextLevel: "المستوى التالي",
   levelUnlockProgress: "أجبت عن {correct} من {total} إجابة صحيحة. أجب عنها جميعًا بشكل صحيح لفتح المستوى التالي.",
   finalLevelComplete: "اكتمل المستوى الأخير. لقد أنهيت كل مستويات هذه الفئة.",
-  xpToRank: "{xp} نقطة خبرة لبلوغ {rank}",
+  xpToRank: "{xp} بركة لبلوغ {rank}",
   maxRankReached: "تم بلوغ أعلى رتبة",
   rankUpTitle: "رتبة جديدة",
 
@@ -4911,7 +4953,7 @@ const arTranslations: Translations = {
   achievements: "الإنجازات",
   statistics: "الإحصائيات",
   activity: "النشاط",
-  totalXp: "إجمالي نقاط الخبرة",
+  totalXp: "إجمالي البركة",
   dayStreak: "أيام متتالية",
   globalRank: "الترتيب العالمي",
   progressTo: "التقدم نحو المستوى {level}",
@@ -4981,7 +5023,7 @@ const arTranslations: Translations = {
   achievementsAndChallenges: "الإنجازات والتحديات",
   trackProgress: "تابع تقدّمك واكسب المكافآت",
   unlocked: "مفتوحة",
-  xpEarned: "نقاط الخبرة المكتسبة",
+  xpEarned: "البركة المكتسبة",
   activeChallenges: "التحديات النشطة",
   weeklyChallenge: "التحدي الأسبوعي",
   monthMaster: "بطل الشهر",
@@ -5432,6 +5474,13 @@ const arTranslations: Translations = {
   rarityRare: "نادر",
   rarityEpic: "ملحمي",
   rarityLegendary: "أسطوري",
+  knowledgeBreakdown: "تفصيل المعرفة",
+  questionsCount: "{count} سؤال",
+  accuracyOfPct: "دقة {pct}%",
+  daysCount: "{count} يوم",
+  pointsShort: "{points} نقطة",
+  percentOff: "خصم {pct}%",
+  barakahShort: "بركة",
 }
 
 /**

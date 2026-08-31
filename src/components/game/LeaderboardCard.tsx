@@ -97,7 +97,7 @@ export function LeaderboardCard({
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-bold text-primary">{entry.xp.toLocaleString()} XP</p>
+                <p className="font-bold text-primary">{entry.xp.toLocaleString()} {t("barakahShort")}</p>
                 {entry.rank <= 3 && (
                   <PremiumBadge variant={entry.rank === 1 ? "warning" : "primary"} size="sm">
                     {entry.rank === 1 ? t("championBadge") : entry.rank === 2 ? t("runnerUpBadge") : t("thirdPlaceBadge")}

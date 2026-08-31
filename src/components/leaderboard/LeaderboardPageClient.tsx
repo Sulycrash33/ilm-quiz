@@ -138,7 +138,7 @@ export function LeaderboardPageClient({
               </div>
             </div>
             <div className="text-right">
-              <p className="font-bold text-primary text-xl">{myRank.xp.toLocaleString()} XP</p>
+              <p className="font-bold text-primary text-xl">{myRank.xp.toLocaleString()} {t("barakahShort")}</p>
             </div>
           </div>
         </motion.div>
@@ -174,6 +174,7 @@ function PodiumSlot({
   nameClass: string
   plinthClass: string
 }) {
+  const { t } = useLanguage()
   const circle = (
     <div className={`relative rounded-full border-4 mx-auto mb-2 overflow-visible ${avatarClass}`}>
       <PremiumAvatar
@@ -200,7 +201,7 @@ function PodiumSlot({
       )}
       <p className={`font-bold text-on-surface ${nameClass}`}>{entry.name.split(" ")[0]}</p>
       <p className={`text-on-surface-variant ${nameClass ? "text-xs" : "text-sm"}`}>
-        {entry.xp.toLocaleString()} XP
+        {entry.xp.toLocaleString()} {t("barakahShort")}
       </p>
       <div className={`rounded-t-xl mt-2 ${plinthClass}`} />
     </div>

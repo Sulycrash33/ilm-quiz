@@ -16,6 +16,7 @@ import { ResetProgressCard } from "@/components/profile/ResetProgressCard"
 import { GameMasterCard } from "@/components/profile/GameMasterCard"
 import { SoundToggle } from "@/components/profile/SoundToggle"
 import { HapticsToggle } from "@/components/profile/HapticsToggle"
+import { KnowledgeBreakdown } from "@/components/profile/KnowledgeBreakdown"
 import { StreakReminderToggle } from "@/components/profile/StreakReminderToggle"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Locale, Translations } from "@/lib/i18n"
@@ -152,7 +153,7 @@ export function ProfilePageClient({
                     {nextRank ? t("progressToRank", { rank: nextRank.name }) : t("highestRankReachedName", { rank: currentRank.name })}
                   </span>
                   {nextRank && xpNeededForNextRank !== null && (
-                    <span className="font-bold text-on-surface">{xpIntoCurrentRank}/{xpNeededForNextRank} XP</span>
+                    <span className="font-bold text-on-surface">{xpIntoCurrentRank}/{xpNeededForNextRank} {t("barakahShort")}</span>
                   )}
                 </div>
                 {nextRank && xpNeededForNextRank !== null && (
@@ -195,7 +196,7 @@ export function ProfilePageClient({
                     <div key={category.slug}>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-on-surface">{category.name}</span>
-                        <span className="text-on-surface-variant">{category.attempted} questions</span>
+                        <span className="text-on-surface-variant">{t("questionsCount", { count: category.attempted })}</span>
                       </div>
                       <PremiumProgress value={category.correct} max={category.attempted} size="sm" />
                     </div>
@@ -260,27 +261,14 @@ export function ProfilePageClient({
 
         {activeTab === "statistics" && (
           <motion.div key="statistics" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <PremiumCard className="p-6">
-              <h3 className="font-headline-md text-headline-md text-primary mb-4">{t("categoryPerformance")}</h3>
-              {categories.length === 0 ? (
+            {categories.length === 0 ? (
+              <PremiumCard className="p-6">
+                <h3 className="font-headline-md text-headline-md text-primary mb-4">{t("categoryPerformance")}</h3>
                 <p className="text-on-surface-variant text-sm">{t("noAccuracyYet")}</p>
-              ) : (
-                <div className="space-y-4">
-                  {categories.map((category) => {
-                    const pct = category.attempted > 0 ? Math.round((category.correct / category.attempted) * 100) : 0
-                    return (
-                      <div key={category.slug}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-on-surface">{category.name}</span>
-                          <span className="text-on-surface-variant">{pct}% accuracy</span>
-                        </div>
-                        <PremiumProgress value={category.correct} max={category.attempted} size="sm" />
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </PremiumCard>
+              </PremiumCard>
+            ) : (
+              <KnowledgeBreakdown stats={categories} />
+            )}
 
             <PremiumCard className="p-6">
               <h3 className="font-headline-md text-headline-md text-primary mb-4">{t("learningStreaks")}</h3>
@@ -302,7 +290,7 @@ export function ProfilePageClient({
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-on-surface-variant">{t("longestStreak")}</span>
-                  <span className="font-bold text-on-surface">{profile.longestStreak} days</span>
+                  <span className="font-bold text-on-surface">{t("daysCount", { count: profile.longestStreak })}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-on-surface-variant">{t("questionsAnswered")}</span>
@@ -330,7 +318,7 @@ export function ProfilePageClient({
                         <p className="text-on-surface text-sm">{a.questionText}</p>
                         <p className="text-xs text-on-surface-variant">{a.categoryName} · {timeAgo(a.createdAt, t)}</p>
                       </div>
-                      {a.xpEarned > 0 && <PremiumBadge variant="primary" size="sm">+{a.xpEarned} XP</PremiumBadge>}
+                      {a.xpEarned > 0 && <PremiumBadge variant="primary" size="sm">+{a.xpEarned} {t("barakahShort")}</PremiumBadge>}
                     </div>
                   ))}
                 </div>

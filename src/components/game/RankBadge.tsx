@@ -44,7 +44,7 @@ export function RankBadge({ currentPoints }: RankBadgeProps) {
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>{t("progressToRank", { rank: nextRank.title })}</span>
-              <span className="font-semibold">{currentPoints}/{nextRank.minPoints} XP</span>
+              <span className="font-semibold">{currentPoints}/{nextRank.minPoints} {t("barakahShort")}</span>
             </div>
             <Progress value={progress} className="h-3" aria-label={t("progressToRank", { rank: nextRank.title })} />
           </div>

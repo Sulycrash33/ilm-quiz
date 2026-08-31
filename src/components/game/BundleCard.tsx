@@ -58,7 +58,7 @@ export function BundleCard({ bundle, userCoins, handlePurchase }: BundleCardProp
           </div>
           <div className="text-right">
             <div className="text-lg font-bold text-success">Save {savings}!</div>
-            <div className="text-sm text-muted-foreground">{discount}% off</div>
+            <div className="text-sm text-muted-foreground">{t("percentOff", { pct: discount })}</div>
           </div>
         </div>
 
