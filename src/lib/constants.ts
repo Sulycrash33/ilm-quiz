@@ -39,30 +39,53 @@ import { MosqueIcon } from '@/components/icons/MosqueIcon';
  * rank shown by client-side `rankFor()` disagreed with the rank stored on the
  * profile and used for achievement criteria — a seeker could read as Faqih in
  * one place and Talib in another. Change both or neither.
+ *
+ * `theme` is live too: `ranks.ts` re-exports these and `RunSummary` renders
+ * `rank.theme` beside the rank icon on the payoff screen, so these colours are
+ * seen by every player who finishes a run. They were nine raw Tailwind palette
+ * classes picked with no relation to each other; they are tokens now, ordered
+ * as a deliberate cool-to-warm climb that ends on the brand gold, so the ramp
+ * itself reads as ascent rather than nine unrelated hues.
  */
 export const RANKS: Rank[] = [
-  { level: 1, title: 'Mubtadi', icon: Sprout, theme: 'text-green-500', minPoints: 0 },
-  { level: 2, title: 'Talib', icon: BookOpen, theme: 'text-blue-500', minPoints: 500 },
-  { level: 3, title: 'Hafiz', icon: BookMarked, theme: 'text-yellow-500', minPoints: 1500 },
-  { level: 4, title: 'Faqih', icon: Scale, theme: 'text-purple-500', minPoints: 3000 },
-  { level: 5, title: 'Muhaddith', icon: ScrollText, theme: 'text-amber-700', minPoints: 5000 },
-  { level: 6, title: 'Mufassir', icon: Search, theme: 'text-gray-500', minPoints: 8000 },
-  { level: 7, title: 'Shaykh', icon: MosqueIcon, theme: 'text-emerald-500', minPoints: 12000 },
-  { level: 8, title: 'Imam', icon: Crown, theme: 'text-blue-700', minPoints: 18000 },
-  { level: 9, title: 'Mujaddid', icon: Flame, theme: 'text-red-500', minPoints: 25000 },
+  { level: 1, title: 'Mubtadi', icon: Sprout, theme: 'text-success', minPoints: 0 },
+  { level: 2, title: 'Talib', icon: BookOpen, theme: 'text-info', minPoints: 500 },
+  { level: 3, title: 'Hafiz', icon: BookMarked, theme: 'text-info-bright', minPoints: 1500 },
+  { level: 4, title: 'Faqih', icon: Scale, theme: 'text-special', minPoints: 3000 },
+  { level: 5, title: 'Muhaddith', icon: ScrollText, theme: 'text-special-bright', minPoints: 5000 },
+  { level: 6, title: 'Mufassir', icon: Search, theme: 'text-secondary', minPoints: 8000 },
+  { level: 7, title: 'Shaykh', icon: MosqueIcon, theme: 'text-warning', minPoints: 12000 },
+  { level: 8, title: 'Imam', icon: Crown, theme: 'text-medal-gold', minPoints: 18000 },
+  { level: 9, title: 'Mujaddid', icon: Flame, theme: 'text-primary', minPoints: 25000 },
 ];
 
+/**
+ * NOTE: nothing imports this. The live category list comes from the database
+ * via `quiz-service.ts`; this survives as scaffold data.
+ *
+ * Its colours were still shipping, though: Tailwind scans this directory and
+ * emitted every class named here into the stylesheet, which is how ten dead
+ * entries came to be the last raw palette classes in the bundle. They were also
+ * pale-tint-on-dark-text chips, so anything reviving this list would have
+ * painted light boxes onto a dark app. Tokens now: correct if it is ever wired
+ * up, and costing nothing if it is not.
+ *
+ * Do not name a palette class literally in a comment here. The scanner is a
+ * regex over the file's bytes and has no idea what a comment is, so writing one
+ * out is enough to put it back in the bundle. That is not hypothetical: the
+ * first draft of this very note re-emitted the two classes it was describing.
+ */
 export const CATEGORIES: Category[] = [
-  { id: 'holy-quran', title: 'Quran', description: 'Surahs, verses, themes, and memorization', icon: Book, color: 'bg-green-100 text-green-800 hover:bg-green-200' },
-  { id: 'hadith-sciences', title: 'Hadith', description: 'Prophetic sayings and their authenticity', icon: BookCopy, color: 'bg-blue-100 text-blue-800 hover:bg-blue-200' },
-  { id: 'prophetic-biography', title: 'Prophets', description: 'Life of Prophet Muhammad (PBUH) & others.', icon: StarIcon, color: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' },
-  { id: 'islamic-law', title: 'Fiqh', description: 'Practical religious rulings.', icon: Scale, color: 'bg-white text-black hover:bg-gray-100' },
-  { id: 'islamic-history', title: 'History', description: 'Golden age achievements.', icon: History, color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' },
-  { id: 'allahs-names', title: 'Aqeedah', description: "Allah's Names & Attributes", icon: Gem, color: 'bg-sky-100 text-sky-800 hover:bg-sky-200' },
-  { id: 'islamic-ethics', title: 'Ethics', description: 'Character development and morals.', icon: Heart, color: 'bg-pink-100 text-pink-800 hover:bg-pink-200' },
-  { id: 'arabic-language', title: 'Arabic', description: 'Learn the language of the Quran.', icon: Languages, color: 'bg-teal-100 text-teal-800 hover:bg-teal-200' },
-  { id: 'five-pillars', title: 'Pillars', description: 'Practice of fundamental obligations.', icon: Landmark, color: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' },
-  { id: 'contemporary-issues', title: 'Contemporary Issues', description: 'Modern Islamic perspectives.', icon: ShieldQuestion, color: 'bg-slate-100 text-slate-800 hover:bg-slate-200' },
+  { id: 'holy-quran', title: 'Quran', description: 'Surahs, verses, themes, and memorization', icon: Book, color: 'bg-success/10 text-success hover:bg-success/20' },
+  { id: 'hadith-sciences', title: 'Hadith', description: 'Prophetic sayings and their authenticity', icon: BookCopy, color: 'bg-info/10 text-info hover:bg-info/20' },
+  { id: 'prophetic-biography', title: 'Prophets', description: 'Life of Prophet Muhammad (PBUH) & others.', icon: StarIcon, color: 'bg-warning/10 text-warning hover:bg-warning/20' },
+  { id: 'islamic-law', title: 'Fiqh', description: 'Practical religious rulings.', icon: Scale, color: 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest' },
+  { id: 'islamic-history', title: 'History', description: 'Golden age achievements.', icon: History, color: 'bg-warning/10 text-warning-bright hover:bg-warning/20' },
+  { id: 'allahs-names', title: 'Aqeedah', description: "Allah's Names & Attributes", icon: Gem, color: 'bg-info/10 text-info-bright hover:bg-info/20' },
+  { id: 'islamic-ethics', title: 'Ethics', description: 'Character development and morals.', icon: Heart, color: 'bg-special/10 text-special-bright hover:bg-special/20' },
+  { id: 'arabic-language', title: 'Arabic', description: 'Learn the language of the Quran.', icon: Languages, color: 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20' },
+  { id: 'five-pillars', title: 'Pillars', description: 'Practice of fundamental obligations.', icon: Landmark, color: 'bg-success/10 text-success-bright hover:bg-success/20' },
+  { id: 'contemporary-issues', title: 'Contemporary Issues', description: 'Modern Islamic perspectives.', icon: ShieldQuestion, color: 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest' },
 ];
 
 export const QUESTIONS: Record<string, Question[]> = {
@@ -327,7 +350,7 @@ const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
     estimatedTime: 'Approx. 3-4 hours',
     xpReward: 2500,
     unlocked: true,
-    color: "border-orange-300",
+    color: "border-warning/40",
     topics: [
       { id: 'ih-rashidun', name: 'The Rightly Guided Caliphs', description: 'Study the rule of Abu Bakr, Umar, Uthman, and Ali.', questions: 40, completed: 0, difficulty: 'Beginner', unlocked: true },
       { id: 'ih-umayyad', name: 'The Umayyad Caliphate', description: 'Explore the expansion and administration of the Umayyad dynasty.', questions: 40, completed: 0, difficulty: 'Intermediate', unlocked: false },
@@ -350,7 +373,7 @@ const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
     estimatedTime: 'Approx. 3-4 hours',
     xpReward: 2500,
     unlocked: true,
-    color: "border-amber-300",
+    color: "border-warning/40",
     topics: [],
     achievements: [],
   },
@@ -366,7 +389,7 @@ const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
     estimatedTime: 'Approx. 2-3 hours',
     xpReward: 2000,
     unlocked: true,
-    color: "border-yellow-300",
+    color: "border-warning-bright/40",
     topics: [],
     achievements: [],
   },
@@ -382,7 +405,7 @@ const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
     estimatedTime: 'Approx. 3-4 hours',
     xpReward: 3000,
     unlocked: true,
-    color: "border-purple-300",
+    color: "border-special/40",
     topics: [],
     achievements: [],
   },
@@ -398,7 +421,7 @@ const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
     estimatedTime: 'Approx. 1-2 hours',
     xpReward: 1500,
     unlocked: true,
-    color: "border-teal-300",
+    color: "border-tertiary/40",
     topics: [],
     achievements: [],
   },
