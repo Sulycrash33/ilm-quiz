@@ -781,6 +781,14 @@ export interface Translations {
   hapticsOff: string
   hapticsHint: string
   levelsCleared: string
+  milestoneTrophies: string
+  collectionBadges: string
+  achievementPoints: string
+  rarityCommon: string
+  rarityUncommon: string
+  rarityRare: string
+  rarityEpic: string
+  rarityLegendary: string
 }
 
 const enTranslations: Translations = {
@@ -1546,6 +1554,14 @@ const enTranslations: Translations = {
   hapticsOff: "Vibration off",
   hapticsHint: "A short pulse when you answer. On by default, because only you can feel it.",
   levelsCleared: "{done} of {total} levels cleared",
+  milestoneTrophies: "Milestone Trophies",
+  collectionBadges: "Collection Badges",
+  achievementPoints: "Achievement points",
+  rarityCommon: "Common",
+  rarityUncommon: "Uncommon",
+  rarityRare: "Rare",
+  rarityEpic: "Epic",
+  rarityLegendary: "Legendary",
 }
 
 // Malay/Indonesian translations - culturally meaningful, not direct translations
@@ -2312,6 +2328,14 @@ const msTranslations: Translations = {
   hapticsOff: "Getaran dimatikan",
   hapticsHint: "Denyutan pendek apabila anda menjawab. Dihidupkan secara lalai, kerana anda sahaja yang merasainya.",
   levelsCleared: "{done} daripada {total} tahap selesai",
+  milestoneTrophies: "Piala Pencapaian",
+  collectionBadges: "Lencana Koleksi",
+  achievementPoints: "Mata pencapaian",
+  rarityCommon: "Biasa",
+  rarityUncommon: "Jarang",
+  rarityRare: "Langka",
+  rarityEpic: "Hebat",
+  rarityLegendary: "Legenda",
 }
 
 // Indonesian translations - culturally meaningful, adapted for Indonesian context
@@ -3078,6 +3102,14 @@ const idTranslations: Translations = {
   hapticsOff: "Getaran nonaktif",
   hapticsHint: "Denyut singkat saat Anda menjawab. Aktif secara bawaan, karena hanya Anda yang merasakannya.",
   levelsCleared: "{done} dari {total} level selesai",
+  milestoneTrophies: "Piala Pencapaian",
+  collectionBadges: "Lencana Koleksi",
+  achievementPoints: "Poin pencapaian",
+  rarityCommon: "Biasa",
+  rarityUncommon: "Tidak Umum",
+  rarityRare: "Langka",
+  rarityEpic: "Epik",
+  rarityLegendary: "Legendaris",
 }
 
 // Hausa translations
@@ -3844,6 +3876,14 @@ const haTranslations: Translations = {
   hapticsOff: "An kashe girgiza",
   hapticsHint: "Gajeriyar girgiza sa’ad da ka amsa. A kunne ta asali, domin kai kaɗai ke jinta.",
   levelsCleared: "An kammala matakai {done} daga {total}",
+  milestoneTrophies: "Kofunan Nasara",
+  collectionBadges: "Bajojin Tarin",
+  achievementPoints: "Makin nasara",
+  rarityCommon: "Talakawa",
+  rarityUncommon: "Ba safai ba",
+  rarityRare: "Wuya",
+  rarityEpic: "Babba",
+  rarityLegendary: "Almara",
 }
 
 // French translations
@@ -4610,6 +4650,14 @@ const frTranslations: Translations = {
   hapticsOff: "Vibration désactivée",
   hapticsHint: "Une brève impulsion quand vous répondez. Activée par défaut, car vous seul la sentez.",
   levelsCleared: "{done} niveaux sur {total} terminés",
+  milestoneTrophies: "Trophées",
+  collectionBadges: "Badges de collection",
+  achievementPoints: "Points de réussite",
+  rarityCommon: "Commun",
+  rarityUncommon: "Peu commun",
+  rarityRare: "Rare",
+  rarityEpic: "Épique",
+  rarityLegendary: "Légendaire",
 }
 
 // Arabic translations (RTL)
@@ -5376,6 +5424,14 @@ const arTranslations: Translations = {
   hapticsOff: "الاهتزاز متوقف",
   hapticsHint: "نبضة قصيرة عند الإجابة. مفعل افتراضياً، لأنك وحدك من يشعر بها.",
   levelsCleared: "{done} من {total} مستويات مكتملة",
+  milestoneTrophies: "كؤوس الإنجاز",
+  collectionBadges: "شارات المجموعة",
+  achievementPoints: "نقاط الإنجاز",
+  rarityCommon: "شائع",
+  rarityUncommon: "غير شائع",
+  rarityRare: "نادر",
+  rarityEpic: "ملحمي",
+  rarityLegendary: "أسطوري",
 }
 
 /**

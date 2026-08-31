@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
+import { achievementRarity } from "./achievement-rarity"
+import type { AchievementRarity } from "./design-tokens"
 
 export interface CategoryStat {
   categoryId: string
@@ -24,6 +26,14 @@ export interface AchievementView {
   earnedAt: string | null
   progress: number
   target: number
+  /**
+   * Derived from `criteria` rather than stored: the achievements table has no
+   * rarity column. See `achievement-rarity.ts` for why deriving beats a column
+   * here. Computed on the server because this is where `criteria` is already
+   * in hand; sending the raw criteria to the client would hand every player the
+   * exact unlock conditions of everything, which is a hint sheet.
+   */
+  rarity: AchievementRarity
 }
 
 export interface RecentAttempt {
@@ -277,6 +287,7 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
       earnedAt: earnedMap.get(def.id) ?? null,
       progress: unlocked ? target : progress,
       target,
+      rarity: achievementRarity(def.criteria),
     })
   }
 

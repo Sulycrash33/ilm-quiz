@@ -6,7 +6,9 @@ import { useState } from "react"
 import { PremiumCard } from "@/components/ui/premium-card"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
-import { AchievementCard } from "@/components/game/AchievementCard"
+import { AchievementBadge } from "@/components/achievements/AchievementBadge"
+import { TrophyCard } from "@/components/achievements/TrophyCard"
+import { RARITY_POINTS, isMilestone } from "@/lib/achievement-rarity"
 import { PremiumProgress } from "@/components/ui/premium-progress"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { AchievementView } from "@/lib/profile-stats"
@@ -33,6 +35,22 @@ export function AchievementsPageClient({
 
   const unlockedCount = achievements.filter((a) => a.unlocked).length
 
+  /**
+   * The gallery in three bands, which is what the flat grid was missing: it
+   * drew a legendary rank achievement and "answer one question" at identical
+   * size and weight, so nothing on the screen said what was worth chasing.
+   *
+   * Milestones are the epic and legendary tiers only, three of the thirteen
+   * live achievements. Keeping the rail that short is the point.
+   */
+  const milestones = achievements.filter((a) => isMilestone(a.rarity))
+  const badges = achievements.filter((a) => !isMilestone(a.rarity))
+
+  /** Earned points only, so the number moves when the player does something. */
+  const points = achievements
+    .filter((a) => a.unlocked)
+    .reduce((sum, a) => sum + RARITY_POINTS[a.rarity], 0)
+
   return (
     <div dir={dir} className="min-h-[100dvh] px-5 py-6 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
@@ -58,8 +76,11 @@ export function AchievementsPageClient({
             <p className="font-label-caps text-label-caps text-on-surface-variant">{t("unlockedLabel")}</p>
           </div>
           <div>
-            <p className="font-bold text-3xl text-secondary">{todayChallenge ? 1 : 0}</p>
-            <p className="font-label-caps text-label-caps text-on-surface-variant">{t("activeChallenges")}</p>
+            {/* Weighted by rarity, so finishing something hard moves it more
+                than finishing something easy. A flat count of unlocks is
+                already the number to its left. */}
+            <p className="font-bold text-3xl text-warning tabular-nums">{points}</p>
+            <p className="font-label-caps text-label-caps text-on-surface-variant">{t("achievementPoints")}</p>
           </div>
         </div>
         <div className="mt-4">
@@ -88,21 +109,30 @@ export function AchievementsPageClient({
             <p className="text-on-surface-variant">{t("noAchievementsYet")}</p>
           </motion.div>
         ) : (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {achievements.map((achievement, index) => (
-              <motion.div key={achievement.slug} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
-                <AchievementCard
-                  title={achievement.name}
-                  description={achievement.description}
-                  icon={achievement.icon}
-                  progress={achievement.progress}
-                  maxProgress={achievement.target}
-                  reward=""
-                  isUnlocked={achievement.unlocked}
-                  unlockedAt={achievement.earnedAt ? new Date(achievement.earnedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : undefined}
-                />
-              </motion.div>
-            ))}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-10">
+            {milestones.length > 0 && (
+              <section className="space-y-4">
+                <h2 className="font-headline-md text-headline-md text-on-surface">{t("milestoneTrophies")}</h2>
+                {/* A rail rather than a grid: these are meant to be looked
+                    through one at a time, and on a phone a grid of three of
+                    these would shrink each below the size that makes it feel
+                    like a trophy. `snap-x` keeps them landing squarely. */}
+                <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-4">
+                  {milestones.map((a) => (
+                    <TrophyCard key={a.slug} achievement={a} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <section className="space-y-4">
+              <h2 className="font-headline-md text-headline-md text-on-surface">{t("collectionBadges")}</h2>
+              <div className="grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-6">
+                {badges.map((a) => (
+                  <AchievementBadge key={a.slug} achievement={a} />
+                ))}
+              </div>
+            </section>
           </motion.div>
         )
       ) : (

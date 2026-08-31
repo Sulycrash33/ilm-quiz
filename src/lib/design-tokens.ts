@@ -15,32 +15,48 @@ export type AchievementRarity = "common" | "uncommon" | "rare" | "epic" | "legen
 
 export const RARITY_STYLES: Record<
   AchievementRarity,
-  { text: string; bg: string; border: string }
+  {
+    text: string
+    /** A faint wash, for a card background behind content. */
+    bg: string
+    border: string
+    /**
+     * A solid fill, for shapes that ARE the colour rather than sit on it.
+     * The `/10` washes above are correct behind text and useless as the rim of
+     * the achievement hexagon, where they vanish against the plate inside.
+     */
+    plate: string
+  }
 > = {
   common: {
     text: "text-muted-foreground",
     bg: "bg-muted",
     border: "border-border",
+    plate: "bg-outline",
   },
   uncommon: {
     text: "text-success",
     bg: "bg-success/10",
     border: "border-success/30",
+    plate: "bg-success",
   },
   rare: {
     text: "text-info",
     bg: "bg-info/10",
     border: "border-info/30",
+    plate: "bg-info",
   },
   epic: {
     text: "text-special",
     bg: "bg-special/10",
     border: "border-special/30",
+    plate: "bg-special",
   },
   legendary: {
     text: "text-primary",
     bg: "bg-primary/10",
     border: "border-primary/40",
+    plate: "bg-primary",
   },
 };
 

@@ -246,6 +246,17 @@
     50% { box-shadow: 0 0 40px rgba(240, 205, 109, 0.6); }
   }
 
+  /* The badge hexagon.
+
+     A six-sided plate rather than another rounded rectangle: the achievements
+     gallery is the one screen that should not look like the rest of the app,
+     and the shape carries that on its own without needing extra colour. Two
+     nested hexagons give the plate a border, since `clip-path` removes any
+     real border along with the corners. */
+  .hexagon {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
   /* Haptic Feedback Simulation */
   .haptic-feedback {
     transition: transform 0.1s ease;
