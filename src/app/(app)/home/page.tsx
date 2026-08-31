@@ -160,6 +160,13 @@ export default function HomePage() {
         {/* Salaam, name, rank. First thing on the page, on every screen size. */}
         <SalaamGreeting />
 
+        {/* The hadith card, finally on screen. It was imported by this file and
+            never rendered, so a built, styled and fully translated component
+            had been invisible to every player. It leads because it is the one
+            thing here that is not a number: opening on rings and streak counts
+            makes a scoreboard, and this is meant to be a place of study. */}
+        <DailyHadith />
+
         {/* Prayer times, directly under the greeting. This is the real card:
             it locates the seeker, counts down to the next salah, and rolls over
             to tomorrow's Fajr after Isha. What used to sit further down the

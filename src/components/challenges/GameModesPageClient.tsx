@@ -127,7 +127,7 @@ export function GameModesPageClient({
                   <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
                   </svg>
-                  <span className="font-bold text-tertiary">+{todayChallenge.rewardCoins} {t("coinsWord").toLowerCase()}, +{todayChallenge.rewardXp} XP</span>
+                  <span className="font-bold text-tertiary">+{todayChallenge.rewardCoins} {t("coinsWord").toLowerCase()}, +{todayChallenge.rewardXp} {t("barakahShort")}</span>
                 </div>
               </div>
               {!todayChallenge.completed && (
@@ -170,7 +170,7 @@ export function GameModesPageClient({
                     <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z" />
                     </svg>
-                    <span className="font-bold text-primary">{mode.xpMultiplier} XP</span>
+                    <span className="font-bold text-primary">{mode.xpMultiplier} {t("barakahShort")}</span>
                   </div>
                   {mode.available && mode.href ? (
                     <Link href={mode.href}>

@@ -98,5 +98,47 @@ for (const file of walk(SRC)) {
 }
 check("no hardcoded English JSX text outside admin", offenders.length === 0, offenders.slice(0, 12));
 
+/**
+ * The same rule, for text that FOLLOWS an interpolation.
+ *
+ * The check above anchors on `>` immediately before a capital letter, so it
+ * only ever saw text that starts a JSX node. It was blind to the far more
+ * common shape `{count} questions`, where the English trails an expression: the
+ * character after `>` is `{`, and the pattern never fires.
+ *
+ * That blind spot was hiding six real strings across the profile, the
+ * leaderboard row and the bundle card, every one of them player-facing and
+ * every one of them staying English in Arabic, Hausa, French, Malay and
+ * Indonesian.
+ *
+ * Deliberately narrow: a single line, words and percent signs only, nothing
+ * with code punctuation in it. A looser pattern matched `return (` and
+ * `React.forwardRef<` by the dozen, and a guard that cries wolf gets switched
+ * off, which is worse than the gap it was meant to close.
+ */
+const trailing: string[] = [];
+const TRAILING = /\}\s*((?:[A-Za-z%][A-Za-z%]*)(?:\s+[A-Za-z%][A-Za-z%]*)*)\s*</g;
+const TRAILING_ALLOWED = new Set(["return", "const", "let", "var"]);
+for (const file of walk(SRC)) {
+  const rel = relative(process.cwd(), file);
+  for (const [i, line] of readFileSync(file, "utf8").split("\n").entries()) {
+    if (!line.includes("{") || !line.includes("<")) continue;
+    for (const m of line.matchAll(TRAILING)) {
+      const text = m[1].trim();
+      // Two characters is enough: a bare "XP" beside a number was untranslated
+      // on thirteen screens and slipped past both this length floor and the
+      // original check, which requires a lowercase letter.
+      if (text.length < 2) continue;
+      if (TRAILING_ALLOWED.has(text)) continue;
+      trailing.push(`${rel}:${i + 1}: ...}${text.slice(0, 40)}<`);
+    }
+  }
+}
+check(
+  "no hardcoded English after an interpolation",
+  trailing.length === 0,
+  trailing.slice(0, 12),
+);
+
 console.log(failures === 0 ? "\nALL PASS" : `\n${failures} FAILED`);
 process.exit(failures === 0 ? 0 : 1);

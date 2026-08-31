@@ -45,7 +45,7 @@ export function FriendsList({ friends }: FriendsListProps) {
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="font-bold text-primary">{friend.xp} XP</p>
+              <p className="font-bold text-primary">{friend.xp} {t("barakahShort")}</p>
               <p className="text-xs text-on-surface-variant">
                 {friend.isOnline ? t("online") : t("offline")}
               </p>
