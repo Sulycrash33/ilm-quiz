@@ -9,6 +9,7 @@ import { rankFor } from "@/lib/ranks";
 import { useProfile } from "@/hooks/use-profile";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { playCue } from "@/lib/sound";
+import { playHaptic } from "@/lib/haptics";
 import type { GradeResult, QuizQuestion } from "@/lib/types";
 import {
   applyAnswer,
@@ -330,7 +331,10 @@ export function HuntView({
     runRecorded.current = true;
     // Only for a level run that was actually won — losing a run is not a
     // moment to celebrate, and the adaptive Hunt has no "level" to complete.
-    if (forceTier !== undefined && state.status === "won") playCue("levelComplete");
+    if (forceTier !== undefined && state.status === "won") {
+      playCue("levelComplete");
+      playHaptic("levelComplete");
+    }
     const s = summarize(state);
     void recordHuntRun({
       categoryId,
@@ -379,6 +383,7 @@ export function HuntView({
       void refreshProfile();
 
       playCue(result.correct ? "correct" : "wrong");
+      playHaptic(result.correct ? "correct" : "wrong");
 
       // Congratulate in the run, not days later on the profile page. The cue
       // is deliberately the rank-up one — an achievement is rare enough to
@@ -393,7 +398,10 @@ export function HuntView({
             });
           }, 450 + i * 900);
         });
-        setTimeout(() => playCue("rankUp"), 450);
+        setTimeout(() => {
+          playCue("rankUp");
+          playHaptic("rankUp");
+        }, 450);
       }
 
       if (result.correct) {

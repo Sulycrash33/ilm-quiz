@@ -27,7 +27,7 @@ const gameModes = [
         title: "Revision Mode",
         description: "Practice questions you've previously answered incorrectly to master difficult topics.",
         icon: RefreshCcw,
-        color: "border-blue-400/20 bg-blue-400/5 text-blue-400",
+        color: "border-info/20 bg-info/5 text-info",
         buttonText: "Start Revising",
         href: "/quiz",
     },

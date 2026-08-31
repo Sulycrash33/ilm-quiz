@@ -37,19 +37,19 @@ export function StoreItemCard({ item, userCoins, handlePurchase, addToCart, them
       icon: <Zap className="h-4 w-4 mr-2" />,
     },
     powerup: {
-      badgeColor: "bg-blue-400/10 text-blue-400",
+      badgeColor: "bg-info/10 text-info",
       border: item.popular
-        ? "border-blue-400/30 bg-blue-400/10"
+        ? "border-info/30 bg-info/10"
         : "border-border",
-      buttonColor: "bg-blue-400 hover:bg-blue-400/90",
+      buttonColor: "bg-info hover:bg-info/90",
       icon: <Sparkles className="h-4 w-4 mr-2" />,
     },
     cosmetic: {
-      badgeColor: "bg-purple-400/10 text-purple-400",
+      badgeColor: "bg-special/10 text-special",
       border: item.popular
-        ? "border-purple-400/30 bg-purple-400/10"
+        ? "border-special/30 bg-special/10"
         : "border-border",
-      buttonColor: "bg-purple-400 hover:bg-purple-400/90",
+      buttonColor: "bg-special hover:bg-special/90",
       icon: <Heart className="h-4 w-4 mr-2" />,
     },
   }
@@ -82,7 +82,7 @@ export function StoreItemCard({ item, userCoins, handlePurchase, addToCart, them
             <span className="font-bold text-card-foreground">{item.price}</span>
           </div>
           {item.inStock ? (
-            <Badge className="bg-emerald-400/10 text-emerald-400">{t("available")}</Badge>
+            <Badge className="bg-success/10 text-success">{t("available")}</Badge>
           ) : (
             <Badge variant="secondary">{t("outOfStock")}</Badge>
           )}

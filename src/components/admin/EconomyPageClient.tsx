@@ -47,7 +47,7 @@ export function EconomyPageClient({ economy }: { economy: EconomySnapshot }) {
         </p>
       </motion.div>
 
-      <PremiumCard className="mb-6 border-amber-400/30 bg-amber-400/5 p-4">
+      <PremiumCard className="mb-6 border-warning/30 bg-warning/5 p-4">
         <p className="text-sm text-on-surface">
           These take effect immediately for every player. XP multipliers are capped at
           2× in the database. Migration 0030 chose that ceiling so the compounded

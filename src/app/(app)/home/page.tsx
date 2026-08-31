@@ -408,10 +408,10 @@ export default function HomePage() {
           className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"
         >
           {[
-            { href: "/achievements", label: t("achievements"), Icon: Trophy, tint: "from-amber-400/25 to-amber-600/10", fg: "text-amber-300" },
-            { href: "/challenges", label: t("challenges"), Icon: Zap, tint: "from-violet-400/25 to-violet-600/10", fg: "text-violet-300" },
-            { href: "/community", label: t("communityHub"), Icon: Users, tint: "from-sky-400/25 to-sky-600/10", fg: "text-sky-300" },
-            { href: "/multiplayer", label: t("multiplayerQuiz"), Icon: Gamepad2, tint: "from-emerald-400/25 to-emerald-600/10", fg: "text-emerald-300" },
+            { href: "/achievements", label: t("achievements"), Icon: Trophy, tint: "from-warning/25 to-warning/10", fg: "text-warning-bright" },
+            { href: "/challenges", label: t("challenges"), Icon: Zap, tint: "from-special/25 to-special-container/10", fg: "text-special-bright" },
+            { href: "/community", label: t("communityHub"), Icon: Users, tint: "from-info/25 to-info-container/10", fg: "text-info-bright" },
+            { href: "/multiplayer", label: t("multiplayerQuiz"), Icon: Gamepad2, tint: "from-success/25 to-success/10", fg: "text-success-bright" },
           ].map(({ href, label, Icon, tint, fg }, i) => (
             <motion.div
               key={href}

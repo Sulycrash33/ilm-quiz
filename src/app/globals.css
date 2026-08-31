@@ -14,11 +14,11 @@
     --primary: #f0cd6d;
     --primary-foreground: #3a2c00;
     --secondary: #dcc9a4;
-    --secondary-foreground: #00174b;
+    --secondary-foreground: #3a2f16;
     --muted: #222a3d;
     --muted-foreground: #bbcabf;
-    --accent: #f0cd6d;
-    --accent-foreground: #3a2c00;
+    --accent: #2d3449;
+    --accent-foreground: #dae2fd;
     --destructive: #93000a;
     --destructive-foreground: #ffdad6;
     --border: #2d3449;
@@ -205,6 +205,10 @@
     animation: glow 2s ease-in-out infinite;
   }
 
+  /* Brand gold. This is the only definition now: tailwind.config.ts carried a
+     second `glow` in tertiary green that nothing ever referenced, because no
+     component uses `animate-glow`. Two names, one winner, and the loser was
+     the one that looked authoritative. */
   @keyframes glow {
     0%, 100% { box-shadow: 0 0 20px rgba(240, 205, 109, 0.3); }
     50% { box-shadow: 0 0 40px rgba(240, 205, 109, 0.6); }
@@ -220,25 +224,68 @@
   }
 }
 
-/* Star Particle Animation */
+/* ---------------------------------------------------------------------------
+   Decorative loops stop when the reader asks for less motion.
+
+   The drift columns and the entrance animations already honoured
+   prefers-reduced-motion; these four never did, which meant a player who had
+   asked their phone for stillness still got a pulsing ring, a floating card
+   and a breathing glow. Vestibular triggers do not care which stylesheet a
+   loop was declared in.
+
+   For the four loops the resting state is the element as it already looks, so
+   cancelling the animation is enough. A star particle is different: it starts
+   at opacity 0 and only the animation ever reveals it, so cancelling alone
+   would leave invisible nodes stacked over the board. It carries no
+   information, so it is removed outright rather than frozen.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-effect,
+  .loading-bar,
+  .float-animation,
+  .glow-effect {
+    animation: none;
+  }
+
+  .star-particle {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Star particles: the small burst on a correct answer.
+
+   Every particle used to be an identical 8px dot falling straight down the
+   same 100px, which at twenty per burst read as a dropped handful of pixels
+   rather than a spark. Size, horizontal drift, spin and distance are now per
+   particle, passed in as custom properties by the component, so no two pieces
+   travel the same path.
+
+   The properties carry fallbacks so a particle still animates sensibly if the
+   component ever renders one without them.
+   --------------------------------------------------------------------------- */
 .star-particle {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background-color: var(--accent);
+  width: var(--sp-size, 8px);
+  height: var(--sp-size, 8px);
+  background-color: var(--primary);
   border-radius: 50%;
-  animation: star-fall 1s ease-out forwards;
+  animation: star-fall var(--sp-duration, 1s) cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
   opacity: 0;
+  will-change: transform, opacity;
 }
 
 @keyframes star-fall {
   0% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
   }
   100% {
     opacity: 0;
-    transform: translateY(100px) scale(0.5);
+    transform:
+      translate3d(var(--sp-drift, 0px), var(--sp-fall, 100px), 0)
+      scale(0.4)
+      rotate(var(--sp-spin, 0deg));
   }
 }
 

@@ -10,7 +10,7 @@ export const LeaderboardItem = ({ user, index, isPodium = false }: { user: Leade
   const podiumStyles = isPodium 
     ? index === 0 ? "border-primary bg-primary/10" 
     : index === 1 ? "border-muted-foreground/30 bg-muted" 
-    : "border-amber-500 bg-amber-500/10" 
+    : "border-warning bg-warning/10" 
     : "";
 
   return (

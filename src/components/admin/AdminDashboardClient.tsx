@@ -190,7 +190,7 @@ export function AdminDashboardClient({
               {recentAttempts.map((attempt, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-surface-container/50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <span className={attempt.is_correct ? "text-emerald-400" : "text-red-400"}>
+                    <span className={attempt.is_correct ? "text-success" : "text-danger"}>
                       {attempt.is_correct ? "✓" : "✗"}
                     </span>
                     <span className="text-on-surface">

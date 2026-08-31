@@ -22,8 +22,8 @@ export function PremiumBadge({
     primary: "bg-primary/20 text-primary border-primary/30",
     secondary: "bg-secondary/20 text-secondary border-secondary/30",
     tertiary: "bg-tertiary/20 text-tertiary border-tertiary/30",
-    success: "bg-green-500/20 text-green-400 border-green-500/30",
-    warning: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+    success: "bg-success/20 text-success border-success/30",
+    warning: "bg-warning/20 text-warning border-warning/30",
     danger: "bg-error/20 text-error border-error/30",
   }
 

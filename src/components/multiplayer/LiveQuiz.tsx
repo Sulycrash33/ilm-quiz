@@ -157,9 +157,9 @@ export function LiveQuiz({
                     className={`
                       p-4 rounded-xl border text-left transition-all
                       ${selectedWasCorrect
-                        ? "bg-green-500/20 border-green-500"
+                        ? "bg-success/20 border-success"
                         : selectedWasWrong
-                        ? "bg-red-500/20 border-red-500"
+                        ? "bg-danger/20 border-danger"
                         : isSelected
                         ? "bg-primary/20 border-primary"
                         : "bg-surface-container-high border-white/5 hover:bg-surface-container-highest"
@@ -172,9 +172,9 @@ export function LiveQuiz({
                         className={`
                           w-8 h-8 rounded-full flex items-center justify-center font-bold
                           ${selectedWasCorrect
-                            ? "bg-green-500 text-white"
+                            ? "bg-success text-white"
                             : selectedWasWrong
-                            ? "bg-red-500 text-white"
+                            ? "bg-danger text-white"
                             : isSelected
                             ? "bg-primary text-on-primary"
                             : "bg-surface-container-highest text-on-surface-variant"
@@ -225,7 +225,7 @@ export function LiveQuiz({
                 >
                   <div className="flex items-center gap-2">
                     <span className={`w-6 text-center font-bold ${
-                      index === 0 ? "text-yellow-400" : index === 1 ? "text-gray-300" : index === 2 ? "text-amber-600" : "text-on-surface-variant"
+                      index === 0 ? "text-medal-gold" : index === 1 ? "text-medal-silver" : index === 2 ? "text-medal-bronze" : "text-on-surface-variant"
                     }`}>
                       {index + 1}
                     </span>

@@ -28,7 +28,7 @@ export function StreakCounter({ streak }: StreakCounterProps) {
               <p className="text-sm text-muted-foreground">{t("dayStreak")}</p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-emerald-400/10 text-emerald-400">
+          <Badge variant="secondary" className="bg-success/10 text-success">
             <Shield className="h-3 w-3 mr-1" aria-hidden="true" />
             {t("protectedLabel")}
           </Badge>

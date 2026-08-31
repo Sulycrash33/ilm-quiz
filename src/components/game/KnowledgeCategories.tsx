@@ -67,7 +67,7 @@ export function KnowledgeCategories() {
           <Button
             asChild
             variant="outline"
-            className="h-20 justify-start text-left flex-col items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 bg-slate-100 text-slate-800 hover:bg-slate-200"
+            className="h-20 justify-start text-left flex-col items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 bg-surface-container-high text-on-surface hover:bg-surface-container-highest"
           >
             <Link href="/quiz">
               <div className="flex flex-col items-center gap-1">

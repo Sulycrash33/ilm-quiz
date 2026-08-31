@@ -75,6 +75,80 @@ export default {
         'primary-fixed': '#ffe9ad',
         'on-primary-fixed-variant': '#5c4700',
         'inverse-surface': '#dae2fd',
+        /**
+         * Semantic state colours.
+         *
+         * These exist because the app had been saying the same thing in two
+         * vocabularies at once: 163 raw Tailwind palette classes sat beside
+         * the design tokens, which gave the interface three golds
+         * (`primary`, `amber-*`, `yellow-*`), two greens (`tertiary`,
+         * `emerald-*`/`green-*`) and two reds (`error`, `red-*`). Which one a
+         * component reached for was down to who wrote it.
+         *
+         * `success` is deliberately an alias of `tertiary` rather than a new
+         * green. The palette already had a green that means "good"; adding a
+         * second one a few degrees away would have re-created the very problem
+         * this is closing. Likewise `danger` aliases `error`.
+         *
+         * `warning` is the one genuinely new hue, and it is pushed orange
+         * (#f0a94d) rather than gold on purpose: the brand `primary` is
+         * #f0cd6d, and a warning a few percent from the brand colour is a
+         * warning nobody sees.
+         */
+        success: '#7fd4b0',
+        'success-bright': '#b8f2d8',
+        'on-success': '#00382a',
+        'success-container': '#1f5a44',
+        'on-success-container': '#b8f2d8',
+
+        warning: '#f0a94d',
+        'warning-bright': '#ffd9a8',
+        'on-warning': '#452200',
+        'warning-container': '#7a4a10',
+        'on-warning-container': '#ffd9a8',
+
+        danger: '#ffb4ab',
+        'on-danger': '#690005',
+        'danger-container': '#93000a',
+        'on-danger-container': '#ffdad6',
+
+        info: '#8fb8dc',
+        'info-bright': '#c5dcf0',
+        'on-info': '#0a2337',
+        'info-container': '#1f4460',
+        'on-info-container': '#c5dcf0',
+
+        // Rarity and premium ownership. The store, the bundles and the
+        // legendary avatar frames all reached for `purple-400`; this gives
+        // that meaning a name.
+        special: '#b9a2e3',
+        'special-bright': '#ddd0f5',
+        'on-special': '#2b1a4d',
+        'special-container': '#463070',
+        'on-special-container': '#ddd0f5',
+
+        /**
+         * The podium.
+         *
+         * Rank one, two and three were being drawn in `yellow-400`,
+         * `gray-300` and `amber-700`, which meant a medal was borrowing the
+         * warning ramp and the neutral ramp to say something neither of them
+         * means. Worse, gold and bronze are both warm ambers: folding them
+         * into one semantic `warning` token made first and third place
+         * identical, which is the sort of thing a token migration does
+         * quietly if the axis is never named.
+         *
+         * A medal is its own axis, so it gets its own three values. They are
+         * shifted cooler than the raw palette equivalents to sit on the navy
+         * surface without turning muddy.
+         */
+        'medal-gold': '#f2c94c',
+        'on-medal-gold': '#3d2c00',
+        'medal-silver': '#cdd5e0',
+        'on-medal-silver': '#232a36',
+        'medal-bronze': '#c07f3e',
+        'on-medal-bronze': '#2b1705',
+
         // Legacy shadcn colors mapped to new system
         card: {
           DEFAULT: '#171f33',
@@ -156,40 +230,24 @@ export default {
           from: {height: 'var(--radix-accordion-content-height)'},
           to: {height: '0'},
         },
-        'pulse-ring': {
-          '0%': {transform: 'scale(0.95)', opacity: '0.1'},
-          '50%': {transform: 'scale(1.05)', opacity: '0.4'},
-          '100%': {transform: 'scale(0.95)', opacity: '0.1'},
-        },
-        'loading': {
-          '0%': {left: '-30%', width: '30%'},
-          '50%': {left: '40%', width: '50%'},
-          '100%': {left: '100%', width: '30%'},
-        },
-        'float': {
-          '0%, 100%': {transform: 'translateY(0)'},
-          '50%': {transform: 'translateY(-10px)'},
-        },
         // A slow gold breath for the one call to action on an empty home
-        // screen. `glow` below is green and belongs to success states; this is
-        // the brand gold, and it is deliberately slower than `animate-pulse`,
-        // which flickers too fast to read as an invitation.
+        // screen. Deliberately slower than `animate-pulse`, which flickers too
+        // fast to read as an invitation.
+        //
+        // This is the only decorative keyframe left here. `pulse-ring`,
+        // `loading`, `float` and `glow` used to sit alongside it and were all
+        // dead: nothing ever wrote `animate-glow`, so Tailwind never emitted
+        // them, while globals.css declared its own copies under the same names
+        // and those are the ones that have always rendered. They now live once,
+        // in globals.css, next to the classes that use them.
         'pulse-slow': {
           '0%, 100%': {boxShadow: '0 0 22px -8px rgba(240, 205, 109, 0.35)'},
           '50%': {boxShadow: '0 0 34px -4px rgba(240, 205, 109, 0.6)'},
-        },
-        'glow': {
-          '0%, 100%': {boxShadow: '0 0 20px rgba(78, 222, 163, 0.3)'},
-          '50%': {boxShadow: '0 0 40px rgba(78, 222, 163, 0.6)'},
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-ring': 'pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'loading': 'loading 2s ease-in-out infinite',
-        'float': 'float 3s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite',
         'pulse-slow': 'pulse-slow 2.8s ease-in-out infinite',
       },
     },

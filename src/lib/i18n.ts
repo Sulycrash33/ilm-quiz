@@ -776,6 +776,10 @@ export interface Translations {
   soundOn: string
   soundOff: string
   soundHint: string
+  haptics: string
+  hapticsOn: string
+  hapticsOff: string
+  hapticsHint: string
 }
 
 const enTranslations: Translations = {
@@ -1536,6 +1540,10 @@ const enTranslations: Translations = {
   soundOn: "Sound on",
   soundOff: "Sound off",
   soundHint: "Off by default, so the app stays quiet on shared devices and around prayer times.",
+  haptics: "Vibration",
+  hapticsOn: "Vibration on",
+  hapticsOff: "Vibration off",
+  hapticsHint: "A short pulse when you answer. On by default, because only you can feel it.",
 }
 
 // Malay/Indonesian translations - culturally meaningful, not direct translations
@@ -2297,6 +2305,10 @@ const msTranslations: Translations = {
   soundOn: "Bunyi dihidupkan",
   soundOff: "Bunyi dimatikan",
   soundHint: "Dimatikan secara lalai, supaya aplikasi kekal senyap pada peranti dikongsi dan ketika waktu solat.",
+  haptics: "Getaran",
+  hapticsOn: "Getaran dihidupkan",
+  hapticsOff: "Getaran dimatikan",
+  hapticsHint: "Denyutan pendek apabila anda menjawab. Dihidupkan secara lalai, kerana anda sahaja yang merasainya.",
 }
 
 // Indonesian translations - culturally meaningful, adapted for Indonesian context
@@ -3058,6 +3070,10 @@ const idTranslations: Translations = {
   soundOn: "Suara aktif",
   soundOff: "Suara nonaktif",
   soundHint: "Nonaktif secara bawaan, agar aplikasi tetap senyap di perangkat bersama dan saat waktu salat.",
+  haptics: "Getaran",
+  hapticsOn: "Getaran aktif",
+  hapticsOff: "Getaran nonaktif",
+  hapticsHint: "Denyut singkat saat Anda menjawab. Aktif secara bawaan, karena hanya Anda yang merasakannya.",
 }
 
 // Hausa translations
@@ -3819,6 +3835,10 @@ const haTranslations: Translations = {
   soundOn: "An kunna sauti",
   soundOff: "An kashe sauti",
   soundHint: "An kashe shi ta asali, don manhajar ta yi shiru a na'urorin haɗin gwiwa da lokutan sallah.",
+  haptics: "Girgiza",
+  hapticsOn: "An kunna girgiza",
+  hapticsOff: "An kashe girgiza",
+  hapticsHint: "Gajeriyar girgiza sa’ad da ka amsa. A kunne ta asali, domin kai kaɗai ke jinta.",
 }
 
 // French translations
@@ -4580,6 +4600,10 @@ const frTranslations: Translations = {
   soundOn: "Son activé",
   soundOff: "Son désactivé",
   soundHint: "Désactivé par défaut, pour que l'application reste silencieuse sur un appareil partagé et aux heures de prière.",
+  haptics: "Vibration",
+  hapticsOn: "Vibration activée",
+  hapticsOff: "Vibration désactivée",
+  hapticsHint: "Une brève impulsion quand vous répondez. Activée par défaut, car vous seul la sentez.",
 }
 
 // Arabic translations (RTL)
@@ -5341,6 +5365,10 @@ const arTranslations: Translations = {
   soundOn: "الصوت مفعّل",
   soundOff: "الصوت متوقف",
   soundHint: "متوقف افتراضياً، ليبقى التطبيق صامتاً على الأجهزة المشتركة وأوقات الصلاة.",
+  haptics: "الاهتزاز",
+  hapticsOn: "الاهتزاز مفعل",
+  hapticsOff: "الاهتزاز متوقف",
+  hapticsHint: "نبضة قصيرة عند الإجابة. مفعل افتراضياً، لأنك وحدك من يشعر بها.",
 }
 
 /**

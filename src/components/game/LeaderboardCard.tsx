@@ -48,11 +48,11 @@ export function LeaderboardCard({
   const getRankColor = (rank: number) => {
     switch (rank) {
       case 1:
-        return "bg-yellow-500/10 border-yellow-500/30"
+        return "bg-medal-gold/10 border-medal-gold/30"
       case 2:
-        return "bg-gray-300/10 border-gray-300/30"
+        return "bg-medal-silver/10 border-medal-silver/30"
       case 3:
-        return "bg-amber-700/10 border-amber-700/30"
+        return "bg-medal-bronze/10 border-medal-bronze/30"
       default:
         return "bg-surface-container border-white/5"
     }

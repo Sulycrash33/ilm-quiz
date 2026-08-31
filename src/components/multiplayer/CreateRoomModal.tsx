@@ -79,10 +79,10 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
                 className={`p-2 rounded-lg border text-center capitalize transition-all ${
                   difficulty === d
                     ? d === "easy"
-                      ? "bg-green-500/20 border-green-500 text-green-400"
+                      ? "bg-success/20 border-success text-success"
                       : d === "medium"
-                      ? "bg-yellow-500/20 border-yellow-500 text-yellow-400"
-                      : "bg-red-500/20 border-red-500 text-red-400"
+                      ? "bg-warning/20 border-warning text-warning"
+                      : "bg-danger/20 border-danger text-danger"
                     : "bg-surface-container-high border-white/5 text-on-surface-variant hover:bg-surface-container-highest"
                 }`}
               >
