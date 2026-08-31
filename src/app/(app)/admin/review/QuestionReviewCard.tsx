@@ -63,7 +63,7 @@ export function QuestionReviewCard({ q }: { q: ReviewQuestion }) {
       <Card className="opacity-60">
         <CardContent className="py-4 flex items-center gap-2 text-sm">
           {decided === 'approved' ? (
-            <><CheckCircle2 className="h-4 w-4 text-emerald-400" /> Published</>
+            <><CheckCircle2 className="h-4 w-4 text-success" /> Published</>
           ) : (
             <><XCircle className="h-4 w-4 text-destructive" /> Rejected</>
           )}
@@ -111,7 +111,7 @@ export function QuestionReviewCard({ q }: { q: ReviewQuestion }) {
                     next[i] = e.target.value;
                     setChoices(next);
                   }}
-                  className={correctIndex === i ? 'border-emerald-400' : ''}
+                  className={correctIndex === i ? 'border-success' : ''}
                 />
               </div>
             ))}

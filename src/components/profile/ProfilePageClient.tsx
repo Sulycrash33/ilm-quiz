@@ -15,6 +15,7 @@ import { LogoutButton } from "@/components/layout/LogoutButton"
 import { ResetProgressCard } from "@/components/profile/ResetProgressCard"
 import { GameMasterCard } from "@/components/profile/GameMasterCard"
 import { SoundToggle } from "@/components/profile/SoundToggle"
+import { HapticsToggle } from "@/components/profile/HapticsToggle"
 import { StreakReminderToggle } from "@/components/profile/StreakReminderToggle"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Locale, Translations } from "@/lib/i18n"
@@ -232,6 +233,7 @@ export function ProfilePageClient({
             <div className="md:col-span-2 space-y-6">
               {isAdmin && <GameMasterCard />}
               <SoundToggle />
+              <HapticsToggle />
               <StreakReminderToggle />
               <ResetProgressCard />
             </div>

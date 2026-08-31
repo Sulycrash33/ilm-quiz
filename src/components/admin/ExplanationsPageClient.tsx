@@ -175,12 +175,12 @@ export function ExplanationsPageClient({
       </PremiumCard>
 
       {error && (
-        <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <div className="mb-4 rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}
       {notice && !error && (
-        <div className="mb-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+        <div className="mb-4 rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm text-success-bright">
           {notice}
         </div>
       )}
@@ -229,7 +229,7 @@ export function ExplanationsPageClient({
                   {r.category} · tier {r.tier} · correct answer: {r.correct}
                 </p>
                 {r.draftedBy?.includes("needs verification") && (
-                  <span className="mt-2 inline-block rounded bg-amber-400/10 px-2 py-0.5 text-xs text-amber-300">
+                  <span className="mt-2 inline-block rounded bg-warning/10 px-2 py-0.5 text-xs text-warning-bright">
                     the model flagged this one for scholar verification
                   </span>
                 )}
@@ -281,7 +281,7 @@ export function ExplanationsPageClient({
                     <button
                       onClick={() => accept(r.id)}
                       disabled={busy !== null}
-                      className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+                      className="rounded-lg bg-success px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
                     >
                       {busy === r.id ? "Working…" : "Publish this"}
                     </button>
@@ -295,7 +295,7 @@ export function ExplanationsPageClient({
                     <button
                       onClick={() => reject(r.id)}
                       disabled={busy !== null}
-                      className="rounded-lg border border-red-500/30 px-3 py-1.5 text-sm text-red-300 hover:bg-red-500/10 disabled:opacity-50"
+                      className="rounded-lg border border-danger/30 px-3 py-1.5 text-sm text-danger hover:bg-danger/10 disabled:opacity-50"
                     >
                       Discard
                     </button>

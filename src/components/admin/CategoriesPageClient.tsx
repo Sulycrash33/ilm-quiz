@@ -151,12 +151,12 @@ export function CategoriesPageClient({ categories }: Props) {
       </motion.div>
 
       {error && (
-        <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <div className="mb-4 rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}
       {notice && !error && (
-        <div className="mb-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+        <div className="mb-4 rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm text-success-bright">
           {notice}
         </div>
       )}
@@ -174,7 +174,7 @@ export function CategoriesPageClient({ categories }: Props) {
             <button
               onClick={saveOrder}
               disabled={pending}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-lg bg-success px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
             >
               {pending ? "Saving…" : "Save order"}
             </button>
@@ -355,7 +355,7 @@ export function CategoriesPageClient({ categories }: Props) {
                         <button
                           onClick={() => submitDelete(category.id)}
                           disabled={pending}
-                          className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+                          className="rounded-lg bg-danger-container px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
                         >
                           Confirm
                         </button>
@@ -374,7 +374,7 @@ export function CategoriesPageClient({ categories }: Props) {
                             ? `This category holds ${category.questionCount} questions and cannot be deleted until they are moved or removed.`
                             : "Delete this category"
                         }
-                        className="rounded-lg border border-red-500/30 px-3 py-1.5 text-sm text-red-300 hover:bg-red-500/10"
+                        className="rounded-lg border border-danger/30 px-3 py-1.5 text-sm text-danger hover:bg-danger/10"
                       >
                         Delete
                       </button>

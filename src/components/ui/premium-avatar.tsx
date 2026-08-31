@@ -46,13 +46,13 @@ export function PremiumAvatar({
     primary: "border-primary",
     secondary: "border-secondary",
     tertiary: "border-tertiary",
-    success: "border-green-500",
+    success: "border-success",
   }
 
   const statusColors = {
-    online: "bg-green-500",
-    offline: "bg-gray-500",
-    away: "bg-yellow-500",
+    online: "bg-success",
+    offline: "bg-outline",
+    away: "bg-warning",
   }
 
   return (

@@ -10,7 +10,7 @@ import { ProgressRing } from "@/components/game/ProgressRing"
 import { PrayerTimesCard } from "@/components/game/PrayerTimesCard"
 import { SalaamGreeting } from "@/components/game/SalaamGreeting"
 import { DailyHadith } from "@/components/game/DailyHadith"
-import { StreakCounter } from "@/components/game/StreakCounter"
+import { IslamicPattern } from "@/components/islamic-pattern"
 import { ReviewCallout } from "@/components/game/ReviewCallout"
 import { UserStats } from "@/components/game/UserStats"
 import { DailyProgressCard } from "@/components/game/DailyProgressCard"
@@ -88,12 +88,12 @@ export default function HomePage() {
 
   return (
     <div dir={dir} className="relative min-h-[100dvh] bg-background pb-32">
-      {/* Background Accents */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute top-1/2 -left-24 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
-        <div className="absolute inset-0 mashrabiya-pattern" />
-      </div>
+      {/* The backdrop lives in `(app)/layout.tsx`, which this page renders
+          inside. It used to be repeated here verbatim, so the home screen drew
+          two gold blurs, two secondary blurs and two copies of the pattern on
+          top of each other: the ornament was twice as strong here as on every
+          other screen, and it cost an extra compositing layer on the most
+          visited page in the app. */}
 
       {/* Top Header */}
       <motion.header
@@ -128,9 +128,13 @@ export default function HomePage() {
               streak sitting still is information, not an oversight. */}
           <div className="flex items-center gap-4 bg-surface-container-high/40 px-4 py-1.5 rounded-full border border-white/5">
             <div className="flex items-center gap-1.5">
-              <CountUp value={profile?.streakCount ?? 0} className="text-tertiary tabular-nums" />
+              <CountUp value={profile?.streakCount ?? 0} className={`tabular-nums ${streakAlive ? "text-warning" : "text-on-surface-variant"}`} />
               <motion.svg
-                className={`w-4 h-4 ${streakAlive ? "text-tertiary drop-shadow-[0_0_6px_rgba(255,138,76,0.55)]" : "text-tertiary/40"}`}
+                /* A live streak is warm. This drew a `tertiary` mint flame with a
+                   hardcoded orange halo, the same contradiction the combo badge
+                   carried: green fire giving off orange light. Warm ramp now,
+                   and the glow is `currentColor` so the two cannot drift apart. */
+                className={`w-4 h-4 ${streakAlive ? "text-warning drop-shadow-[0_0_6px_currentColor]" : "text-on-surface-variant/40"}`}
                 fill="currentColor"
                 viewBox="0 0 24 24"
                 animate={streakAlive && !reduceMotion ? { scale: [1, 1.14, 1] } : { scale: 1 }}
@@ -265,7 +269,7 @@ export default function HomePage() {
                 coldStart ? "ring-1 ring-primary/40 shadow-[0_0_28px_-6px_rgba(240,205,109,0.35)]" : ""
               } ${coldStart && !reduceMotion ? "animate-pulse-slow" : ""}`}
             >
-              <div className="absolute bottom-0 right-0 mashrabiya-pattern w-32 h-32 rotate-12" />
+              <IslamicPattern variant="flat" className="inset-auto bottom-0 right-0 h-32 w-32 rotate-12" />
               <div className="relative z-10">
                 <div className="flex justify-between items-start gap-3 mb-6">
                   <div className="min-w-0">
@@ -408,10 +412,10 @@ export default function HomePage() {
           className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"
         >
           {[
-            { href: "/achievements", label: t("achievements"), Icon: Trophy, tint: "from-amber-400/25 to-amber-600/10", fg: "text-amber-300" },
-            { href: "/challenges", label: t("challenges"), Icon: Zap, tint: "from-violet-400/25 to-violet-600/10", fg: "text-violet-300" },
-            { href: "/community", label: t("communityHub"), Icon: Users, tint: "from-sky-400/25 to-sky-600/10", fg: "text-sky-300" },
-            { href: "/multiplayer", label: t("multiplayerQuiz"), Icon: Gamepad2, tint: "from-emerald-400/25 to-emerald-600/10", fg: "text-emerald-300" },
+            { href: "/achievements", label: t("achievements"), Icon: Trophy, tint: "from-warning/25 to-warning/10", fg: "text-warning-bright" },
+            { href: "/challenges", label: t("challenges"), Icon: Zap, tint: "from-special/25 to-special-container/10", fg: "text-special-bright" },
+            { href: "/community", label: t("communityHub"), Icon: Users, tint: "from-info/25 to-info-container/10", fg: "text-info-bright" },
+            { href: "/multiplayer", label: t("multiplayerQuiz"), Icon: Gamepad2, tint: "from-success/25 to-success/10", fg: "text-success-bright" },
           ].map(({ href, label, Icon, tint, fg }, i) => (
             <motion.div
               key={href}

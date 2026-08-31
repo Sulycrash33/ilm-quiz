@@ -82,29 +82,29 @@ export function LeaderboardPageClient({
               <PodiumSlot
                 entry={podium[1]}
                 place={2}
-                avatarClass="w-20 h-20 border-gray-300 bg-gradient-to-br from-gray-300/40 to-gray-400/30"
-                badgeClass="bg-gray-300 text-gray-900"
+                avatarClass="w-20 h-20 border-medal-silver bg-gradient-to-br from-medal-silver/40 to-medal-silver/25"
+                badgeClass="bg-medal-silver text-on-medal-silver"
                 nameClass="text-sm"
-                plinthClass="w-24 h-24 bg-gradient-to-b from-gray-300/20 to-transparent"
+                plinthClass="w-24 h-24 bg-gradient-to-b from-medal-silver/20 to-transparent"
               />
 
               <PodiumSlot
                 entry={podium[0]}
                 place={1}
                 float
-                avatarClass="w-24 h-24 border-yellow-400 bg-gradient-to-br from-yellow-400/40 to-yellow-600/30 shadow-[0_0_30px_rgba(255,200,0,0.5)]"
-                badgeClass="bg-yellow-400 text-yellow-950"
+                avatarClass="w-24 h-24 border-medal-gold bg-gradient-to-br from-medal-gold/40 to-medal-gold/25 shadow-[0_0_30px_rgba(242,201,76,0.5)]"
+                badgeClass="bg-medal-gold text-on-medal-gold"
                 nameClass=""
-                plinthClass="w-28 h-32 bg-gradient-to-b from-yellow-400/20 to-transparent"
+                plinthClass="w-28 h-32 bg-gradient-to-b from-medal-gold/20 to-transparent"
               />
 
               <PodiumSlot
                 entry={podium[2]}
                 place={3}
-                avatarClass="w-20 h-20 border-amber-700 bg-gradient-to-br from-amber-700/40 to-amber-800/30"
-                badgeClass="bg-amber-700 text-amber-50"
+                avatarClass="w-20 h-20 border-medal-bronze bg-gradient-to-br from-medal-bronze/40 to-medal-bronze/25"
+                badgeClass="bg-medal-bronze text-on-medal-bronze"
                 nameClass="text-sm"
-                plinthClass="w-24 h-16 bg-gradient-to-b from-amber-700/20 to-transparent"
+                plinthClass="w-24 h-16 bg-gradient-to-b from-medal-bronze/20 to-transparent"
               />
             </motion.div>
           )}

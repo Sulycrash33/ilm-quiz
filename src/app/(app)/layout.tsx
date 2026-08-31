@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { IslamicPattern } from "@/components/islamic-pattern";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar"
 import type { Translations } from "@/lib/i18n"
 
@@ -71,7 +72,7 @@ export default function AppLayout({
       <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
         <div className="absolute top-1/2 -left-24 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
-        <div className="absolute inset-0 mashrabiya-pattern" />
+        <IslamicPattern />
       </div>
 
       {/* Main Content */}

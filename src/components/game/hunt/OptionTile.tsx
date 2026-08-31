@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { playHaptic } from "@/lib/haptics";
 
 export type OptionState = "idle" | "eliminated" | "correct" | "wrong" | "missed";
 
@@ -55,7 +56,14 @@ export function OptionTile({ label, index, state, disabled, onSelect }: OptionTi
     <motion.button
       type="button"
       disabled={disabled || state === "eliminated"}
-      onClick={onSelect}
+      onClick={() => {
+        // The tap, acknowledged in the hand before the server has said
+        // anything. The grade arrives a round trip later and brings its own
+        // cue; this one only says the press registered, which is the gap that
+        // made a slow connection feel like a dead button.
+        playHaptic("select");
+        onSelect();
+      }}
       whileHover={interactive && !reduce ? { scale: 1.02 } : undefined}
       whileTap={interactive && !reduce ? { scale: 0.97 } : undefined}
       animate={feedback}

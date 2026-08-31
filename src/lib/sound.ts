@@ -33,6 +33,7 @@ export type SoundCue =
   | "wrong"
   | "levelComplete"
   | "rankUp"
+  | "comboUp"
   | "tick"
 
 const STORAGE_KEY = "ilm-sound-enabled"
@@ -189,6 +190,16 @@ export function playCue(cue: SoundCue): void {
         tone(ac, { freq: 440.0, start: 0.1, duration: 0.2, gain: 0.14 })
         tone(ac, { freq: 659.25, start: 0.26, duration: 0.2, gain: 0.15 })
         tone(ac, { freq: 880.0, start: 0.42, duration: 0.45, gain: 0.16 })
+        break
+
+      // The multiplier stepping up, every third correct answer in a row.
+      // Deliberately a bright two-note flick rather than a fanfare: it lands
+      // right after the `correct` cue and must read as a flourish on top of
+      // it, not as a competing event. Higher and quieter than `correct` so
+      // the two stack rather than muddy.
+      case "comboUp":
+        tone(ac, { freq: 987.77, start: 0, duration: 0.1, gain: 0.1, type: "triangle" }) // B5
+        tone(ac, { freq: 1318.51, start: 0.07, duration: 0.16, gain: 0.09, type: "triangle" }) // E6
         break
 
       // The last seconds on the clock. Very quiet by design — this one

@@ -37,8 +37,8 @@ export function PremiumIcon({
     primary: "bg-primary/10 text-primary",
     secondary: "bg-secondary/10 text-secondary",
     tertiary: "bg-tertiary/10 text-tertiary",
-    success: "bg-green-500/10 text-green-400",
-    warning: "bg-yellow-500/10 text-yellow-400",
+    success: "bg-success/10 text-success",
+    warning: "bg-warning/10 text-warning",
     danger: "bg-error/10 text-error",
   }
 

@@ -22,7 +22,7 @@ const ACTIONS: Record<string, { label: string; tone: "danger" | "warn" | "info" 
 
 const TONES: Record<string, string> = {
   danger: "border-error/40 bg-error/5",
-  warn: "border-amber-400/30 bg-amber-400/5",
+  warn: "border-warning/30 bg-warning/5",
   info: "border-white/10 bg-surface-container/50",
 }
 

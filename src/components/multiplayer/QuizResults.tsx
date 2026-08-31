@@ -80,7 +80,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
             <PremiumAvatar avatarId={sortedPlayers[1].avatarId} size="lg" />
             <p className="font-bold text-on-surface mt-2 text-sm">{sortedPlayers[1].userName}</p>
             <p className="text-xs text-on-surface-variant">{sortedPlayers[1].score} XP</p>
-            <div className="w-20 h-20 bg-gradient-to-b from-gray-300/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
+            <div className="w-20 h-20 bg-gradient-to-b from-medal-silver/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
               <span className="text-3xl">🥈</span>
             </div>
           </div>
@@ -96,7 +96,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
           </motion.div>
           <p className="font-bold text-on-surface mt-2">{winner.userName}</p>
           <p className="text-sm text-primary font-bold">{winner.score} XP</p>
-          <div className="w-24 h-28 bg-gradient-to-b from-yellow-400/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
+          <div className="w-24 h-28 bg-gradient-to-b from-warning/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
             <span className="text-4xl">🥇</span>
           </div>
         </div>
@@ -107,7 +107,7 @@ export function QuizResults({ players, currentUserId, onPlayAgain, onLeave }: Qu
             <PremiumAvatar avatarId={sortedPlayers[2].avatarId} size="lg" />
             <p className="font-bold text-on-surface mt-2 text-sm">{sortedPlayers[2].userName}</p>
             <p className="text-xs text-on-surface-variant">{sortedPlayers[2].score} XP</p>
-            <div className="w-20 h-16 bg-gradient-to-b from-amber-700/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
+            <div className="w-20 h-16 bg-gradient-to-b from-warning-container/20 to-transparent rounded-t-xl mt-2 flex items-center justify-center">
               <span className="text-3xl">🥉</span>
             </div>
           </div>

@@ -21,7 +21,7 @@ export function PremiumStat({
   className = "",
 }: PremiumStatProps) {
   const trendColors = {
-    up: "text-green-400",
+    up: "text-success",
     down: "text-error",
     neutral: "text-on-surface-variant",
   }

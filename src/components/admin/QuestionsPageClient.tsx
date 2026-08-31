@@ -23,10 +23,10 @@ interface Props {
 }
 
 const statusColors: Record<string, string> = {
-  published: "bg-emerald-400/10 text-emerald-400",
-  ai_drafted: "bg-blue-400/10 text-blue-400",
-  draft: "bg-blue-400/10 text-blue-400",
-  rejected: "bg-red-400/10 text-red-400",
+  published: "bg-success/10 text-success",
+  ai_drafted: "bg-info/10 text-info",
+  draft: "bg-info/10 text-info",
+  rejected: "bg-danger/10 text-danger",
 }
 
 /**
@@ -231,7 +231,7 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
       </motion.div>
 
       {summary && scholarDone === 0 && (
-        <PremiumCard className="mb-6 border-amber-400/30 bg-amber-400/5 p-4">
+        <PremiumCard className="mb-6 border-warning/30 bg-warning/5 p-4">
           <p className="text-sm text-on-surface">
             No question has been approved by a scholar yet. Filter to{" "}
             <strong>Awaiting review</strong> and work a category at a time. Approving a
@@ -337,7 +337,7 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                         {q.status}
                       </span>
                       {q.scholarApproved && (
-                        <span className="inline-flex items-center gap-1 rounded bg-emerald-400/10 px-2 py-0.5 text-emerald-400">
+                        <span className="inline-flex items-center gap-1 rounded bg-success/10 px-2 py-0.5 text-success">
                           <BadgeCheck className="h-3 w-3" aria-hidden="true" /> scholar approved
                         </span>
                       )}
@@ -363,7 +363,7 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                       className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
                         q.scholarApproved
                           ? "border-white/15 text-on-surface-variant hover:bg-white/5"
-                          : "border-emerald-400/40 text-emerald-400 hover:bg-emerald-400/10"
+                          : "border-success/40 text-success hover:bg-success/10"
                       }`}
                     >
                       {busy === q.id
@@ -392,7 +392,7 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                       {q.choices.map((c, i) => (
                         <li
                           key={i}
-                          className={`text-sm ${i === q.correctIndex ? "font-semibold text-emerald-400" : "text-on-surface-variant"}`}
+                          className={`text-sm ${i === q.correctIndex ? "font-semibold text-success" : "text-on-surface-variant"}`}
                         >
                           {String.fromCharCode(65 + i)}. {c}
                           {i === q.correctIndex && " ✓"}
@@ -436,7 +436,7 @@ export function QuestionsPageClient({ initialQuestions, initialTotal, summary }:
                             checked={draft.correctIndex === i}
                             onChange={() => setDraft({ ...draft, correctIndex: i })}
                             aria-label={`Mark choice ${String.fromCharCode(65 + i)} correct`}
-                            className="h-4 w-4 accent-emerald-400"
+                            className="h-4 w-4 accent-success"
                           />
                           <span className="w-5 text-sm text-on-surface-variant">
                             {String.fromCharCode(65 + i)}

@@ -10,6 +10,8 @@ import type { RunSummary as RunSummaryData } from "@/lib/hunt-engine";
 import { rankProgress, rankUpBetween } from "@/lib/ranks";
 import { useEffect, useState } from "react";
 import { playCue } from "@/lib/sound";
+import { playHaptic } from "@/lib/haptics";
+import { Celebration } from "@/components/game/Celebration";
 
 /** One question as the summary retells it. Mirrors the shape HuntView keeps. */
 export interface RunReviewEntry {
@@ -73,7 +75,10 @@ export function RunSummary({
   // The rarest cue in the game — nine times in a whole playthrough. Fires on
   // mount of the summary, once, and only when the run actually promoted them.
   useEffect(() => {
-    if (rankedUp) playCue("rankUp");
+    if (rankedUp) {
+      playCue("rankUp");
+      playHaptic("rankUp");
+    }
   }, [rankedUp]);
   const RankIcon = progress.rank.icon;
 
@@ -83,6 +88,11 @@ export function RunSummary({
       animate={{ opacity: 1, y: 0 }}
       className="mx-auto w-full max-w-2xl space-y-6"
     >
+      {/* Only for a won run. Losing a run is not a moment to throw a party
+          over, and the same restraint governs the `levelComplete` sound cue
+          a few files away. */}
+      <Celebration active={won} pieces={rankedUp ? 260 : 180} />
+
       <div className="space-y-3 text-center">
         <motion.div
           initial={{ scale: 0.4, opacity: 0 }}
