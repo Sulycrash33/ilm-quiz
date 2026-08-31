@@ -116,15 +116,42 @@
     box-shadow: 0 10px 40px -10px rgba(240, 205, 109, 0.2);
   }
 
-  /* Islamic Pattern Overlay */
+  /* ---------------------------------------------------------------------
+     The khatim: the app's one piece of ornament.
+
+     What was here before was a solid white diamond at 3% opacity. Two things
+     were wrong with it. It was not an Islamic motif, it was a rotated square
+     on a grid, which is the default texture of every dark SaaS landing page.
+     And at 0.03 of white on a #0b1326 ground it was, in practice, invisible:
+     the app had ornament in the stylesheet and none on the screen.
+
+     This is a khatim, the eight-pointed star, drawn as the two overlapping
+     squares the construction actually is: outer points every 45 degrees, the
+     inner radius set to cos(45)/cos(22.5) of the outer so the arms meet in
+     straight collinear edges rather than a soft rosette. Stars sit at the
+     tile centre and at all four corners, so the quarter stars from adjacent
+     tiles complete each other and the field repeats with no seam.
+
+     It is stroked in the brand gold rather than white, and at an opacity that
+     can actually be seen. It stays behind a mask and well under the contrast
+     floor for text, so it reads as woven into the surface rather than
+     printed on top of it.
+
+     Rendered and inspected as a 4x4 tiling on the real background before it
+     went in, per this project's rule about not trusting a generator.
+     --------------------------------------------------------------------- */
   .mashrabiya-pattern {
     mask-image: linear-gradient(to bottom, black, transparent);
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23ffffff' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40.00,15.00 L47.32,22.32 L57.68,22.32 L57.68,32.68 L65.00,40.00 L57.68,47.32 L57.68,57.68 L47.32,57.68 L40.00,65.00 L32.68,57.68 L22.32,57.68 L22.32,47.32 L15.00,40.00 L22.32,32.68 L22.32,22.32 L32.68,22.32 Z M0.00,-25.00 L7.32,-17.68 L17.68,-17.68 L17.68,-7.32 L25.00,0.00 L17.68,7.32 L17.68,17.68 L7.32,17.68 L0.00,25.00 L-7.32,17.68 L-17.68,17.68 L-17.68,7.32 L-25.00,0.00 L-17.68,-7.32 L-17.68,-17.68 L-7.32,-17.68 Z M80.00,-25.00 L87.32,-17.68 L97.68,-17.68 L97.68,-7.32 L105.00,0.00 L97.68,7.32 L97.68,17.68 L87.32,17.68 L80.00,25.00 L72.68,17.68 L62.32,17.68 L62.32,7.32 L55.00,0.00 L62.32,-7.32 L62.32,-17.68 L72.68,-17.68 Z M0.00,55.00 L7.32,62.32 L17.68,62.32 L17.68,72.68 L25.00,80.00 L17.68,87.32 L17.68,97.68 L7.32,97.68 L0.00,105.00 L-7.32,97.68 L-17.68,97.68 L-17.68,87.32 L-25.00,80.00 L-17.68,72.68 L-17.68,62.32 L-7.32,62.32 Z M80.00,55.00 L87.32,62.32 L97.68,62.32 L97.68,72.68 L105.00,80.00 L97.68,87.32 L97.68,97.68 L87.32,97.68 L80.00,105.00 L72.68,97.68 L62.32,97.68 L62.32,87.32 L55.00,80.00 L62.32,72.68 L62.32,62.32 L72.68,62.32 Z' fill='none' stroke='%23f0cd6d' stroke-width='1'/%3E%3C/svg%3E");
   }
 
+  /* The same motif, standing on its own rather than under a mask, for screens
+     that use it as a full-bleed field. It was the old diamond stroked in
+     #4edea3, a green belonging to no token in this project. */
   .mashrabiya-overlay {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='none' stroke='%234edea3' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40.00,15.00 L47.32,22.32 L57.68,22.32 L57.68,32.68 L65.00,40.00 L57.68,47.32 L57.68,57.68 L47.32,57.68 L40.00,65.00 L32.68,57.68 L22.32,57.68 L22.32,47.32 L15.00,40.00 L22.32,32.68 L22.32,22.32 L32.68,22.32 Z M0.00,-25.00 L7.32,-17.68 L17.68,-17.68 L17.68,-7.32 L25.00,0.00 L17.68,7.32 L17.68,17.68 L7.32,17.68 L0.00,25.00 L-7.32,17.68 L-17.68,17.68 L-17.68,7.32 L-25.00,0.00 L-17.68,-7.32 L-17.68,-17.68 L-7.32,-17.68 Z M80.00,-25.00 L87.32,-17.68 L97.68,-17.68 L97.68,-7.32 L105.00,0.00 L97.68,7.32 L97.68,17.68 L87.32,17.68 L80.00,25.00 L72.68,17.68 L62.32,17.68 L62.32,7.32 L55.00,0.00 L62.32,-7.32 L62.32,-17.68 L72.68,-17.68 Z M0.00,55.00 L7.32,62.32 L17.68,62.32 L17.68,72.68 L25.00,80.00 L17.68,87.32 L17.68,97.68 L7.32,97.68 L0.00,105.00 L-7.32,97.68 L-17.68,97.68 L-17.68,87.32 L-25.00,80.00 L-17.68,72.68 L-17.68,62.32 L-7.32,62.32 Z M80.00,55.00 L87.32,62.32 L97.68,62.32 L97.68,72.68 L105.00,80.00 L97.68,87.32 L97.68,97.68 L87.32,97.68 L80.00,105.00 L72.68,97.68 L62.32,97.68 L62.32,87.32 L55.00,80.00 L62.32,72.68 L62.32,62.32 L72.68,62.32 Z' fill='none' stroke='%23f0cd6d' stroke-width='1'/%3E%3C/svg%3E");
     background-repeat: repeat;
   }
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { IslamicPattern } from "@/components/islamic-pattern";
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { PremiumCard } from "@/components/ui/premium-card"
@@ -112,7 +113,7 @@ export function GameModesPageClient({
       {/* Daily Challenge feature card - real data */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8 mb-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-secondary/10 to-tertiary/10" />
-        <div className="absolute top-0 right-0 w-64 h-64 mashrabiya-pattern rotate-12 opacity-30" />
+        <IslamicPattern variant="flat" className="inset-auto right-0 top-0 h-64 w-64 rotate-12" />
         <div className="relative z-10">
           <PremiumBadge variant="warning" size="md" className="mb-4">{t("todaySpecialBadge")}</PremiumBadge>
           <h2 className="font-headline-md text-headline-md text-on-surface mb-2">{t("dailyChallengeTitle")}</h2>

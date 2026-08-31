@@ -119,7 +119,10 @@ export function HuntHeader({
           </span>
         )}
 
-        <span className="flex items-center gap-1.5 text-tertiary">
+        {/* Gold, matching the coin counter in the home header. Coins were
+            `tertiary` mint here and `primary-fixed` gold there, so the same
+            currency changed colour depending on which screen you were on. */}
+        <span className="flex items-center gap-1.5 text-primary-fixed">
           <Coins className="h-4 w-4" aria-hidden="true" />
           <span className="tabular-nums font-semibold">{coins}</span>
           <span className="sr-only">{t("coinsWord")}</span>
@@ -137,15 +140,18 @@ export function HuntHeader({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: [0.8, 1.18, 1], opacity: 1 }}
             transition={{ duration: 0.34, ease: "easeOut" }}
+            /* Heat, and only heat.
+               The flame was `tertiary` mint at multiplier 2 and above while its
+               halo was hardcoded orange, so a building combo drew a green flame
+               giving off orange light. It runs the warm ramp now, gold into the
+               `warning` orange, and the glow is `currentColor` so the halo can
+               never disagree with the flame again. */
             className={cn(
               "flex items-center gap-1.5 font-semibold",
-              multiplier > 1 ? "text-tertiary" : "text-primary",
+              multiplier > 1 ? "text-warning" : "text-primary",
             )}
             style={{
-              filter: `drop-shadow(0 0 ${Math.min(4 + combo * 1.6, 14)}px rgba(255,138,76,${Math.min(
-                0.22 + combo * 0.07,
-                0.7,
-              )}))`,
+              filter: `drop-shadow(0 0 ${Math.min(4 + combo * 1.6, 14)}px currentColor)`,
             }}
           >
             <Flame

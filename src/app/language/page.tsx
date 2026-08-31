@@ -1,5 +1,6 @@
 "use client"
 
+import { IslamicPattern } from "@/components/islamic-pattern";
 import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
 import { FlagIcon } from "@/components/icons/FlagIcons"
 import Link from "next/link"
@@ -35,7 +36,7 @@ export default function LanguageSelectionPage() {
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
         <div className="absolute top-1/2 -left-24 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
-        <div className="absolute inset-0 mashrabiya-overlay pointer-events-none" />
+        <IslamicPattern variant="flat" />
       </div>
 
       <div className="z-10 w-full max-w-md">

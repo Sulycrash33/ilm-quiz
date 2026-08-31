@@ -780,6 +780,7 @@ export interface Translations {
   hapticsOn: string
   hapticsOff: string
   hapticsHint: string
+  levelsCleared: string
 }
 
 const enTranslations: Translations = {
@@ -1544,6 +1545,7 @@ const enTranslations: Translations = {
   hapticsOn: "Vibration on",
   hapticsOff: "Vibration off",
   hapticsHint: "A short pulse when you answer. On by default, because only you can feel it.",
+  levelsCleared: "{done} of {total} levels cleared",
 }
 
 // Malay/Indonesian translations - culturally meaningful, not direct translations
@@ -2309,6 +2311,7 @@ const msTranslations: Translations = {
   hapticsOn: "Getaran dihidupkan",
   hapticsOff: "Getaran dimatikan",
   hapticsHint: "Denyutan pendek apabila anda menjawab. Dihidupkan secara lalai, kerana anda sahaja yang merasainya.",
+  levelsCleared: "{done} daripada {total} tahap selesai",
 }
 
 // Indonesian translations - culturally meaningful, adapted for Indonesian context
@@ -3074,6 +3077,7 @@ const idTranslations: Translations = {
   hapticsOn: "Getaran aktif",
   hapticsOff: "Getaran nonaktif",
   hapticsHint: "Denyut singkat saat Anda menjawab. Aktif secara bawaan, karena hanya Anda yang merasakannya.",
+  levelsCleared: "{done} dari {total} level selesai",
 }
 
 // Hausa translations
@@ -3839,6 +3843,7 @@ const haTranslations: Translations = {
   hapticsOn: "An kunna girgiza",
   hapticsOff: "An kashe girgiza",
   hapticsHint: "Gajeriyar girgiza sa’ad da ka amsa. A kunne ta asali, domin kai kaɗai ke jinta.",
+  levelsCleared: "An kammala matakai {done} daga {total}",
 }
 
 // French translations
@@ -4604,6 +4609,7 @@ const frTranslations: Translations = {
   hapticsOn: "Vibration activée",
   hapticsOff: "Vibration désactivée",
   hapticsHint: "Une brève impulsion quand vous répondez. Activée par défaut, car vous seul la sentez.",
+  levelsCleared: "{done} niveaux sur {total} terminés",
 }
 
 // Arabic translations (RTL)
@@ -5369,6 +5375,7 @@ const arTranslations: Translations = {
   hapticsOn: "الاهتزاز مفعل",
   hapticsOff: "الاهتزاز متوقف",
   hapticsHint: "نبضة قصيرة عند الإجابة. مفعل افتراضياً، لأنك وحدك من يشعر بها.",
+  levelsCleared: "{done} من {total} مستويات مكتملة",
 }
 
 /**

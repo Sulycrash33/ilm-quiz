@@ -25,6 +25,7 @@ import {
   spendLifeline as markLifelineSpent,
   summarize,
   endRun,
+  comboMultiplier,
   CLASSIC_RULES,
   type HuntState,
   type ModeRules,
@@ -187,6 +188,28 @@ export function HuntView({
    *  thinking time — counting it would quietly forfeit the pace bonus and
    *  record a response time of several minutes on an attempt. */
   const pausedAt = useRef<number | null>(null);
+
+  /**
+   * The multiplier stepping up, marked.
+   *
+   * The combo badge already punched on every correct answer, so answer three
+   * and answer four looked alike even though the third is where the rate
+   * actually changes. This fires only on the step, and only upward: breaking a
+   * combo is its own (quieter) event and does not deserve a flourish.
+   *
+   * In an effect rather than in the answer handler because the multiplier is
+   * derived from reducer state, and a cue fired inside a state updater would
+   * play twice under React's double invocation. Same trap the round review hit.
+   */
+  const prevMultiplier = useRef(1);
+  useEffect(() => {
+    const next = comboMultiplier(state.combo);
+    if (next > prevMultiplier.current) {
+      playCue("comboUp");
+      playHaptic("comboUp");
+    }
+    prevMultiplier.current = next;
+  }, [state.combo]);
   const runRecorded = useRef(false);
   /**
    * Stage the clock has already run out on. Without this the timeout can fire
@@ -644,13 +667,20 @@ export function HuntView({
         {grade?.correct && grade.xpEarned > 0 && (
           <motion.div
             key={`xp-${question?.id ?? "none"}`}
-            initial={{ opacity: 0, y: 8, scale: 0.85 }}
-            animate={{ opacity: [0, 1, 1, 0], y: -34, scale: 1 }}
+            /* Reduced motion keeps the number and drops the travel. The figure
+               is the information; the rise is decoration. Everything else on
+               this screen honours the preference and this did not. */
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.85 }}
+            animate={
+              reduceMotion
+                ? { opacity: [0, 1, 1, 0] }
+                : { opacity: [0, 1, 1, 0], y: -34, scale: 1 }
+            }
             transition={{ duration: 1.5, times: [0, 0.15, 0.7, 1], ease: "easeOut" }}
             className="pointer-events-none absolute left-1/2 top-16 z-30 -translate-x-1/2 select-none"
             aria-hidden="true"
           >
-            <span className="rounded-full bg-primary/15 px-3 py-1 font-bold text-headline-md text-primary tabular-nums drop-shadow-[0_0_14px_rgba(240,205,109,0.6)]">
+            <span className="rounded-full bg-primary/15 px-3 py-1 font-bold text-headline-md text-primary tabular-nums drop-shadow-[0_0_14px_currentColor]">
               +{grade.xpEarned}
             </span>
           </motion.div>

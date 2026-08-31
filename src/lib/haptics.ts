@@ -37,6 +37,7 @@ export type HapticCue =
   | "wrong"
   | "levelComplete"
   | "rankUp"
+  | "comboUp"
 
 const STORAGE_KEY = "ilm-haptics-enabled"
 
@@ -61,6 +62,9 @@ const PATTERNS: Record<HapticCue, number | number[]> = {
   levelComplete: [30, 50, 30, 50, 60],
   // The rarest, nine times in a whole playthrough.
   rankUp: [40, 60, 40, 60, 80],
+  // The multiplier stepping up. Two light taps: more than `correct`, well
+  // short of `levelComplete`, because it can happen several times a run.
+  comboUp: [14, 34, 22],
 }
 
 function prefersReducedMotion(): boolean {
