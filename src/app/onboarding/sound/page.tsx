@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { motion, useReducedMotion } from "framer-motion"
-import { ArrowRight, Hand, CheckCircle2, Flame, Trophy, Crown } from "lucide-react"
+import { ArrowLeft, ArrowRight, Hand, CheckCircle2, Flame, Trophy, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { OnboardingBackdrop } from "@/components/layout/OnboardingBackdrop"
 import { SoundToggle } from "@/components/profile/SoundToggle"
@@ -27,12 +27,18 @@ import type { Translations } from "@/lib/i18n"
  * not an invitation; this is.
  *
  * ── Why here in the flow ──────────────────────────────────────────────────
- * After signup, before the explainer. Sound and vibration are device
- * settings, not profile fields, so they do not belong beside age and avatar —
- * and putting them last would mean the first cue a player hears is one they
- * never agreed to. Landing on the explainer immediately afterwards means the
- * next four taps they make are audible, which is the fastest possible proof
- * that what they just switched on works.
+ * Straight after the language choice, before the three profile steps. It was
+ * briefly placed after signup instead; this is earlier, and earlier is
+ * better for one concrete reason. An AudioContext may not start outside a
+ * user gesture, so the tap that switches sound on is also the tap that opens
+ * the audio device. Doing that at the top of onboarding means every screen
+ * after it can make a sound; doing it at the end meant most of onboarding was
+ * silent whatever the player had chosen.
+ *
+ * It sits outside the "Step N of 3" numbering on purpose. Age, avatar and
+ * name build a profile; this sets two device preferences that are not stored
+ * on the account at all. Counting it as a fourth step would promise the
+ * player their answers here follow them to another phone, and they do not.
  *
  * ── Why the previews ──────────────────────────────────────────────────────
  * A volume slider with nothing to play is a guess. Every cue the game will
@@ -81,9 +87,22 @@ export default function SoundSetupPage() {
     >
       <OnboardingBackdrop />
 
+      {/* Back is real now. When this screen sat after signup there was
+          nothing sensible behind it — the account already existed — so it had
+          none. Sitting between language and age, the step before it is a step
+          the player can genuinely return to. */}
+      <div className="absolute start-4 top-4 z-20">
+        <Button asChild variant="ghost" size="sm">
+          <Link href="/language">
+            <ArrowLeft className="me-2 h-5 w-5" aria-hidden="true" />
+            {t("back")}
+          </Link>
+        </Button>
+      </div>
+
       <div className="absolute end-4 top-4 z-20">
         <Button asChild variant="ghost" size="sm">
-          <Link href="/onboarding/how-it-works">{t("skip")}</Link>
+          <Link href="/onboarding/age">{t("skip")}</Link>
         </Button>
       </div>
 
@@ -144,7 +163,7 @@ export default function SoundSetupPage() {
         </div>
 
         <Button asChild size="lg" className="mt-6 h-12 w-full">
-          <Link href="/onboarding/how-it-works">
+          <Link href="/onboarding/age">
             {t("continue")}
             <ArrowRight className="ms-2 h-5 w-5" aria-hidden="true" />
           </Link>

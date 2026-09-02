@@ -75,7 +75,7 @@ export default function LandingScreen() {
 
         <div className="rise-in delay-1 flex w-full flex-col items-center gap-4">
           <Link
-            href="/language"
+            href="/intro"
             className="btn-primary glow-effect haptic-feedback w-full max-w-xs rounded-full px-10 py-4 text-center text-lg font-bold shadow-lg"
           >
             {t("beginYourJourney")}
