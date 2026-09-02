@@ -4,6 +4,15 @@ import { GameIntro } from "@/components/onboarding/GameIntro";
 /**
  * What ILM Hunt is, for somebody who has not decided to sign up yet.
  *
+ * Shown straight after the language choice, so every word of it lands in a
+ * language the reader actually picked. It ran before that choice for one
+ * revision, which quietly wasted five of the six translations:
+ * `LanguageContext` starts at English and only moves for a stored preference
+ * or a signed in profile, and a first time visitor has neither. Every stranger
+ * read the English copy, whoever they were. The language screen is the one
+ * page in this app that needs no translation to work, since every option is
+ * written in its own language, which is exactly why it belongs first.
+ *
  * The one number on this screen is counted in the database on every request
  * rather than written into the copy. That is the whole reason this is a server
  * component. A landing claim that hardens into a string goes stale silently:
