@@ -1,7 +1,6 @@
 "use client"
 
-import { IslamicPattern } from "@/components/islamic-pattern";
-import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
+import { OnboardingBackdrop } from "@/components/layout/OnboardingBackdrop"
 import { FlagIcon } from "@/components/icons/FlagIcons"
 import Link from "next/link"
 import { PremiumButton } from "@/components/ui/premium-button"
@@ -31,15 +30,9 @@ export default function LanguageSelectionPage() {
       <div className="absolute top-4 right-4 z-20">
         <SoundToggle compact />
       </div>
-      {/* Background */}
-      <NamesOfAllahBackdrop />
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute top-1/2 -left-24 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
-        <IslamicPattern variant="flat" />
-      </div>
+      <OnboardingBackdrop />
 
-      <div className="z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

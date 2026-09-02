@@ -365,8 +365,26 @@
    The four columns run at different durations and two of them run in reverse,
    which is what stops the page reading as one repeating band: at any moment no
    two columns show the same name at the same height. Durations are deliberately
-   coprime-ish rather than round multiples, so the pattern between any two
-   columns takes a very long time to repeat.
+   coprime rather than round multiples, so the pattern between any two columns
+   takes a very long time to repeat.
+
+   READ THIS BEFORE CHANGING A NUMBER HERE. A duration is not a speed. What the
+   eye sees is distance over time, and the distance is one full copy of the
+   list — about 8,550px — because the column translates by -50% of its own
+   height. So 2657s is roughly 3.2px/s, not something you can reason about from
+   the number alone.
+
+   These were 197/233/271/313s, which looked right and was not. The columns were
+   being stretched to viewport height by their flex parent, so -50% was 422px
+   rather than 8,550px: the real drift was 2.1px/s and it snapped back to the
+   start every few minutes. `self-start` in NamesOfAllahBackdrop fixes the
+   height; these numbers are the same speeds re-expressed over the correct
+   distance, then raised by half again, which is the speed that was asked for —
+   noticeable at rest, never pulling the eye off the content in front of it.
+
+   Kept prime so no two columns fall into step. If this is ever tuned again,
+   measure the drift on a running page and tune the px/s; do not adjust the
+   seconds and assume.
    --------------------------------------------------------------------------- */
 @keyframes names-drift-up {
   from { transform: translate3d(0, 0, 0); }
@@ -386,10 +404,10 @@
   will-change: transform;
 }
 
-.names-col-a { animation: names-drift-up   197s linear infinite; }
-.names-col-b { animation: names-drift-down 233s linear infinite; }
-.names-col-c { animation: names-drift-up   271s linear infinite; }
-.names-col-d { animation: names-drift-down 313s linear infinite; }
+.names-col-a { animation: names-drift-up   2657s linear infinite; }
+.names-col-b { animation: names-drift-down 3181s linear infinite; }
+.names-col-c { animation: names-drift-up   3671s linear infinite; }
+.names-col-d { animation: names-drift-down 4273s linear infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   .names-col-a,
