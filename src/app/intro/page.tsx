@@ -4,23 +4,25 @@ import { GameIntro } from "@/components/onboarding/GameIntro";
 /**
  * What ILM Hunt is, for somebody who has not decided to sign up yet.
  *
- * The three numbers on this screen are counted in the database on every
- * request rather than written into the copy. That is the whole reason this is
- * a server component. A landing claim that hardens into a string is a claim
- * that goes stale silently: "over 5,000 questions" survives the day somebody
- * unpublishes a category, and nobody notices until a player does. Counted, the
- * page can only ever overstate the bank by the length of one request.
+ * The one number on this screen is counted in the database on every request
+ * rather than written into the copy. That is the whole reason this is a server
+ * component. A landing claim that hardens into a string goes stale silently:
+ * "over 25 subjects" survives the day somebody adds five more, and nobody
+ * notices until a player does.
+ *
+ * It counts subjects and nothing else. The question and explanation totals
+ * were here and were deliberately removed: a total tells a player where the
+ * game ends, and this app would rather it felt open. See the note in
+ * `GameIntro` before adding a count back.
  *
  * `head: true` with an exact count, never a select. An unbounded PostgREST
  * select stops at 1,000 rows, which has already produced two wrong numbers in
- * this codebase — the category grid and the admin question console — and a
- * marketing page claiming 1,000 questions when there are 5,220 would be the
- * third and the most embarrassing.
+ * this codebase: the category grid and the admin question console.
  *
- * Every count is allowed to fail. A signed-out visitor reads this through row
- * level security, and if any of the three does not come back the panel simply
- * drops its figure and keeps its sentence. An intro screen that renders
- * "0 questions" is worse than one that renders none.
+ * The count is allowed to fail. A signed-out visitor reads this through row
+ * level security, and if it does not come back the panel drops its figure and
+ * keeps its sentence. An intro screen that renders "0 subjects" is worse than
+ * one that renders none.
  *
  * ── Why this does not use the app's server client ─────────────────────────
  * `@/lib/supabase/server` reads cookies, and reading cookies opts a route out
@@ -43,24 +45,9 @@ export default async function IntroPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
-  const [questions, categories, explanations] = await Promise.all([
-    supabase
-      .from("questions")
-      .select("id", { count: "exact", head: true })
-      .eq("review_status", "published"),
-    supabase.from("categories").select("id", { count: "exact", head: true }),
-    supabase
-      .from("questions")
-      .select("id", { count: "exact", head: true })
-      .eq("review_status", "published")
-      .not("explanation", "is", null),
-  ]);
+  const categories = await supabase
+    .from("categories")
+    .select("id", { count: "exact", head: true });
 
-  return (
-    <GameIntro
-      questionCount={questions.count ?? 0}
-      categoryCount={categories.count ?? 0}
-      explanationCount={explanations.count ?? 0}
-    />
-  );
+  return <GameIntro categoryCount={categories.count ?? 0} />;
 }

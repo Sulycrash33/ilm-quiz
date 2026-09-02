@@ -11,11 +11,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Translations } from "@/lib/i18n";
 
 interface GameIntroProps {
-  /** Counted in the database on each request. Any of them may be 0, which
-   *  means "could not be counted" and renders as no figure at all. */
-  questionCount: number;
+  /** How many subjects there are, counted in the database on each request.
+   *  0 means "could not be counted" and renders as no figure at all. */
   categoryCount: number;
-  explanationCount: number;
 }
 
 /**
@@ -29,6 +27,22 @@ interface GameIntroProps {
  * and is read by a player who already has an account and is about to start.
  * Nothing about the rules of a run belongs here; it would be explaining the
  * mechanics of a game to someone still deciding whether to open it.
+ *
+ * ── Why the size of the question bank is not on this screen ──────────────
+ * It was, briefly: panel one carried the total number of questions and panel
+ * three the total number of explanations. Both are gone, and this is a
+ * product decision rather than an oversight, so **do not add them back**.
+ *
+ * A total tells a player where the game ends. The moment somebody reads
+ * "5,220 questions" they have a denominator, and everything after it is
+ * measured against finishing rather than against learning. The bank is meant
+ * to feel open. Anyone who works the number out from the parts — nine levels,
+ * twenty questions each, the subject count on this very panel — is welcome to
+ * it; what the app must not do is hand it over.
+ *
+ * The subject count stays. It says how wide the app is, not where it stops,
+ * and breadth is the honest thing to promise someone deciding whether to sign
+ * up.
  *
  * ── Why there are no subject names on panel two ───────────────────────────
  * The obvious version of that panel lists real category names from the
@@ -48,7 +62,7 @@ interface GameIntroProps {
  * on every pointer move — on a phone, which has no pointer, it was dead code
  * that would have fought the animation on a desktop.
  */
-export function GameIntro({ questionCount, categoryCount, explanationCount }: GameIntroProps) {
+export function GameIntro({ categoryCount }: GameIntroProps) {
   const { t, dir } = useLanguage();
   const reduce = useReducedMotion();
   const [panel, setPanel] = useState(0);
@@ -57,30 +71,17 @@ export function GameIntro({ questionCount, categoryCount, explanationCount }: Ga
     titleKey: keyof Translations;
     bodyKey: keyof Translations;
     Icon: typeof BookOpen;
-    /** The figure under the panel, or null when it could not be counted. */
+    /** The figure under the panel, or null where there is none. */
     figure: string | null;
   }[] = [
-    {
-      titleKey: "introTitleOne",
-      bodyKey: "introBodyOne",
-      Icon: BookOpen,
-      figure: questionCount > 0 ? t("questionsCount", { count: questionCount.toLocaleString() }) : null,
-    },
+    { titleKey: "introTitleOne", bodyKey: "introBodyOne", Icon: BookOpen, figure: null },
     {
       titleKey: "introTitleTwo",
       bodyKey: "introBodyTwo",
       Icon: Layers,
       figure: categoryCount > 0 ? t("introCategoriesCount", { count: categoryCount }) : null,
     },
-    {
-      titleKey: "introTitleThree",
-      bodyKey: "introBodyThree",
-      Icon: Lightbulb,
-      figure:
-        explanationCount > 0
-          ? t("introExplanationsCount", { count: explanationCount.toLocaleString() })
-          : null,
-    },
+    { titleKey: "introTitleThree", bodyKey: "introBodyThree", Icon: Lightbulb, figure: null },
   ];
 
   const isLast = panel === PANELS.length - 1;
