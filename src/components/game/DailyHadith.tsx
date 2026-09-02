@@ -2,7 +2,6 @@
 
 import { Quote } from "lucide-react";
 import { DAILY_HADITH } from "@/lib/constants";
-import { IslamicPattern } from "@/components/islamic-pattern";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /**
@@ -31,8 +30,10 @@ export function DailyHadith() {
 
   return (
     <section className="glass-card relative overflow-hidden rounded-xl p-6 text-center">
-      <IslamicPattern variant="flat" />
-
+      {/* The khatim moved into `.glass-card` itself, so every box in the game
+          carries it rather than this one alone. Drawing it here as well would
+          stack two copies and make the hadith card the only panel with the
+          motif at double strength — which is the inconsistency, inverted. */}
       <div className="relative z-10 flex flex-col items-center gap-3">
         <Quote className="h-8 w-8 text-primary/40" aria-hidden="true" />
 

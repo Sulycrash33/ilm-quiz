@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { RewardsPageClient } from "@/components/rewards/RewardsPageClient"
+import type { SpinSegment } from "@/components/rewards/SpinWheel"
 
 export default async function RewardsPage() {
   const supabase = await createClient()
@@ -48,6 +49,15 @@ export default async function RewardsPage() {
     .select("tier, price_coins, min_coins, max_coins, min_xp, max_xp")
     .order("price_coins")
 
+  // The wheel's segments. Ordered by id because `spin_wheel_rpc` selects its
+  // reward with `row_number() over (order by sr.id)`, so any other ordering
+  // here would draw a wheel whose segments do not correspond to the ones the
+  // server is choosing between.
+  const { data: spinRewards } = await supabase
+    .from("spin_rewards")
+    .select("id, label, type, value")
+    .order("id")
+
   return (
     <RewardsPageClient
       streakCount={profile?.streak_count ?? 0}
@@ -60,6 +70,7 @@ export default async function RewardsPage() {
       currentDayNumber={nextDayNumber}
       loginRewards={loginRewards ?? []}
       chestTypes={chestTypes ?? []}
+      spinRewards={(spinRewards ?? []) as SpinSegment[]}
     />
   )
 }

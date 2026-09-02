@@ -1,4 +1,4 @@
-import { IslamicPattern } from "@/components/islamic-pattern"
+import { AppBackdrop } from "@/components/layout/AppBackdrop"
 import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
 
 /**
@@ -14,8 +14,14 @@ import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
  * is a backdrop that drifts apart in five files, and this repository has
  * already paid for that once with the palette.
  *
- * Not a client component: three divs, no state, no hooks. It ships no
- * JavaScript, and `NamesOfAllahBackdrop` is a server component too.
+ * It is now the game's own backdrop plus the names, rather than a second
+ * implementation of the same glows: the glows and the lattice had already
+ * drifted apart from the copy in `(app)/layout.tsx`, which is the fault this
+ * component was extracted to prevent, repeated one level up. The names are the
+ * only thing onboarding adds — see `AppBackdrop` for why they stop here.
+ *
+ * Not a client component: `NamesOfAllahBackdrop` and `AppBackdrop` are both
+ * server components, so this ships no JavaScript.
  *
  * Everything here is `fixed`, so the field stays put while a page that is
  * taller than the viewport scrolls over it. Page content must sit in a
@@ -26,11 +32,7 @@ export function OnboardingBackdrop() {
   return (
     <>
       <NamesOfAllahBackdrop />
-      <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
-        <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute top-1/2 -left-24 h-80 w-80 rounded-full bg-secondary/5 blur-[100px]" />
-        <IslamicPattern variant="flat" />
-      </div>
+      <AppBackdrop />
     </>
   )
 }

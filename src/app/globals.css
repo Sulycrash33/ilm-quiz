@@ -94,15 +94,47 @@
 
 /* Glassmorphism Effects */
 @layer components {
+  /* ---------------------------------------------------------------------
+     Every box in the game, carrying the khatim.
+
+     The daily hadith card was the only panel in the app with the motif inside
+     it: it drew an `<IslamicPattern variant="flat">` as an absolutely
+     positioned child, and every other `glass-card` — the streak stats, the
+     login row, the wheel, the chests, the leaderboard, the achievements, the
+     profile — was a plain dark rectangle. One ornamented box among two dozen
+     bare ones reads as an inconsistency rather than as an accent.
+
+     Carried by the class rather than by a component in each file. Twenty-four
+     components already say `glass-card`, so this is one edit instead of
+     twenty-four, and a box added next month gets it without anyone
+     remembering to.
+
+     Two things make this a background layer instead of a child element:
+
+     - **No `position` or `overflow` change.** A `::before` overlay would need
+       `position: relative` and `overflow: hidden` on every card, and cards in
+       this app hang badges, rings and menus outside their own bounds — the
+       clipping would have been a silent regression spread over two dozen
+       screens. `background-image` is clipped by `border-radius` already and
+       changes no layout.
+     - **The alpha is baked into the SVG stroke**, not applied as element
+       opacity. `opacity` on the card would fade its text along with its
+       ornament; `stroke-opacity` inside the data URI fades only the motif, and
+       composites to exactly what `.mashrabiya-overlay` produced at 0.08.
+
+     `background-color` and `background-image` are set separately rather than
+     through the `background` shorthand, which resets the image. --------- */
   .glass-card {
-    background: rgba(23, 31, 51, 0.6);
+    background-color: rgba(23, 31, 51, 0.6);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40.00,15.00 L47.32,22.32 L57.68,22.32 L57.68,32.68 L65.00,40.00 L57.68,47.32 L57.68,57.68 L47.32,57.68 L40.00,65.00 L32.68,57.68 L22.32,57.68 L22.32,47.32 L15.00,40.00 L22.32,32.68 L22.32,22.32 L32.68,22.32 Z M0.00,-25.00 L7.32,-17.68 L17.68,-17.68 L17.68,-7.32 L25.00,0.00 L17.68,7.32 L17.68,17.68 L7.32,17.68 L0.00,25.00 L-7.32,17.68 L-17.68,17.68 L-17.68,7.32 L-25.00,0.00 L-17.68,-7.32 L-17.68,-17.68 L-7.32,-17.68 Z M80.00,-25.00 L87.32,-17.68 L97.68,-17.68 L97.68,-7.32 L105.00,0.00 L97.68,7.32 L97.68,17.68 L87.32,17.68 L80.00,25.00 L72.68,17.68 L62.32,17.68 L62.32,7.32 L55.00,0.00 L62.32,-7.32 L62.32,-17.68 L72.68,-17.68 Z M0.00,55.00 L7.32,62.32 L17.68,62.32 L17.68,72.68 L25.00,80.00 L17.68,87.32 L17.68,97.68 L7.32,97.68 L0.00,105.00 L-7.32,97.68 L-17.68,97.68 L-17.68,87.32 L-25.00,80.00 L-17.68,72.68 L-17.68,62.32 L-7.32,62.32 Z M80.00,55.00 L87.32,62.32 L97.68,62.32 L97.68,72.68 L105.00,80.00 L97.68,87.32 L97.68,97.68 L87.32,97.68 L80.00,105.00 L72.68,97.68 L62.32,97.68 L62.32,87.32 L55.00,80.00 L62.32,72.68 L62.32,62.32 L72.68,62.32 Z' fill='none' stroke='%23f0cd6d' stroke-opacity='0.08' stroke-width='1'/%3E%3C/svg%3E");
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 0.75rem;
   }
 
   .glass-card-hover {
-    background: rgba(23, 31, 51, 0.6);
+    background-color: rgba(23, 31, 51, 0.6);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40.00,15.00 L47.32,22.32 L57.68,22.32 L57.68,32.68 L65.00,40.00 L57.68,47.32 L57.68,57.68 L47.32,57.68 L40.00,65.00 L32.68,57.68 L22.32,57.68 L22.32,47.32 L15.00,40.00 L22.32,32.68 L22.32,22.32 L32.68,22.32 Z M0.00,-25.00 L7.32,-17.68 L17.68,-17.68 L17.68,-7.32 L25.00,0.00 L17.68,7.32 L17.68,17.68 L7.32,17.68 L0.00,25.00 L-7.32,17.68 L-17.68,17.68 L-17.68,7.32 L-25.00,0.00 L-17.68,-7.32 L-17.68,-17.68 L-7.32,-17.68 Z M80.00,-25.00 L87.32,-17.68 L97.68,-17.68 L97.68,-7.32 L105.00,0.00 L97.68,7.32 L97.68,17.68 L87.32,17.68 L80.00,25.00 L72.68,17.68 L62.32,17.68 L62.32,7.32 L55.00,0.00 L62.32,-7.32 L62.32,-17.68 L72.68,-17.68 Z M0.00,55.00 L7.32,62.32 L17.68,62.32 L17.68,72.68 L25.00,80.00 L17.68,87.32 L17.68,97.68 L7.32,97.68 L0.00,105.00 L-7.32,97.68 L-17.68,97.68 L-17.68,87.32 L-25.00,80.00 L-17.68,72.68 L-17.68,62.32 L-7.32,62.32 Z M80.00,55.00 L87.32,62.32 L97.68,62.32 L97.68,72.68 L105.00,80.00 L97.68,87.32 L97.68,97.68 L87.32,97.68 L80.00,105.00 L72.68,97.68 L62.32,97.68 L62.32,87.32 L55.00,80.00 L62.32,72.68 L62.32,62.32 L72.68,62.32 Z' fill='none' stroke='%23f0cd6d' stroke-opacity='0.08' stroke-width='1'/%3E%3C/svg%3E");
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 0.75rem;
@@ -110,7 +142,9 @@
   }
 
   .glass-card-hover:hover {
-    background: rgba(23, 31, 51, 0.8);
+    /* `background-color`, not `background`: the shorthand would reset the
+       khatim out of the card on hover and put it back on mouse-out. */
+    background-color: rgba(23, 31, 51, 0.8);
     border-color: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
     box-shadow: 0 10px 40px -10px rgba(240, 205, 109, 0.2);
