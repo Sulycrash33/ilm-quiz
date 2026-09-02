@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight, BookOpen, Layers, Lightbulb } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, Flame, Layers, Swords } from "lucide-react";
 import { OnboardingBackdrop } from "@/components/layout/OnboardingBackdrop";
-import { IlmHuntMark } from "@/components/icons/IlmHuntMark";
+import { RANKS } from "@/lib/constants";
+import { TIER_MAX } from "@/lib/hunt-engine";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Translations } from "@/lib/i18n";
 
@@ -19,171 +18,258 @@ interface GameIntroProps {
 /**
  * The three panels between the landing screen and the language choice.
  *
+ * ── Built to the landing screen's rules, not its own ──────────────────────
+ * The first version of this screen was a small icon, a heading and two lines
+ * of body text floating in the middle of an otherwise empty page, three times
+ * over. Beside the landing screen — pulsing rings, a glowing emblem, display
+ * type, a call to action you can see from across the room — it read like
+ * documentation that had wandered into a product.
+ *
+ * So it borrows the landing screen's vocabulary exactly: the same pulse rings
+ * around the same glass emblem, the same display type, the same gold call to
+ * action. A player moving from one to the other should not feel a seam.
+ *
+ * **No framer-motion here, deliberately.** The landing screen dropped it for a
+ * specific reason worth repeating: a motion component renders its `initial`
+ * state into the HTML, which is `opacity: 0`, so the content is in the
+ * document and invisible until React has downloaded, parsed and hydrated. On a
+ * phone that is the whole feel of the page. The entrance animations are the
+ * CSS `settle-in` and `rise-in` classes instead, which run off the stylesheet
+ * at first paint and stop entirely under `prefers-reduced-motion`. Replaying
+ * them per panel is what the `key` is for.
+ *
  * ── How this differs from /onboarding/how-it-works ────────────────────────
- * They are the two explainers in this app and they must not converge, so the
- * line between them is worth stating. This one answers **what is this**, and
- * is read by a stranger who has not signed up and may not. That one answers
- * **how do I play** — nine tiers, twenty questions, three lives, the clock —
- * and is read by a player who already has an account and is about to start.
- * Nothing about the rules of a run belongs here; it would be explaining the
- * mechanics of a game to someone still deciding whether to open it.
+ * They are the two explainers and they must not converge. This one answers
+ * **what is this**, for a stranger who has not signed up. That one answers
+ * **how do I play**, for a player about to start. The rank names appear here
+ * as a horizon, not as a rules table.
  *
- * ── Why the size of the question bank is not on this screen ──────────────
- * It was, briefly: panel one carried the total number of questions and panel
- * three the total number of explanations. Both are gone, and this is a
- * product decision rather than an oversight, so **do not add them back**.
- *
- * A total tells a player where the game ends. The moment somebody reads
- * "5,220 questions" they have a denominator, and everything after it is
+ * ── Why the size of the question bank is not on this screen ───────────────
+ * A total tells a player where the game ends, and everything after it is
  * measured against finishing rather than against learning. The bank is meant
- * to feel open. Anyone who works the number out from the parts — nine levels,
- * twenty questions each, the subject count on this very panel — is welcome to
- * it; what the app must not do is hand it over.
- *
- * The subject count stays. It says how wide the app is, not where it stops,
- * and breadth is the honest thing to promise someone deciding whether to sign
- * up.
+ * to feel open. Anyone who works the number out from the parts is welcome to
+ * it; the app must not hand it over. **Do not add a question count back.** The
+ * subject count stays: it says how wide the app is, not where it stops.
  *
  * ── Why there are no subject names on panel two ───────────────────────────
- * The obvious version of that panel lists real category names from the
- * database. They are stored in English, this app runs in six languages, and
- * this screen is shown *before* the language choice — so an Arabic reader
- * would meet a wall of English on the first page that tries to explain
- * anything. The counts carry the same weight and are language neutral; the
- * subjects are named in translated prose instead.
- *
- * ── On the mockup ─────────────────────────────────────────────────────────
- * Three things in it deliberately did not come across. Its hero was a stock
- * image on a `googleusercontent` URL, which will rot and takes the top of the
- * screen with it when it does; the mark this app already owns cannot. Its
- * background redefined `mashrabiya-overlay` as green dots, which is the exact
- * palette leak this codebase has already cleaned out once. And its parallax
- * bound a `mousemove` listener that overwrote the float animation's transform
- * on every pointer move — on a phone, which has no pointer, it was dead code
- * that would have fought the animation on a desktop.
+ * They are stored in English and this screen runs before the language choice,
+ * so an Arabic reader would meet a wall of English on the first page that
+ * tries to explain anything. The disciplines are named in translated prose.
  */
+
+const PANELS: {
+  eyebrowKey: keyof Translations;
+  titleKey: keyof Translations;
+  bodyKey: keyof Translations;
+  Icon: typeof Swords;
+}[] = [
+  { eyebrowKey: "introEyebrowOne", titleKey: "introTitleOne", bodyKey: "introBodyOne", Icon: Swords },
+  { eyebrowKey: "introEyebrowTwo", titleKey: "introTitleTwo", bodyKey: "introBodyTwo", Icon: Layers },
+  { eyebrowKey: "introEyebrowThree", titleKey: "introTitleThree", bodyKey: "introBodyThree", Icon: Flame },
+];
+
 export function GameIntro({ categoryCount }: GameIntroProps) {
   const { t, dir } = useLanguage();
-  const reduce = useReducedMotion();
   const [panel, setPanel] = useState(0);
-
-  const PANELS: {
-    titleKey: keyof Translations;
-    bodyKey: keyof Translations;
-    Icon: typeof BookOpen;
-    /** The figure under the panel, or null where there is none. */
-    figure: string | null;
-  }[] = [
-    { titleKey: "introTitleOne", bodyKey: "introBodyOne", Icon: BookOpen, figure: null },
-    {
-      titleKey: "introTitleTwo",
-      bodyKey: "introBodyTwo",
-      Icon: Layers,
-      figure: categoryCount > 0 ? t("introCategoriesCount", { count: categoryCount }) : null,
-    },
-    { titleKey: "introTitleThree", bodyKey: "introBodyThree", Icon: Lightbulb, figure: null },
-  ];
 
   const isLast = panel === PANELS.length - 1;
   const current = PANELS[panel];
+  const firstRank = RANKS[0];
+  const lastRank = RANKS[RANKS.length - 1];
+
+  /** The rank titles are data, not copy, so the headline cannot drift from the
+   *  ladder the game actually has. */
+  const title =
+    current.titleKey === "introTitleThree"
+      ? t("introTitleThree", { first: firstRank.title, last: lastRank.title })
+      : t(current.titleKey);
 
   return (
     <div
       dir={dir}
-      className="relative flex min-h-[100dvh] flex-col items-center bg-background px-4 py-8"
+      className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-background"
     >
       <OnboardingBackdrop />
 
-      {/* Back steps through the panels, and on the first one leaves for the
-          landing screen, which is genuinely what is behind it. Two branches
-          rather than one Button with a conditional `asChild`: that prop swaps
-          the rendered element between a Slot and a button, and changing it
-          across renders of the same node is how a Radix Slot ends up with the
-          wrong child. */}
-      <div className="absolute start-4 top-4 z-20">
+      <header className="relative z-20 flex items-center justify-between px-4 pt-4">
         {panel === 0 ? (
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/">
-              <ArrowLeft className="me-2 h-5 w-5" aria-hidden="true" />
-              {t("back")}
-            </Link>
-          </Button>
-        ) : (
-          <Button variant="ghost" size="sm" onClick={() => setPanel((p) => p - 1)}>
-            <ArrowLeft className="me-2 h-5 w-5" aria-hidden="true" />
-            {t("back")}
-          </Button>
-        )}
-      </div>
-
-      <div className="absolute end-4 top-4 z-20">
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/language">{t("skip")}</Link>
-        </Button>
-      </div>
-
-      {/* The mark sits in the header band rather than inside the centred
-          column. Grouped with the panel it was centred *with* it, which pushed
-          both down and left the top third of the screen empty. */}
-      <div className="relative z-10 flex w-full justify-center pt-12">
-        <IlmHuntMark className="h-12 w-12 text-primary" aria-hidden="true" />
-      </div>
-
-      <div className="relative z-10 flex w-full max-w-md flex-1 flex-col justify-center">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={panel}
-            initial={reduce ? false : { opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={reduce ? undefined : { opacity: 0, x: -24 }}
-            transition={{ duration: 0.25 }}
-            className="space-y-5 text-center"
+          <Link
+            href="/"
+            className="haptic-feedback inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm text-on-surface-variant transition-colors hover:text-on-surface"
           >
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-surface-container">
-              <current.Icon className="h-7 w-7 text-primary" aria-hidden="true" />
-            </div>
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+            {t("back")}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setPanel((p) => p - 1)}
+            className="haptic-feedback inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm text-on-surface-variant transition-colors hover:text-on-surface"
+          >
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+            {t("back")}
+          </button>
+        )}
 
-            <h1 className="font-headline text-3xl font-bold text-on-surface">
-              {t(current.titleKey)}
-            </h1>
+        <Link
+          href="/language"
+          className="haptic-feedback font-label-caps text-label-caps rounded-full px-3 py-2 uppercase tracking-widest text-on-surface-variant/70 transition-colors hover:text-on-surface"
+        >
+          {t("skip")}
+        </Link>
+      </header>
 
-            <p className="mx-auto max-w-prose text-on-surface-variant">{t(current.bodyKey)}</p>
+      <main className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-6 px-5 py-4 sm:gap-8">
+        {/* Everything below is keyed on the panel so the CSS entrances replay
+            on every step. */}
+        {/* Sized to the outer pulse ring, not to the emblem. The rings are
+            absolutely positioned, so without an explicit size this box
+            measured 112px while painting 208px, and the column centred itself
+            around a height that was 96px short — which is where the dead air
+            at the top and bottom of this screen came from. */}
+        <div
+          key={`hero-${panel}`}
+          className="settle-in relative flex h-52 w-52 shrink-0 items-center justify-center sm:h-64 sm:w-64"
+        >
+          {/* The landing screen's emblem treatment, to the letter: two pulse
+              rings, the second a second behind the first, around a glass disc. */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="pulse-effect h-40 w-40 rounded-full border border-primary/20 sm:h-52 sm:w-52" />
+            <div
+              className="pulse-effect absolute h-52 w-52 rounded-full border border-primary/10 sm:h-64 sm:w-64"
+              style={{ animationDelay: "1s" }}
+            />
+          </div>
 
-            {current.figure && (
-              <p className="font-display-lg-mobile text-2xl tabular-nums text-primary">
-                {current.figure}
-              </p>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+          <div className="glow-effect relative flex h-28 w-28 items-center justify-center rounded-full border border-primary/25 bg-gradient-to-br from-primary/20 to-primary-container/10 backdrop-blur-2xl sm:h-36 sm:w-36">
+            <current.Icon className="h-12 w-12 text-primary sm:h-16 sm:w-16" aria-hidden="true" />
+          </div>
+        </div>
 
-      <div className="relative z-10 w-full max-w-md space-y-5 pb-2">
-        <div className="flex justify-center gap-2" aria-hidden="true">
+        <div key={`copy-${panel}`} className="rise-in delay-1 w-full text-center">
+          <span className="font-label-caps text-label-caps mb-2 block uppercase tracking-[0.3em] text-primary/70">
+            {t(current.eyebrowKey)}
+          </span>
+          <h1 className="font-display-lg-mobile text-display-lg-mobile mb-3 tracking-tight text-primary">
+            {title}
+          </h1>
+          <p className="mx-auto max-w-prose text-on-surface/80">{t(current.bodyKey)}</p>
+        </div>
+
+        <div key={`flourish-${panel}`} className="rise-in delay-2 w-full">
+          {panel === 0 && <LadderStrip />}
+          {panel === 1 && <SubjectCount count={categoryCount} word={t("introSubjectsWord")} />}
+          {panel === 2 && <RankStrip />}
+        </div>
+      </main>
+
+      <footer className="relative z-10 mx-auto w-full max-w-lg px-5 pb-8 pt-2">
+        <div className="mb-5 flex justify-center gap-2" aria-hidden="true">
           {PANELS.map((p, i) => (
             <span
               key={p.titleKey}
-              className={`h-2 rounded-full transition-all ${
-                i === panel ? "w-6 bg-primary" : "w-2 bg-surface-container-highest"
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === panel ? "w-8 bg-primary shadow-[0_0_10px_rgba(240,205,109,0.5)]" : "w-1.5 bg-on-surface-variant/30"
               }`}
             />
           ))}
         </div>
 
         {isLast ? (
-          <Button asChild size="lg" className="h-12 w-full">
-            <Link href="/language">
-              {t("continue")}
-              <ArrowRight className="ms-2 h-5 w-5" aria-hidden="true" />
-            </Link>
-          </Button>
+          <Link
+            href="/language"
+            className="btn-primary glow-effect haptic-feedback flex w-full items-center justify-center gap-2 rounded-full px-10 py-4 text-center text-lg font-bold shadow-lg"
+          >
+            {t("introEnter")}
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          </Link>
         ) : (
-          <Button size="lg" className="h-12 w-full" onClick={() => setPanel((p) => p + 1)}>
+          <button
+            type="button"
+            onClick={() => setPanel((p) => p + 1)}
+            className="btn-primary glow-effect haptic-feedback flex w-full items-center justify-center gap-2 rounded-full px-10 py-4 text-center text-lg font-bold shadow-lg"
+          >
             {t("next")}
-            <ArrowRight className="ms-2 h-5 w-5" aria-hidden="true" />
-          </Button>
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          </button>
         )}
-      </div>
+      </footer>
+    </div>
+  );
+}
+
+/** The nine levels of a single subject, drawn as a climb.
+ *
+ * The first version was nine equal pills and read as a row of dots, which says
+ * nothing. These ascend, and they fade as they rise: the near rung is lit and
+ * solid because it is the one open to the player, and the far ones recede
+ * because that is honestly what they are. It carries the shape of the game
+ * without a word of copy, which is why it can sit under a headline in six
+ * languages.
+ *
+ * `TIER_MAX` rather than a literal nine, so the drawing cannot outlive a
+ * change to the ladder it is drawing.
+ */
+function LadderStrip() {
+  return (
+    <div className="flex h-16 items-end justify-center gap-1.5" aria-hidden="true">
+      {Array.from({ length: TIER_MAX }, (_, i) => {
+        const climb = i / Math.max(1, TIER_MAX - 1);
+        return (
+          <span
+            key={i}
+            className={`w-6 rounded-t-md sm:w-8 ${
+              i === 0
+                ? "bg-primary shadow-[0_0_16px_rgba(240,205,109,0.55)]"
+                : "bg-surface-container-highest"
+            }`}
+            style={{
+              height: `${18 + climb * 46}px`,
+              opacity: i === 0 ? 1 : 0.85 - climb * 0.5,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/** The one figure on this screen, at display size because it is the only
+ *  number the app is willing to hand over. */
+function SubjectCount({ count, word }: { count: number; word: string }) {
+  if (count <= 0) return null;
+  return (
+    <div className="text-center">
+      <p className="font-display-lg-mobile text-7xl leading-none tabular-nums text-primary drop-shadow-[0_0_24px_rgba(240,205,109,0.4)]">
+        {count}
+      </p>
+      <p className="font-label-caps text-label-caps mt-2 uppercase tracking-[0.3em] text-on-surface-variant">
+        {word}
+      </p>
+    </div>
+  );
+}
+
+/** The whole ladder of ranks, ends lit. Names come from `RANKS`, so this is
+ *  the ladder the game has rather than a picture of one. */
+function RankStrip() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-1.5">
+      {RANKS.map((rank, i) => {
+        const isEnd = i === 0 || i === RANKS.length - 1;
+        return (
+          <span
+            key={rank.level}
+            className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
+              isEnd
+                ? "border border-primary/40 bg-primary/15 font-semibold text-primary"
+                : "bg-surface-container text-on-surface-variant/70"
+            }`}
+          >
+            {rank.title}
+          </span>
+        );
+      })}
     </div>
   );
 }
