@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, Check } from "lucide-react"
-import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
+import { OnboardingBackdrop } from "@/components/layout/OnboardingBackdrop"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
@@ -84,7 +84,7 @@ export default function AvatarSelectionPage() {
       <div className="absolute top-4 right-4 z-20">
         <SoundToggle compact />
       </div>
-      <NamesOfAllahBackdrop />
+      <OnboardingBackdrop />
       <div className="absolute left-4 top-4 z-20">
         <Button asChild variant="ghost">
           <Link href="/onboarding/age">
@@ -94,7 +94,7 @@ export default function AvatarSelectionPage() {
         </Button>
       </div>
 
-      <div className="z-10 w-full max-w-2xl">
+      <div className="relative z-10 w-full max-w-2xl">
         <Card className="w-full bg-card/80 backdrop-blur-sm">
           <CardHeader className="space-y-3 text-center">
             <CardTitle className="text-3xl font-bold">{t("chooseYourAvatar")}</CardTitle>

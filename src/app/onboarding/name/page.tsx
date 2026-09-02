@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Check } from "lucide-react"
-import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
+import { OnboardingBackdrop } from "@/components/layout/OnboardingBackdrop"
 import { Progress } from "@/components/ui/progress"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
@@ -34,7 +34,7 @@ export default function NameSelectionPage() {
       <div className="absolute top-4 right-4 z-20">
         <SoundToggle compact />
       </div>
-      <NamesOfAllahBackdrop />
+      <OnboardingBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost">
           <Link href="/onboarding/avatar">
@@ -44,7 +44,7 @@ export default function NameSelectionPage() {
         </Button>
       </div>
 
-      <div className="z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md">
         <Card className="w-full bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4">
             <CardTitle className="text-3xl font-bold">{t("whatShouldWeCallYou")}</CardTitle>

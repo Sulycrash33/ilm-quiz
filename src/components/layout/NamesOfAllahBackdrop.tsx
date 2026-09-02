@@ -27,6 +27,20 @@ import { NAMES_OF_ALLAH } from "@/data/names-of-allah"
  * Each column holds the list twice and translates by exactly -50%, which is
  * what makes the loop seamless: when the first copy has scrolled fully out, the
  * second sits precisely where the first began.
+ *
+ * `self-start` is load-bearing, and its absence was a real bug. The columns sit
+ * in a flex row, so they were being stretched to the height of the viewport —
+ * 844px on a phone — while their content was 17,105px. `-50%` resolves against
+ * the element's own height, so the loop was translating by half a *viewport*,
+ * 422px, and snapping back. Two things followed. The seam the comment above
+ * claims does not exist was plainly visible as a jump every few minutes, and
+ * each column only ever showed the first handful of names in its rotation, so
+ * most of the ninety-nine were rendered into the page and never once seen.
+ *
+ * `self-start` opts out of the stretch and lets the height come from the
+ * content, which is what `-50%` was always assuming. Because every row is
+ * `whitespace-nowrap` at a fixed size, that height does not depend on viewport
+ * width, so the translation stays exactly one copy at every breakpoint.
  */
 
 /**
@@ -77,7 +91,7 @@ export function NamesOfAllahBackdrop() {
           return (
             <div
               key={column.className}
-              className={`${column.className} w-full max-w-[15rem] flex-col items-center`}
+              className={`${column.className} w-full max-w-[15rem] flex-col items-center self-start`}
             >
               {[0, 1].map((copy) => (
                 <div key={copy} className="flex w-full flex-col items-center">

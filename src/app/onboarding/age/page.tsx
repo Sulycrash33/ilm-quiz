@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-import { NamesOfAllahBackdrop } from "@/components/layout/NamesOfAllahBackdrop"
+import { OnboardingBackdrop } from "@/components/layout/OnboardingBackdrop"
 import { Progress } from "@/components/ui/progress"
 import { saveOnboardingSelection } from "@/lib/onboarding-storage"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -42,7 +42,7 @@ export default function AgeSelectionPage() {
       <div className="absolute top-4 right-4 z-20">
         <SoundToggle compact />
       </div>
-      <NamesOfAllahBackdrop />
+      <OnboardingBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost">
           <Link href="/language">
@@ -52,7 +52,7 @@ export default function AgeSelectionPage() {
         </Button>
       </div>
 
-      <div className="z-10 w-full max-w-2xl">
+      <div className="relative z-10 w-full max-w-2xl">
         <Card className="w-full bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center space-y-3 sm:space-y-4">
             <CardTitle className="text-2xl sm:text-3xl font-bold">{t("selectYourAge")}</CardTitle>

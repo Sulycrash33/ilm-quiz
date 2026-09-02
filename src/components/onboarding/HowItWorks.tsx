@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { RANKS } from "@/lib/constants";
 import { HUNT_RULES, TIER_MAX, TIER_MIN, timeLimitForTier } from "@/lib/hunt-engine";
 import { SoundToggle } from "@/components/profile/SoundToggle";
+import { OnboardingBackdrop } from "@/components/layout/OnboardingBackdrop";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { markOnboardingSeen } from "@/app/onboarding/how-it-works/actions";
 
@@ -75,7 +76,9 @@ export function HowItWorks({ startSlug, startName, startIcon, tierOneCount }: Ho
         <SoundToggle compact />
       </div>
 
-      <div className="flex w-full max-w-md flex-1 flex-col justify-center">
+      <OnboardingBackdrop />
+
+      <div className="relative z-10 flex w-full max-w-md flex-1 flex-col justify-center">
         <AnimatePresence mode="wait">
           <motion.div
             key={panel}
@@ -93,7 +96,7 @@ export function HowItWorks({ startSlug, startName, startIcon, tierOneCount }: Ho
         </AnimatePresence>
       </div>
 
-      <div className="w-full max-w-md space-y-5">
+      <div className="relative z-10 w-full max-w-md space-y-5">
         <div className="flex justify-center gap-2" aria-hidden="true">
           {Array.from({ length: PANELS }, (_, i) => (
             <span
