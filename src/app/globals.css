@@ -160,6 +160,35 @@
     background-repeat: repeat;
   }
 
+  /* The volume slider.
+
+     A native `input[type=range]`, not a div with a draggable dot on top. The
+     mockup this came from positioned its thumb with `left: N%`, which is the
+     one thing that cannot work here: this app runs in Arabic, and a percentage
+     from the left puts the handle at the wrong end of a right-to-left track.
+     The native control mirrors itself, and arrives with keyboard support, a
+     screen-reader role and a value announcement already attached.
+
+     `accent-color` colours the filled part of the track and the thumb together
+     from one token, in every browser that supports it. Where it is not
+     supported the control still renders and still works; it is grey. That is
+     the correct failure for a decorative colour. */
+  .volume-slider {
+    accent-color: var(--primary);
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .volume-slider:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .volume-slider:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+  }
+
   /* Progress Ring Animation */
   .progress-ring-circle {
     transition: stroke-dashoffset 0.8s ease-in-out;

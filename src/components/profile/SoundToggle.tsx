@@ -85,13 +85,23 @@ export function SoundToggle({ compact = false }: { compact?: boolean }) {
         onClick={toggle}
         // Invisible until the stored value is known, so the switch never
         // flashes the wrong position on load.
-        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+        //
+        // Flex with a logical padding, not an absolutely positioned knob.
+        // The knob used to be `absolute top-1` with no `left`, so it resolved
+        // against its static position rather than the track, and in the "on"
+        // state it landed 20px past the track's right edge — the full width of
+        // the knob, entirely outside the pill it is supposed to sit in. The
+        // travel is now exactly the space that exists: 48px track, less 4px of
+        // padding at each end, less the 20px knob, is 20px.
+        className={`flex h-7 w-12 shrink-0 items-center rounded-full px-1 transition-colors ${
           enabled ? "bg-primary" : "bg-surface-container-highest"
         } ${ready ? "opacity-100" : "opacity-0"}`}
       >
         <span
-          className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-transform ${
-            enabled ? "translate-x-6" : "translate-x-1"
+          // `rtl:` mirrors the travel, because a knob that slides right in
+          // Arabic would move away from the end of its own track.
+          className={`h-5 w-5 rounded-full bg-white transition-transform ${
+            enabled ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0"
           }`}
         />
       </button>

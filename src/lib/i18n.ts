@@ -796,6 +796,21 @@ export interface Translations {
   pointsShort: string
   percentOff: string
   barakahShort: string
+  /** The sound and vibration setup screen, shown once between signing up and
+   *  the explainer. Admin pages are exempt from i18n; this is player facing. */
+  soundSetupTitle: string
+  soundSetupSubtitle: string
+  soundVolume: string
+  soundVolumeHint: string
+  /** Heads the row of buttons that play each cue on demand. */
+  soundTryTitle: string
+  soundSetupMutedHint: string
+  /** Names of the individual cues, used as labels on those preview buttons. */
+  cueTap: string
+  cueCorrect: string
+  cueStreak: string
+  cueLevelComplete: string
+  cueRankUp: string
 }
 
 const enTranslations: Translations = {
@@ -1576,6 +1591,17 @@ const enTranslations: Translations = {
   pointsShort: "{points} pts",
   percentOff: "{pct}% off",
   barakahShort: "Barakah",
+  soundSetupTitle: "Calibrate your senses",
+  soundSetupSubtitle: "Set how the game sounds and feels before your first question.",
+  soundVolume: "Volume",
+  soundVolumeHint: "How loud the cues are. The game never plays music, only short cues.",
+  soundTryTitle: "Hear them",
+  soundSetupMutedHint: "Turn sound on to hear these.",
+  cueTap: "Tap",
+  cueCorrect: "Correct",
+  cueStreak: "Streak",
+  cueLevelComplete: "Level cleared",
+  cueRankUp: "New rank",
 }
 
 // Malay/Indonesian translations - culturally meaningful, not direct translations
@@ -2357,6 +2383,17 @@ const msTranslations: Translations = {
   pointsShort: "{points} mata",
   percentOff: "diskaun {pct}%",
   barakahShort: "Barakah",
+  soundSetupTitle: "Selaraskan deria anda",
+  soundSetupSubtitle: "Tetapkan bunyi dan getaran permainan sebelum soalan pertama anda.",
+  soundVolume: "Kelantangan",
+  soundVolumeHint: "Sekuat mana isyarat bunyi. Permainan ini tidak memainkan muzik, hanya isyarat pendek.",
+  soundTryTitle: "Dengar bunyinya",
+  soundSetupMutedHint: "Hidupkan bunyi untuk mendengarnya.",
+  cueTap: "Ketik",
+  cueCorrect: "Betul",
+  cueStreak: "Rentetan harian",
+  cueLevelComplete: "Tahap selesai",
+  cueRankUp: "Pangkat baharu",
 }
 
 // Indonesian translations - culturally meaningful, adapted for Indonesian context
@@ -3138,6 +3175,17 @@ const idTranslations: Translations = {
   pointsShort: "{points} poin",
   percentOff: "diskon {pct}%",
   barakahShort: "Berkah",
+  soundSetupTitle: "Selaraskan indra Anda",
+  soundSetupSubtitle: "Atur suara dan getaran permainan sebelum soal pertama Anda.",
+  soundVolume: "Volume",
+  soundVolumeHint: "Seberapa keras isyarat suaranya. Permainan ini tidak memutar musik, hanya isyarat singkat.",
+  soundTryTitle: "Dengarkan suaranya",
+  soundSetupMutedHint: "Hidupkan suara untuk mendengarnya.",
+  cueTap: "Ketuk",
+  cueCorrect: "Benar",
+  cueStreak: "Runtutan hari",
+  cueLevelComplete: "Level selesai",
+  cueRankUp: "Peringkat baru",
 }
 
 // Hausa translations
@@ -3919,6 +3967,17 @@ const haTranslations: Translations = {
   pointsShort: "maki {points}",
   percentOff: "ragi {pct}%",
   barakahShort: "Albarka",
+  soundSetupTitle: "Daidaita hankalinka",
+  soundSetupSubtitle: "Saita yadda wasan zai yi sauti da girgiza kafin tambayarka ta farko.",
+  soundVolume: "Ƙarfin sauti",
+  soundVolumeHint: "Yadda sautukan za su yi ƙarfi. Wasan ba ya kunna waƙa, sai gajerun sautuka kawai.",
+  soundTryTitle: "Ka saurare su",
+  soundSetupMutedHint: "Kunna sauti don jin su.",
+  cueTap: "Taɓawa",
+  cueCorrect: "Daidai",
+  cueStreak: "Jerin kwanaki",
+  cueLevelComplete: "An kammala mataki",
+  cueRankUp: "Sabon matsayi",
 }
 
 // French translations
@@ -4700,6 +4759,17 @@ const frTranslations: Translations = {
   pointsShort: "{points} pts",
   percentOff: "{pct}% de remise",
   barakahShort: "Barakah",
+  soundSetupTitle: "Réglez vos sens",
+  soundSetupSubtitle: "Choisissez le son et les vibrations du jeu avant votre première question.",
+  soundVolume: "Volume",
+  soundVolumeHint: "Le niveau des signaux sonores. Le jeu ne joue jamais de musique, seulement de brefs signaux.",
+  soundTryTitle: "Écoutez",
+  soundSetupMutedHint: "Activez le son pour les entendre.",
+  cueTap: "Appui",
+  cueCorrect: "Bonne réponse",
+  cueStreak: "Série de jours",
+  cueLevelComplete: "Niveau terminé",
+  cueRankUp: "Nouveau rang",
 }
 
 // Arabic translations (RTL)
@@ -5481,6 +5551,17 @@ const arTranslations: Translations = {
   pointsShort: "{points} نقطة",
   percentOff: "خصم {pct}%",
   barakahShort: "بركة",
+  soundSetupTitle: "اضبط حواسك",
+  soundSetupSubtitle: "اختر صوت اللعبة واهتزازها قبل سؤالك الأول.",
+  soundVolume: "مستوى الصوت",
+  soundVolumeHint: "قوة الإشارات الصوتية. اللعبة لا تشغّل موسيقى، بل إشارات قصيرة فقط.",
+  soundTryTitle: "استمع إليها",
+  soundSetupMutedHint: "فعّل الصوت لسماعها.",
+  cueTap: "نقرة",
+  cueCorrect: "إجابة صحيحة",
+  cueStreak: "سلسلة الأيام",
+  cueLevelComplete: "اكتمل المستوى",
+  cueRankUp: "رتبة جديدة",
 }
 
 /**

@@ -26,17 +26,42 @@
  * learning app that blurts noise on first open is a bad guest on someone's
  * phone. `isSoundEnabled()` is the single source of truth and is read fresh
  * on every cue, so muting takes effect immediately everywhere.
+ *
+ * ── On volume ─────────────────────────────────────────────────────────────
+ * Every cue runs through one master gain rather than carrying its own volume
+ * argument. The per-cue gains below were balanced against each other by ear —
+ * `tick` is deliberately a third of `correct`, `tap` quieter still — and a
+ * volume that multiplied each call site would let that balance drift the
+ * first time somebody passed a number. One knob, applied once, keeps the mix
+ * intact at every setting.
+ *
+ * The gain is read fresh on every cue for the same reason `isSoundEnabled()`
+ * is: dragging the slider is audible immediately, with no cue caching a stale
+ * value.
  */
 
 export type SoundCue =
+  | "tap"
   | "correct"
   | "wrong"
   | "levelComplete"
   | "rankUp"
   | "comboUp"
+  | "streak"
   | "tick"
 
 const STORAGE_KEY = "ilm-sound-enabled"
+const VOLUME_KEY = "ilm-sound-volume"
+
+/**
+ * Default volume, 0 to 1.
+ *
+ * Not 1.0. The cue gains below were chosen to sit under speech and under a
+ * podcast playing in another tab, and full scale on a phone speaker is louder
+ * than any of them wants to be. 0.75 leaves headroom above the default for
+ * someone on a bus who genuinely needs more, which a default of 1 would not.
+ */
+const DEFAULT_VOLUME = 0.75
 
 /** Off unless the player has explicitly opted in. */
 export function isSoundEnabled(): boolean {
@@ -60,6 +85,37 @@ export function setSoundEnabled(on: boolean): void {
 }
 
 /**
+ * Master volume, 0 to 1.
+ *
+ * Anything unparseable — absent, empty, "null" from a bad earlier write, or a
+ * number outside the range — returns the default rather than propagating a
+ * NaN into a GainNode, which would silence the app with no way for the player
+ * to tell why.
+ */
+export function getVolume(): number {
+  if (typeof window === "undefined") return DEFAULT_VOLUME
+  try {
+    const raw = window.localStorage.getItem(VOLUME_KEY)
+    if (raw === null) return DEFAULT_VOLUME
+    const value = Number.parseFloat(raw)
+    if (!Number.isFinite(value)) return DEFAULT_VOLUME
+    return Math.min(1, Math.max(0, value))
+  } catch {
+    return DEFAULT_VOLUME
+  }
+}
+
+export function setVolume(value: number): void {
+  if (typeof window === "undefined") return
+  const clamped = Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : DEFAULT_VOLUME
+  try {
+    window.localStorage.setItem(VOLUME_KEY, String(clamped))
+  } catch {
+    /* nothing to do — the level simply does not persist this session */
+  }
+}
+
+/**
  * One shared AudioContext, created lazily on the first cue.
  *
  * Browsers refuse to start an AudioContext outside a user gesture, and
@@ -67,6 +123,7 @@ export function setSoundEnabled(on: boolean): void {
  * on first play — which is always downstream of a tap — satisfies both.
  */
 let ctx: AudioContext | null = null
+let masterGain: GainNode | null = null
 
 function audioContext(): AudioContext | null {
   if (typeof window === "undefined") return null
@@ -83,6 +140,23 @@ function audioContext(): AudioContext | null {
   }
 }
 
+/**
+ * The single node every cue is routed through.
+ *
+ * Created once and reused, because a GainNode per cue would leak one node per
+ * answer for the length of a run. Its level is refreshed here rather than at
+ * write time so a change to the stored volume is heard on the very next cue,
+ * including one made in another tab.
+ */
+function output(ac: AudioContext): GainNode {
+  if (!masterGain) {
+    masterGain = ac.createGain()
+    masterGain.connect(ac.destination)
+  }
+  masterGain.gain.value = getVolume()
+  return masterGain
+}
+
 interface ToneSpec {
   freq: number
   start: number
@@ -95,6 +169,7 @@ interface ToneSpec {
 function tone(
   ac: AudioContext,
   { freq, start, duration, gain = 0.18, type = "sine" }: ToneSpec,
+  out: AudioNode,
 ): void {
   const osc = ac.createOscillator()
   const amp = ac.createGain()
@@ -108,7 +183,7 @@ function tone(
   amp.gain.exponentialRampToValueAtTime(gain, ac.currentTime + start + 0.012)
   amp.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + start + duration)
 
-  osc.connect(amp).connect(ac.destination)
+  osc.connect(amp).connect(out)
   osc.start(ac.currentTime + start)
   osc.stop(ac.currentTime + start + duration + 0.02)
 }
@@ -117,7 +192,7 @@ function tone(
  * A duff-like frame-drum hit: a low body tone plus a very short filtered
  * noise transient for the skin. Cheap, and much warmer than a bare sine.
  */
-function drum(ac: AudioContext, start: number, gain = 0.22): void {
+function drum(ac: AudioContext, start: number, out: AudioNode, gain = 0.22): void {
   const osc = ac.createOscillator()
   const amp = ac.createGain()
   osc.type = "sine"
@@ -126,7 +201,7 @@ function drum(ac: AudioContext, start: number, gain = 0.22): void {
   amp.gain.setValueAtTime(0.0001, ac.currentTime + start)
   amp.gain.exponentialRampToValueAtTime(gain, ac.currentTime + start + 0.01)
   amp.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + start + 0.22)
-  osc.connect(amp).connect(ac.destination)
+  osc.connect(amp).connect(out)
   osc.start(ac.currentTime + start)
   osc.stop(ac.currentTime + start + 0.26)
 
@@ -145,7 +220,7 @@ function drum(ac: AudioContext, start: number, gain = 0.22): void {
   filter.frequency.value = 1800
   const noiseAmp = ac.createGain()
   noiseAmp.gain.value = gain * 0.5
-  noise.connect(filter).connect(noiseAmp).connect(ac.destination)
+  noise.connect(filter).connect(noiseAmp).connect(out)
   noise.start(ac.currentTime + start)
 }
 
@@ -160,36 +235,47 @@ export function playCue(cue: SoundCue): void {
   if (!ac) return
 
   try {
+    const out = output(ac)
     switch (cue) {
+      // Every press, anywhere in the game. This is the most frequent cue in
+      // the app by a wide margin, so it is built to the same rule as the
+      // `select` haptic it accompanies: nearly subliminal, or it becomes an
+      // irritation by question three. One very short, very quiet click well
+      // above the pitch of the reward cues, so it never reads as a verdict on
+      // the answer — the grade arrives a round trip later and brings its own.
+      case "tap":
+        tone(ac, { freq: 1760.0, start: 0, duration: 0.035, gain: 0.035, type: "triangle" }, out)
+        break
+
       // A short rising third. Affirming without being a fanfare, because it
       // fires up to twenty times in a single run.
       case "correct":
-        tone(ac, { freq: 587.33, start: 0, duration: 0.16, gain: 0.16 }) // D5
-        tone(ac, { freq: 880.0, start: 0.075, duration: 0.2, gain: 0.13 }) // A5
+        tone(ac, { freq: 587.33, start: 0, duration: 0.16, gain: 0.16 }, out) // D5
+        tone(ac, { freq: 880.0, start: 0.075, duration: 0.2, gain: 0.13 }, out) // A5
         break
 
       // Deliberately soft and low. A wrong answer already costs a life; the
       // sound should not also scold.
       case "wrong":
-        tone(ac, { freq: 220.0, start: 0, duration: 0.22, gain: 0.13, type: "triangle" })
-        tone(ac, { freq: 174.61, start: 0.09, duration: 0.26, gain: 0.11, type: "triangle" })
+        tone(ac, { freq: 220.0, start: 0, duration: 0.22, gain: 0.13, type: "triangle" }, out)
+        tone(ac, { freq: 174.61, start: 0.09, duration: 0.26, gain: 0.11, type: "triangle" }, out)
         break
 
       // The earned moment: drum, then a rising figure.
       case "levelComplete":
-        drum(ac, 0)
-        tone(ac, { freq: 587.33, start: 0.1, duration: 0.18, gain: 0.15 })
-        tone(ac, { freq: 739.99, start: 0.22, duration: 0.18, gain: 0.15 })
-        tone(ac, { freq: 880.0, start: 0.34, duration: 0.34, gain: 0.16 })
+        drum(ac, 0, out)
+        tone(ac, { freq: 587.33, start: 0.1, duration: 0.18, gain: 0.15 }, out)
+        tone(ac, { freq: 739.99, start: 0.22, duration: 0.18, gain: 0.15 }, out)
+        tone(ac, { freq: 880.0, start: 0.34, duration: 0.34, gain: 0.16 }, out)
         break
 
       // Rarer and fuller than a level: two drums and a wider flourish.
       case "rankUp":
-        drum(ac, 0)
-        drum(ac, 0.26)
-        tone(ac, { freq: 440.0, start: 0.1, duration: 0.2, gain: 0.14 })
-        tone(ac, { freq: 659.25, start: 0.26, duration: 0.2, gain: 0.15 })
-        tone(ac, { freq: 880.0, start: 0.42, duration: 0.45, gain: 0.16 })
+        drum(ac, 0, out)
+        drum(ac, 0.26, out)
+        tone(ac, { freq: 440.0, start: 0.1, duration: 0.2, gain: 0.14 }, out)
+        tone(ac, { freq: 659.25, start: 0.26, duration: 0.2, gain: 0.15 }, out)
+        tone(ac, { freq: 880.0, start: 0.42, duration: 0.45, gain: 0.16 }, out)
         break
 
       // The multiplier stepping up, every third correct answer in a row.
@@ -198,14 +284,28 @@ export function playCue(cue: SoundCue): void {
       // it, not as a competing event. Higher and quieter than `correct` so
       // the two stack rather than muddy.
       case "comboUp":
-        tone(ac, { freq: 987.77, start: 0, duration: 0.1, gain: 0.1, type: "triangle" }) // B5
-        tone(ac, { freq: 1318.51, start: 0.07, duration: 0.16, gain: 0.09, type: "triangle" }) // E6
+        tone(ac, { freq: 987.77, start: 0, duration: 0.1, gain: 0.1, type: "triangle" }, out) // B5
+        tone(ac, { freq: 1318.51, start: 0.07, duration: 0.16, gain: 0.09, type: "triangle" }, out) // E6
+        break
+
+      // A streak carried into another day.
+      //
+      // Warm and rising rather than triumphant. A streak is not an
+      // achievement the player just earned, it is one they have kept, so this
+      // is a fifth opening upward over a single drum — the same frame-drum
+      // body as the earned moments, but one hit instead of two, and no
+      // fanfare on top. It has to sit comfortably under a screen the player
+      // did not tap to reach.
+      case "streak":
+        drum(ac, 0, out, 0.16)
+        tone(ac, { freq: 440.0, start: 0.06, duration: 0.18, gain: 0.12 }, out) // A4
+        tone(ac, { freq: 659.25, start: 0.2, duration: 0.32, gain: 0.13 }, out) // E5
         break
 
       // The last seconds on the clock. Very quiet by design — this one
       // repeats, and a loud tick is the fastest way to make someone mute a game.
       case "tick":
-        tone(ac, { freq: 1046.5, start: 0, duration: 0.05, gain: 0.05 })
+        tone(ac, { freq: 1046.5, start: 0, duration: 0.05, gain: 0.05 }, out)
         break
     }
   } catch {

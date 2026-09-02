@@ -16,6 +16,7 @@ import { ResetProgressCard } from "@/components/profile/ResetProgressCard"
 import { GameMasterCard } from "@/components/profile/GameMasterCard"
 import { SoundToggle } from "@/components/profile/SoundToggle"
 import { HapticsToggle } from "@/components/profile/HapticsToggle"
+import { VolumeSlider } from "@/components/profile/VolumeSlider"
 import { KnowledgeBreakdown } from "@/components/profile/KnowledgeBreakdown"
 import { StreakReminderToggle } from "@/components/profile/StreakReminderToggle"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -234,6 +235,7 @@ export function ProfilePageClient({
             <div className="md:col-span-2 space-y-6">
               {isAdmin && <GameMasterCard />}
               <SoundToggle />
+              <VolumeSlider />
               <HapticsToggle />
               <StreakReminderToggle />
               <ResetProgressCard />

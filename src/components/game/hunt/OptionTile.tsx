@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { playCue } from "@/lib/sound";
 import { playHaptic } from "@/lib/haptics";
 
 export type OptionState = "idle" | "eliminated" | "correct" | "wrong" | "missed";
@@ -57,10 +58,16 @@ export function OptionTile({ label, index, state, disabled, onSelect }: OptionTi
       type="button"
       disabled={disabled || state === "eliminated"}
       onClick={() => {
-        // The tap, acknowledged in the hand before the server has said
-        // anything. The grade arrives a round trip later and brings its own
-        // cue; this one only says the press registered, which is the gap that
-        // made a slow connection feel like a dead button.
+        // The tap, acknowledged in the hand and the ear before the server
+        // has said anything. The grade arrives a round trip later and brings
+        // its own cue; these only say the press registered, which is the gap
+        // that made a slow connection feel like a dead button.
+        //
+        // The haptic has been here since it was built; the sound had not,
+        // which meant anyone on an iPhone — where `navigator.vibrate` does
+        // not exist at all — got no acknowledgement of their own tap
+        // whatsoever, no matter what they had switched on.
+        playCue("tap");
         playHaptic("select");
         onSelect();
       }}
