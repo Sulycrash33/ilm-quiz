@@ -306,6 +306,31 @@ export function HuntView({
   }, [remaining, question, locked, handleTimeout, rules.perQuestionTimer]);
 
   /**
+   * The last five seconds, heard as well as seen.
+   *
+   * The `tick` cue has existed in `sound.ts` since the sound system was
+   * written and was called from nowhere at all, so the one cue in the game
+   * whose own comment describes it repeating had never repeated — or played
+   * once. Wiring it is the whole fix.
+   *
+   * Five, not the ten at which `TimerRing` turns red: the eye gets the first
+   * warning and the ear joins for the run-in, which escalates instead of
+   * doubling up. Ten ticks in a row on every question of a twenty-question
+   * run is also exactly how a player learns to mute a game.
+   *
+   * In an effect keyed on `remaining` rather than inside the interval's
+   * updater, because React may call an updater twice and a cue fired in one
+   * would double. That mistake has been made three times in this repository;
+   * this is not the fourth.
+   */
+  useEffect(() => {
+    if (!rules.perQuestionTimer) return;
+    if (!question || locked) return;
+    if (remaining <= 0 || remaining > 5) return;
+    playCue("tick");
+  }, [remaining, question, locked, rules.perQuestionTimer]);
+
+  /**
    * The run clock, for Speed Round.
    *
    * It runs regardless of the reveal, because the whole point of the mode is

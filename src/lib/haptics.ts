@@ -38,6 +38,7 @@ export type HapticCue =
   | "levelComplete"
   | "rankUp"
   | "comboUp"
+  | "streak"
 
 const STORAGE_KEY = "ilm-haptics-enabled"
 
@@ -65,6 +66,11 @@ const PATTERNS: Record<HapticCue, number | number[]> = {
   // The multiplier stepping up. Two light taps: more than `correct`, well
   // short of `levelComplete`, because it can happen several times a run.
   comboUp: [14, 34, 22],
+  // A streak carried into another day. Two unhurried pulses with a longer gap
+  // than any other cue here: this one is not reacting to something the player
+  // just did, it is greeting them, so it should feel like a nod rather than a
+  // buzz.
+  streak: [22, 90, 30],
 }
 
 function prefersReducedMotion(): boolean {

@@ -19,6 +19,9 @@ import { LogoutButton } from "@/components/layout/LogoutButton"
 import { getContinueCard, type ContinueCard } from "./actions"
 import { getDailyChallenge, type DailyChallengeView } from "../challenges/actions"
 import { useProfile } from "@/hooks/use-profile"
+import { playCue } from "@/lib/sound"
+import { playHaptic } from "@/lib/haptics"
+import { takeStreakAdvance } from "@/lib/streak-cue"
 import { useTodayStats } from "@/hooks/use-today-stats"
 import { useLanguage } from "@/contexts/LanguageContext"
 
@@ -78,6 +81,24 @@ export default function HomePage() {
     const interval = setInterval(updateTime, 60000)
     return () => clearInterval(interval)
   }, [])
+
+  /**
+   * The streak, heard the first time the player sees it move.
+   *
+   * Waits for `loading` to clear: `useProfile` reports 0 before the profile
+   * arrives, and celebrating that would first record a streak of nothing and
+   * then fire on the very next render when the real number landed.
+   *
+   * `takeStreakAdvance` consumes the advance, so this stays correct under
+   * strict mode's double effect run and across the re-renders the two card
+   * requests cause as they resolve.
+   */
+  useEffect(() => {
+    if (loading) return
+    if (!takeStreakAdvance(profile?.streakCount ?? 0)) return
+    playCue("streak")
+    playHaptic("streak")
+  }, [loading, profile?.streakCount])
 
   const reduceMotion = useReducedMotion()
   const dailyProgress = Math.min((questionsToday / 10) * 100, 100)
