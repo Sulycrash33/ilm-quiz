@@ -16,7 +16,7 @@ interface GameIntroProps {
 }
 
 /**
- * The three panels between the landing screen and the language choice.
+ * The three panels between the language choice and the sound setup.
  *
  * ── Built to the landing screen's rules, not its own ──────────────────────
  * The first version of this screen was a small icon, a heading and two lines
@@ -52,9 +52,13 @@ interface GameIntroProps {
  * subject count stays: it says how wide the app is, not where it stops.
  *
  * ── Why there are no subject names on panel two ───────────────────────────
- * They are stored in English and this screen runs before the language choice,
- * so an Arabic reader would meet a wall of English on the first page that
- * tries to explain anything. The disciplines are named in translated prose.
+ * The reason used to be that this screen ran before the language choice. It
+ * no longer does, and the conclusion survives the move on a different footing:
+ * category names are stored in English in the database and there is no
+ * translation layer over them anywhere in the app. Knowing the reader's
+ * language does not help when the data has only one. So the disciplines are
+ * named in translated prose, and the counts, which are language neutral, carry
+ * the evidence.
  */
 
 const PANELS: {
@@ -94,7 +98,7 @@ export function GameIntro({ categoryCount }: GameIntroProps) {
       <header className="relative z-20 flex items-center justify-between px-4 pt-4">
         {panel === 0 ? (
           <Link
-            href="/"
+            href="/language"
             className="haptic-feedback inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm text-on-surface-variant transition-colors hover:text-on-surface"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
@@ -112,7 +116,7 @@ export function GameIntro({ categoryCount }: GameIntroProps) {
         )}
 
         <Link
-          href="/language"
+          href="/onboarding/sound"
           className="haptic-feedback font-label-caps text-label-caps rounded-full px-3 py-2 uppercase tracking-widest text-on-surface-variant/70 transition-colors hover:text-on-surface"
         >
           {t("skip")}
@@ -177,7 +181,7 @@ export function GameIntro({ categoryCount }: GameIntroProps) {
 
         {isLast ? (
           <Link
-            href="/language"
+            href="/onboarding/sound"
             className="btn-primary glow-effect haptic-feedback flex w-full items-center justify-center gap-2 rounded-full px-10 py-4 text-center text-lg font-bold shadow-lg"
           >
             {t("introEnter")}

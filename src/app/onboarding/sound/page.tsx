@@ -27,11 +27,11 @@ import type { Translations } from "@/lib/i18n"
  * not an invitation; this is.
  *
  * ── Why here in the flow ──────────────────────────────────────────────────
- * Straight after the language choice, before the three profile steps. It was
- * briefly placed after signup instead; this is earlier, and earlier is
+ * After the language choice and the intro, before the three profile steps. It
+ * was briefly placed after signup instead; this is earlier, and earlier is
  * better for one concrete reason. An AudioContext may not start outside a
  * user gesture, so the tap that switches sound on is also the tap that opens
- * the audio device. Doing that at the top of onboarding means every screen
+ * the audio device. Doing that near the top of onboarding means every screen
  * after it can make a sound; doing it at the end meant most of onboarding was
  * silent whatever the player had chosen.
  *
@@ -93,7 +93,7 @@ export default function SoundSetupPage() {
           the player can genuinely return to. */}
       <div className="absolute start-4 top-4 z-20">
         <Button asChild variant="ghost" size="sm">
-          <Link href="/language">
+          <Link href="/intro">
             <ArrowLeft className="me-2 h-5 w-5" aria-hidden="true" />
             {t("back")}
           </Link>
