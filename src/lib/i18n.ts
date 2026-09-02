@@ -796,6 +796,17 @@ export interface Translations {
   pointsShort: string
   percentOff: string
   barakahShort: string
+  /** The three panel intro shown between the landing screen and the language
+   *  choice. It answers "what is this", where /onboarding/how-it-works
+   *  answers "how do I play" — the first is read by a stranger deciding
+   *  whether to sign up, the second by a player about to start. */
+  introTitleOne: string
+  introBodyOne: string
+  introTitleTwo: string
+  introBodyTwo: string
+  introTitleThree: string
+  introBodyThree: string
+  introCategoriesCount: string
   /** The sound and vibration setup screen, shown once between signing up and
    *  the explainer. Admin pages are exempt from i18n; this is player facing. */
   soundSetupTitle: string
@@ -1591,6 +1602,13 @@ const enTranslations: Translations = {
   pointsShort: "{points} pts",
   percentOff: "{pct}% off",
   barakahShort: "Barakah",
+  introTitleOne: "Not a quiz. A climb.",
+  introBodyOne: "You do not skim a list of questions. You take a subject and climb it, level by level, as far as you can go.",
+  introTitleTwo: "From creed to commentary",
+  introBodyTwo: "Belief, the Quran, the life of the Prophet, hadith, jurisprudence and the history that carried them. Each subject is its own ladder.",
+  introTitleThree: "Every answer explains itself",
+  introBodyThree: "Right or wrong, each question tells you why before you move on. That is the part that turns a quiz into study.",
+  introCategoriesCount: "{count} subjects",
   soundSetupTitle: "Calibrate your senses",
   soundSetupSubtitle: "Set how the game sounds and feels before your first question.",
   soundVolume: "Volume",
@@ -2383,6 +2401,13 @@ const msTranslations: Translations = {
   pointsShort: "{points} mata",
   percentOff: "diskaun {pct}%",
   barakahShort: "Barakah",
+  introTitleOne: "Bukan kuiz. Satu pendakian.",
+  introBodyOne: "Anda tidak sekadar membaca senarai soalan. Anda memilih satu subjek dan mendakinya, tahap demi tahap, sejauh yang anda mampu.",
+  introTitleTwo: "Daripada akidah hingga tafsir",
+  introBodyTwo: "Akidah, Quran, sirah Nabi, hadith, fiqh dan sejarah yang membawanya. Setiap subjek ada tangganya sendiri.",
+  introTitleThree: "Setiap jawapan menerangkan dirinya",
+  introBodyThree: "Betul atau salah, setiap soalan memberitahu anda sebabnya sebelum anda meneruskan. Itulah yang mengubah kuiz menjadi pembelajaran.",
+  introCategoriesCount: "{count} subjek",
   soundSetupTitle: "Selaraskan deria anda",
   soundSetupSubtitle: "Tetapkan bunyi dan getaran permainan sebelum soalan pertama anda.",
   soundVolume: "Kelantangan",
@@ -3175,6 +3200,13 @@ const idTranslations: Translations = {
   pointsShort: "{points} poin",
   percentOff: "diskon {pct}%",
   barakahShort: "Berkah",
+  introTitleOne: "Bukan kuis. Sebuah pendakian.",
+  introBodyOne: "Anda tidak sekadar melewati daftar pertanyaan. Anda memilih satu subjek dan mendakinya, level demi level, sejauh yang Anda mampu.",
+  introTitleTwo: "Dari akidah hingga tafsir",
+  introBodyTwo: "Akidah, Quran, sirah Nabi, hadis, fikih dan sejarah yang membawanya. Setiap subjek punya tangganya sendiri.",
+  introTitleThree: "Setiap jawaban menjelaskan dirinya",
+  introBodyThree: "Benar atau salah, setiap pertanyaan memberi tahu Anda alasannya sebelum Anda lanjut. Itulah yang mengubah kuis menjadi belajar.",
+  introCategoriesCount: "{count} subjek",
   soundSetupTitle: "Selaraskan indra Anda",
   soundSetupSubtitle: "Atur suara dan getaran permainan sebelum soal pertama Anda.",
   soundVolume: "Volume",
@@ -3967,6 +3999,13 @@ const haTranslations: Translations = {
   pointsShort: "maki {points}",
   percentOff: "ragi {pct}%",
   barakahShort: "Albarka",
+  introTitleOne: "Ba jarrabawa ba. Hawa ne.",
+  introBodyOne: "Ba wai kawai kana bin jerin tambayoyi ba. Kana zaɓar fanni ka hau shi, mataki bayan mataki, gwargwadon iyawarka.",
+  introTitleTwo: "Daga akida zuwa tafsiri",
+  introBodyTwo: "Akida, Alkur'ani, sirar Annabi, hadisi, fikihu da tarihin da ya ɗauke su. Kowane fanni yana da nasa matakan.",
+  introTitleThree: "Kowace amsa tana bayyana kanta",
+  introBodyThree: "Daidai ko kuskure, kowace tambaya tana gaya maka dalilin kafin ka ci gaba. Wannan shi ne ke mai da jarrabawa zuwa karatu.",
+  introCategoriesCount: "fannoni {count}",
   soundSetupTitle: "Daidaita hankalinka",
   soundSetupSubtitle: "Saita yadda wasan zai yi sauti da girgiza kafin tambayarka ta farko.",
   soundVolume: "Ƙarfin sauti",
@@ -4759,6 +4798,13 @@ const frTranslations: Translations = {
   pointsShort: "{points} pts",
   percentOff: "{pct}% de remise",
   barakahShort: "Barakah",
+  introTitleOne: "Pas un quiz. Une ascension.",
+  introBodyOne: "Vous ne parcourez pas une liste de questions. Vous choisissez une matière et vous la gravissez, niveau après niveau, aussi loin que vous le pouvez.",
+  introTitleTwo: "De la croyance au commentaire",
+  introBodyTwo: "La croyance, le Coran, la vie du Prophète, le hadith, le fiqh et l'histoire qui les a portés. Chaque matière a sa propre échelle.",
+  introTitleThree: "Chaque réponse s'explique",
+  introBodyThree: "Juste ou fausse, chaque question vous dit pourquoi avant que vous passiez à la suivante. C'est ce qui transforme un quiz en étude.",
+  introCategoriesCount: "{count} matières",
   soundSetupTitle: "Réglez vos sens",
   soundSetupSubtitle: "Choisissez le son et les vibrations du jeu avant votre première question.",
   soundVolume: "Volume",
@@ -5551,6 +5597,13 @@ const arTranslations: Translations = {
   pointsShort: "{points} نقطة",
   percentOff: "خصم {pct}%",
   barakahShort: "بركة",
+  introTitleOne: "ليس اختباراً، بل ارتقاء.",
+  introBodyOne: "أنت لا تتصفّح قائمة أسئلة. تختار موضوعاً وترتقي فيه مستوى بعد مستوى، إلى أبعد ما تستطيع.",
+  introTitleTwo: "من العقيدة إلى التفسير",
+  introBodyTwo: "العقيدة والقرآن وسيرة النبي والحديث والفقه والتاريخ الذي حملها. لكل موضوع سُلّمه الخاص.",
+  introTitleThree: "كل إجابة تشرح نفسها",
+  introBodyThree: "صواباً كانت أو خطأ، يخبرك كل سؤال بالسبب قبل أن تنتقل. هذا ما يحوّل الاختبار إلى دراسة.",
+  introCategoriesCount: "{count} موضوعاً",
   soundSetupTitle: "اضبط حواسك",
   soundSetupSubtitle: "اختر صوت اللعبة واهتزازها قبل سؤالك الأول.",
   soundVolume: "مستوى الصوت",

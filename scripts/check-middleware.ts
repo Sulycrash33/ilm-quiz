@@ -38,6 +38,7 @@ const PUBLIC: string[] = [
   // they are locked out of.
   '/forgot-password',
   '/reset-password',
+  '/intro',
 ];
 
 const PRIVATE: string[] = [
@@ -68,7 +69,7 @@ for (const p of PUBLIC) check(`public: ${p}`, isPublicPath(p), true);
 for (const p of PRIVATE) check(`private: ${p}`, isPublicPath(p), false);
 
 // A prefix must only match on a path boundary, or `/loginbait` becomes public.
-for (const p of ['/loginsomething', '/signupfake', '/languages', '/onboardingx', '/reset-passwordx']) {
+for (const p of ['/loginsomething', '/signupfake', '/languages', '/onboardingx', '/reset-passwordx', '/introduction']) {
   check(`prefix does not over-match: ${p}`, isPublicPath(p), false);
 }
 

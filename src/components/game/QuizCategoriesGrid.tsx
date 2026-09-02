@@ -10,7 +10,14 @@ import type { QuizCategory } from "@/lib/quiz-service"
 
 export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] }) {
   const { t, dir } = useLanguage()
-  const totalPublished = categories.reduce((s, c) => s + c.publishedCount, 0)
+  // The size of the question bank is deliberately not shown anywhere on this
+  // screen. It used to be, twice: once in the line under the heading and once
+  // as a stat tile three times the size of the body text. A total tells a
+  // player where the game ends, and everything after that is measured against
+  // finishing rather than against learning. Working it out from nine levels
+  // and a subject count is fair game; printing it is not. **Do not add it
+  // back.** `answeredCount` stays — that is the player's own record, not the
+  // shape of the bank.
   const totalAnswered = categories.reduce((s, c) => s + c.answeredCount, 0)
 
   return (
@@ -25,7 +32,7 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
           {t("knowledgeCategories")}
         </h1>
         <p className="text-on-surface-variant">
-          {categories.length} {t("categories").toLowerCase()} · {totalPublished} {t("questionsAvailable")} ·{" "}
+          {categories.length} {t("categories").toLowerCase()} ·{" "}
           {totalAnswered} {t("questionsAnswered")}
         </p>
 
@@ -47,17 +54,11 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
         transition={{ delay: 0.1 }}
         className="glass-card p-6 mb-8"
       >
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-2 gap-4 text-center">
           <div>
             <p className="font-bold text-3xl text-primary">{categories.length}</p>
             <p className="font-label-caps text-label-caps text-on-surface-variant">
               {t("categories").toUpperCase()}
-            </p>
-          </div>
-          <div>
-            <p className="font-bold text-3xl text-secondary">{totalPublished}</p>
-            <p className="font-label-caps text-label-caps text-on-surface-variant">
-              {t("questions").toUpperCase()}
             </p>
           </div>
           <div>
@@ -116,7 +117,9 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
                         value={category.answeredCount}
                         max={category.publishedCount}
                         showLabel
-                        label={`${category.answeredCount}/${category.publishedCount}`}
+                        label={`${Math.round(
+                          (category.answeredCount / Math.max(1, category.publishedCount)) * 100,
+                        )}%`}
                       />
                     </PremiumCard>
                   </Link>

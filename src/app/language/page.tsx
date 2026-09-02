@@ -66,7 +66,7 @@ export default function LanguageSelectionPage() {
                   transition={{ delay: 0.1 + index * 0.05 }}
                 >
                   <Link
-                    href="/onboarding/age"
+                    href="/onboarding/sound"
                     onClick={() => {
                       setLocale(lang.code as Locale)
                       saveOnboardingSelection({ preferredLanguage: lang.code })

@@ -38,6 +38,13 @@ export const PUBLIC_PREFIXES = [
   '/signup',
   '/onboarding',
   '/language',
+  // The explainer a stranger reads before deciding to sign up. Public for the
+  // obvious reason that nobody reaching it has an account yet — and listed
+  // here the moment the route was created, because with protection opt-in a
+  // forgotten route does not go unguarded, it goes unreachable: the landing
+  // page's only call to action would have bounced every signed-out visitor to
+  // `/login`.
+  '/intro',
   // Both halves of password recovery. `/reset-password` in particular is
   // reached from an email by someone who cannot sign in, which is the whole
   // reason they are there: gating it behind a session would send them to the

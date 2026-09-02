@@ -45,7 +45,7 @@ export default function AgeSelectionPage() {
       <OnboardingBackdrop />
       <div className="absolute top-4 left-4 z-20">
         <Button asChild variant="ghost">
-          <Link href="/language">
+          <Link href="/onboarding/sound">
             <ArrowLeft className="h-6 w-6 mr-2" />
             {t("back")}
           </Link>
