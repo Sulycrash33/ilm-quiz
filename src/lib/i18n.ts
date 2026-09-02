@@ -70,6 +70,15 @@ export interface Translations {
   backToCategories: string
   xpThisRound: string
   coinsWord: string
+  /**
+   * The short unit shown on a spin-wheel segment, beside a number.
+   *
+   * Separate from the prose word for experience points because it has to fit
+   * inside a 45-degree wedge: Arabic renders XP as "نقاط الخبرة" in a sentence,
+   * which is four times the width a segment caption has. Kept as a key rather
+   * than hardcoded so a locale that does have a short form can use it.
+   */
+  xpShort: string
   bestTotal: string
   playAgain: string
   couldNotLoadQuestion: string
@@ -898,6 +907,7 @@ const enTranslations: Translations = {
   backToCategories: "Back to Categories",
   xpThisRound: "Barakah this round",
   coinsWord: "Coins",
+  xpShort: "XP",
   bestTotal: "Best total",
   playAgain: "Play again",
   couldNotLoadQuestion: "Could not load question",
@@ -1309,7 +1319,7 @@ const enTranslations: Translations = {
   claimingLabel: "Claiming...",
   claimDayReward: "Claim Day {day} Reward",
   freeSpinTitle: "Free Spin",
-  freeSpinDesc: "One free spin every 4 hours for a real coin or XP prize.",
+  freeSpinDesc: "One free spin a day for a real coin or XP prize.",
   spinningLabel: "Spinning...",
   spinNowLabel: "Spin Now",
   nextSpinIn: "Next spin in {time}",
@@ -1701,6 +1711,7 @@ const msTranslations: Translations = {
   backToCategories: "Kembali ke Kategori",
   xpThisRound: "Barakah pusingan ini",
   coinsWord: "Syiling",
+  xpShort: "XP",
   bestTotal: "Jumlah terbaik",
   playAgain: "Main semula",
   couldNotLoadQuestion: "Tidak dapat memuatkan soalan",
@@ -2112,7 +2123,7 @@ const msTranslations: Translations = {
   claimingLabel: "Menuntut...",
   claimDayReward: "Tuntut Ganjaran Hari {day}",
   freeSpinTitle: "Putaran Percuma",
-  freeSpinDesc: "Satu putaran percuma setiap 4 jam untuk hadiah syiling atau XP sebenar.",
+  freeSpinDesc: "Satu putaran percuma setiap hari untuk hadiah syiling atau XP sebenar.",
   spinningLabel: "Memutar...",
   spinNowLabel: "Putar Sekarang",
   nextSpinIn: "Putaran seterusnya dalam {time}",
@@ -2504,6 +2515,7 @@ const idTranslations: Translations = {
   backToCategories: "Kembali ke Kategori",
   xpThisRound: "Berkah putaran ini",
   coinsWord: "Koin",
+  xpShort: "XP",
   bestTotal: "Total terbaik",
   playAgain: "Main lagi",
   couldNotLoadQuestion: "Tidak dapat memuat pertanyaan",
@@ -2915,7 +2927,7 @@ const idTranslations: Translations = {
   claimingLabel: "Mengklaim...",
   claimDayReward: "Klaim Hadiah Hari {day}",
   freeSpinTitle: "Putaran Gratis",
-  freeSpinDesc: "Satu putaran gratis setiap 4 jam untuk hadiah koin atau XP nyata.",
+  freeSpinDesc: "Satu putaran gratis setiap hari untuk hadiah koin atau XP nyata.",
   spinningLabel: "Memutar...",
   spinNowLabel: "Putar Sekarang",
   nextSpinIn: "Putaran berikutnya dalam {time}",
@@ -3307,6 +3319,7 @@ const haTranslations: Translations = {
   backToCategories: "Koma zuwa Rukunoni",
   xpThisRound: "Albarka na wannan zagaye",
   coinsWord: "Tsabar Kudi",
+  xpShort: "XP",
   bestTotal: "Jimlar Mafi Kyau",
   playAgain: "Sake Wasa",
   couldNotLoadQuestion: "Ba a iya loda tambaya ba",
@@ -3718,7 +3731,7 @@ const haTranslations: Translations = {
   claimingLabel: "Ana Karba...",
   claimDayReward: "Karɓi Ladan Rana {day}",
   freeSpinTitle: "Juyi Kyauta",
-  freeSpinDesc: "Juyi kyauta guda daya kowace awa 4 don lada na ainihi na tsabar kudi ko XP.",
+  freeSpinDesc: "Juyi kyauta guda daya kowace rana don lada na ainihi na tsabar kudi ko XP.",
   spinningLabel: "Ana Juyawa...",
   spinNowLabel: "Juya Yanzu",
   nextSpinIn: "Juyi na gaba a cikin {time}",
@@ -4110,6 +4123,7 @@ const frTranslations: Translations = {
   backToCategories: "Retour aux cat\u00e9gories",
   xpThisRound: "Barakah de cette manche",
   coinsWord: "Pi\u00e8ces",
+  xpShort: "XP",
   bestTotal: "Meilleur total",
   playAgain: "Rejouer",
   couldNotLoadQuestion: "Impossible de charger la question",
@@ -4521,7 +4535,7 @@ const frTranslations: Translations = {
   claimingLabel: "Réclamation...",
   claimDayReward: "Réclamer la récompense du jour {day}",
   freeSpinTitle: "Tour gratuit",
-  freeSpinDesc: "Un tour gratuit toutes les 4 heures pour une vraie récompense en pièces ou XP.",
+  freeSpinDesc: "Un tour gratuit par jour pour une vraie récompense en pièces ou XP.",
   spinningLabel: "Tour en cours...",
   spinNowLabel: "Tourner maintenant",
   nextSpinIn: "Prochain tour dans {time}",
@@ -4913,6 +4927,7 @@ const arTranslations: Translations = {
   backToCategories: "العودة إلى الفئات",
   xpThisRound: "بركة هذه الجولة",
   coinsWord: "العملات",
+  xpShort: "XP",
   bestTotal: "أفضل مجموع",
   playAgain: "العب مرة أخرى",
   couldNotLoadQuestion: "تعذّر تحميل السؤال",
@@ -5324,7 +5339,7 @@ const arTranslations: Translations = {
   claimingLabel: "جارٍ الاستلام...",
   claimDayReward: "استلم مكافأة اليوم {day}",
   freeSpinTitle: "دورة مجانية",
-  freeSpinDesc: "دورة مجانية واحدة كل 4 ساعات للحصول على جائزة حقيقية من العملات أو نقاط الخبرة.",
+  freeSpinDesc: "دورة مجانية واحدة كل يوم للحصول على جائزة حقيقية من العملات أو نقاط الخبرة.",
   spinningLabel: "جارٍ التدوير...",
   spinNowLabel: "أدر الآن",
   nextSpinIn: "الدورة التالية خلال {time}",

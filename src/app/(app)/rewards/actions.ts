@@ -44,8 +44,24 @@ export interface SpinResult {
   value?: number
 }
 
-/** Real weighted-random spin, computed inside the database via a SECURITY
- * DEFINER function so the outcome can't be seen or influenced client-side. */
+/**
+ * Today's gift, chosen and awarded inside the database.
+ *
+ * **Not weighted-random**, whatever the `weight` column on `spin_rewards`
+ * suggests — this comment used to say it was, and it has been wrong since
+ * migration 0008. That migration took the randomness out of the wheel and the
+ * chests on loot-box grounds, and replaced the roll with a rota: the reward is
+ * `(day number) % (number of rewards)`, so every player gets the same gift on
+ * the same day and `weight` is dead data. Read 0008 before adding a roll back.
+ *
+ * The cadence is **once every 24 hours**, not the four the UI claimed for a
+ * long time. `SPIN_COOLDOWN_MS` in `RewardsPageClient` is the client's copy of
+ * that number; the server is the one that enforces it.
+ *
+ * Still SECURITY DEFINER, and the outcome still cannot be influenced from the
+ * client: the prize is awarded and `last_spin_at` is stamped in the same
+ * statement that picks it.
+ */
 export async function spinWheel(): Promise<SpinResult> {
   const supabase = await createClient()
   const {

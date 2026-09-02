@@ -6,7 +6,13 @@ import { useState, useTransition, useEffect } from "react"
 import { PremiumButton } from "@/components/ui/premium-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { PremiumCard } from "@/components/ui/premium-card"
-import { claimDailyLogin, spinWheel, purchaseAndOpenChest } from "@/app/(app)/rewards/actions"
+import {
+  claimDailyLogin,
+  spinWheel,
+  purchaseAndOpenChest,
+  type SpinResult,
+} from "@/app/(app)/rewards/actions"
+import { SpinWheel, type SpinSegment } from "@/components/rewards/SpinWheel"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Translations } from "@/lib/i18n"
 
@@ -24,6 +30,22 @@ interface ChestType {
   min_xp: number
   max_xp: number
 }
+
+/**
+ * How long the wheel actually stays locked, in milliseconds.
+ *
+ * **Twenty-four hours, not four.** This file used to say four in two places and
+ * the copy said "every 4 hours" in all six languages, while `spin_wheel_rpc`
+ * has refused anything inside twenty-four hours since migration 0008 — which
+ * describes the wheel as a "once-a-day cadence" and means it. So the countdown
+ * ran to zero, invited the player to spin, and the server answered "Come back
+ * later for today's gift." The promise was wrong, not the cooldown; the copy
+ * moved to match the database rather than the other way round.
+ *
+ * One constant, because the two places that had the number disagreed with the
+ * server independently and would have drifted again.
+ */
+const SPIN_COOLDOWN_MS = 24 * 60 * 60 * 1000
 
 const CHEST_NAME_KEYS: Record<string, keyof Translations> = {
   bronze: "chestBronze",
@@ -43,6 +65,7 @@ export function RewardsPageClient({
   currentDayNumber,
   loginRewards,
   chestTypes,
+  spinRewards,
 }: {
   streakCount: number
   longestStreak: number
@@ -54,6 +77,7 @@ export function RewardsPageClient({
   currentDayNumber: number
   loginRewards: LoginReward[]
   chestTypes: ChestType[]
+  spinRewards: SpinSegment[]
 }) {
   const { t, dir } = useLanguage()
   const [coins, setCoins] = useState(initialCoins)
@@ -61,23 +85,48 @@ export function RewardsPageClient({
   const [claimedToday, setClaimedToday] = useState(initialClaimedToday)
   const [message, setMessage] = useState<string | null>(null)
   const [spinAvailableAt, setSpinAvailableAt] = useState<string | null>(
-    lastSpinAt ? new Date(new Date(lastSpinAt).getTime() + 4 * 60 * 60 * 1000).toISOString() : null
+    lastSpinAt ? new Date(new Date(lastSpinAt).getTime() + SPIN_COOLDOWN_MS).toISOString() : null
   )
   const [now, setNow] = useState(() => Date.now())
   const [isPending, startTransition] = useTransition()
   const [pendingAction, setPendingAction] = useState<string | null>(null)
+  /** The segment the wheel is travelling to, or null when it is at rest. */
+  const [spinTarget, setSpinTarget] = useState<number | null>(null)
+  /** The awarded prize, held back until the wheel stops so it is not spoiled. */
+  const [pendingSpin, setPendingSpin] = useState<SpinResult | null>(null)
+  /** Bumped once per spin so an identical target still starts the wheel. */
+  const [spinToken, setSpinToken] = useState(0)
 
+  /**
+   * Once a second, not once every thirty.
+   *
+   * At a thirty-second interval the countdown below sat on the same
+   * "4h 0m" for half a minute at a time, which reads as a frozen screen
+   * rather than a wait — there was no way to tell a running timer from a
+   * hung one. A seconds field only helps if something moves it.
+   */
   useEffect(() => {
-    const interval = setInterval(() => setNow(Date.now()), 30000)
+    const interval = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(interval)
   }, [])
 
+  /**
+   * `floor`, not `ceil`, and always a seconds field.
+   *
+   * The old version rounded up to whole minutes, so a wait of twelve seconds
+   * displayed as "1m" and stayed there — the last minute of every countdown
+   * was a full minute of a number that never changed, immediately before the
+   * button was supposed to come alive. Seconds are zero-padded so the width
+   * does not jitter as they count down.
+   */
   const formatCountdown = (ms: number): string => {
     if (ms <= 0) return t("countdownNow")
-    const totalMinutes = Math.ceil(ms / 60000)
-    const hours = Math.floor(totalMinutes / 60)
-    const minutes = totalMinutes % 60
-    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
+    const total = Math.floor(ms / 1000)
+    const hours = Math.floor(total / 3600)
+    const minutes = Math.floor((total % 3600) / 60)
+    const seconds = total % 60
+    const pad = (n: number) => String(n).padStart(2, "0")
+    return hours > 0 ? `${hours}h ${pad(minutes)}m ${pad(seconds)}s` : `${minutes}m ${pad(seconds)}s`
   }
 
   const spinReady = !spinAvailableAt || new Date(spinAvailableAt).getTime() <= now
@@ -101,21 +150,64 @@ export function RewardsPageClient({
     })
   }
 
+  /**
+   * The prize is awarded before the wheel moves, and revealed after it stops.
+   *
+   * `spin_wheel_rpc` picks, awards and records in one call, so by the time the
+   * animation starts the coins are already on the profile. That ordering is
+   * deliberate and not reversible: the server cannot be asked to "confirm"
+   * afterwards without opening a window where a player who closes the tab
+   * mid-spin has been shown a prize they were never paid.
+   *
+   * What it costs is that the totals in the header would give the answer away
+   * four seconds early, so the balance updates are held in `pendingSpin` and
+   * applied by `handleSpinSettled` when the wheel comes to rest. Nothing is at
+   * risk in that gap — the money is already banked; only the reveal is
+   * waiting.
+   */
   const handleSpin = () => {
     setPendingAction("spin")
+    setMessage(null)
     startTransition(async () => {
       const result = await spinWheel()
       if (result.success) {
-        if (result.type === "coins") setCoins((c) => c + (result.value ?? 0))
-        else setXp((x) => x + (result.value ?? 0))
-        setSpinAvailableAt(new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString())
-        setMessage(t("spinWonMsg", { label: result.label ?? "" }))
+        // Matched on type and value rather than on the label, because the
+        // label is English text from the database and the segment captions are
+        // built from the numbers so they can be translated.
+        const index = spinRewards.findIndex(
+          (r) => r.type === result.type && r.value === result.value,
+        )
+        setPendingSpin(result)
+        // A prize the wheel has no segment for cannot be landed on. It should
+        // not happen — both come from `spin_rewards` — but a silent no-op that
+        // leaves the player watching a still wheel forever is the worse
+        // failure, so the reveal skips straight to the sentence.
+        if (index === -1) {
+          setSpinTarget(null)
+          applySpinResult(result)
+        } else {
+          setSpinTarget(index)
+          setSpinToken((n) => n + 1)
+        }
       } else {
         if (result.nextAvailableAt) setSpinAvailableAt(result.nextAvailableAt)
         setMessage(result.error ?? t("spinErrorMsg"))
+        setPendingAction(null)
       }
-      setPendingAction(null)
     })
+  }
+
+  const applySpinResult = (result: SpinResult) => {
+    if (result.type === "coins") setCoins((c) => c + (result.value ?? 0))
+    else setXp((x) => x + (result.value ?? 0))
+    setSpinAvailableAt(new Date(Date.now() + SPIN_COOLDOWN_MS).toISOString())
+    setMessage(t("spinWonMsg", { label: result.label ?? "" }))
+    setPendingSpin(null)
+    setPendingAction(null)
+  }
+
+  const handleSpinSettled = () => {
+    if (pendingSpin) applySpinResult(pendingSpin)
   }
 
   const handleOpenChest = (tier: string) => {
@@ -155,7 +247,16 @@ export function RewardsPageClient({
       </motion.div>
 
       {message && (
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center text-sm text-on-surface-variant">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          // The wheel itself is hidden from assistive technology, so this is
+          // the only place a screen reader learns what was won. It has to
+          // announce on change rather than only on focus.
+          role="status"
+          aria-live="polite"
+          className="mb-6 text-center text-sm text-on-surface-variant"
+        >
           {message}
         </motion.div>
       )}
@@ -217,8 +318,20 @@ export function RewardsPageClient({
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-6">
           <h2 className="font-headline-md text-headline-md text-on-surface mb-4">{t("freeSpinTitle")}</h2>
           <p className="text-on-surface-variant text-sm mb-4">{t("freeSpinDesc")}</p>
-          <PremiumButton variant="primary" onClick={handleSpin} disabled={!spinReady || (isPending && pendingAction === "spin")}>
-            {isPending && pendingAction === "spin"
+
+          <SpinWheel
+            segments={spinRewards}
+            targetIndex={spinTarget}
+            spinToken={spinToken}
+            onSettled={handleSpinSettled}
+          />
+
+          <PremiumButton
+            variant="primary"
+            onClick={handleSpin}
+            disabled={!spinReady || pendingAction === "spin"}
+          >
+            {pendingAction === "spin"
               ? t("spinningLabel")
               : spinReady
                 ? t("spinNowLabel")

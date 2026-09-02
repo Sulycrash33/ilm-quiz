@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/LanguageContext"
-import { IslamicPattern } from "@/components/islamic-pattern";
+import { AppBackdrop } from "@/components/layout/AppBackdrop"
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar"
 import type { Translations } from "@/lib/i18n"
 
@@ -68,12 +68,14 @@ export default function AppLayout({
     <div dir={dir} className="relative min-h-[100dvh] bg-background">
       <ServiceWorkerRegistrar />
 
-      {/* Background Accents */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute top-1/2 -left-24 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full" />
-        <IslamicPattern />
-      </div>
+      {/* The same field onboarding sits on, from the same file. This used to be
+          a hand-copied duplicate of `OnboardingBackdrop`, and it had drifted:
+          it drew the khatim `masked`, which fades to nothing about a screenful
+          down, so the ornament that carries the whole opening flow petered out
+          on every page of the actual game — the pages that scroll furthest.
+          `AppBackdrop` holds an even field, and the drifting names stay behind
+          onboarding alone. See that file for why. */}
+      <AppBackdrop />
 
       {/* Main Content */}
       <main className="relative z-10 pb-nav-safe md:pb-8">{children}</main>
