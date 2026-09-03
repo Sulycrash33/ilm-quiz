@@ -1,11 +1,11 @@
 # ILM Hunt — session handoff
 
-Written 2026-09-03, replacing the 2026-09-02 note. **Read this first if you are
-picking up work cold.** Everything below was checked against the live database
-(project `ziblpvwiqzpjnkqjwodl`) and `main` at `4f05824` on the day it was
-written — re-check anything you are about to depend on rather than trusting the
-numbers blind. Four earlier notes were wrong about a count within a day of
-being written, which is the argument for checking.
+Written 2026-09-03, updating the note from earlier the same day. **Read this
+first if you are picking up work cold.** Everything below was checked against
+the live database (project `ziblpvwiqzpjnkqjwodl`) and `main` at `f7bd886`
+(PR #64, merged) — re-check anything you are about to depend on rather than
+trusting the numbers blind. Four earlier notes were wrong about a count within
+a day of being written, which is the argument for checking.
 
 ## The one fact that reframes everything
 
@@ -14,7 +14,7 @@ being written, which is the argument for checking.
 ```
 questions        5,220        profiles              1
 categories          29        attempts              0
-translations         5        scholar approved      0
+translations         26       scholar approved      0
 ```
 
 The `attempts` table is **empty**. Every question, category, store item,
@@ -31,7 +31,7 @@ shipped since anyone last suggested playing it.
 | Questions | **5,220** — 29 categories × 9 tiers × 20 |
 | Published | 5,220 |
 | Explanations | 5,220 written and live, 0 missing |
-| Translations | **5** — one question, in all five non-English locales |
+| Translations | **26** — the backfill is queued but barely moving, see below |
 | **Scholar approved** | **0** |
 | **Attempts, ever** | **0** |
 | Accounts | **1** — the owner, an admin |
@@ -102,26 +102,43 @@ A refusal leaves that question English in that locale and puts the row on the
 - `/admin/translations` — queue by language and status, "Queue every published
   question" (one set-based statement, safe to re-run), the refusal list, and an
   editor for any translation. Saving marks it `human`.
-- **The backfill has NOT been queued.** Only one question is translated.
-- **Throughput was raised in 0048 and the arithmetic changed shape.** It was
-  ~3 per 5-minute tick, ≈860/day, ≈30 days for the full 26,100 — the ceiling of
-  a strictly sequential worker inside a 110-second budget at ~40s a call.
-  The worker now draws its batch through a **bounded pool**, so the calls in
-  flight are a dial rather than a consequence of the batch size. Three dials,
-  all turnable without touching the worker's code:
+- **The backfill was queued** — all 26,100 rows went into `translation_queue`
+  in one statement on 2026-09-03. As of this writing it has drained only
+  **21 rows in roughly two hours.** That is not the concurrency dial working
+  as designed; see the next point.
+- **Real bottleneck, found after 0048/0049 shipped: the Gemini API key is out
+  of quota.** `query_logs` on `translate-questions` shows the model itself
+  returning `"You exceeded your current quota, please check your plan and
+  billing details."` — an account-level billing/plan limit, not something any
+  cron cadence, batch size or concurrency setting can fix from this codebase.
+  Concurrency was raised to 6 (0048), measured as ~12/12 calls rate-limited on
+  nearly every tick, dropped to **2** to see if it was a burst-limit problem,
+  and the failures persisted identically at concurrency 2, almost
+  instantaneously (~200ms per call) — proof it is quota exhaustion, not
+  concurrency. **`TRANSLATE_CONCURRENCY` is currently 2, left there on the
+  owner's instruction** rather than tuned further, because there is nothing
+  left to tune without access to the Gemini account's billing page.
+  `translate-questions` was redeployed as **v6** with
+  `console.error("translate-questions: retryable, ...")` added so this shows
+  up in `query_logs` immediately next time, instead of needing a fresh
+  `net._http_response` investigation.
+  **Next step is not code:** the account owner needs to check the Gemini API
+  key's plan/quota at ai.google.dev or the Google Cloud console. Nobody in
+  this session has access to that account.
+- **The arithmetic below is what 0048 made *possible*, not what is
+  happening.** It holds once the quota is fixed; until then it is fiction.
 
   | Dial | Where | Now |
   |---|---|---|
   | Cron cadence | `cron.job`, migration 0048 | every 2 minutes |
   | Batch size | `cron_run_translations` body | 12 per invocation |
-  | Concurrency | `TRANSLATE_CONCURRENCY` env var | 6 in flight |
+  | Concurrency | `TRANSLATE_CONCURRENCY` env var | **2** in flight (was 6, see above) |
 
-  12 ÷ 6 × ~40s ≈ 80s, inside the 110s deadline; 30 ticks/hour × 12 ≈
-  **8,640/day**, so 26,100 is about **3 days**, not 30. **These are projections
-  from one measurement, not observations** — the backfill has still never been
-  queued, so nothing has run at this setting. The worker reports `elapsedMs`,
-  `rateLimited`, `released` and `concurrency` in its response; read them from a
-  real run before believing the table above.
+  At concurrency 6 the projection was 26,100 in about 3 days; at 2 it would be
+  slower still, and none of it matters while the quota is exhausted. The
+  worker reports `elapsedMs`, `rateLimited`, `released` and `concurrency` in
+  its response, and the retryable path now logs to `query_logs` — read both
+  before believing any throughput number, including this one.
 - **What makes the dial safe to turn is the refund, not the arithmetic.**
   `claim_translation_batch` spends an attempt when it hands a row out and three
   attempts marks a row `failed`. So before 0048, over-driving the model could
@@ -400,12 +417,16 @@ not rendered.**
    task. Zero attempts means no screen shipped in the last week has ever
    rendered with real data behind it.
 2. ~~The answer-key exposure.~~ **Fixed in 0049** — see the section above.
-3. **The translation backfill was queued and is running.** All 26,100 rows
-   went into `translation_queue` in one statement; the worker is draining it
-   unattended at the 0048 settings. Read a few Hausa samples once it has run
-   for a while — especially fiqh, where the fard/sunnah distinction the guard
-   exists for actually bites — rather than assuming the automatic checks
-   caught everything.
+3. **The translation backfill is queued but effectively stalled — Gemini API
+   quota exhausted, not a code problem.** 26,100 rows queued, only ~21
+   completed after ~2 hours. See "The translation system" section above for
+   the full diagnosis. **This is the actual next thing to unblock**: someone
+   with access to the Gemini/Google Cloud billing needs to raise or restore
+   the quota; nothing further is tunable from `cron_run_translations` or
+   `TRANSLATE_CONCURRENCY`. Once it's flowing, read a few Hausa samples —
+   especially fiqh, where the fard/sunnah distinction the guard exists for
+   actually bites — rather than assuming the automatic checks caught
+   everything.
 4. **Scholar review — still zero of 5,220.** `/admin/questions` filters to
    "Awaiting review". Contemporary Issues is the riskiest and so the most
    informative.
@@ -549,7 +570,7 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
-| this one | The language that would not stay, a hadith that is actually daily, and a backfill that is days rather than a month |
+| #64 | The language that would not stay, a hadith that is actually daily, and a backfill that turned out to be quota-blocked rather than slow |
 | #62 | What running the translation pipeline for real taught it |
 | #61 | Content translates itself, and Sunrise is a word again |
 | #60 | A wheel that turns, a countdown that moves, and the khatim on every box |
