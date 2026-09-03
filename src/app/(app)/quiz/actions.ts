@@ -90,24 +90,23 @@ async function awardAchievements(
   }
 }
 
+/**
+ * Two wrong option indices to eliminate, decided entirely by
+ * `fifty_fifty_choices` (migration 0049). This used to select
+ * `correct_choice_index` directly and shuffle client-side — the same answer
+ * key `quiz-service.ts` has always gone out of its way not to select. The
+ * database now keeps that value to itself; only the two indices to remove
+ * ever cross back out.
+ */
 export async function fiftyFifty(questionId: string): Promise<number[]> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('You must be signed in.');
-  const { data: q, error } = await supabase
-    .from('questions')
-    .select('correct_choice_index, choices, review_status')
-    .eq('id', questionId)
-    .single();
-  if (error || !q || q.review_status !== 'published') throw new Error('Question not found.');
-  const total = ((q.choices ?? []) as string[]).length;
-  const wrong: number[] = [];
-  for (let i = 0; i < total; i += 1) if (i !== q.correct_choice_index) wrong.push(i);
-  for (let i = wrong.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [wrong[i], wrong[j]] = [wrong[j], wrong[i]];
-  }
-  return wrong.slice(0, 2);
+  const { data, error } = await supabase.rpc('fifty_fifty_choices', {
+    p_question_id: questionId,
+  });
+  if (error || !data) throw new Error(error?.message || 'Question not found.');
+  return data as number[];
 }
 
 /** Lifelines, as the dock renders them. `cost` always comes from the database

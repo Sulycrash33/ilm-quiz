@@ -70,6 +70,13 @@ const quickActions = [
     color: "secondary",
   },
   {
+    title: "Daily Hadith",
+    description: "The narration rotation, and its text in each language",
+    href: "/admin/hadiths",
+    icon: "📖",
+    color: "tertiary",
+  },
+  {
     title: "Audit Log",
     description: "Every administrative action, with who and when",
     href: "/admin/audit",

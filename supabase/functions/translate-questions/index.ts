@@ -1,10 +1,16 @@
 /**
  * Translates queued questions into the app's five non-English locales.
  *
- * Invoked by `cron_run_translations` every five minutes, and only when the
+ * Invoked by `cron_run_translations` every two minutes, and only when the
  * queue has something in it. One batch per invocation; the cron tick is the
  * loop, so a run that dies takes one batch with it rather than a whole
  * backfill.
+ *
+ * Within a batch the rows are translated by a bounded pool of workers rather
+ * than one at a time — see the note on it below. Throughput is now the product
+ * of three dials that can all be turned without touching this file: the cron
+ * cadence, the batch size in `cron_run_translations`, and TRANSLATE_CONCURRENCY
+ * in this function's environment.
  *
  * ── Why this lives here and not on Vercel ─────────────────────────────────
  * A worker needs a privileged, non-interactive credential. Supabase injects
@@ -100,27 +106,51 @@ function parseModelJson(raw: string): { question: string; choices: string[]; exp
  */
 const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.6-flash";
 
+/**
+ * A fault that is about the moment, not about the row.
+ *
+ * A rate limit or a 503 says the model was busy; it says nothing at all about
+ * whether this question can be translated. Counting one as an attempt means
+ * three busy minutes can mark a perfectly good row `failed` and take it out of
+ * the backfill for good — and raising the throughput makes rate limits the
+ * *expected* way a batch ends, not an exotic one. So these hand the claim back
+ * instead, exactly as running out of wall clock does.
+ */
+class RetryableError extends Error {}
+
 async function translate(row: QueueRow, apiKey: string) {
   const languageName = LOCALE_NAMES[row.o_locale] ?? row.o_locale;
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: buildPrompt(row, languageName) }] }],
-        generationConfig: {
-          // Deterministic-ish. A translation that changes between runs would
-          // make a player's review history disagree with what they answered.
-          temperature: 0.2,
-          responseMimeType: "application/json",
-        },
-      }),
-    },
-  );
+
+  let res: Response;
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: buildPrompt(row, languageName) }] }],
+          generationConfig: {
+            // Deterministic-ish. A translation that changes between runs would
+            // make a player's review history disagree with what they answered.
+            temperature: 0.2,
+            responseMimeType: "application/json",
+          },
+        }),
+      },
+    );
+  } catch (e) {
+    // A socket that never opened is the network, not the question.
+    throw new RetryableError(`network: ${String((e as Error).message ?? e).slice(0, 200)}`);
+  }
 
   if (!res.ok) {
-    throw new Error(`model returned ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    const detail = `model returned ${res.status}: ${(await res.text()).slice(0, 300)}`;
+    // 429 is the rate limit; 5xx is the model's own trouble. A 400 or a 404 is
+    // ours — a bad prompt or a model name that has been retired — and those
+    // must keep counting, because retrying them forever would hide them.
+    if (res.status === 429 || res.status >= 500) throw new RetryableError(detail);
+    throw new Error(detail);
   }
 
   const body = await res.json();
@@ -135,6 +165,7 @@ async function translate(row: QueueRow, apiKey: string) {
 }
 
 Deno.serve(async (req) => {
+  const startedAt = Date.now();
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const apiKey = Deno.env.get("GEMINI_API_KEY");
@@ -173,6 +204,10 @@ Deno.serve(async (req) => {
   let refused = 0;
   let failed = 0;
   let released = 0;
+  // Reported separately from `released` so a tuning run can tell "we ran out
+  // of clock" apart from "the model pushed back", which are the same recovery
+  // and completely different signals about whether the dial is set too high.
+  let rateLimited = 0;
 
   /**
    * Stop before the runtime stops us.
@@ -189,45 +224,120 @@ Deno.serve(async (req) => {
    */
   const deadline = Date.now() + 110_000;
 
-  // Sequential on purpose. Firing twenty concurrent model calls is the fastest
-  // way to hit a rate limit and turn a whole batch into retries; the cron tick
-  // supplies the throughput instead.
-  for (const row of rows) {
-    if (Date.now() > deadline) {
-      await supabase.rpc("release_translation_claim", {
-        p_question_id: row.o_question_id,
-        p_locale: row.o_locale,
-      });
-      released += 1;
-      continue;
-    }
-    try {
-      const out = await translate(row, apiKey);
-      const { data, error } = await supabase.rpc("complete_translation", {
-        p_question_id: row.o_question_id,
-        p_locale: row.o_locale,
-        p_text: out.question,
-        p_choices: out.choices,
-        p_explanation: out.explanation ?? null,
-      });
-      if (error) throw new Error(error.message);
-      const result = Array.isArray(data) ? data[0] : data;
-      if (result?.o_success) written += 1;
-      else refused += 1;
-    } catch (e) {
-      failed += 1;
-      await supabase.rpc("complete_translation", {
-        p_question_id: row.o_question_id,
-        p_locale: row.o_locale,
-        p_text: null,
-        p_choices: null,
-        p_error: String((e as Error).message ?? e).slice(0, 500),
-      });
+  /**
+   * ── Why this is a pool and no longer a plain loop ────────────────────────
+   *
+   * It used to be sequential, on the reasoning that firing a whole batch of
+   * concurrent model calls is the fastest way to hit a rate limit. That is
+   * true of an *unbounded* fan-out and it is why this is bounded rather than a
+   * `Promise.all` over the batch.
+   *
+   * But sequential made the wall clock the ceiling. One translation measured
+   * at roughly forty seconds, so a 110-second budget spent one at a time fits
+   * two, maybe three — about 860 a day, and 26,100 of them is a month of
+   * waiting for a backfill nobody can watch.
+   *
+   * A fixed number of workers drawing from one queue changes the arithmetic
+   * without changing the risk profile: in-flight calls never exceed
+   * TRANSLATE_CONCURRENCY no matter how large the batch grows, so the rate the
+   * model sees is a number set here rather than a consequence of the batch
+   * size.
+   *
+   * Started at six. The first real run at that setting showed 12 of 12 rows
+   * rate-limited on nearly every two-minute tick — Gemini rejecting most of
+   * the batch outright rather than the ~40s-per-call throttling this was
+   * sized around, and the refund made that cheap enough to run for half an
+   * hour before anyone noticed the throughput hadn't moved. Turned down to
+   * two while the actual per-key quota is unknown; `console.error` above now
+   * logs what the API says, and the honest way to raise this again is to
+   * read that, not to guess a second number.
+   *
+   * And the failure mode is now cheap. A 429 releases the claim with its
+   * attempt refunded, so pushing the rate too high costs throughput and
+   * nothing else — the queue is exactly as it was, and the next tick tries
+   * again. That is what makes the dial safe to turn.
+   */
+  const CONCURRENCY = Math.max(1, Number(Deno.env.get("TRANSLATE_CONCURRENCY") ?? 2));
+
+  let next = 0;
+
+  async function release(row: QueueRow) {
+    await supabase.rpc("release_translation_claim", {
+      p_question_id: row.o_question_id,
+      p_locale: row.o_locale,
+    });
+    released += 1;
+  }
+
+  async function worker() {
+    // `next++` is atomic here in the only sense that matters: Deno runs one
+    // JavaScript thread, so no two workers can read the same index. The awaits
+    // below are where control changes hands, and by then the index is taken.
+    while (true) {
+      const i = next++;
+      if (i >= rows.length) return;
+      const row = rows[i];
+
+      // Out of time. Hand this one back rather than starting a call the
+      // runtime will kill halfway through: an unanswered claim sits
+      // `in_progress` until the ten-minute reclaim, and the row would burn an
+      // attempt having never reached the model.
+      if (Date.now() > deadline) {
+        await release(row);
+        continue;
+      }
+
+      try {
+        const out = await translate(row, apiKey);
+        const { data, error } = await supabase.rpc("complete_translation", {
+          p_question_id: row.o_question_id,
+          p_locale: row.o_locale,
+          p_text: out.question,
+          p_choices: out.choices,
+          p_explanation: out.explanation ?? null,
+        });
+        if (error) throw new Error(error.message);
+        const result = Array.isArray(data) ? data[0] : data;
+        if (result?.o_success) written += 1;
+        else refused += 1;
+      } catch (e) {
+        if (e instanceof RetryableError) {
+          // Logged, not swallowed: the first real run at concurrency 6 showed
+          // 12/12 rate-limited on almost every tick with no way to see why,
+          // which is what forced concurrency back down blind rather than by
+          // measurement. This is the fix for that gap, not just this run.
+          console.error("translate-questions: retryable,", e.message);
+          await release(row);
+          rateLimited += 1;
+          continue;
+        }
+        failed += 1;
+        await supabase.rpc("complete_translation", {
+          p_question_id: row.o_question_id,
+          p_locale: row.o_locale,
+          p_text: null,
+          p_choices: null,
+          p_error: String((e as Error).message ?? e).slice(0, 500),
+        });
+      }
     }
   }
 
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, rows.length) }, () => worker()),
+  );
+
   return new Response(
-    JSON.stringify({ claimed: rows.length, written, refused, failed, released }),
+    JSON.stringify({
+      claimed: rows.length,
+      written,
+      refused,
+      failed,
+      released,
+      rateLimited,
+      concurrency: CONCURRENCY,
+      elapsedMs: Date.now() - startedAt,
+    }),
     { headers: { "Content-Type": "application/json" } },
   );
 });

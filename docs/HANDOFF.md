@@ -37,7 +37,7 @@ shipped since anyone last suggested playing it.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0046`**, disk and database in step |
+| Migrations | through **`0050`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -103,9 +103,33 @@ A refusal leaves that question English in that locale and puts the row on the
   question" (one set-based statement, safe to re-run), the refusal list, and an
   editor for any translation. Saving marks it `human`.
 - **The backfill has NOT been queued.** Only one question is translated.
-- **Measured throughput: ~3 translations per 5-minute tick, ≈860/day.** The
-  full 26,100 is therefore about **30 days** unattended. Raising the cadence or
-  running locales in parallel within a batch are the two levers.
+- **Throughput was raised in 0048 and the arithmetic changed shape.** It was
+  ~3 per 5-minute tick, ≈860/day, ≈30 days for the full 26,100 — the ceiling of
+  a strictly sequential worker inside a 110-second budget at ~40s a call.
+  The worker now draws its batch through a **bounded pool**, so the calls in
+  flight are a dial rather than a consequence of the batch size. Three dials,
+  all turnable without touching the worker's code:
+
+  | Dial | Where | Now |
+  |---|---|---|
+  | Cron cadence | `cron.job`, migration 0048 | every 2 minutes |
+  | Batch size | `cron_run_translations` body | 12 per invocation |
+  | Concurrency | `TRANSLATE_CONCURRENCY` env var | 6 in flight |
+
+  12 ÷ 6 × ~40s ≈ 80s, inside the 110s deadline; 30 ticks/hour × 12 ≈
+  **8,640/day**, so 26,100 is about **3 days**, not 30. **These are projections
+  from one measurement, not observations** — the backfill has still never been
+  queued, so nothing has run at this setting. The worker reports `elapsedMs`,
+  `rateLimited`, `released` and `concurrency` in its response; read them from a
+  real run before believing the table above.
+- **What makes the dial safe to turn is the refund, not the arithmetic.**
+  `claim_translation_batch` spends an attempt when it hands a row out and three
+  attempts marks a row `failed`. So before 0048, over-driving the model could
+  permanently drop good questions out of the backfill for a fault entirely of
+  the scheduler's. A 429 or a 5xx now **releases the claim and refunds the
+  attempt**, exactly as running out of wall clock does, so pushing the rate too
+  high costs throughput and nothing else. A 400 or a 404 still counts — those
+  are ours, and retrying them forever would hide them.
 - `GEMINI_MODEL` is an edge function env var. **Model names get retired** —
   `gemini-2.0-flash` 404'd on the very first real batch — so change the
   variable, not the code.
@@ -147,6 +171,17 @@ in the same session: it must return 307 to `/login`.
 
 ## The traps that will cost you a day
 
+- **A PostgREST query builder is lazy and sends nothing until it is awaited.**
+  `LanguageContext` built a `.update({ preferred_language })` and never awaited
+  it, so *every* language a signed-in player chose was written to the browser
+  and never to their profile — the profile row still read `en`, untouched since
+  July, through many deliberate switches to Hausa. Worse, the restore path then
+  let that stale profile **overrule** the device: pick Hausa, refresh, see
+  Hausa for an instant, and watch the profile's `en` put it back. It read
+  exactly like "the choice does not save". The profile now fills a gap rather
+  than overruling — it applies only when the device has no stored choice — and
+  a pick made while the profile lookup is still in flight is no longer
+  clobbered when it lands.
 - **`correct_choice_index` is positional.** Anything that reorders, adds or
   drops a choice — a translation especially — mis-grades the question.
 - **A `"use server"` module may only export async functions.** Exporting a
@@ -182,26 +217,48 @@ in the same session: it must return 307 to `/login`.
 - **The i18n guard has two shapes to catch**: text that starts a JSX node, and
   text that trails an interpolation.
 
-## A security hole that is still open
+## The security hole that was open, and how 0049 closed it
 
-**The SELECT policy on `questions` is `using (review_status = 'published')`
-with no column restriction.** `correct_choice_index` and `explanation` are
-therefore readable through PostgREST **by anyone holding the anon key**, even
-though `quiz-service.ts` carefully declines to select them and says in a
-comment that they must never reach the browser before an answer is submitted.
-The comment states the intent; the policy does not enforce it.
+**Fixed in migration 0049.** The SELECT policy on `questions` was `using
+(review_status = 'published')` with no column restriction, so
+`correct_choice_index` and `explanation` were readable through PostgREST **by
+anyone holding the anon key**, even though `quiz-service.ts` carefully
+declined to select them and said so in a comment. The comment stated the
+intent; the policy never enforced it. Every answer in the bank was
+downloadable — not a theoretical finding, checked directly against the anon
+key. `quiz_room_questions` (multiplayer) had the identical shape of the same
+bug on `correct_index`, found while fixing the first one.
 
-**Every answer in the bank is currently downloadable.** This is not a
-theoretical finding.
+**Why it took more than a grant.** Four places read one of the two columns
+directly as `authenticated` — the fifty-fifty lifeline, multiplayer's room
+seeding, and two admin reads — because a server action built with
+`@/lib/supabase/server` runs under the signed-in user's own JWT and is bound
+by the same privileges as the browser. Each moved to a SECURITY DEFINER
+function before the column lock landed: `fifty_fifty_choices` (returns two
+wrong indices, never the correct one), `start_multiplayer_quiz_rpc` (the old
+select-then-insert is now one atomic host-checked function),
+`admin_questions_for_drafting`, `reviewer_pending_questions`.
 
-It is not a one-liner: the admin pages read those columns directly as
-`authenticated`, so column grants would break them — the reads have to move to
-SECURITY DEFINER RPCs first. It has been reported to the owner twice and is not
-yet scheduled. **Do not launch without fixing it.**
+**Why a column-level `REVOKE` alone would have done nothing.** Supabase's
+default schema setup already grants table-level `SELECT` to `anon` and
+`authenticated`, and Postgres checks column access as table-level-grant *OR*
+column-level-grant — a per-column revoke on top of a standing table-level
+grant changes nothing, which a dry run of this migration caught before it
+shipped. The fix revokes table-level `SELECT` entirely and grants it back
+column-by-column, naming everything except the two that stay locked.
 
-`question_translations` and `translation_queue` deliberately do not repeat it:
-grants there are per column, and neither the translated explanation nor the
-queue is among them.
+`question_translations` and `translation_queue` never had this problem: their
+grants were per-column from the start, and neither the translated explanation
+nor the queue is among them.
+
+Verified against the live database: `has_column_privilege` confirms `anon`
+and `authenticated` can no longer select `correct_choice_index` or
+`explanation` on `questions`, nor `correct_index` on `quiz_room_questions`,
+while every other column — including the ones `quiz-service.ts` actually
+reads — stays readable. All four new functions were exercised in a
+**rolled-back** transaction first: the lifeline never returns the correct
+index, a non-host is refused starting a room, a non-admin/non-reviewer is
+refused both admin reads, and a host's call seeds the room and starts it.
 
 ## Two product decisions that live only in code
 
@@ -342,19 +399,34 @@ not rendered.**
 1. **Somebody needs to play the app.** Still the top item, still not a coding
    task. Zero attempts means no screen shipped in the last week has ever
    rendered with real data behind it.
-2. **The answer-key exposure above.** The one thing that should block a launch.
-3. **The translation backfill has not been queued**, and only one question has
-   ever been translated. Read a few more Hausa samples — especially fiqh, where
-   the fard/sunnah distinction the guard exists for actually bites — before
-   committing to 26,100.
+2. ~~The answer-key exposure.~~ **Fixed in 0049** — see the section above.
+3. **The translation backfill was queued and is running.** All 26,100 rows
+   went into `translation_queue` in one statement; the worker is draining it
+   unattended at the 0048 settings. Read a few Hausa samples once it has run
+   for a while — especially fiqh, where the fard/sunnah distinction the guard
+   exists for actually bites — rather than assuming the automatic checks
+   caught everything.
 4. **Scholar review — still zero of 5,220.** `/admin/questions` filters to
    "Awaiting review". Contemporary Issues is the riskiest and so the most
    informative.
-5. **The daily hadith is not daily.** `DAILY_HADITH` is one hardcoded constant.
-   The owner is supplying Bukhari and Muslim in all six languages, so this gets
-   an **importer, not a translator** — a narration is a religious claim and
-   published editions exist. Design the table locale-aware from the first
-   migration.
+5. **The daily hadith rotation is 391 narrations long, English only.** Built
+   in `0047`: `hadiths` + `hadith_translations`, locale-aware from the first
+   migration, a `daily_hadith()` that picks by date so every player sees the
+   same narration on the same day, and an importer at `/admin/hadiths`. `0050`
+   filled it: the `0047` seed plus 390 more — 40 Hadith Nawawi and 40 Hadith
+   Qudsi in full, and Bukhari's Belief, Knowledge and Ar-Riqaq (heart-
+   softening) books in full — fetched from fawazahmed0/hadith-api, a mirror of
+   published English translations, spot-checked against the well-known text
+   of Bukhari 1 before trusting the rest. It is an **importer and deliberately
+   not a translator**: there is no "translate this" button and its absence is
+   the feature. A narration is a claim about what the Prophet ﷺ said,
+   published translations of Bukhari and Muslim exist and are what people
+   cite, and the pipeline's guard — that a mistranslation must not change
+   which answer is correct — has no counterpart here, because there is
+   nothing to check the output against. **Every locale but English still
+   falls back to English** on every one of the 391 — non-English text arrives
+   the same way English did, from a published edition entered by hand, never
+   generated.
 6. **Nothing has been felt on a physical device.** Haptics need a real Android
    phone; no emulator reproduces a vibration.
 7. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
@@ -477,6 +549,7 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| this one | The language that would not stay, a hadith that is actually daily, and a backfill that is days rather than a month |
 | #62 | What running the translation pipeline for real taught it |
 | #61 | Content translates itself, and Sunrise is a word again |
 | #60 | A wheel that turns, a countdown that moves, and the khatim on every box |

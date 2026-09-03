@@ -29,23 +29,25 @@ export default async function ReviewPage() {
     .select('id, name')
     .order('sort_order');
 
-  const { data: pending } = await supabase
-    .from('questions')
-    .select('id, question_text, choices, correct_choice_index, explanation, citation_reference, madhab_tag, difficulty, language, category_id, categories(name)')
-    .eq('review_status', 'ai_drafted')
-    .order('created_at', { ascending: true });
+  // `reviewer_pending_questions` (migration 0049) replaces a direct select
+  // of `correct_choice_index, explanation` as `authenticated` — the same two
+  // columns `quiz-service.ts` has always avoided reading, now actually
+  // unreadable outside a SECURITY DEFINER function. It re-checks the
+  // reviewer/admin role itself, so this page's own redirect above and the
+  // function's gate agree rather than one being load-bearing on trust.
+  const { data: pending } = await supabase.rpc('reviewer_pending_questions');
 
   const reviewQuestions: ReviewQuestion[] = (pending ?? []).map((row: any) => ({
-    id: row.id,
-    question_text: row.question_text,
-    choices: row.choices,
-    correct_choice_index: row.correct_choice_index,
-    explanation: row.explanation,
-    citation_reference: row.citation_reference,
-    madhab_tag: row.madhab_tag,
-    difficulty: row.difficulty,
-    language: row.language,
-    categoryName: row.categories?.name ?? 'Unknown',
+    id: row.o_id,
+    question_text: row.o_question_text,
+    choices: row.o_choices,
+    correct_choice_index: row.o_correct_choice_index,
+    explanation: row.o_explanation,
+    citation_reference: row.o_citation_reference,
+    madhab_tag: row.o_madhab_tag,
+    difficulty: row.o_difficulty,
+    language: row.o_language,
+    categoryName: row.o_category_name ?? 'Unknown',
   }));
 
   return (

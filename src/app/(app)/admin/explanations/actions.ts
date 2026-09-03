@@ -100,29 +100,32 @@ export async function generateDrafts(
   try {
     const { supabase } = await requireAdmin();
 
-    const { data: rows, error } = await supabase
-      .from('questions')
-      .select('id, question_text, choices, correct_choice_index, explanation, citation_reference, tier, categories(name)')
-      .eq('category_id', categoryId)
-      .eq('review_status', 'published')
-      .is('explanation_draft', null)
-      .order('tier')
-      .limit(Math.max(1, Math.min(batchSize, 10)));
+    // `admin_questions_for_drafting` (migration 0049) replaces a direct
+    // select of `correct_choice_index, explanation` as `authenticated` — the
+    // same two columns `quiz-service.ts` has always avoided, now genuinely
+    // unreadable outside a SECURITY DEFINER function. The admin gate that
+    // used to live only in `requireAdmin()` here is enforced a second time
+    // inside the function itself.
+    const { data, error } = await supabase.rpc('admin_questions_for_drafting', {
+      p_category_id: categoryId,
+      p_limit: Math.max(1, Math.min(batchSize, 10)),
+    });
 
     if (error) return { ok: false, error: error.message };
-    if (!rows || rows.length === 0) {
+    const rows = (data ?? []) as any[];
+    if (rows.length === 0) {
       return { ok: true, drafted: 0, skipped: 0, flagged: 0 };
     }
 
     const input = rows.map((r: any) => ({
-      id: r.id as string,
-      questionText: r.question_text as string,
-      choices: (r.choices ?? []) as string[],
-      correctChoice: (r.choices ?? [])[r.correct_choice_index] ?? '',
-      currentExplanation: r.explanation ?? undefined,
-      citation: r.citation_reference ?? undefined,
-      categoryName: r.categories?.name ?? 'General',
-      tier: r.tier ?? 1,
+      id: r.o_id as string,
+      questionText: r.o_question_text as string,
+      choices: (r.o_choices ?? []) as string[],
+      correctChoice: (r.o_choices ?? [])[r.o_correct_choice_index] ?? '',
+      currentExplanation: r.o_explanation ?? undefined,
+      citation: r.o_citation_reference ?? undefined,
+      categoryName: r.o_category_name ?? 'General',
+      tier: r.o_tier ?? 1,
     }));
 
     const out = await draftExplanations({ questions: input });

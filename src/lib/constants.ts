@@ -282,11 +282,6 @@ export const QUESTIONS: Record<string, Question[]> = {
   'arabic-language': [],
 };
 
-export const DAILY_HADITH = {
-  text: "The best among you are those who have the best manners and character.",
-  source: "Sahih al-Bukhari 6029"
-};
-
 const CATEGORY_DETAILS_DATA: Record<string, CategoryDetails> = {
   'allahs-names': {
     id: 'allahs-names',

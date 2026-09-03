@@ -82,3 +82,47 @@ export async function getContinueCard(): Promise<ContinueCard | null> {
     percent: published === 0 ? 0 : Math.min(100, Math.round((answered / published) * 100)),
   }
 }
+
+/**
+ * Today's hadith, in every language at once.
+ *
+ * `DAILY_HADITH` used to be one hardcoded English string in `constants.ts`, so
+ * the card showed the same narration forever and stayed English when the
+ * player chose Hausa — the one piece of genuine religious content on a home
+ * screen that had otherwise translated around it.
+ *
+ * Every locale comes back in a single call rather than just the caller's. That
+ * is the same bargain the question pipeline strikes: pay one round trip when
+ * the page loads, and a language change afterwards is a re-render with the
+ * text already in hand, instant and offline-safe. Fetching per locale would
+ * have put a network request between tapping a flag and reading a hadith.
+ */
+export interface DailyHadithView {
+  reference: string
+  /** Locale code to `{ text, attribution }`. English is always present. */
+  byLocale: Record<string, { text: string; attribution: string }>
+}
+
+export async function getDailyHadith(): Promise<DailyHadithView | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase.rpc("daily_hadith")
+  if (error || !data || data.length === 0) return null
+
+  const rows = data as {
+    o_reference: string
+    o_locale: string
+    o_text: string
+    o_attribution: string
+  }[]
+
+  const byLocale: DailyHadithView["byLocale"] = {}
+  for (const r of rows) {
+    byLocale[r.o_locale] = { text: r.o_text, attribution: r.o_attribution }
+  }
+
+  // No English means no fallback for the other five, and a card that would go
+  // blank the moment someone switched to a locale nobody has filled in yet.
+  if (!byLocale.en) return null
+
+  return { reference: rows[0].o_reference, byLocale }
+}
