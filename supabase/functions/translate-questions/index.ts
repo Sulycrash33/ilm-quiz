@@ -241,14 +241,23 @@ Deno.serve(async (req) => {
    * without changing the risk profile: in-flight calls never exceed
    * TRANSLATE_CONCURRENCY no matter how large the batch grows, so the rate the
    * model sees is a number set here rather than a consequence of the batch
-   * size. Six at forty seconds each is roughly nine requests a minute.
+   * size.
+   *
+   * Started at six. The first real run at that setting showed 12 of 12 rows
+   * rate-limited on nearly every two-minute tick — Gemini rejecting most of
+   * the batch outright rather than the ~40s-per-call throttling this was
+   * sized around, and the refund made that cheap enough to run for half an
+   * hour before anyone noticed the throughput hadn't moved. Turned down to
+   * two while the actual per-key quota is unknown; `console.error` above now
+   * logs what the API says, and the honest way to raise this again is to
+   * read that, not to guess a second number.
    *
    * And the failure mode is now cheap. A 429 releases the claim with its
    * attempt refunded, so pushing the rate too high costs throughput and
    * nothing else — the queue is exactly as it was, and the next tick tries
    * again. That is what makes the dial safe to turn.
    */
-  const CONCURRENCY = Math.max(1, Number(Deno.env.get("TRANSLATE_CONCURRENCY") ?? 6));
+  const CONCURRENCY = Math.max(1, Number(Deno.env.get("TRANSLATE_CONCURRENCY") ?? 2));
 
   let next = 0;
 
@@ -293,8 +302,11 @@ Deno.serve(async (req) => {
         else refused += 1;
       } catch (e) {
         if (e instanceof RetryableError) {
-          // The model was busy. That is not this question's fault and must not
-          // count against its three attempts.
+          // Logged, not swallowed: the first real run at concurrency 6 showed
+          // 12/12 rate-limited on almost every tick with no way to see why,
+          // which is what forced concurrency back down blind rather than by
+          // measurement. This is the fix for that gap, not just this run.
+          console.error("translate-questions: retryable,", e.message);
           await release(row);
           rateLimited += 1;
           continue;
