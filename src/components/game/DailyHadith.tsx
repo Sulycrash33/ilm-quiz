@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Quote } from "lucide-react";
-import { DAILY_HADITH } from "@/lib/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getDailyHadith, type DailyHadithView } from "@/app/(app)/home/actions";
 
 /**
  * The opening word on the home screen.
@@ -18,15 +19,56 @@ import { useLanguage } from "@/contexts/LanguageContext";
  * being joined on with a dash, and the khatim runs behind it.
  *
  * ── On the word "daily" ───────────────────────────────────────────────────
- * `DAILY_HADITH` is a single hardcoded constant, so this shows the same hadith
- * every day forever. The heading is therefore the honest one, not a promise of
- * rotation. Making it genuinely daily means a set of verified narrations with
- * their references, which is content work for the owner or a scholar to supply:
- * this project's rule is that a citation is never invented, and a wrong hadith
- * number in a religious app is worse than no number.
+ * It is now actually daily. The narration comes from the `hadiths` table and
+ * is chosen by the date, so every player sees the same one on the same day —
+ * the deterministic choice migration 0008 established for the rewards, for the
+ * same reason: a rotation nobody can predict is not a calendar.
+ *
+ * ── On the fallback ───────────────────────────────────────────────────────
+ * The card holds every locale of today's narration and picks one on render, so
+ * changing language is instant and needs no network. A locale nobody has
+ * entered text for falls back to English rather than blanking, which is the
+ * same per-row fallback the question translations use: a partly translated
+ * bank is a working bank.
+ *
+ * Hadith text is never machine-translated. `0047` sets out why at length: a
+ * narration is a claim about what the Prophet ﷺ said, published translations
+ * exist, and there would be nothing to check a model's output against. Locales
+ * are filled in by hand at `/admin/hadiths`.
  */
 export function DailyHadith() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const [hadith, setHadith] = useState<DailyHadithView | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getDailyHadith()
+      .then((h) => {
+        if (!cancelled) setHadith(h);
+      })
+      .catch(() => {
+        /* The card is decoration on a study screen, not a control. If it
+           cannot load, showing nothing is better than showing an error where
+           a hadith should be. */
+      });
+    return () => {
+      cancelled = true;
+    };
+    // Deliberately not keyed on `locale`: every language is already in `hadith`,
+    // so switching one re-renders and does not re-fetch.
+  }, []);
+
+  // Nothing on the first paint, and nothing if the table is empty. The home
+  // page is a stack of independent cards, so an absent one costs no layout.
+  if (!hadith) return null;
+
+  const entry = hadith.byLocale[locale] ?? hadith.byLocale.en;
+  if (!entry) return null;
+
+  // A hadith rendered in a locale that has no text of its own is English text,
+  // whatever the surrounding page is set to. Saying so lets a screen reader
+  // switch voice rather than reading English aloud in a Hausa one.
+  const isFallback = !hadith.byLocale[locale];
 
   return (
     <section className="glass-card relative overflow-hidden rounded-xl p-6 text-center">
@@ -39,12 +81,18 @@ export function DailyHadith() {
 
         <h2 className="sr-only">{t("dailyHadith")}</h2>
 
-        <blockquote className="font-quote-italic text-quote-italic italic text-on-surface">
-          {DAILY_HADITH.text}
+        <blockquote
+          className="font-quote-italic text-quote-italic italic text-on-surface"
+          {...(isFallback ? { lang: "en", dir: "ltr" } : {})}
+        >
+          {entry.text}
         </blockquote>
 
-        <cite className="font-label-caps text-label-caps uppercase not-italic tracking-widest text-primary">
-          {DAILY_HADITH.source}
+        <cite
+          className="font-label-caps text-label-caps uppercase not-italic tracking-widest text-primary"
+          {...(isFallback ? { lang: "en", dir: "ltr" } : {})}
+        >
+          {entry.attribution}
         </cite>
       </div>
     </section>

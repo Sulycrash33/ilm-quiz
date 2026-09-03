@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, ReactNode } from "react"
 import { Locale, Translations, translations, t } from "@/lib/i18n"
 import { createClient } from "@/lib/supabase/client"
 
@@ -25,10 +25,20 @@ function applyDocumentLocale(next: Locale) {
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en")
 
+  /** Set once the visitor has expressed a choice on this device — either by
+   * restoring one from storage or by picking one. The profile lookup below is
+   * asynchronous, and without this flag a pick made while it was still in
+   * flight would be silently overwritten by the older stored value when it
+   * landed. */
+  const hasDeviceChoice = useRef(false)
+
   useEffect(() => {
+    let cancelled = false
+
     // Load saved language from localStorage first (works before sign-in too)
     const saved = localStorage.getItem("ilm-locale") as Locale
     if (saved && translations[saved]) {
+      hasDeviceChoice.current = true
       setLocaleState(saved)
       // This used to be missing on the restore path, so a returning Arabic
       // reader got their translated text laid out left-to-right until they
@@ -36,37 +46,61 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       applyDocumentLocale(saved)
     }
 
-    // Then check the real profile - a signed-in user's saved preference
-    // takes precedence, so language follows them across devices.
+    // Then check the real profile, so a language chosen on one device is
+    // picked up by a device that has never chosen one.
+    //
+    // It fills a gap; it does not overrule. A stored choice is this device's
+    // most recent instruction from the person holding it, and the profile
+    // used to win unconditionally: pick Hausa, refresh, and the profile's
+    // stale "en" put the whole app back into English. That looked like the
+    // choice had not saved. It had — it was being overwritten on read.
     const supabase = createClient()
     supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) return
+      if (!user || cancelled || hasDeviceChoice.current) return
       const { data: profile } = await supabase
         .from("profiles")
         .select("preferred_language")
         .eq("id", user.id)
         .single()
       const preferred = profile?.preferred_language as Locale | undefined
+      if (cancelled || hasDeviceChoice.current) return
       if (preferred && translations[preferred]) {
         setLocaleState(preferred)
         localStorage.setItem("ilm-locale", preferred)
         applyDocumentLocale(preferred)
       }
     })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const setLocale = useCallback((newLocale: Locale, persistToProfile = true) => {
+    hasDeviceChoice.current = true
     setLocaleState(newLocale)
     localStorage.setItem("ilm-locale", newLocale)
     applyDocumentLocale(newLocale)
 
     if (persistToProfile) {
-      const supabase = createClient()
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user) {
-          supabase.from("profiles").update({ preferred_language: newLocale }).eq("id", user.id)
+      // A PostgREST query builder is lazy: it describes a request and sends
+      // nothing until it is awaited. This update was built and dropped, so
+      // every language a signed-in player ever chose was saved to the browser
+      // and never to their profile. Awaiting it is the whole fix.
+      void (async () => {
+        const supabase = createClient()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) return
+        const { error } = await supabase
+          .from("profiles")
+          .update({ preferred_language: newLocale })
+          .eq("id", user.id)
+        if (error) {
+          console.error("Could not save preferred language to profile", error)
         }
-      })
+      })()
     }
   }, [])
 
