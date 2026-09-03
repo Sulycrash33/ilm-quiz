@@ -48,6 +48,30 @@ export async function getCategoryBySlug(slug: string) {
   return data;
 }
 
+/**
+ * The locale to serve content in, taken from the signed-in player's profile.
+ *
+ * Server-side, so it cannot come from `LanguageContext` — that is a client
+ * context. `profiles.preferred_language` is the same value the context reads
+ * and writes when the player picks a language, so the two agree by
+ * construction rather than by a second copy being kept in step.
+ *
+ * Signed out, or no preference stored, means English. That is the honest
+ * default here and not a fallback worth logging: `/quiz` requires a session
+ * anyway.
+ */
+async function preferredLocale(): Promise<string> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return 'en';
+  const { data } = await supabase
+    .from('profiles')
+    .select('preferred_language')
+    .eq('id', user.id)
+    .single();
+  return (data?.preferred_language as string | undefined) ?? 'en';
+}
+
 export async function getPublishedQuizQuestions(slug: string): Promise<QuizQuestion[]> {
   const supabase = await createClient();
   const category = await getCategoryBySlug(slug);
@@ -65,12 +89,73 @@ export async function getPublishedQuizQuestions(slug: string): Promise<QuizQuest
 
   if (error || !data) return [];
 
+  /**
+   * The same questions, in the player's language where one exists.
+   *
+   * ── Why this is an overlay and not a different set of rows ──────────────
+   * `questions.language` has existed since the first migration and nothing
+   * has ever read it, so a player who picked Hausa has always been served
+   * English. The obvious repair — Hausa rows in `questions` — was a trap:
+   * nothing scopes a query by language, so those rows would have doubled the
+   * bank for every player and broken the twenty-per-tier assumption
+   * `buildTierLadder` rests on. Migration 0044 keys translations on
+   * `(question_id, locale)` instead, so the bank stays exactly 5,220
+   * questions and a translation is a different *rendering* of one, never an
+   * extra one.
+   *
+   * ── The fallback is per question, not per language ──────────────────────
+   * A locale with three translated questions out of twenty shows those three
+   * in Hausa and the rest in English, rather than the whole run reverting.
+   * A partly translated bank is therefore a working bank, which is what makes
+   * it safe to publish translations as they arrive instead of all at once.
+   *
+   * `explanation` is not fetched here and could not be: migration 0044 grants
+   * `authenticated` only the columns a player needs before answering. The
+   * translated explanation arrives from `submit_quiz_answer`, after the
+   * answer, in the same language.
+   */
+  const locale = await preferredLocale();
+  const translations = new Map<string, { text: string; options: string[] }>();
+
+  if (locale !== 'en' && data.length > 0) {
+    const { data: rows } = await supabase
+      .from('question_translations')
+      .select('question_id, question_text, choices')
+      .eq('locale', locale)
+      .in('question_id', data.map((r: any) => r.id));
+
+    (rows ?? []).forEach((t: any) => {
+      const options = (t.choices ?? []) as string[];
+      translations.set(t.question_id as string, {
+        text: t.question_text as string,
+        options,
+      });
+    });
+  }
+
   return data.map((row: any) => {
     const tier = clampTier(row.tier ?? 1);
+    const englishOptions = (row.choices ?? []) as string[];
+    const translated = translations.get(row.id as string);
+    /**
+     * A translation with a different number of options is discarded rather
+     * than rendered. `correct_choice_index` indexes into the English array,
+     * so a shorter or longer translated array silently repoints the correct
+     * answer at whatever now sits at that position — a player choosing
+     * correctly would be marked wrong. The database rejects these on write
+     * (0044); this is the second door, because a row written before that
+     * constraint existed, or by any future path that bypasses the RPC, must
+     * still not be able to mis-grade a run.
+     */
+    const usable =
+      translated && translated.options.length === englishOptions.length
+        ? translated
+        : null;
+
     return {
       id: row.id as string,
-      text: row.question_text as string,
-      options: (row.choices ?? []) as string[],
+      text: usable?.text ?? (row.question_text as string),
+      options: usable?.options ?? englishOptions,
       difficulty: labelDifficulty(row.difficulty),
       tier,
       points: POINTS_BY_DIFFICULTY[row.difficulty as DbDifficulty] ?? 10,

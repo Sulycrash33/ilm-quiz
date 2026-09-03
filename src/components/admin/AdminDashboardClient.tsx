@@ -63,6 +63,13 @@ const quickActions = [
     color: "tertiary",
   },
   {
+    title: "Translations",
+    description: "Automatic translation runs, and fixing what reads wrong",
+    href: "/admin/translations",
+    icon: "🌍",
+    color: "secondary",
+  },
+  {
     title: "Audit Log",
     description: "Every administrative action, with who and when",
     href: "/admin/audit",
