@@ -63,6 +63,7 @@ const PRIVATE: string[] = [
   '/admin/audit',
   '/admin/economy',
   '/admin/questions',
+  '/admin/translations',
 ];
 
 for (const p of PUBLIC) check(`public: ${p}`, isPublicPath(p), true);
@@ -91,7 +92,7 @@ for (const asset of [
 }
 
 // Real pages must still go through it, or the deny-by-default does nothing.
-for (const page of ['/home', '/admin', '/admin/users', '/profile', '/quiz/a/1']) {
+for (const page of ['/home', '/admin', '/admin/users', '/admin/translations', '/profile', '/quiz/a/1']) {
   check(`page goes through middleware: ${page}`, runs(page), true);
 }
 
