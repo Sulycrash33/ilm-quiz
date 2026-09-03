@@ -37,7 +37,7 @@ shipped since anyone last suggested playing it.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0049`**, disk and database in step |
+| Migrations | through **`0050`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -409,19 +409,24 @@ not rendered.**
 4. **Scholar review — still zero of 5,220.** `/admin/questions` filters to
    "Awaiting review". Contemporary Issues is the riskiest and so the most
    informative.
-5. **The daily hadith needs content, not code.** Built in 0048's sibling
-   `0047`: `hadiths` + `hadith_translations`, locale-aware from the first
+5. **The daily hadith rotation is 391 narrations long, English only.** Built
+   in `0047`: `hadiths` + `hadith_translations`, locale-aware from the first
    migration, a `daily_hadith()` that picks by date so every player sees the
-   same narration on the same day, and an importer at `/admin/hadiths`.
-   **There is exactly one hadith in the table**, in English only — the one the
-   hardcoded constant carried — so the rotation is one day long and every
-   locale falls back to English. It is an **importer and deliberately not a
-   translator**: there is no "translate this" button and its absence is the
-   feature. A narration is a claim about what the Prophet ﷺ said, published
-   translations of Bukhari and Muslim exist and are what people cite, and the
-   pipeline's guard — that a mistranslation must not change which answer is
-   correct — has no counterpart here, because there is nothing to check the
-   output against.
+   same narration on the same day, and an importer at `/admin/hadiths`. `0050`
+   filled it: the `0047` seed plus 390 more — 40 Hadith Nawawi and 40 Hadith
+   Qudsi in full, and Bukhari's Belief, Knowledge and Ar-Riqaq (heart-
+   softening) books in full — fetched from fawazahmed0/hadith-api, a mirror of
+   published English translations, spot-checked against the well-known text
+   of Bukhari 1 before trusting the rest. It is an **importer and deliberately
+   not a translator**: there is no "translate this" button and its absence is
+   the feature. A narration is a claim about what the Prophet ﷺ said,
+   published translations of Bukhari and Muslim exist and are what people
+   cite, and the pipeline's guard — that a mistranslation must not change
+   which answer is correct — has no counterpart here, because there is
+   nothing to check the output against. **Every locale but English still
+   falls back to English** on every one of the 391 — non-English text arrives
+   the same way English did, from a published edition entered by hand, never
+   generated.
 6. **Nothing has been felt on a physical device.** Haptics need a real Android
    phone; no emulator reproduces a vibration.
 7. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
