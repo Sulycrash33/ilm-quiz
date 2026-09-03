@@ -1,33 +1,28 @@
 # ILM Hunt — session handoff
 
-Written 2026-09-02, replacing the 2026-08-31 note. **Read this first if you are
+Written 2026-09-03, replacing the 2026-09-02 note. **Read this first if you are
 picking up work cold.** Everything below was checked against the live database
-(project `ziblpvwiqzpjnkqjwodl`) and `main` at `ef02c8f` on the day it was
+(project `ziblpvwiqzpjnkqjwodl`) and `main` at `4f05824` on the day it was
 written — re-check anything you are about to depend on rather than trusting the
-numbers blind. Three earlier notes were wrong about a count within a day of
-being written, which is the argument for checking. This one already caught one:
-`daily_challenges` was 10 in the last note and is 12 now.
+numbers blind. Four earlier notes were wrong about a count within a day of
+being written, which is the argument for checking.
 
 ## The one fact that reframes everything
 
 **Nobody has ever played this app.**
 
 ```
-questions      5,220        profiles     1
-categories        29        attempts     0
-store_items       17        weekly_xp    0
-achievements      13
-daily_challenges  12
+questions        5,220        profiles              1
+categories          29        attempts              0
+translations         5        scholar approved      0
 ```
 
 The `attempts` table is **empty**. Every question, category, store item,
 achievement, challenge and rank tier is seeded and ready; one account exists,
 the owner's, and it has never answered anything.
 
-Keep that in front of you when deciding what to build. Four pull requests of
-onboarding work have shipped since the last note and **every one of them was
-verified by rendering it, never by playing it**. A screen that renders is not a
-screen that works.
+Keep that in front of you when deciding what to build. Seven pull requests have
+shipped since anyone last suggested playing it.
 
 ## Where things stand
 
@@ -35,175 +30,282 @@ screen that works.
 |---|---|
 | Questions | **5,220** — 29 categories × 9 tiers × 20 |
 | Published | 5,220 |
-| Explanations | 5,220 written and live, 0 missing, **413 characters average** |
+| Explanations | 5,220 written and live, 0 missing |
+| Translations | **5** — one question, in all five non-English locales |
 | **Scholar approved** | **0** |
 | **Attempts, ever** | **0** |
 | Accounts | **1** — the owner, an admin |
-| Active pg_cron jobs | 5 |
-| `vault.secrets` | 0 of 2 set |
-| Migrations | through **`0043`**, disk and database in step |
+| Active pg_cron jobs | **6** |
+| `vault.secrets` | **2 of 2 set** |
+| Migrations | through **`0046`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
 Overview → the **Game master** card.
 
-## The onboarding flow, as it now stands
+## The translation system, which is the newest and largest thing here
+
+**Content translates itself.** A question written once in English appears in
+Hausa, French, Arabic, Indonesian and Malay without anyone asking.
 
 ```
-/                    landing, the brand moment
-/language            pick a language
-/intro               three panels: what this is
-/onboarding/sound    sound, volume and vibration
-/onboarding/age      Step 1 of 3
-/onboarding/avatar   Step 2 of 3
-/onboarding/name     Step 3 of 3
-/signup
-/onboarding/how-it-works   the rules
-/quiz/<first>/1      the first level
+questions (insert or update)
+     │  trigger, only when translatable text actually moved
+translation_queue          one row per (question, target locale)
+     │  claimed in batches of 3
+edge function              translate-questions, calls the model per locale
+     │
+question_translations      through one shared validation gate
 ```
 
-Four things about this order are decisions, not accidents, and each cost a
-round to work out. **Do not reorder without reading these.**
+**Translation happens on write, not on language selection.** That is the whole
+design: by the time a player taps Hausa the text is already in the database, so
+switching is instant, works offline and costs nothing per view. A model call
+per view would have been latency on every question and a bill that never ends.
 
-- **Language comes before anything with prose on it.** `LanguageContext` opens
-  at `"en"` and only moves for a stored preference or a signed in profile;
-  there is no browser detection anywhere. A first time visitor has neither, so
-  every stranger reads English. While `/intro` sat before the language choice,
-  five of its six translations were unreachable at the one moment they were
-  written for. `/language` is the only page in the app that needs no
-  translation to work, because every option is written in its own language.
-- **Sound is set early because of the audio device, not because of tidiness.**
-  An AudioContext may not start outside a user gesture, so the tap that
-  switches sound on is also the tap that opens the device. Near the top of
-  onboarding, every screen after it can make a sound.
-- **`/intro` and `/onboarding/how-it-works` must not converge.** The first
-  answers *what is this*, for a stranger who has not signed up. The second
-  answers *how do I play*, for a player who has. Nothing about the rules of a
-  run belongs on `/intro`.
-- **The sound screen is outside the "Step N of 3" numbering** because it sets
-  device preferences, not profile fields. Numbering it would promise the player
-  their answers follow them to another phone.
+- **`questions.language` is still not read by anything**, and must not be used
+  to hold translations. It existed since the first migration with all six
+  locales in it and nothing ever read it, which is why a Hausa player was
+  always served English. Rows in `questions` would double the bank for every
+  player and break the twenty-per-tier assumption `buildTierLadder` rests on.
+  Keep it for questions that are genuinely language-native — the
+  `arabic-language` category asks about Arabic grammar and cannot be
+  translated without ceasing to be the question.
+- **The fallback is per question, not per language.** A locale with three
+  translated questions out of twenty shows those three translated and the rest
+  in English. A partly translated bank is a working bank.
+- **Translations publish without human review.** That is the owner's decision,
+  made knowing the trade, and it is why the checks below are load-bearing.
+- **A hand-edited translation is never re-queued and never overwritten.** It is
+  skipped by the trigger, refused by the upsert, and preserved by the worker
+  even if edited mid-batch. When the English moves it is flagged stale, not
+  rewritten. Without this, "publish automatically and fix what reads wrong"
+  loses every fix.
 
-## Two product decisions that live only in code
+### The two checks that stop a player being marked wrong for a right answer
 
-Both would be undone by a well meaning session that had not read them. They are
-commented at their call sites; they are here so you meet them first.
+Both live in `translation_rejection_reason`, used by the automatic *and* the
+by-hand path so they cannot drift, and re-checked on read.
 
-- **Never state the size of the question bank.** A total hands the player a
-  denominator, and from then on every run is measured against finishing rather
-  than against learning. It was removed from `/intro` and from `/quiz` (the
-  heading line, a stat tile, and a per category progress label that read
-  `0/180` and now reads as a percentage). Anyone who works the number out from
-  nine levels and a subject count is welcome to it; the app must not hand it
-  over. The subject count stays: it says how wide the app is, not where it
-  stops.
-- **Player facing counts are fine when they are about the player.** Their own
-  answered totals, the per level count that opens the next level, a daily
-  challenge size, a multiplayer room size. Admin pages keep every total.
+1. **The number of options must match.** `correct_choice_index` points at a
+   **slot**, not a string. A shorter or longer translated array repoints the
+   correct answer at whatever now sits there.
+2. **No two options may be identical.** Two distinct rulings rendered with one
+   word — fard and sunnah, say — leaves the player nothing correct to pick, and
+   the app then teaches them the right answer was wrong.
+
+A refusal leaves that question English in that locale and puts the row on the
+"needs a look" list at `/admin/translations`.
+
+### Operating it
+
+- `/admin/translations` — queue by language and status, "Queue every published
+  question" (one set-based statement, safe to re-run), the refusal list, and an
+  editor for any translation. Saving marks it `human`.
+- **The backfill has NOT been queued.** Only one question is translated.
+- **Measured throughput: ~3 translations per 5-minute tick, ≈860/day.** The
+  full 26,100 is therefore about **30 days** unattended. Raising the cadence or
+  running locales in parallel within a batch are the two levers.
+- `GEMINI_MODEL` is an edge function env var. **Model names get retired** —
+  `gemini-2.0-flash` 404'd on the very first real batch — so change the
+  variable, not the code.
 
 ## The five warnings this codebase has earned
 
+**Testing the happy path is not testing.** `case when attempts >= 3 then
+'failed' else 'queued' end` yields `text`, not the enum, so **every refused or
+failed translation would have thrown** instead of being retried. The rejection
+path caught it; the success path never would have.
+
+**A number chosen before anything was measured is a guess.** A batch of 20 was
+set before a translation had ever been timed. One takes ~40 seconds, so the
+first real batch was killed by the edge function's wall clock partway through
+its fifth item. Measure, then choose.
+
 **A Next build warning does not fail the build.** #37 moved the middleware
 matcher into a shared module so a test could import it. Next reads
-`config.matcher` by *static analysis* and cannot follow an identifier; it
-printed `⨯ Next.js can't recognize the exported config field` and **exited 0**.
-With no matcher the middleware ran on every request, and because #37 had also
-made it deny-by-default, every static asset was redirected to `/login` for
-signed-out visitors. Nobody could sign in.
+`config.matcher` by *static analysis*, printed `⨯ Next.js can't recognize the
+exported config field`, and **exited 0**. With no matcher the middleware ran on
+every request and redirected every static asset to `/login`.
 
 - **Read the whole build log.** A filtered log is not a read log.
 - **A unit test that checks a value cannot tell you the framework used it.**
 
 **Verify against a deployment, not against the code.** Preview deployments sit
 behind Vercel SSO; the Vercel MCP's `get_access_to_vercel_url` issues a share
-token that gets you past it.
+token. **A share token is scoped to one deployment** — reusing an older one
+serves Vercel's own login page with **HTTP 200**.
 
-**A share token is scoped to one deployment.** Reusing an older one silently
-serves you Vercel's own login page, which returns **HTTP 200**. That produced a
-clean-looking "no raw palette found" result from a **zero-byte** stylesheet.
-Any verification that greps a fetched file must first assert the file is what
-you think it is.
+**Assert the file is the file.** A stylesheet grep once returned a clean "no
+raw palette found" from a **zero-byte** file. More recently the first
+stylesheet grepped was simply the wrong one of two — 9KB with zero matches, and
+the real one 100KB. Check size and a known marker before believing a grep.
 
-**A signed-out check needs a control.** Proving `/intro` serves to a signed out
+**A signed-out check needs a control.** Proving `/intro` serves to a signed-out
 visitor means nothing unless you also prove you *are* signed out. Fetch `/home`
-in the same session: it must return 307 to `/login`. Without that, a share
-token that happened to carry a session would make any public route look public.
-
-**Measuring beats reasoning, repeatedly.** Every significant error in the last
-two sessions was caught by rendering, querying, measuring or grepping the built
-artefact, and none by re-reading the source.
+in the same session: it must return 307 to `/login`.
 
 ## The traps that will cost you a day
 
+- **`correct_choice_index` is positional.** Anything that reorders, adds or
+  drops a choice — a translation especially — mis-grades the question.
+- **A `"use server"` module may only export async functions.** Exporting a
+  `LOCALES` constant from one compiled cleanly and failed at page-data
+  collection with "Failed to collect configuration for /admin/translations",
+  which names the page, not the cause.
+- **The key format decides the header.** A legacy `service_role` key is a JWT
+  and goes on `Authorization: Bearer`; newer `sb_secret_...` keys are not JWTs
+  and the functions gateway rejects them there — they must be sent as `apikey`.
+  Supabase's own migration guide calls this out for `pg_net`. Both produce an
+  identical-looking 401. `cron_run_translations` branches on the format.
 - **Scholar approval is NOT `review_status`.** `scholar_approved` is a value of
   that enum, and `submit_quiz_answer` accepts **only** `published`. Migration
   0033 gave it `questions.scholar_approved_at`, its own column.
 - **PostgREST caps an unbounded select at 1,000 rows.** Bitten twice. Count in
   the database with `{ count: "exact", head: true }`.
-- **`config.matcher` must be an inline literal.** See above.
+- **`config.matcher` must be an inline literal.**
 - **A state updater must stay pure.** React may call it twice. Three bugs came
   from a side effect inside one. Cues belong in an effect keyed on the state.
 - **Protection is opt-in, so a forgotten route goes *unreachable*, not
-  unguarded.** `PUBLIC_PREFIXES` in `src/lib/auth-routes.ts` is the allow list
-  and everything else demands a session. Adding `/intro` without listing it
-  would have bounced every signed out visitor off the landing page's only call
-  to action. Add the route and the assertion in `check-middleware` in the same
-  edit.
+  unguarded.** `PUBLIC_PREFIXES` in `src/lib/auth-routes.ts` is the allow list.
+  Add the route and the assertion in `check-middleware` in the same edit.
 - **Reading cookies opts a route out of static rendering permanently.**
-  `@/lib/supabase/server` reads them. `/intro` needs no session, so it takes a
-  plain anonymous client and caches: measured, that was 500ms per request
-  against 5ms, on the first thing a stranger clicks.
-- **An absolutely positioned child does not size its parent.** The intro hero
-  measured 112px while painting 208px of pulse rings, so the column centred
-  itself around a height 96px short of what it drew. That was 145px of dead air
-  top and bottom. If a layout looks wrongly spaced, measure the boxes before
-  adjusting padding.
+  `/intro` takes a plain anonymous client and caches: measured, 500ms per
+  request against 5ms.
+- **An absolutely positioned child does not size its parent.**
 - **`-50%` resolves against the element's own height, and flex stretches it.**
-  The names backdrop was stretched to the viewport while its content was
-  17,105px, so the "seamless" loop ran half a viewport and snapped back, and
-  most of the ninety-nine names were never seen. `self-start` fixed it.
-- **A duration is not a speed.** The names drift over one full copy of the
-  list, about 8,550px, so 2657s is roughly 3.2px/s. Tune by measuring px/s on a
-  running page, never by adjusting the seconds.
+- **A duration is not a speed.** Tune the names drift by measuring px/s.
 - **Adding a column to a `returns table` needs a `drop function` first.**
-- **Tailwind emits a keyframe only if some `animate-*` utility is used.**
-- **Tailwind's scanner is a regex over file bytes and does not know what a
-  comment is.** Naming a palette class inside a comment ships that class.
-- **The i18n guard has two shapes to catch, not one.** Text that starts a JSX
-  node, and text that trails an interpolation. If you add a third check, run it
-  against a deliberately broken file first.
+- **Tailwind emits a keyframe only if some `animate-*` utility is used**, and
+  its scanner is a regex over file bytes that **does not know what a comment
+  is** — naming a palette class inside a comment ships that class.
+- **The i18n guard has two shapes to catch**: text that starts a JSX node, and
+  text that trails an interpolation.
 
-## Dead code is still the most common bug in this repository
+## A security hole that is still open
 
-| Thing | Fault |
-|---|---|
-| `QuizCategoriesClient` | a stale duplicate of the live `QuizCategoriesGrid`, imported by nothing. Both were cleaned of the bank total so the leak cannot return through it |
-| `StreakCounter` | no longer even imported. Fully unreferenced |
-| `KnowledgeTree`, `RankBadge`, `FriendsList`, `KnowledgeCategories` | defined, never used |
+**The SELECT policy on `questions` is `using (review_status = 'published')`
+with no column restriction.** `correct_choice_index` and `explanation` are
+therefore readable through PostgREST **by anyone holding the anon key**, even
+though `quiz-service.ts` carefully declines to select them and says in a
+comment that they must never reach the browser before an answer is submitted.
+The comment states the intent; the policy does not enforce it.
 
-`tick` was in this table until recently: it was defined in `sound.ts` and
-called from nowhere, so the one cue whose own comment describes it repeating
-had never played once. **Before building a screen, grep for whether it already
-exists and is simply not rendered.**
+**Every answer in the bank is currently downloadable.** This is not a
+theoretical finding.
+
+It is not a one-liner: the admin pages read those columns directly as
+`authenticated`, so column grants would break them — the reads have to move to
+SECURITY DEFINER RPCs first. It has been reported to the owner twice and is not
+yet scheduled. **Do not launch without fixing it.**
+
+`question_translations` and `translation_queue` deliberately do not repeat it:
+grants there are per column, and neither the translated explanation nor the
+queue is among them.
+
+## Two product decisions that live only in code
+
+- **Never state the size of the question bank.** A total hands the player a
+  denominator, and from then on every run is measured against finishing rather
+  than against learning. Removed from `/intro` and `/quiz`. The subject count
+  stays: it says how wide the app is, not where it stops.
+- **Player facing counts are fine when they are about the player.** Their own
+  answered totals, the per level count that opens the next level, a daily
+  challenge size. Admin pages keep every total.
+
+## The reward system, and why it is not a gamble
+
+Migration 0008 removed the randomness from the chests **and** the wheel on
+loot-box grounds — paying a set price for an unknown return is structurally
+gacha, and this is a children's Islamic education app. Read that file before
+adding any randomness back.
+
+- **The spin wheel turns now** (#60), but it decides nothing. `spin_wheel_rpc`
+  chooses and awards before the animation starts; the wheel is handed the index
+  it must stop on, so what lands under the pointer is by construction the
+  reward already written to the profile. It is the reveal, not the gamble.
+- **The prize is a function of the date**, the same for every player. The
+  `weight` column on `spin_rewards` is **dead data**.
+- **The cooldown is 24 hours.** The copy said "every 4 hours" in all six
+  languages for a long time while the RPC refused anything inside 24 — the
+  countdown ran to zero and the server said come back later. One
+  `SPIN_COOLDOWN_MS` constant now.
+
+## The onboarding flow
+
+```
+/  →  /language  →  /intro  →  /onboarding/sound  →  age  →  avatar  →  name
+   →  /signup  →  /onboarding/how-it-works  →  /quiz/<first>/1
+```
+
+Four things about this order are decisions, not accidents. **Do not reorder
+without reading these.**
+
+- **Language comes before anything with prose on it.** `LanguageContext` opens
+  at `"en"` and there is no browser detection anywhere, so a first-time visitor
+  reads English. While `/intro` sat before the language choice, five of its six
+  translations were unreachable at the one moment they were written for.
+  `/language` is the only page that needs no translation, because every option
+  is written in its own language.
+- **Sound is set early because of the audio device.** An AudioContext may not
+  start outside a user gesture, so the tap that switches sound on is also the
+  tap that opens the device.
+- **`/intro` and `/onboarding/how-it-works` must not converge.** The first
+  answers *what is this*, for a stranger. The second answers *how do I play*,
+  for a player who has signed up.
+- **The sound screen is outside the "Step N of 3" numbering** because it sets
+  device preferences, not profile fields.
+
+## Look and feel
+
+- **One backdrop for the whole app.** `AppBackdrop` — two glows and an even
+  khatim field. `OnboardingBackdrop` is that plus the drifting names of Allah,
+  which stay in onboarding alone: they are the wrong company for a scoreboard
+  and a shop, and a 17,000px moving layer competes with question text.
+- **Every box carries the khatim**, because `.glass-card` does. One CSS rule,
+  not twenty-four call sites. It is a background layer with the alpha baked
+  into the SVG stroke, not a `::before` — cards here hang badges and rings
+  outside their own bounds, and the `overflow: hidden` an overlay needs would
+  have clipped them.
+- **Colour goes through a token, never the raw palette.** `success`, `warning`,
+  `danger`, `info`, `special`, and `medal-gold` / `-silver` / `-bronze`.
+  **Medals are their own axis.**
+- **Entrances are CSS, not framer-motion.** A motion component renders its
+  `initial` state into the HTML — `opacity: 0` — so content is in the document
+  and invisible until hydration. `settle-in`, `rise-in`, `delay-1`, `delay-2`.
+- **Motion respects `prefers-reduced-motion`**, decorative loops included. The
+  spin wheel does not spin at all under it; it is already on the answer.
+- **No dash is used as punctuation in player-facing copy.** Check with
+  `[a-zA-Z]-[a-zA-Z]`, and expect transliterated names as legitimate hits.
+
+## i18n
+
+- **Six locales: en, ms, id, ha, fr, ar**, in that order in `i18n.ts`.
+- **Zero drift, two guards.** Add every new string to all six in the same edit.
+- **Admin pages are exempt and are English.**
+- **Category names are English in the database** with no translation layer, so
+  do not render them where translated prose would be expected.
+- **The prayer strip** goes through keys. Five of the six labels are Arabic
+  proper nouns and stay as they are in Latin-script locales; **Sunrise was the
+  only common noun** and was English everywhere, which is why it read as a bug.
+  Arabic now gets الفجر الشروق الظهر العصر المغرب العشاء.
+- **Hausa, Malay and Indonesian have established local forms for the five
+  prayers** (Hausa: Asuba, Azahar, La'asar, Magariba, Isha'i). Left alone
+  deliberately — a content decision for the owner, still open.
 
 ## Sound and haptics
 
-Both are synthesised or generated in code, nothing is loaded. Read
-`src/lib/sound.ts` before touching audio; its note on why no dhikr is used as a
-routine reward cue is a considered position, not a placeholder.
+Both are synthesised in code, nothing is loaded. Read `src/lib/sound.ts` before
+touching audio; its note on why no dhikr is used as a routine reward cue is a
+considered position.
 
 - **Cues**: `tap`, `correct`, `wrong`, `levelComplete`, `rankUp`, `comboUp`,
-  `streak`, `tick`. Haptics mirror them except `tap`, which pairs with
-  `select`.
-- **Sound is off by default; haptics are on.** A vibration is private, a sound
-  is not. Haptics switch themselves off under `prefers-reduced-motion`.
-- **Volume runs through one master gain**, never a per call argument, so the
-  balance the cue gains were given by ear survives every setting. Read fresh on
-  every cue, so a slider drag is audible immediately.
+  `streak`, `tick`. `tick` now also drives the spin wheel, one per segment.
+- **Sound is off by default; haptics are on.** A vibration is private.
+- **Volume runs through one master gain**, read fresh on every cue.
 - **`navigator.vibrate` does not exist on iOS Safari at all.** Roughly half the
-  audience will never feel any haptic, which is why every haptic has a visible
-  or audible counterpart.
-- `/onboarding/sound` and the profile both carry the switches and the slider.
+  audience will never feel a haptic, which is why each has a visible or audible
+  counterpart.
 
 ## Conventions that are load-bearing
 
@@ -215,75 +317,69 @@ routine reward cue is a considered position, not a placeholder.
 - **The audit log cannot be forged.** `admin_audit_log` has RLS on, a read
   policy for admins, and no insert policy at all.
 - **Verify migrations in a rolled-back transaction** before believing them.
-- **Colour goes through a token, never the raw palette.** The semantic set is
-  `success`, `warning`, `danger`, `info`, `special`, and `medal-gold` /
-  `medal-silver` / `medal-bronze`. **Medals are their own axis.**
-- **i18n has zero drift and two guards.** Add every new string to all six
-  locales in the same edit. Admin pages are exempt and are English. Category
-  names are English in the database and there is no translation layer over
-  them, so do not render them where translated prose would be expected.
-- **No dash is used as punctuation in player-facing copy.** Check with
-  `[a-zA-Z]-[a-zA-Z]`, and expect transliterated names as legitimate hits.
-- **Motion respects `prefers-reduced-motion`**, decorative loops included.
-- **Entrances are CSS, not framer-motion.** A motion component renders its
-  `initial` state into the HTML — `opacity: 0` — so the content is in the
-  document and invisible until hydration. `settle-in`, `rise-in`, `delay-1`,
-  `delay-2` are the vocabulary, and they stop under reduced motion.
-- **Ornament goes through `<IslamicPattern>`**, and the shared onboarding
-  background is `<OnboardingBackdrop>`: names, two glows, khatim lattice.
+  Raising an exception at the end of a `do $$` block is a clean way to run a
+  whole scenario and keep nothing.
 - **Never hand-retype SQL.** Read the staged `.sql` file and paste it exactly.
+  `submit_quiz_answer` was extracted from 0035 programmatically and patched
+  database-side from its own stored source rather than retyped.
+- Migrations go to the live database **and** `supabase/migrations/`.
 
-## Known holes, disclosed rather than hidden
+## Dead code is still the most common bug in this repository
 
-- **Double points is real now.** 0034 adds `lifeline_spends`; the grader reads
-  and *consumes* a row instead of believing an argument.
-- **A run's difficulty is server-chosen.** 0035 records the tier band on the run.
-- **A player enters a room as themselves.** 0036 to 0038.
-- **Signup is still open.** Dashboard setting, owner only. Confirm at
-  `/auth/v1/settings` before relying on the last known value.
+| Thing | Fault |
+|---|---|
+| `QuizCategoriesClient` | a stale duplicate of the live `QuizCategoriesGrid`, imported by nothing |
+| `StreakCounter` | no longer even imported |
+| `KnowledgeTree`, `RankBadge`, `FriendsList`, `KnowledgeCategories` | defined, never used |
+| `.glass-card-hover` | referenced nowhere, so Tailwind drops it from the output entirely |
+| `spin_rewards.weight` | dead since 0008 removed the weighted roll |
+
+**Before building a screen, grep for whether it already exists and is simply
+not rendered.**
 
 ## Open items
 
 1. **Somebody needs to play the app.** Still the top item, still not a coding
-   task. Zero attempts means no screen shipped in the last four days has ever
+   task. Zero attempts means no screen shipped in the last week has ever
    rendered with real data behind it.
-2. **Nothing has been felt on a physical device.** Haptics need a real Android
-   phone: iOS Safari has no `navigator.vibrate`, and no emulator reproduces a
-   vibration. The sound cues have been verified at the audio graph — with sound
-   off all five previews synthesise nothing, and each cue produces exactly the
-   voices its definition specifies — but nobody has heard them in a run.
-3. **Scholar review — still zero of 5,220.** `/admin/questions` filters to
+2. **The answer-key exposure above.** The one thing that should block a launch.
+3. **The translation backfill has not been queued**, and only one question has
+   ever been translated. Read a few more Hausa samples — especially fiqh, where
+   the fard/sunnah distinction the guard exists for actually bites — before
+   committing to 26,100.
+4. **Scholar review — still zero of 5,220.** `/admin/questions` filters to
    "Awaiting review". Contemporary Issues is the riskiest and so the most
    informative.
-4. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
-5. **Streak reminders — dormant.** `vault.secrets` is empty. `npm run
-   vapid:keys`; walkthrough in `docs/RUNBOOK.md`.
-6. **The daily hadith is not daily.** `DAILY_HADITH` is one hardcoded constant.
-   Making it genuinely daily needs verified narrations with real references.
-   **This is content work for the owner or a scholar, not for a session**: no
-   citation has ever been invented in this project, and a wrong one is worse
-   than none.
-7. **Timed-out questions in the round review withhold the answer.** Showing
+5. **The daily hadith is not daily.** `DAILY_HADITH` is one hardcoded constant.
+   The owner is supplying Bukhari and Muslim in all six languages, so this gets
+   an **importer, not a translator** — a narration is a religious claim and
+   published editions exist. Design the table locale-aware from the first
+   migration.
+6. **Nothing has been felt on a physical device.** Haptics need a real Android
+   phone; no emulator reproduces a vibration.
+7. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
+8. **Streak reminders.** The two vault secrets that kept them dormant since
+   0027 are now set, so `ilm-streak-reminders` will fire at 17:00 UTC. Whether
+   a push actually sends still depends on the VAPID keys, which have not been
+   verified — check before assuming either way.
+9. **Timed-out questions in the round review withhold the answer.** Showing
    them cleanly means recording a timeout as an attempt, which changes accuracy
    stats. A decision, not a fix.
-8. **No browser language detection.** One `navigator.language` fallback would
-   mean an Arabic phone opens in Arabic before anyone taps. Agreed as worth
-   doing, not yet done.
-9. **RTL arrow direction.** Forward and back arrows point the same physical way
-   in Arabic across the whole app. One pass, app wide, or leave it consistent.
-10. **Rank names are Latin inside Arabic text.** `RANKS` titles are data, and
-    `/intro` and how-it-works both render them as they are.
-11. Agreed but unbuilt: bulk actions, Excel export, a read-only auditor role.
+10. **No browser language detection.** One `navigator.language` fallback would
+    mean an Arabic phone opens in Arabic before anyone taps. Agreed, not done.
+11. **RTL arrow direction.** Forward and back arrows point the same physical
+    way in Arabic across the whole app. One pass, app wide, or leave it.
+12. **Rank names are Latin inside Arabic text.** `RANKS` titles are data.
+13. Agreed but unbuilt: bulk actions, Excel export, a read-only auditor role.
 
 ## Deliberately declined, with reasons
 
 Recorded so a future session does not rediscover these and build them by
 accident. None of these is a todo.
 
-- **A friends and social system.** Two Stitch mockups asked for it. No feed
-  table, no reactions, no social graph. This is a schema, RLS, presence and
-  moderation product, not a screen, on an app with **one account**. Declined
-  twice.
+- **A friends and social system.** No feed table, no reactions, no social
+  graph. This is a schema, RLS, presence and moderation product, not a screen,
+  on an app with **one account**. Declined twice.
 - **The global leaderboard mockup.** Roughly everything in it already exists.
 - **Artifacts as an economy.** The mockup's "+15% XP GAIN" is exactly what
   migration 0034 exists to prevent.
@@ -292,20 +388,21 @@ accident. None of these is a todo.
 - **The knowledge tree's winding path.** Alternating absolute offsets are
   precisely what breaks in Arabic RTL.
 - **Barakah as a second currency.** Adopted as the *name* for XP instead.
+- **Chrome-style runtime translation.** Discussed at length and rejected: a
+  model call per view is latency, an endless bill and no offline, and the app
+  *grades* the player on the text. Pre-translation into the database was built
+  instead.
 
 ## About the Stitch mockups
 
 They are built on an **inverted palette**: `primary` is emerald `#4edea3` where
 this app is gold `#f0cd6d`. Every `text-primary` in those files means *green*.
-Translate them: read each class as a role, not a colour.
+Read each class as a role, not a colour.
 
-They also carry, in every file, things that must not come across: AI-generated
-stock photos on `googleusercontent` URLs that will rot, the Material Symbols
-icon font beside this app's lucide, hardcoded English, absolute left/right
-positioning that breaks in RTL, and at least once a redefinition of
-`mashrabiya-overlay` in that orphan green. One mockup's own toggle handler
-checked a class its markup never set, so the first tap turned a switch "on"
-again instead of off. Read them for intent, never for code.
+They also carry AI-generated stock photos on `googleusercontent` URLs that will
+rot, the Material Symbols icon font beside this app's lucide, hardcoded
+English, and absolute left/right positioning that breaks in RTL. Read them for
+intent, never for code.
 
 ## A content problem, still unfixed
 
@@ -339,10 +436,12 @@ authoring questions stops.
 - **`npm run build` and `npm run dev` share `.next`.** Stop dev first.
 - **`NEXT_PUBLIC_*` is inlined at build time.** Writing `.env.local` after a
   build does nothing until you rebuild.
-- **Headless Chrome has no outbound network here, but localhost works.** Serving
-  `npm start` and driving Chromium at `http://localhost:3000` is the cheapest
-  real verification available, and it is how the audio graph, the switch
-  geometry and the layout boxes were all measured.
+- **A fresh container has no `node_modules` and no `.env.local`.** `npm ci`,
+  then write `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` or
+  the build fails prerendering `/intro` with "supabaseUrl is required".
+- **Headless Chrome has no outbound network here, but localhost works.** The
+  Playwright chromium at `/opt/pw-browsers` is the one that exists; there is no
+  `chromium` on PATH.
 - **A run's per-question timer is 25s at tier 1 rising to 45s at tier 9**,
   shorter than a browser automation round trip. The option letter lives in
   `aria-label`, not `innerText`.
@@ -370,21 +469,22 @@ sanity guards, and the signed-out control described above.
 - Develop on a fresh `claude/...` branch, branched from `origin/main`. Open a
   draft PR; the owner says "merge" when ready.
 - Squash merge, matching the existing history: a title ending in `(#N)`.
-- Migrations are applied to the live database **and** written to
-  `supabase/migrations/`. Keep the two in step.
 - The repository is public. Never commit keys.
+- **Ask for the error, not the editor.** Screenshots of a SQL editor have
+  twice put more on screen than the error needed.
 
 ## Recent history
 
 | PR | What |
 |---|---|
+| #62 | What running the translation pipeline for real taught it |
+| #61 | Content translates itself, and Sunrise is a word again |
+| #60 | A wheel that turns, a countdown that moves, and the khatim on every box |
+| #59 | The handoff before this one |
 | #58 | The intro earns its place, and the language comes first |
 | #57 | An intro that says what this is, and a bank whose size stays a mystery |
 | #56 | A screen to set the sound, and the cues it was missing |
 | #55 | One backdrop for every onboarding screen, and a drift that actually loops |
-| #54 | The handoff before this one |
-| #53 | The Stitch screens, translated into the design system |
 | #52 | One vocabulary for colour, a game you can feel, and a real khatim |
-| #51 | The first explanations, written and staged |
 | #43 | The "Next level" CTA, and three security holes |
 | #38 | Inlined the middleware matcher — the import had broken every static asset |
