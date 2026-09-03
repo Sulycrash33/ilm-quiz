@@ -37,7 +37,7 @@ shipped since anyone last suggested playing it.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0048`**, disk and database in step |
+| Migrations | through **`0049`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -217,26 +217,48 @@ in the same session: it must return 307 to `/login`.
 - **The i18n guard has two shapes to catch**: text that starts a JSX node, and
   text that trails an interpolation.
 
-## A security hole that is still open
+## The security hole that was open, and how 0049 closed it
 
-**The SELECT policy on `questions` is `using (review_status = 'published')`
-with no column restriction.** `correct_choice_index` and `explanation` are
-therefore readable through PostgREST **by anyone holding the anon key**, even
-though `quiz-service.ts` carefully declines to select them and says in a
-comment that they must never reach the browser before an answer is submitted.
-The comment states the intent; the policy does not enforce it.
+**Fixed in migration 0049.** The SELECT policy on `questions` was `using
+(review_status = 'published')` with no column restriction, so
+`correct_choice_index` and `explanation` were readable through PostgREST **by
+anyone holding the anon key**, even though `quiz-service.ts` carefully
+declined to select them and said so in a comment. The comment stated the
+intent; the policy never enforced it. Every answer in the bank was
+downloadable — not a theoretical finding, checked directly against the anon
+key. `quiz_room_questions` (multiplayer) had the identical shape of the same
+bug on `correct_index`, found while fixing the first one.
 
-**Every answer in the bank is currently downloadable.** This is not a
-theoretical finding.
+**Why it took more than a grant.** Four places read one of the two columns
+directly as `authenticated` — the fifty-fifty lifeline, multiplayer's room
+seeding, and two admin reads — because a server action built with
+`@/lib/supabase/server` runs under the signed-in user's own JWT and is bound
+by the same privileges as the browser. Each moved to a SECURITY DEFINER
+function before the column lock landed: `fifty_fifty_choices` (returns two
+wrong indices, never the correct one), `start_multiplayer_quiz_rpc` (the old
+select-then-insert is now one atomic host-checked function),
+`admin_questions_for_drafting`, `reviewer_pending_questions`.
 
-It is not a one-liner: the admin pages read those columns directly as
-`authenticated`, so column grants would break them — the reads have to move to
-SECURITY DEFINER RPCs first. It has been reported to the owner twice and is not
-yet scheduled. **Do not launch without fixing it.**
+**Why a column-level `REVOKE` alone would have done nothing.** Supabase's
+default schema setup already grants table-level `SELECT` to `anon` and
+`authenticated`, and Postgres checks column access as table-level-grant *OR*
+column-level-grant — a per-column revoke on top of a standing table-level
+grant changes nothing, which a dry run of this migration caught before it
+shipped. The fix revokes table-level `SELECT` entirely and grants it back
+column-by-column, naming everything except the two that stay locked.
 
-`question_translations` and `translation_queue` deliberately do not repeat it:
-grants there are per column, and neither the translated explanation nor the
-queue is among them.
+`question_translations` and `translation_queue` never had this problem: their
+grants were per-column from the start, and neither the translated explanation
+nor the queue is among them.
+
+Verified against the live database: `has_column_privilege` confirms `anon`
+and `authenticated` can no longer select `correct_choice_index` or
+`explanation` on `questions`, nor `correct_index` on `quiz_room_questions`,
+while every other column — including the ones `quiz-service.ts` actually
+reads — stays readable. All four new functions were exercised in a
+**rolled-back** transaction first: the lifeline never returns the correct
+index, a non-host is refused starting a room, a non-admin/non-reviewer is
+refused both admin reads, and a host's call seeds the room and starts it.
 
 ## Two product decisions that live only in code
 
@@ -377,11 +399,13 @@ not rendered.**
 1. **Somebody needs to play the app.** Still the top item, still not a coding
    task. Zero attempts means no screen shipped in the last week has ever
    rendered with real data behind it.
-2. **The answer-key exposure above.** The one thing that should block a launch.
-3. **The translation backfill has not been queued**, and only one question has
-   ever been translated. Read a few more Hausa samples — especially fiqh, where
-   the fard/sunnah distinction the guard exists for actually bites — before
-   committing to 26,100.
+2. ~~The answer-key exposure.~~ **Fixed in 0049** — see the section above.
+3. **The translation backfill was queued and is running.** All 26,100 rows
+   went into `translation_queue` in one statement; the worker is draining it
+   unattended at the 0048 settings. Read a few Hausa samples once it has run
+   for a while — especially fiqh, where the fard/sunnah distinction the guard
+   exists for actually bites — rather than assuming the automatic checks
+   caught everything.
 4. **Scholar review — still zero of 5,220.** `/admin/questions` filters to
    "Awaiting review". Contemporary Issues is the riskiest and so the most
    informative.
