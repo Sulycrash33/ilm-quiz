@@ -89,10 +89,21 @@ function parseModelJson(raw: string): { question: string; choices: string[]; exp
   return JSON.parse(cleaned);
 }
 
+/**
+ * The model, overridable without a redeploy.
+ *
+ * Hardcoding it cost a batch: `gemini-2.0-flash` was retired, and every call
+ * came back `404 ... is no longer available`. The queue handled that correctly
+ * — five rows went back to `queued` with the reason recorded rather than being
+ * lost — but fixing it still meant shipping code. Reading the name from the
+ * environment means the next retirement is a dashboard edit.
+ */
+const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.6-flash";
+
 async function translate(row: QueueRow, apiKey: string) {
   const languageName = LOCALE_NAMES[row.o_locale] ?? row.o_locale;
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -161,11 +172,35 @@ Deno.serve(async (req) => {
   let written = 0;
   let refused = 0;
   let failed = 0;
+  let released = 0;
+
+  /**
+   * Stop before the runtime stops us.
+   *
+   * An edge function has a wall clock, and one translation measured at roughly
+   * forty seconds — so the first real batch of five was killed partway through
+   * its fifth item. The HTTP response never arrived, and that row sat `claimed`
+   * until the ten-minute reclaim swept it up.
+   *
+   * Finishing early and handing the rest back is strictly better: the work is
+   * queued again immediately, and `release_translation_claim` gives back the
+   * attempt that claiming spent, so a row the model never actually saw cannot
+   * be marked failed for it.
+   */
+  const deadline = Date.now() + 110_000;
 
   // Sequential on purpose. Firing twenty concurrent model calls is the fastest
   // way to hit a rate limit and turn a whole batch into retries; the cron tick
   // supplies the throughput instead.
   for (const row of rows) {
+    if (Date.now() > deadline) {
+      await supabase.rpc("release_translation_claim", {
+        p_question_id: row.o_question_id,
+        p_locale: row.o_locale,
+      });
+      released += 1;
+      continue;
+    }
     try {
       const out = await translate(row, apiKey);
       const { data, error } = await supabase.rpc("complete_translation", {
@@ -192,7 +227,7 @@ Deno.serve(async (req) => {
   }
 
   return new Response(
-    JSON.stringify({ claimed: rows.length, written, refused, failed }),
+    JSON.stringify({ claimed: rows.length, written, refused, failed, released }),
     { headers: { "Content-Type": "application/json" } },
   );
 });
