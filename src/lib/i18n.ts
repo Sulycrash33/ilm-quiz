@@ -79,6 +79,32 @@ export interface Translations {
    * than hardcoded so a locale that does have a short form can use it.
    */
   xpShort: string
+
+  /**
+   * The prayer strip's six labels.
+   *
+   * Five of these are Arabic proper nouns and stay as they are in Latin-script
+   * locales — Fajr is Fajr in French. Two things made the strip look broken
+   * anyway, and both are fixed by routing all six through keys:
+   *
+   *  - **"Sunrise" was the only English common noun in the list.** It sat
+   *    between Fajr and Dhuhr untranslated in all six languages, which is
+   *    exactly why it was the word that read as a bug.
+   *  - **Arabic was rendering Arabic words in Latin script.** An Arabic
+   *    speaker saw "Fajr" where the word is الفجر. Same fault the handoff
+   *    records for the rank names.
+   *
+   * Hausa, Malay and Indonesian all have established local forms for the five
+   * prayers (Hausa says Asuba, Azahar, La'asar, Magariba, Isha'i). Those are
+   * left alone here deliberately: swapping them is a content decision for the
+   * owner, not something to slip into a layout fix.
+   */
+  prayerFajr: string
+  prayerSunrise: string
+  prayerDhuhr: string
+  prayerAsr: string
+  prayerMaghrib: string
+  prayerIsha: string
   bestTotal: string
   playAgain: string
   couldNotLoadQuestion: string
@@ -908,6 +934,12 @@ const enTranslations: Translations = {
   xpThisRound: "Barakah this round",
   coinsWord: "Coins",
   xpShort: "XP",
+  prayerFajr: "Fajr",
+  prayerSunrise: "Sunrise",
+  prayerDhuhr: "Dhuhr",
+  prayerAsr: "Asr",
+  prayerMaghrib: "Maghrib",
+  prayerIsha: "Isha",
   bestTotal: "Best total",
   playAgain: "Play again",
   couldNotLoadQuestion: "Could not load question",
@@ -1712,6 +1744,12 @@ const msTranslations: Translations = {
   xpThisRound: "Barakah pusingan ini",
   coinsWord: "Syiling",
   xpShort: "XP",
+  prayerFajr: "Fajr",
+  prayerSunrise: "Syuruk",
+  prayerDhuhr: "Dhuhr",
+  prayerAsr: "Asr",
+  prayerMaghrib: "Maghrib",
+  prayerIsha: "Isha",
   bestTotal: "Jumlah terbaik",
   playAgain: "Main semula",
   couldNotLoadQuestion: "Tidak dapat memuatkan soalan",
@@ -2516,6 +2554,12 @@ const idTranslations: Translations = {
   xpThisRound: "Berkah putaran ini",
   coinsWord: "Koin",
   xpShort: "XP",
+  prayerFajr: "Fajr",
+  prayerSunrise: "Syuruq",
+  prayerDhuhr: "Dhuhr",
+  prayerAsr: "Asr",
+  prayerMaghrib: "Maghrib",
+  prayerIsha: "Isha",
   bestTotal: "Total terbaik",
   playAgain: "Main lagi",
   couldNotLoadQuestion: "Tidak dapat memuat pertanyaan",
@@ -3320,6 +3364,12 @@ const haTranslations: Translations = {
   xpThisRound: "Albarka na wannan zagaye",
   coinsWord: "Tsabar Kudi",
   xpShort: "XP",
+  prayerFajr: "Fajr",
+  prayerSunrise: "Shuruk",
+  prayerDhuhr: "Dhuhr",
+  prayerAsr: "Asr",
+  prayerMaghrib: "Maghrib",
+  prayerIsha: "Isha",
   bestTotal: "Jimlar Mafi Kyau",
   playAgain: "Sake Wasa",
   couldNotLoadQuestion: "Ba a iya loda tambaya ba",
@@ -4124,6 +4174,12 @@ const frTranslations: Translations = {
   xpThisRound: "Barakah de cette manche",
   coinsWord: "Pi\u00e8ces",
   xpShort: "XP",
+  prayerFajr: "Fajr",
+  prayerSunrise: "Chourouk",
+  prayerDhuhr: "Dhuhr",
+  prayerAsr: "Asr",
+  prayerMaghrib: "Maghrib",
+  prayerIsha: "Isha",
   bestTotal: "Meilleur total",
   playAgain: "Rejouer",
   couldNotLoadQuestion: "Impossible de charger la question",
@@ -4928,6 +4984,12 @@ const arTranslations: Translations = {
   xpThisRound: "بركة هذه الجولة",
   coinsWord: "العملات",
   xpShort: "XP",
+  prayerFajr: "الفجر",
+  prayerSunrise: "الشروق",
+  prayerDhuhr: "الظهر",
+  prayerAsr: "العصر",
+  prayerMaghrib: "المغرب",
+  prayerIsha: "العشاء",
   bestTotal: "أفضل مجموع",
   playAgain: "العب مرة أخرى",
   couldNotLoadQuestion: "تعذّر تحميل السؤال",

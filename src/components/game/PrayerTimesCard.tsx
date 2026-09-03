@@ -11,6 +11,7 @@ import {
   SunriseIcon,
 } from "@/components/icons/prayer-time-icons"
 import { useLanguage } from "@/contexts/LanguageContext"
+import type { Translations } from "@/lib/i18n"
 
 /**
  * Prayer times, as a countdown to the next salah.
@@ -58,6 +59,32 @@ type Timings = Record<string, string>
 interface DayEntry {
   timings: Timings
   date: { hijri: { day: string; month: { en: string }; year: string } }
+}
+
+/**
+ * The i18n key for each label on the strip.
+ *
+ * The strip used to render its own array keys — `{key}` — straight to the
+ * screen, so all six labels were the English literals in every language. Five
+ * of them are Arabic proper nouns and survived that unharmed in French or
+ * Malay, but two things did not:
+ *
+ *  - **"Sunrise" is a common noun**, and it was the only one in the list. It
+ *    stayed English in all six locales, which is why it is the word that gets
+ *    noticed.
+ *  - **Arabic was reading its own words in Latin script.** الفجر rendered as
+ *    "Fajr" to an Arabic speaker.
+ *
+ * Keyed rather than translated inline so the strip and the "next prayer"
+ * headline above it cannot drift apart.
+ */
+const LABEL_KEYS: Record<StripKey, keyof Translations> = {
+  Fajr: "prayerFajr",
+  Sunrise: "prayerSunrise",
+  Dhuhr: "prayerDhuhr",
+  Asr: "prayerAsr",
+  Maghrib: "prayerMaghrib",
+  Isha: "prayerIsha",
 }
 
 const ICONS: Record<StripKey, React.FC<React.SVGProps<SVGSVGElement>>> = {
@@ -296,7 +323,7 @@ export function PrayerTimesCard() {
           </p>
           <p className="truncate font-headline-md text-headline-md leading-tight text-on-surface">
             {t("nextPrayerIn")
-              .replace("{prayer}", next.name)
+              .replace("{prayer}", t(LABEL_KEYS[next.name]))
               .replace("{time}", formatGap(gap))}
           </p>
         </div>
@@ -328,7 +355,7 @@ export function PrayerTimesCard() {
                   isNext ? "text-primary" : "text-on-surface-variant/80"
                 }`}
               >
-                {key}
+                {t(LABEL_KEYS[key])}
               </span>
               <span className="text-[11px] tabular-nums text-on-surface-variant/70">
                 {clock ? `${String(clock.h).padStart(2, "0")}:${String(clock.m).padStart(2, "0")}` : "—"}
