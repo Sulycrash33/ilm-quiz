@@ -283,18 +283,14 @@ export async function getPublishedQuizQuestionsForTier(slug: string, tier: numbe
 
   if (error || !data) return [];
 
-  return data.map((row: any) => {
-    const t = clampTier(row.tier ?? wantedTier);
-    return {
-      id: row.id as string,
-      text: row.question_text as string,
-      options: (row.choices ?? []) as string[],
-      difficulty: labelDifficulty(row.difficulty),
-      tier: t,
-      points: POINTS_BY_DIFFICULTY[row.difficulty as DbDifficulty] ?? 10,
-      timeLimit: timeLimitForTier(t),
-    };
-  });
+  // Through the same overlay as every other player-facing fetch. This mapped
+  // the rows itself and therefore served English to a Hausa player on the
+  // level path — the path a seeker actually walks — while the whole-category
+  // Hunt, three lines above, served the translation correctly. Nothing was
+  // wrong with the translations; this one function simply never asked for
+  // them. Thirty-six Hausa questions live in the browsable bank today, in
+  // thirteen categories, so this was visible on screen rather than latent.
+  return localiseQuestions(data);
 }
 
 /**
