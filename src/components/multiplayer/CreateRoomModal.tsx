@@ -11,18 +11,15 @@ interface CreateRoomModalProps {
   isOpen: boolean
   onClose: () => void
   onCreateRoom: (config: {
-    category: string
     difficulty: "easy" | "medium" | "hard"
     maxPlayers: number
     questionCount: number
   }) => void
-  categories: { id: string; name: string; icon: string }[]
 }
 
-export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: CreateRoomModalProps) {
+export function CreateRoomModal({ isOpen, onClose, onCreateRoom }: CreateRoomModalProps) {
   const { t } = useLanguage()
   const difficultyLabels: Record<"easy" | "medium" | "hard", string> = { easy: t("easy"), medium: t("medium"), hard: t("hard") }
-  const [category, setCategory] = useState(categories[0]?.id || "")
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium")
   const [maxPlayers, setMaxPlayers] = useState(4)
   const [questionCount, setQuestionCount] = useState(10)
@@ -47,26 +44,17 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
           {t("createQuizRoomTitle")}
         </h2>
 
-        {/* Category Selection */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-on-surface mb-2">{t("categoryLabel")}</label>
-          <div className="grid grid-cols-3 gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setCategory(cat.id)}
-                className={`p-3 rounded-lg border text-center transition-all ${
-                  category === cat.id
-                    ? "bg-primary/20 border-primary text-primary"
-                    : "bg-surface-container-high border-white/5 text-on-surface-variant hover:bg-surface-container-highest"
-                }`}
-              >
-                <span className="text-xl block mb-1">{cat.icon}</span>
-                <span className="text-xs">{cat.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* No subject to pick.
+
+            A battle used to ask the host to choose a category, which is the
+            opposite of what it is for: the questions should arrive
+            unannounced, out of a bank the categories never teach. Difficulty
+            stays, because that is the one dial that decides whether the match
+            is winnable — and both players face the identical set either way,
+            seeded once into `quiz_room_questions` when the host starts.
+
+            Anyone who wants to study a particular subject has the categories,
+            which are untouched. */}
 
         {/* Difficulty */}
         <div className="mb-4">
@@ -141,7 +129,7 @@ export function CreateRoomModal({ isOpen, onClose, onCreateRoom, categories }: C
             variant="primary"
             fullWidth
             onClick={() =>
-              onCreateRoom({ category, difficulty, maxPlayers, questionCount })
+              onCreateRoom({ difficulty, maxPlayers, questionCount })
             }
           >
             {t("createRoom")}

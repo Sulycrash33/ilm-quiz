@@ -38,7 +38,7 @@ shipped since anyone last suggested playing it.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0055`**, disk and database in step |
+| Migrations | through **`0056`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -351,14 +351,21 @@ this app quietly.
   `correct_choice_index` was never selected, four call sites honoured it, the
   policy did not, and the answer key was readable for months. Intent repeated
   at call sites drifts. A derived column cannot.
-- **Three readers are pinned to `category`, and those three lines are the
-  switch.** They select across categories rather than within one, so each would
-  start serving arena questions the moment any existed:
-  `ensure_daily_challenge` (picks any category with enough published
-  questions), `getModeQuestionPool` in `quiz-service.ts` (selects by tier
-  alone), and `getCategoriesWithProgress` (lists every category). Measured
-  after the import: unpinned, the play modes would draw 3,536 questions from
-  both banks mixed; pinned, they draw the original 1,740.
+- **The arena is now open (0056).** `ensure_daily_challenge` and
+  `getModeQuestionPool` were flipped to `arena`, and
+  `start_multiplayer_quiz_rpc` now draws from it too. **One pin stays pinned
+  forever**: `getCategoriesWithProgress` must keep `pool = 'category'` or the
+  thirteen arena categories appear on the player's grid. An earlier note here
+  called all three "the switch" — that was wrong, and it is the one to get
+  right.
+- **Nobody picks a subject any more, anywhere but the categories.** The daily
+  challenge, battle and the play modes all draw across the whole arena bank.
+  Difficulty stays contextual and that is deliberate: the bank is even across
+  nine tiers, so uniform-random would give every question an ~11% chance of
+  being Expert and a five-question daily a ~44% chance of containing one, for
+  a player who may have answered nothing. The daily takes a spread (it is
+  shared, and stretch is the point), battle takes the room's difficulty, and
+  the play modes keep the band `startGameRun` computes per player.
 - `start_multiplayer_quiz_rpc` needs no pin — it filters by the room's own
   category, and rooms come from the pinned category list.
 - **The 13 arena categories are organisational, not navigational.** They exist
@@ -390,9 +397,24 @@ row carries its bank number in `seed_batch` as `arena:00123`, the importer
 inserts only what is missing and **never updates**, so a partial run resumes
 and an admin's correction cannot be overwritten.
 
-**Still to do:** flip the three pins. That is what turns the arena on, and it
-is deliberately a separate change so a fault afterwards is unambiguous — the
-data half is already proven.
+### Multiplayer battle was broken, and 0056 fixed it by accident
+
+Worth knowing, because it says something about the state of this app. The
+battle room stored a category id like `holy-quran`, and
+`start_multiplayer_quiz_rpc` compared it to `questions.category_id::text` —
+**a uuid**. Checked, not assumed: all six ids the create-room modal offered
+match **zero** questions as a uuid, and five of the six do not match a
+category slug either. So every battle would have inserted zero questions and
+raised "No questions available for this category". **No battle could ever have
+started.**
+
+Nothing caught it because **no room has ever been created** — the same reason
+nothing else here has been caught. 0056 removes the category filter entirely,
+so the bug leaves with it.
+
+**The daily challenge for a past date keeps its old category.** `category_id`
+is nullable and is now written null; the fifteen stored before today still
+name the category they drew from, and that history is worth keeping legible.
 
 ## The home screen, and what it stopped saying
 

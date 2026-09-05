@@ -26,20 +26,22 @@ import { createClient } from "@/lib/supabase/client"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Translations } from "@/lib/i18n"
 
-const categoryDefs: { id: string; nameKey: keyof Translations; icon: string }[] = [
-  { id: "holy-quran", nameKey: "catQuran", icon: "📖" },
-  { id: "hadith-sciences", nameKey: "catHadith", icon: "📜" },
-  { id: "five-pillars", nameKey: "catFivePillars", icon: "🕌" },
-  { id: "islamic-history", nameKey: "catHistory", icon: "🏛️" },
-  { id: "arabic-language", nameKey: "catArabic", icon: "🔤" },
-  { id: "fiqh", nameKey: "catFiqh", icon: "⚖️" },
-]
+// The category list that used to sit here is gone with the picker it fed.
+//
+// Worth recording why, because it was not only unused: its ids were slugs like
+// "holy-quran", and `start_multiplayer_quiz_rpc` compared the room's category
+// to `questions.category_id::text` — a uuid. Those could never match, so every
+// battle would have raised "No questions available for this category" and no
+// quiz could ever have started. Five of the six ids did not match a category
+// slug either. Nothing caught it because no room has ever been created.
+//
+// Migration 0056 removes the category filter altogether, so the bug goes with
+// it: a battle now draws from the whole arena bank at the room's difficulty.
 
 type ViewState = "home" | "creating" | "joining" | "lobby" | "countdown" | "quiz" | "results"
 
 export default function MultiplayerPage() {
   const { t, dir } = useLanguage()
-  const categories = categoryDefs.map((c) => ({ id: c.id, name: t(c.nameKey), icon: c.icon }))
   const [viewState, setViewState] = useState<ViewState>("home")
   const [roomCode, setRoomCode] = useState("")
   const [joinCode, setJoinCode] = useState("")
@@ -158,7 +160,7 @@ export default function MultiplayerPage() {
     }, 1000)
   }, [roomId, applyActiveQuestion])
 
-  const handleCreateRoom = async (config: { category: string; difficulty: "easy" | "medium" | "hard"; maxPlayers: number; questionCount: number }) => {
+  const handleCreateRoom = async (config: { difficulty: "easy" | "medium" | "hard"; maxPlayers: number; questionCount: number }) => {
     if (!currentUserId || !currentUserName) {
       alert(t("loadingProfileWait"))
       return
@@ -392,7 +394,6 @@ export default function MultiplayerPage() {
         isOpen={viewState === "creating"}
         onClose={() => setViewState("home")}
         onCreateRoom={handleCreateRoom}
-        categories={categories}
       />
 
       {/* Lobby */}

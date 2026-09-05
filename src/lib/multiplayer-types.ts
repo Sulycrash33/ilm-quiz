@@ -130,7 +130,8 @@ export interface QuizRoomState {
 }
 
 export interface CreateRoomInput {
-  category: string
+  /** No category: 0056 moved battles onto the arena bank, drawn across every
+   *  subject at once. Difficulty stays, as the one dial the host still sets. */
   difficulty: "easy" | "medium" | "hard"
   maxPlayers: number
   questionCount: number

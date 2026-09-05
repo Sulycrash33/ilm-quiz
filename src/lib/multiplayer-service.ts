@@ -92,7 +92,11 @@ export async function createRoom(
       host_id: hostId,
       host_name: hostName,
       status: "waiting",
-      category: input.category,
+      // No category. Migration 0056 moved battles onto the arena bank, which
+      // is drawn across every subject at once, and made this column nullable
+      // for exactly this. Rooms created before it keep the category they used,
+      // so the history stays legible.
+      category: null,
       difficulty: input.difficulty,
       max_players: input.maxPlayers,
       current_players: 1,
