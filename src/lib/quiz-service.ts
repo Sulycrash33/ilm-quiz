@@ -89,9 +89,23 @@ export async function getPublishedQuizQuestions(slug: string): Promise<QuizQuest
 
   if (error || !data) return [];
 
+  return localiseQuestions(data);
+}
+
+/**
+ * The rows above, rendered in the player's language where one exists.
+ *
+ * Extracted so there is a single definition of what a translated question is.
+ * It used to live inside `getPublishedQuizQuestions` alone, which is why the
+ * daily challenge had to grow its own copy or go without — and a second copy
+ * of the option-count check below is exactly the kind of drift migration 0049
+ * was written about.
+ */
+async function localiseQuestions(rows: any[]): Promise<QuizQuestion[]> {
+  if (rows.length === 0) return [];
+  const supabase = await createClient();
+
   /**
-   * The same questions, in the player's language where one exists.
-   *
    * ── Why this is an overlay and not a different set of rows ──────────────
    * `questions.language` has existed since the first migration and nothing
    * has ever read it, so a player who picked Hausa has always been served
@@ -117,14 +131,14 @@ export async function getPublishedQuizQuestions(slug: string): Promise<QuizQuest
   const locale = await preferredLocale();
   const translations = new Map<string, { text: string; options: string[] }>();
 
-  if (locale !== 'en' && data.length > 0) {
-    const { data: rows } = await supabase
+  if (locale !== 'en') {
+    const { data: translated } = await supabase
       .from('question_translations')
       .select('question_id, question_text, choices')
       .eq('locale', locale)
-      .in('question_id', data.map((r: any) => r.id));
+      .in('question_id', rows.map((r: any) => r.id));
 
-    (rows ?? []).forEach((t: any) => {
+    (translated ?? []).forEach((t: any) => {
       const options = (t.choices ?? []) as string[];
       translations.set(t.question_id as string, {
         text: t.question_text as string,
@@ -133,7 +147,7 @@ export async function getPublishedQuizQuestions(slug: string): Promise<QuizQuest
     });
   }
 
-  return data.map((row: any) => {
+  return rows.map((row: any) => {
     const tier = clampTier(row.tier ?? 1);
     const englishOptions = (row.choices ?? []) as string[];
     const translated = translations.get(row.id as string);
@@ -165,6 +179,41 @@ export async function getPublishedQuizQuestions(slug: string): Promise<QuizQuest
       timeLimit: timeLimitForTier(tier),
     };
   });
+}
+
+/**
+ * Exactly these questions, whichever bank they came from.
+ *
+ * The daily challenge does not have a pool to draw from: its five questions
+ * were chosen by `ensure_daily_challenge` from the date, are stored on the
+ * row, and are the same five for every player. So this selects by id rather
+ * than by category or tier, and it is the only question fetch in the app that
+ * does.
+ *
+ * Order follows `ids`, not the database's — the ids arrive in the order the
+ * server settled on, and a `.in()` filter returns rows in whatever order
+ * PostgREST likes. Anything not published is dropped rather than substituted:
+ * a challenge whose question was unpublished after it was set is short by one,
+ * and short is honest where a stand-in would silently change the shared set.
+ */
+export async function getQuestionsByIds(ids: readonly string[]): Promise<QuizQuestion[]> {
+  if (ids.length === 0) return [];
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('questions')
+    // As everywhere else: correct_choice_index and explanation are never
+    // selected before an answer is graded. Migration 0049 revoked them at the
+    // column level too, so this is now enforced rather than merely intended.
+    .select('id, question_text, choices, difficulty, tier')
+    .in('id', ids as string[])
+    .eq('review_status', 'published');
+
+  if (error || !data) return [];
+
+  const byId = new Map(data.map((row: any) => [row.id as string, row]));
+  const ordered = ids.map((id) => byId.get(id)).filter(Boolean);
+  return localiseQuestions(ordered as any[]);
 }
 
 export async function getCategoriesWithProgress(): Promise<QuizCategory[]> {

@@ -15,6 +15,7 @@ import {
   applyAnswer,
   applySkip,
   applyTimeout,
+  buildFixedLadder,
   buildLadder,
   buildTierLadder,
   currentQuestion,
@@ -58,6 +59,14 @@ interface HuntViewProps {
    * `buildLadder` used by the whole-category Hunt. */
   forceTier?: number;
   /**
+   * Play exactly the questions handed in, in one fixed order, instead of
+   * sampling a ladder out of them. The daily challenge is the only run whose
+   * questions were chosen by the server and are the same for every player, and
+   * its reward is claimable only once all five have been answered — so the run
+   * must serve all five rather than a rank-curved selection of them.
+   */
+  fixedLadder?: boolean;
+  /**
    * The category's URL slug. Only a level run has one, and only a level run
    * can offer a next level — that is why this is optional rather than derived
    * from `categoryId`, which is a uuid and not routable.
@@ -99,6 +108,7 @@ export function HuntView({
   lifelinePrices,
   onExit,
   forceTier,
+  fixedLadder,
   categorySlug,
   modeRules,
   runId,
@@ -121,7 +131,9 @@ export function HuntView({
   const startTier = rankFor(profile?.totalXp ?? 0).level;
   const ladder = useMemo(
     () =>
-      forceTier !== undefined
+      fixedLadder
+        ? buildFixedLadder(questions)
+        : forceTier !== undefined
         ? buildTierLadder(questions, forceTier, { rng: makeRng(seed) })
         : buildLadder(questions, {
             rng: makeRng(seed),
@@ -132,7 +144,7 @@ export function HuntView({
             // end of it — the whole pool, rather than the classic ten.
             length: rules.endless ? questions.length : undefined,
           }),
-    [questions, seed, startTier, forceTier, rules.endless],
+    [questions, seed, startTier, forceTier, fixedLadder, rules.endless],
   );
 
   const [state, setState] = useState<HuntState>(() => initialState(ladder, rules));

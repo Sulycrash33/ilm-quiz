@@ -9,6 +9,7 @@
  */
 
 import {
+  buildFixedLadder,
   buildLadder,
   buildTierLadder,
   initialState,
@@ -238,6 +239,38 @@ const a = buildLadder(pool, { rng: makeRng(123) }).map((q) => q.id).join(',');
 const b = buildLadder(pool, { rng: makeRng(123) }).map((q) => q.id).join(',');
 check('same seed -> same ladder', a === b);
 check('different seed -> different ladder', a !== buildLadder(pool, { rng: makeRng(124) }).map((q) => q.id).join(','));
+
+// --- the daily challenge's fixed ladder
+// Five questions chosen by the server, the same for every player, all of which
+// must be served: the reward is claimable only once every one has been
+// answered. `buildLadder` would sample them against the player's own rank and
+// `buildTierLadder` would keep one tier and drop the rest.
+const daily: QuizQuestion[] = [5, 2, 6, 4, 3].map((tier, i) => ({
+  id: `daily-${i}`, text: `daily ${i}`, options: ['a', 'b', 'c', 'd'],
+  difficulty: 'Intermediate' as const, tier, points: 15, timeLimit: 30,
+}));
+const fixed = buildFixedLadder(daily);
+check('fixed ladder serves every question', fixed.length === daily.length, fixed.length);
+check('fixed ladder loses nobody',
+  new Set(fixed.map((q) => q.id)).size === daily.length);
+check('fixed ladder stages are 1..n', fixed.every((q, i) => q.stage === i + 1));
+check('fixed ladder climbs', fixed.every((q, i) => i === 0 || q.tier >= fixed[i - 1].tier),
+  fixed.map((q) => q.tier));
+check('fixed ladder takes its clock from the tier',
+  fixed.every((q) => q.timeLimit === timeLimitForTier(q.tier)));
+// No rng anywhere in it: two players on the same day must meet the same five
+// questions in the same order, which is what makes a shared challenge shared.
+check('fixed ladder is the same every time',
+  buildFixedLadder(daily).map((q) => q.id).join(',') === fixed.map((q) => q.id).join(','));
+// Stable within a tier, so the server's own order decides ties rather than
+// whatever `sort` happens to do.
+const sameTier = buildFixedLadder([2, 2, 2].map((tier, i) => ({
+  id: `same-${i}`, text: `same ${i}`, options: ['a', 'b', 'c', 'd'],
+  difficulty: 'Intermediate' as const, tier, points: 15, timeLimit: 30,
+})));
+check('fixed ladder keeps the given order within a tier',
+  sameTier.map((q) => q.id).join(',') === 'same-0,same-1,same-2');
+check('fixed ladder of nothing is empty', buildFixedLadder([]).length === 0);
 
 // --- which modes hold the reveal and allow a pause
 // Derived from the rules rather than a mode name, so these assert the real

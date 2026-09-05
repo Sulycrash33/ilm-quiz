@@ -369,6 +369,53 @@ this app quietly.
   a player who may have answered nothing. The daily takes a spread (it is
   shared, and stretch is the point), battle takes the room's difficulty, and
   the play modes keep the band `startGameRun` computes per player.
+- **Choosing the questions is not the same as serving them, and 0056 only did
+  the first.** The daily challenge has picked five questions by date since
+  migration 0011 and stored their ids on the row, and until now there was no
+  route in the app that played them. The card's button linked to
+  `/quiz/<the challenge's category>` — a whole subject to hunt through, in
+  which those five turned up only by chance — and the Game Modes page's
+  "Start Daily Challenge" linked to `/quiz`, the category grid itself. So the
+  one screen whose entire purpose was *not* asking the player to pick a
+  subject opened a subject picker.
+
+  0056 then made it worse without touching either link: a day now spans the
+  whole arena bank and `category_id` is written null, so the card's button
+  stopped rendering at all and the Game Modes button became the only way in —
+  straight to the category grid. That is what "the arena opens" shipped as,
+  and it was verified against the database rather than clicked, which is
+  exactly the failure the top open item has been warning about.
+
+  **`/play/daily` now serves the five ids on the row and nothing else.** It
+  reuses `ModeRunner`, so the daily is named the same everywhere, and it opens
+  **no `game_runs` row**: a run exists to make an advertised XP multiplier
+  unforgeable (0030), the daily advertises none, and opening one would close
+  whatever run the player had open to authorise a 1x that is already the
+  default. Its rules are written at the route — no lives, a per-question
+  clock — because they are not a mode's bargain and do not belong in
+  `game_mode_rules`. No lives is load-bearing: the reward is claimable only
+  once all five are answered, so losing on the third would put the day's
+  challenge behind a replay.
+- **`buildFixedLadder` exists because the other two builders would lose
+  questions.** `buildLadder` samples a pool against the player's own rank from
+  a `Math.random()` seed, and `buildTierLadder` keeps one tier and drops the
+  rest — today's five span tiers 2 to 6. It happens that `buildLadder` over a
+  five-question pool serves all five, because `takeNearestTier` widens outward
+  until the buckets empty; that is a coincidence of the pool being shorter than
+  `runLength`, not a promise, and the claim "all five get served" is what the
+  reward is gated on. The fixed ladder sorts by tier ascending and is stable
+  within a tier, so it still climbs and every player meets the same five in the
+  same order. No rng anywhere in it.
+- **One definition of a translated question, at last.** The overlay that
+  renders a question in the player's language lived inside
+  `getPublishedQuizQuestions` alone, so the daily challenge had to grow a
+  second copy or go without. It is now `localiseQuestions`, shared. **Still
+  not shared with `getPublishedQuizQuestionsForTier`** — the *level run* path —
+  which means a Hausa player on the level path is served English even where a
+  translation exists. Left alone rather than fixed in the same pass: it is a
+  different bug on a different screen. `getModeQuestionPool` does not localise
+  either, but arena questions are deliberately not queued for translation, so
+  there is nothing there to render yet.
 - `start_multiplayer_quiz_rpc` needs no pin — it filters by the room's own
   category, and rooms come from the pinned category list.
 - **The 13 arena categories are organisational, not navigational.** They exist
@@ -611,6 +658,11 @@ not rendered.**
    against the database and the five gates; not one was clicked.
    The highest-value hour anybody could spend on this project is signing in,
    answering five questions, claiming the daily reward, and starting a battle.
+   **This is no longer hypothetical.** The owner opened the daily challenge,
+   was shown a category picker, and asked why — which is how the missing
+   `/play/daily` route was found. Nothing in the database was wrong; the five
+   questions were there, correct, and unreachable. Every gate passed the whole
+   time. One person, one tap.
 2. ~~The answer-key exposure.~~ **Fixed in 0049** — see the section above.
 3. **The translation backfill is capped at twenty rows a day by the Gemini
    free tier, and the cap now names itself.** As of 2026-09-05 the 429 reads
@@ -761,7 +813,13 @@ authoring questions stops.
 - **The bank is done.** If you find yourself authoring questions, stop.
 - **The admin console is done and reachable.**
 - **Chests, the spin wheel, study circles, daily challenges, leagues and the
-  streak freeze are all fully wired.** "Finish the reward system" is wasted work.
+  streak freeze are all fully wired.** "Finish the reward system" is wasted
+  work. One correction, and it is a pointed one: this line said "fully wired"
+  about the daily challenge while there was **no route that played it** — the
+  reward, the claim RPC, the progress bar and the date-deterministic selection
+  all existed and worked, and the button went to the category grid. A feature
+  can be complete in the database and unreachable in the app, and this document
+  called that finished for two weeks. `/play/daily` closes it.
 - **The combo already escalates and the floating +XP already exists.**
 - **The fonts load correctly.** Investigated, reasoning sound, conclusion false.
 - **The sound system is finished**, including a calibration screen, a volume
@@ -827,6 +885,7 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| #73 | The daily challenge can be played: five questions the server chose, and no category picker on the way in |
 | #71 | The arena opens: daily, battle and the play modes stop asking for a subject — and multiplayer, which could never have started a quiz, works |
 | #70 | Two banks — 5,246 arena questions imported, nothing serving them yet |
 | #69 | The daily reward asks for a day of study, and the home screen remembers |
