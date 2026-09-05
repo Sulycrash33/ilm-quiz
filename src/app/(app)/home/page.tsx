@@ -10,19 +10,15 @@ import { ProgressRing } from "@/components/game/ProgressRing"
 import { PrayerTimesCard } from "@/components/game/PrayerTimesCard"
 import { SalaamGreeting } from "@/components/game/SalaamGreeting"
 import { DailyHadith } from "@/components/game/DailyHadith"
-import { IslamicPattern } from "@/components/islamic-pattern"
 import { ReviewCallout } from "@/components/game/ReviewCallout"
-import { UserStats } from "@/components/game/UserStats"
-import { DailyProgressCard } from "@/components/game/DailyProgressCard"
 import { LogoutButton } from "@/components/layout/LogoutButton"
 
-import { getContinueCard, type ContinueCard } from "./actions"
-import { getDailyChallenge, type DailyChallengeView } from "../challenges/actions"
 import { useProfile } from "@/hooks/use-profile"
 import { playCue } from "@/lib/sound"
 import { playHaptic } from "@/lib/haptics"
 import { takeStreakAdvance } from "@/lib/streak-cue"
-import { useTodayStats } from "@/hooks/use-today-stats"
+import { useLifetimeStats } from "@/hooks/use-lifetime-stats"
+import { rankProgress } from "@/lib/ranks"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 const cardVariants = {
@@ -32,45 +28,10 @@ const cardVariants = {
 
 export default function HomePage() {
   const { profile, loading } = useProfile()
-  const { questionsToday, accuracy } = useTodayStats()
+  const { answered: lifetimeAnswered, accuracy: lifetimeAccuracy } = useLifetimeStats()
   const { t, dir } = useLanguage()
   const [currentTime, setCurrentTime] = useState("")
 
-  // Both of these cards used to be hardcoded. They now come from the database
-  // and render an honest empty state when there is nothing to show.
-  const [continueCard, setContinueCard] = useState<ContinueCard | null>(null)
-  const [challenge, setChallenge] = useState<DailyChallengeView | null>(null)
-
-  /**
-   * Until this resolves, both cards below have nothing to show — and "nothing
-   * to show" is not the same claim as "there is nothing".
-   *
-   * Both used to start at `null` and render their empty state immediately, so
-   * the most prominent card on the front door announced "No challenge today"
-   * for the whole time the request was in flight, then flipped to a real
-   * challenge when it landed. On a slow connection — which is most of the
-   * people this app is for — that is what the home screen says for seconds,
-   * and if the request fails it is what it says forever. There is in fact a
-   * challenge nearly every day: a cron job materialises one at 00:05.
-   */
-  const [cardsLoading, setCardsLoading] = useState(true)
-
-  useEffect(() => {
-    let cancelled = false
-    void (async () => {
-      try {
-        const [c, d] = await Promise.all([getContinueCard(), getDailyChallenge()])
-        if (cancelled) return
-        setContinueCard(c)
-        setChallenge(d)
-      } finally {
-        if (!cancelled) setCardsLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   useEffect(() => {
     const updateTime = () => {
@@ -101,11 +62,9 @@ export default function HomePage() {
   }, [loading, profile?.streakCount])
 
   const reduceMotion = useReducedMotion()
-  const dailyProgress = Math.min((questionsToday / 10) * 100, 100)
+  /** The ladder the ring is measured against — never the size of the bank. */
+  const rank = rankProgress(profile?.totalXp ?? 0)
   const streakAlive = (profile?.streakCount ?? 0) > 0
-  /** Nothing earned, nothing answered, no streak: the cold-start screen. */
-  const coldStart =
-    !loading && !cardsLoading && !continueCard && questionsToday === 0 && !streakAlive
 
   return (
     <div dir={dir} className="relative min-h-[100dvh] bg-background pb-32">
@@ -197,15 +156,34 @@ export default function HomePage() {
         {/* What is due for spaced review. Renders nothing when the queue is empty. */}
         <ReviewCallout />
 
-        {/* Today, in one band instead of one screenful.
+        {/* The player's whole journey, in one band.
 
-            This was a 288px ring centred in its own full-width section, with
-            two stats stranded below it. On a phone that spent most of the fold
-            drawing a large circle whose only message, for a new player, was
-            "0%" — the emptiest possible thing to lead with. The ring is still
-            here because it is genuinely satisfying once it fills; it is now
-            sized to sit beside the numbers rather than instead of them, and
-            the whole band costs about a third of the height it used to. */}
+            This used to be "Today's progress": a ring filling toward ten
+            questions a day, reset every midnight. Two things were wrong with
+            it. It threw away everything the player had ever done at the moment
+            they most wanted to see it — open the app on a new day and the front
+            door says 0%, having forgotten a month of study. And ten a day was a
+            goal nobody had agreed to; missing it read as failure for a person
+            who answered nine.
+
+            ── The denominator problem, which is why the ring shows rank ──────
+            The obvious fix is a percentage of the bank, and it is the one thing
+            this app must not do. Stating the size of the question bank hands
+            the player a denominator, and from then on every run is measured
+            against finishing rather than against learning — which is why the
+            total was removed from `/intro` and `/quiz`. `answered / 5,220`
+            would have put it back on the busiest screen in the app.
+
+            So the ring is progress toward the next rank instead. It is a real
+            total — it only ever goes up, and it survives midnight — but it is
+            measured against the player's own next step rather than against the
+            end of the corpus. `rankProgress` already computes it from
+            `total_xp`, the same ladder the profile and the rank-up cue use, so
+            there is no second definition to drift.
+
+            The two numbers beside it are lifetime and unbounded: questions
+            answered, and accuracy across all of them. Counts about the player
+            are fine; it is the bank's size that stays private. */}
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,25 +192,24 @@ export default function HomePage() {
         >
           <div className="flex items-center gap-4 sm:gap-5">
             <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0">
-              <ProgressRing progress={dailyProgress} size={96} strokeWidth={7} />
+              <ProgressRing progress={rank.percent} size={96} strokeWidth={7} />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="font-headline-md text-headline-md text-primary tabular-nums">
-                  <CountUp value={Math.round(dailyProgress)} format={(n) => `${n}%`} />
+                  <CountUp value={Math.round(rank.percent)} format={(n) => `${n}%`} />
                 </span>
               </div>
             </div>
 
             <div className="min-w-0 flex-1">
               <p className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
-                {t("todayProgress")}
+                {t("overallProgress")}
               </p>
-              {/* Same shape LevelPath already uses, so this needs no new
-                  string in any of the six locales. */}
-              <p className="font-bold text-headline-md text-on-surface tabular-nums mt-0.5">
-                {questionsToday}/10{" "}
-                <span className="font-normal text-body-md text-on-surface-variant">
-                  {t("questions").toLowerCase()}
-                </span>
+              {/* At the top of the ladder there is no "next", and inventing one
+                  would be a lie on the screen. */}
+              <p className="font-bold text-headline-md text-on-surface mt-0.5 break-words">
+                {rank.isMax || !rank.next
+                  ? rank.rank.title
+                  : t("rankJourney", { current: rank.rank.title, next: rank.next.title })}
               </p>
 
               <div className="flex gap-6 mt-3">
@@ -242,11 +219,11 @@ export default function HomePage() {
                       <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z" />
                     </svg>
                     <span className="font-bold text-title-md text-on-surface tabular-nums">
-                      <CountUp value={profile?.totalXp ?? 0} />
+                      <CountUp value={lifetimeAnswered} />
                     </span>
                   </div>
                   <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">
-                    {t("xpGained")}
+                    {t("questionsAnswered")}
                   </p>
                 </div>
                 <div>
@@ -254,10 +231,10 @@ export default function HomePage() {
                     <svg className="w-4 h-4 text-secondary" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M17.66 7.93L12 2.27 6.34 7.93c-3.12 3.12-3.12 8.19 0 11.31C7.9 20.8 9.95 21.58 12 21.58c2.05 0 4.1-.78 5.66-2.34 3.12-3.12 3.12-8.19 0-11.31zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59s.62-3.11 1.76-4.24L12 5.1v14.49z" />
                     </svg>
-                    {/* `accuracy` is null until a question has been answered.
-                        Interpolating it rendered a bare "%" with no number. */}
+                    {/* Null until the first answer. Interpolating it once
+                        rendered a bare "%" with no number in front of it. */}
                     <span className="font-bold text-title-md text-on-surface tabular-nums">
-                      {accuracy === null ? "\u2014" : `${accuracy}%`}
+                      {lifetimeAccuracy === null ? "\u2014" : `${lifetimeAccuracy}%`}
                     </span>
                   </div>
                   <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">
@@ -269,147 +246,21 @@ export default function HomePage() {
           </div>
         </motion.section>
 
-        {/* Bento Grid Content */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-          {/* Continue Learning Card.
-              Everything here was hardcoded: the course name, "Lesson 4 of 12",
-              "15 mins remaining", "60% complete". A brand-new account with no
-              attempts at all was told it was most of the way through a course
-              it had never opened. It also carried `cursor-pointer` with nothing
-              to click, which is why tapping it did nothing.
+        {/* The "Continue learning" card and the "Daily mission" card both
+            stood here and are both gone.
 
-              It now shows the category most recently answered in, with real
-              counts, and is a real link. Someone who has never played is
-              invited to start rather than shown invented progress. */}
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            className="md:col-span-8"
-          >
-            {/* On a cold start this is the only thing on the page worth
-                tapping, so it says so: a warm ring and a slow breath draw the
-                eye to the one action that begins everything. Once there is any
-                history at all it settles down to an ordinary card. */}
-            <Link
-              href={continueCard ? `/quiz/${continueCard.slug}` : "/quiz"}
-              className={`glass-card p-6 relative overflow-hidden group block transition-transform active:scale-[0.98] ${
-                coldStart ? "ring-1 ring-primary/40 shadow-[0_0_28px_-6px_rgba(240,205,109,0.35)]" : ""
-              } ${coldStart && !reduceMotion ? "animate-pulse-slow" : ""}`}
-            >
-              <IslamicPattern variant="flat" className="inset-auto bottom-0 right-0 h-32 w-32 rotate-12" />
-              <div className="relative z-10">
-                <div className="flex justify-between items-start gap-3 mb-6">
-                  <div className="min-w-0">
-                    <span className="font-label-caps text-label-caps text-primary uppercase tracking-widest">
-                      {continueCard ? t("inProgress") : t("startLearning")}
-                    </span>
-                    <h2 className="font-headline-md text-headline-md text-on-surface mt-1 break-words">
-                      {continueCard ? continueCard.name : t("pickACategory")}
-                    </h2>
-                    {/* Same reason as the challenge card: telling someone they
-                        have never answered anything, while the request that
-                        would say otherwise is still running, is a guess
-                        dressed as a fact. */}
-                    {cardsLoading ? (
-                      <span
-                        className="mt-2 block h-4 w-36 max-w-full animate-pulse rounded bg-surface-container-highest"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <p className="text-on-surface-variant text-sm mt-1">
-                        {continueCard
-                          ? t("continueAnswered", {
-                              answered: continueCard.answered,
-                              total: continueCard.total,
-                            })
-                          : t("noProgressYet")}
-                      </p>
-                    )}
-                  </div>
-                  <svg className="w-8 h-8 shrink-0 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
-                  </svg>
-                </div>
-                {continueCard && (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-medium text-on-surface-variant">
-                      <span>{t("complete", { percent: continueCard.percent })}</span>
-                    </div>
-                    <div className="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary to-primary-fixed-dim rounded-full transition-[width] duration-700"
-                        style={{ width: `${continueCard.percent}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Link>
-          </motion.div>
+            Continue learning duplicated the Learning tab in the bottom bar,
+            which is on this screen at all times and goes to the same place. On
+            a cold start it read "Pick a category", which is precisely what the
+            tab already says, so the front door offered the same door twice.
 
-          {/* Daily Mission. The title used to read "Complete 3 Arabic
-              Quizzes" regardless of what today's challenge actually was; only
-              the progress number was real. Both now come from
-              `getDailyChallenge`. It calls `ensure_daily_challenge`, which
-              is belt and braces: the `ilm-daily-challenge` cron job already
-              materialises the day's challenge at 00:05, and this covers the
-              case where a reader arrives before it has run. */}
-          <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            className="md:col-span-12 glass-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-l-tertiary"
-          >
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="w-12 h-12 shrink-0 rounded-full bg-tertiary/10 flex items-center justify-center">
-                <svg className="w-7 h-7 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                </svg>
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-headline-md text-headline-md text-on-surface break-words">
-                  {challenge
-                    ? t("challengeQuestions", { count: challenge.questionCount })
-                    : t("dailyChallengeTitle")}
-                </h3>
-                {/* While the request is in flight this stays a shimmer rather
-                    than an answer. A skeleton needs no copy, so the honest
-                    loading state costs nothing in six locales. */}
-                {cardsLoading ? (
-                  <span
-                    className="mt-1 block h-4 w-40 max-w-full animate-pulse rounded bg-surface-container-highest"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <p className="text-on-surface-variant">
-                    {challenge
-                      ? challenge.completed
-                        ? t("challengeDone")
-                        : t("currentProgress", {
-                            answered: challenge.answered,
-                            total: challenge.questionCount,
-                          })
-                      : t("noChallengeToday")}
-                  </p>
-                )}
-              </div>
-            </div>
-            {challenge && (
-              <div className="flex items-center gap-4 bg-surface-container-high/60 px-4 py-2 rounded-lg border border-white/5 shrink-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-tertiary font-bold">+{challenge.rewardXp}</span>
-                  <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
-                  </svg>
-                </div>
-                <Link href="/challenges" className="btn-primary px-6 py-2 rounded-lg font-bold text-sm">
-                  {t("continueButton")}
-                </Link>
-              </div>
-            )}
-          </motion.div>
-        </div>
+            The daily mission — "Answer 5 questions" — was the harder call. It
+            was not redundant, it was misplaced: it stated a task with no
+            reward attached to it on the screen, while the reward it should
+            have been attached to sat further down paying out for nothing. The
+            two are now one thing, on `/rewards`: the questions are the price
+            of the daily coins, stated where the coins are collected. Migration
+            0053 enforces it in the database. */}
 
         {/* Additional Content */}
         <motion.div variants={cardVariants} initial="hidden" animate="visible">

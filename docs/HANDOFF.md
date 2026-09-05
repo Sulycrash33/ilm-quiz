@@ -38,7 +38,7 @@ shipped since anyone last suggested playing it.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0051`**, disk and database in step |
+| Migrations | through **`0053`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -332,6 +332,64 @@ refused both admin reads, and a host's call seeds the room and starts it.
 - **Player facing counts are fine when they are about the player.** Their own
   answered totals, the per level count that opens the next level, a daily
   challenge size. Admin pages keep every total.
+
+## The home screen, and what it stopped saying
+
+Three things were removed or rewritten in one pass (`0053`), and the reasoning
+matters more than the diff.
+
+- **"Today's progress" is now overall progress.** The ring filled toward ten
+  questions a day and reset at midnight, so the front door forgot a month of
+  study every night, and ten a day was a target nobody agreed to. **The ring
+  now shows progress toward the next rank.** That was the only honest option:
+  a percentage of the bank would have handed the player a denominator, which
+  is the one thing this app refuses to do — see "Never state the size of the
+  question bank" above. Rank is a real total that only goes up and survives
+  midnight, measured against the player's own next step rather than the end of
+  the corpus. It reuses `rankProgress` so there is no second definition.
+  Beside it: lifetime questions answered and lifetime accuracy, both unbounded
+  counts about the player, which are explicitly fine.
+- **`useLifetimeStats` counts, it does not select.** `useTodayStats` fetches a
+  day's rows and counts them in JavaScript; doing that for a lifetime walks
+  straight into the 1,000-row PostgREST cap this repo has hit twice. Both
+  numbers come back as `count`/`head: true`, so no rows cross the wire.
+- **The "Continue learning" card is gone.** It duplicated the Learning tab in
+  the bottom bar, which is on screen at all times and goes to the same place;
+  on a cold start it said "Pick a category", which is what the tab says.
+- **The "Daily mission" card is gone from home, and became the price of the
+  daily reward.** It stated a task with no reward attached while the reward it
+  belonged to sat lower down paying out for nothing.
+
+## The daily login reward now has a condition
+
+**`claim_daily_login_rpc` used to pay for opening the app.** On an education
+app that rewards launching an icon, and it competed with the thing the app
+exists to make attractive. `0053` gates it: answer `daily_task_questions()`
+questions today — currently **5** — and then claim.
+
+- **The wheel is the unconditional one, deliberately.** It is a gift, it costs
+  nothing and asks nothing, and 0008 already removed the gamble from it. Two
+  unconditional gifts on one screen made the daily claim indistinguishable
+  from it. Now they say different things.
+- **The number is a function, not a literal.** `daily_task_questions()` returns
+  5; the owner asked for "five or four or three" and nobody has watched a real
+  player yet. One line, one place, no redeploy.
+- **Progress counts any attempt**, from any room — a level run, the daily
+  challenge, multiplayer. Tying it to one specific set would tell a player who
+  answered forty questions elsewhere that they had done nothing.
+- **The gate is checked after the already-claimed check**, on purpose: someone
+  who claimed this morning is told they already claimed, which is true and
+  final, rather than sent to study for a reward they cannot collect twice.
+- **`daily_task_progress()` exists so the screen never counts for itself.** The
+  bar and the button read the same threshold and the same count as the gate; a
+  bar reading 5/5 beside a button that refuses would be worse than no bar.
+- The button is disabled in the UI and **that is decoration** — the rule from
+  0034 holds, a reward a client can ask for is one it can help itself to.
+
+Verified in a rolled-back transaction against the live database, impersonating
+the account: 0 answered refused, 4 answered refused, the fifth opened it and
+paid 40 coins, a second claim was refused as *already claimed* rather than as
+locked, and `daily_task_progress()` agreed at every step. Nothing was kept.
 
 ## The reward system, and why it is not a gamble
 

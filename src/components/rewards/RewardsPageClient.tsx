@@ -11,6 +11,7 @@ import {
   spinWheel,
   purchaseAndOpenChest,
   type SpinResult,
+  type DailyTaskProgress,
 } from "@/app/(app)/rewards/actions"
 import { SpinWheel, type SpinSegment } from "@/components/rewards/SpinWheel"
 import { useLanguage } from "@/contexts/LanguageContext"
@@ -55,6 +56,7 @@ const CHEST_NAME_KEYS: Record<string, keyof Translations> = {
 }
 
 export function RewardsPageClient({
+  dailyTask,
   streakCount,
   longestStreak,
   streakFreezesAvailable,
@@ -67,6 +69,7 @@ export function RewardsPageClient({
   chestTypes,
   spinRewards,
 }: {
+  dailyTask: DailyTaskProgress
   streakCount: number
   longestStreak: number
   streakFreezesAvailable: number
@@ -83,6 +86,18 @@ export function RewardsPageClient({
   const [coins, setCoins] = useState(initialCoins)
   const [xp, setXp] = useState(initialXp)
   const [claimedToday, setClaimedToday] = useState(initialClaimedToday)
+  /**
+   * Today's questions, seeded from the server and corrected by it.
+   *
+   * Held in state rather than read straight from the prop because the claim
+   * itself reports the count: if the player answered questions in another tab
+   * since this page loaded, the refusal carries the true number and the bar
+   * moves to match instead of arguing with the button.
+   */
+  const [taskAnswered, setTaskAnswered] = useState(dailyTask.answered)
+  const taskRequired = dailyTask.required
+  const taskDone = taskRequired > 0 && taskAnswered >= taskRequired
+  const taskPercent = taskRequired > 0 ? Math.min(100, Math.round((taskAnswered / taskRequired) * 100)) : 0
   const [message, setMessage] = useState<string | null>(null)
   const [spinAvailableAt, setSpinAvailableAt] = useState<string | null>(
     lastSpinAt ? new Date(new Date(lastSpinAt).getTime() + SPIN_COOLDOWN_MS).toISOString() : null
@@ -143,6 +158,12 @@ export function RewardsPageClient({
       } else if (result.alreadyClaimedToday) {
         setClaimedToday(true)
         setMessage(t("alreadyClaimedMsg"))
+      } else if (result.taskIncomplete) {
+        // The server refused because today's questions are not done. It also
+        // reports how far along the player is, so the bar corrects itself from
+        // the authority rather than from whatever this page loaded with.
+        setTaskAnswered(result.taskAnswered ?? taskAnswered)
+        setMessage(t("dailyTaskLocked", { required: result.taskRequired ?? taskRequired }))
       } else {
         setMessage(result.error ?? t("claimErrorMsg"))
       }
@@ -308,8 +329,56 @@ export function RewardsPageClient({
             )
           })}
         </div>
-        <PremiumButton variant="primary" onClick={handleClaim} disabled={claimedToday || (isPending && pendingAction === "claim")}>
-          {claimedToday ? t("claimedForToday") : isPending && pendingAction === "claim" ? t("claimingLabel") : t("claimDayReward", { day: currentDayNumber })}
+        {/* The day's task.
+
+            This reward used to pay for opening the app. 0053 attaches a
+            condition to it and enforces that condition in the database; this
+            strip is what makes the condition visible, because a button that
+            refuses without saying why is a bug as far as the player is
+            concerned. Hidden once claimed: at that point the task is history
+            and the only useful thing to say is that the reward is spent. */}
+        {!claimedToday && taskRequired > 0 && (
+          <div className="mb-4 rounded-lg border border-white/5 bg-surface-container-high/60 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-bold text-on-surface">
+                {t("dailyTaskTitle", { required: taskRequired })}
+              </p>
+              <span
+                className={`font-bold tabular-nums shrink-0 ${taskDone ? "text-success" : "text-on-surface-variant"}`}
+              >
+                {Math.min(taskAnswered, taskRequired)}/{taskRequired}
+              </span>
+            </div>
+            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface-container-highest">
+              <div
+                className={`h-full rounded-full transition-[width] duration-700 ${taskDone ? "bg-success" : "bg-gradient-to-r from-primary to-primary-fixed-dim"}`}
+                style={{ width: `${taskPercent}%` }}
+              />
+            </div>
+            {!taskDone && (
+              <Link
+                href="/quiz"
+                className="mt-3 inline-flex items-center gap-1 font-bold text-sm text-primary hover:underline"
+              >
+                {t("dailyTaskCta")}
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            )}
+          </div>
+        )}
+
+        <PremiumButton
+          variant="primary"
+          onClick={handleClaim}
+          disabled={claimedToday || !taskDone || (isPending && pendingAction === "claim")}
+        >
+          {claimedToday
+            ? t("claimedForToday")
+            : isPending && pendingAction === "claim"
+              ? t("claimingLabel")
+              : !taskDone
+                ? t("dailyTaskLocked", { required: taskRequired })
+                : t("claimDayReward", { day: currentDayNumber })}
         </PremiumButton>
       </motion.div>
 
