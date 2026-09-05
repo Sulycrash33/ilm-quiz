@@ -280,11 +280,17 @@ export async function getModeQuestionPool(
     .from('questions')
     .select('id, question_text, choices, difficulty, tier')
     .eq('review_status', 'published')
-    // THE PIN. This selects by tier alone across every category, so without
-    // it the play modes would start serving arena questions the moment any
-    // exist. Migration 0054 landed the split without changing behaviour;
-    // flipping this to 'arena' is what turns the new bank on here.
-    .eq('pool', 'category')
+    // The arena bank. Timed, survival and practice ask nobody to choose a
+    // subject — questions arrive from all thirteen arena categories at once,
+    // and a player who wants a particular subject goes to the categories,
+    // which are untouched.
+    //
+    // The tier band below is what keeps this from being cruel. The bank is
+    // spread evenly across nine tiers, so selecting with no band at all would
+    // give every question an ~11% chance of being Expert; `startGameRun`
+    // computes the band from the player, so the surprise is in *which*
+    // question, never in whether they could possibly answer it.
+    .eq('pool', 'arena')
     .gte('tier', low)
     .lte('tier', high)
     .limit(limit);
