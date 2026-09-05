@@ -715,7 +715,12 @@ sanity guards, and the signed-out control described above.
 - Develop on a fresh `claude/...` branch, branched from `origin/main`. Open a
   draft PR; the owner says "merge" when ready.
 - Squash merge, matching the existing history: a title ending in `(#N)`.
-- The repository is public. Never commit keys.
+- **The repository is PRIVATE.** Checked 2026-09-05 against the GitHub API,
+  which reports `"private": true`; `raw.githubusercontent.com` 404s even for
+  `README.md`. This note said "public" for a long time and it was wrong — it
+  matters because anything that fetches repo content at run time (an edge
+  function reading a seed file, say) cannot use a raw URL without a token.
+  Never commit keys regardless.
 - **Ask for the error, not the editor.** Screenshots of a SQL editor have
   twice put more on screen than the error needed.
 
