@@ -409,13 +409,27 @@ this app quietly.
 - **One definition of a translated question, at last.** The overlay that
   renders a question in the player's language lived inside
   `getPublishedQuizQuestions` alone, so the daily challenge had to grow a
-  second copy or go without. It is now `localiseQuestions`, shared. **Still
-  not shared with `getPublishedQuizQuestionsForTier`** — the *level run* path —
-  which means a Hausa player on the level path is served English even where a
-  translation exists. Left alone rather than fixed in the same pass: it is a
-  different bug on a different screen. `getModeQuestionPool` does not localise
-  either, but arena questions are deliberately not queued for translation, so
-  there is nothing there to render yet.
+  second copy or go without. It is now `localiseQuestions`, and every
+  player-facing fetch goes through it: the whole-category Hunt, the daily
+  challenge, and — since #74 — the **level run**.
+
+  That last one was a live bug, not a tidy-up. `getPublishedQuizQuestionsForTier`
+  mapped its own rows and never looked at `question_translations`, so a Hausa
+  player walking the level path — *the* path this app is built around — was
+  served English, while the whole-category Hunt three functions above served
+  the same question in Hausa correctly. Nothing was wrong with the
+  translations. One function simply never asked for them. Thirty-six Hausa
+  questions sit in the browsable bank today across thirteen categories, all
+  thirty-six passing the option-count guard, so this was on screen rather than
+  latent. It is the translation-side twin of the daily challenge bug: the
+  content was right and unreachable.
+
+  **`getModeQuestionPool` still does not localise**, and that is currently
+  harmless rather than fixed — arena questions are deliberately not queued for
+  translation (0054's trigger skips the pool), so there is nothing for the
+  overlay to find. **It becomes a bug the day that condition is removed**,
+  which is the same day the Gemini plan gets fixed. Remove the condition and
+  this line together.
 - `start_multiplayer_quiz_rpc` needs no pin — it filters by the room's own
   category, and rooms come from the pinned category list.
 - **The 13 arena categories are organisational, not navigational.** They exist
@@ -885,6 +899,7 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| #74 | The level path speaks Hausa: the one question fetch that never asked for a translation |
 | #73 | The daily challenge can be played: five questions the server chose, and no category picker on the way in |
 | #71 | The arena opens: daily, battle and the play modes stop asking for a subject — and multiplayer, which could never have started a quiz, works |
 | #70 | Two banks — 5,246 arena questions imported, nothing serving them yet |
