@@ -28,7 +28,7 @@ shipped since anyone last suggested playing it.
 
 | | |
 |---|---|
-| Questions | **5,220** — 29 categories × 9 tiers × 20 |
+| Questions | **10,466** — 5,220 browsable + **5,246 arena**, see below |
 | Published | 5,220 |
 | Explanations | 5,220 written and live, 0 missing |
 | Translations | **69** questions — quota-capped at ~20/day, see below |
@@ -38,7 +38,7 @@ shipped since anyone last suggested playing it.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0053`**, disk and database in step |
+| Migrations | through **`0055`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -332,6 +332,67 @@ refused both admin reads, and a host's call seeds the room and starts it.
 - **Player facing counts are fine when they are about the player.** Their own
   answered totals, the per level count that opens the next level, a daily
   challenge size. Admin pages keep every total.
+
+## Two banks, and the pin that keeps them apart
+
+There are now **two** question banks, and confusing them is the way to break
+this app quietly.
+
+| pool | rows | who serves it |
+|---|---|---|
+| `category` | 5,220 | the 29 browsable categories, level runs |
+| `arena` | **5,246** | nothing yet — daily challenge, battle and the play modes, once flipped |
+
+- **`questions.pool` is derived, never typed.** A trigger (`questions_sync_pool`,
+  migration 0054) copies it from the question's category on insert and on any
+  change of category. Filing a row under an `arena_*` category is what makes it
+  an arena question; there is no field to forget and no flag to get wrong.
+  That shape is a direct lesson from 0049 — a comment there said
+  `correct_choice_index` was never selected, four call sites honoured it, the
+  policy did not, and the answer key was readable for months. Intent repeated
+  at call sites drifts. A derived column cannot.
+- **Three readers are pinned to `category`, and those three lines are the
+  switch.** They select across categories rather than within one, so each would
+  start serving arena questions the moment any existed:
+  `ensure_daily_challenge` (picks any category with enough published
+  questions), `getModeQuestionPool` in `quiz-service.ts` (selects by tier
+  alone), and `getCategoriesWithProgress` (lists every category). Measured
+  after the import: unpinned, the play modes would draw 3,536 questions from
+  both banks mixed; pinned, they draw the original 1,740.
+- `start_multiplayer_quiz_rpc` needs no pin — it filters by the room's own
+  category, and rooms come from the pinned category list.
+- **The 13 arena categories are organisational, not navigational.** They exist
+  so a question has a home and an admin can tell fiqh from seerah. Slugs are
+  prefixed `arena_` because several names are near-twins of browsable ones.
+- **Arena questions are not queued for translation.** The trigger skips the
+  pool. Verified after importing 5,246: the queue stayed at 26,100 with **zero**
+  arena rows, rather than growing by 26,230 onto a backlog already 3.5 years
+  deep at 20/day. One condition to remove when the Gemini plan is fixed.
+
+### The arena bank itself
+
+5,246 questions, 13 categories, tiers 1–9, every one with four choices and a
+written explanation. Validated before import, on every row rather than a
+sample: zero missing explanations, zero missing tiers, zero rows with other
+than four choices, **zero with two identical choices**, zero duplicate question
+texts, and bank numbers 1–5246 all present. The correct answer is balanced
+across positions **1312/1312/1311/1311**, so there is no position to learn.
+
+**One accepted gap:** Seerah stops at tier 2 — 78 questions where other
+categories carry 297–540. Confirmed in the source document (every other
+category has nine tier headings; Seerah has two), not a parsing artefact. The
+owner chose to import as-is and top it up later.
+
+It lives at `scripts/question-bank/arena/bank.json` and is imported by the
+`import-arena-bank` edge function, which reads it from the repo **at a pinned
+commit**. Revising questions is a diff and a re-run. Re-running is safe: each
+row carries its bank number in `seed_batch` as `arena:00123`, the importer
+inserts only what is missing and **never updates**, so a partial run resumes
+and an admin's correction cannot be overwritten.
+
+**Still to do:** flip the three pins. That is what turns the arena on, and it
+is deliberately a separate change so a fault afterwards is unambiguous — the
+data half is already proven.
 
 ## The home screen, and what it stopped saying
 
@@ -715,12 +776,18 @@ sanity guards, and the signed-out control described above.
 - Develop on a fresh `claude/...` branch, branched from `origin/main`. Open a
   draft PR; the owner says "merge" when ready.
 - Squash merge, matching the existing history: a title ending in `(#N)`.
-- **The repository is PRIVATE.** Checked 2026-09-05 against the GitHub API,
-  which reports `"private": true`; `raw.githubusercontent.com` 404s even for
-  `README.md`. This note said "public" for a long time and it was wrong — it
-  matters because anything that fetches repo content at run time (an edge
-  function reading a seed file, say) cannot use a raw URL without a token.
-  Never commit keys regardless.
+- **The repository is public — and that now exposes the answer key.**
+  It was private earlier on 2026-09-05 (the API reported `"private": true` and
+  raw URLs 404'd, including for `README.md`), and the owner made it public so
+  the arena importer could fetch the bank. Both states have been true in one
+  day, so **check rather than assume**.
+  What that costs, stated plainly: `scripts/question-bank/arena/bank.json`
+  holds all 5,246 arena questions **with their correct answers and
+  explanations**, and anyone can now download it. Migration 0049 exists
+  precisely to stop the answer key leaking through the anon key; a public repo
+  reaches the same end by another road. Making the repo private again once the
+  import is settled would close it — the importer only needs the raw URL at the
+  moment it runs. Never commit keys regardless.
 - **Ask for the error, not the editor.** Screenshots of a SQL editor have
   twice put more on screen than the error needed.
 
