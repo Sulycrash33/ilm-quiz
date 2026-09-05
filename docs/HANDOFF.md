@@ -32,7 +32,7 @@ shipped since anyone last suggested playing it.
 | Published | 5,220 |
 | Explanations | 5,220 written and live, 0 missing |
 | Translations | **69** questions — quota-capped at ~20/day, see below |
-| Hadith locales | `en` 391, `ar` 391, `fr` 391, `id` 278, `ha`/`ms` 0 — imported, never generated |
+| Hadith locales | `en` 391, `ar` 391, `fr` 391, `id` 278, `ha` 62, `ms` 0 — imported, never generated |
 | **Scholar approved** | **0** |
 | **Attempts, ever** | **0** |
 | Accounts | **1** — the owner, an admin |
@@ -508,13 +508,36 @@ not rendered.**
    | `ar` | **391** | the narration in the language it was narrated in |
    | `fr` | **391** | fra- editions of Bukhari, Nawawi, Qudsi |
    | `id` | **278** | ind-bukhari only; 31 entries have no text, and there is no Indonesian Nawawi or Qudsi |
-   | `ha` | 0 | no published Hausa edition in this source |
+   | `ha` | **62** | hadeethenc.com, matched by Arabic text — see below |
    | `ms` | 0 | no published Malay edition in this source |
 
-   **Hausa and Malay still fall back to English**, and that is the designed
-   behaviour rather than a gap: the fallback is per narration and per locale.
-   Filling them means finding a published edition or an admin typing one —
-   never a model. The same is true of the 113 Indonesian gaps.
+   **Hausa came from a second publisher**, because the edition source above
+   has none. hadeethenc.com (the Encyclopedia of Translated Prophetic Hadiths)
+   renders a curated corpus into 72 languages, Hausa among them, human
+   translated with the Arabic original beside each entry. It keys entries by
+   its own ids and cites sources by collection alone — "Bukhari ne ya rawaito
+   shi", no number — so there is nothing to join on. What made a join possible
+   is that Arabic was already imported for all 391: **the match is on the text,
+   not on a number.**
+
+   Both Arabic sides normalised, compared as 5-word shingles, accepted only at
+   overlap ≥ 0.70 with ≥ 10 shared shingles, rejected whenever the runner-up
+   came within 80% of the best, and cross-checked against the encyclopedia's
+   own attribution. Of 391: 127 matched strongly, 14 fell to ambiguity, 1 to
+   attribution, 50 were too weak — **62 survived.** Three were then read end to
+   end against the English rather than trusted from a score. The map lives in
+   `import-hadith-editions` so it can be reviewed in a diff.
+
+   Caveat worth knowing: the encyclopedia records a narration in its own
+   wording, often the prophetic saying without the full chain Bukhari prints,
+   so a Hausa card can read shorter than the English beside it. Same narration,
+   not a sentence-for-sentence rendering.
+
+   **Malay is still 0, and 329 narrations still fall back to English in Hausa.**
+   That is the designed behaviour, not a gap to paper over: the fallback is per
+   narration and per locale. Closing it means more published text or an admin
+   typing at `/admin/hadiths` — never a model. The same is true of the 113
+   Indonesian gaps.
 
    Matching by hadith number was **checked rather than assumed**: every entry
    carries the collection's own book/hadith reference beside the number, and
