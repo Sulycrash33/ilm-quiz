@@ -214,6 +214,37 @@ export function buildTierLadder(
 }
 
 /**
+ * Build a ladder that is exactly the pool it was handed, in tier order.
+ *
+ * The daily challenge is the one run in this app whose questions were chosen
+ * by the *server*, by date, and are the same five for every player. Both other
+ * builders would undo that: `buildLadder` samples a pool with a per-player rank
+ * curve and a `Math.random()` seed, and `buildTierLadder` keeps one tier and
+ * drops the rest — today's five span tiers 2 to 6.
+ *
+ * It happens that `buildLadder` over a five-question pool serves all five, by
+ * way of `takeNearestTier` widening outward until the buckets empty. That is a
+ * coincidence of the pool being shorter than `runLength`, not a promise, and
+ * "the daily challenge shows all five questions" must not rest on it: the
+ * reward is claimable only once every one of them has been answered.
+ *
+ * Ordered by tier ascending so the run still climbs, and stably within a tier,
+ * so the sequence is a function of what the server stored and nothing else.
+ * Every player meets the same five questions in the same order, which is what
+ * makes a shared challenge worth talking about.
+ */
+export function buildFixedLadder(pool: readonly QuizQuestion[]): HuntQuestion[] {
+  return pool
+    .map((q, i) => ({ q, i }))
+    .sort((a, b) => clampTier(a.q.tier) - clampTier(b.q.tier) || a.i - b.i)
+    .map(({ q }, i) => ({
+      ...q,
+      stage: i + 1,
+      timeLimit: timeLimitForTier(clampTier(q.tier)),
+    }));
+}
+
+/**
  * Which tier stage `index` of a `length`-question run should aim for.
  *
  * The run spans one tier below the seeker's rank to one above it, so it opens

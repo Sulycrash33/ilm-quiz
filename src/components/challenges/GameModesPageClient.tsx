@@ -130,8 +130,12 @@ export function GameModesPageClient({
                   <span className="font-bold text-tertiary">+{todayChallenge.rewardCoins} {t("coinsWord").toLowerCase()}, +{todayChallenge.rewardXp} {t("barakahShort")}</span>
                 </div>
               </div>
+              {/* The daily challenge's own five questions, not the category
+                  grid. This linked to `/quiz`, so the button that says "Start
+                  Daily Challenge" asked the player to pick a subject and then
+                  never served the challenge at all. */}
               {!todayChallenge.completed && (
-                <Link href="/quiz">
+                <Link href="/play/daily">
                   <PremiumButton variant="primary" size="lg">{t("startDailyChallenge")}</PremiumButton>
                 </Link>
               )}

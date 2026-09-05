@@ -21,6 +21,11 @@ const NAME_KEYS: Record<string, { name: keyof Translations; desc: keyof Translat
   timed: { name: "modeSpeedName", desc: "modeSpeedDesc" },
   survival: { name: "modeSurvivalName", desc: "modeSurvivalDesc" },
   practice: { name: "modePracticeName", desc: "modePracticeDesc" },
+  // The daily challenge is not a game mode — it has no row in
+  // `game_mode_rules` and no XP multiplier — but it renders through the same
+  // runner, so it names itself from the same place. Both keys already existed
+  // for the challenge card, so it is called the same thing wherever it appears.
+  daily: { name: "dailyChallengeTitle", desc: "challengeIncompleteMsg" },
 };
 
 export function ModeRunner({
@@ -29,12 +34,16 @@ export function ModeRunner({
   lifelinePrices,
   rules,
   runId,
+  fixedLadder,
 }: {
   mode: string;
   questions: QuizQuestion[];
   lifelinePrices: LifelinePrice[];
   rules: ModeRules;
-  runId: string;
+  /** Absent for the daily challenge, which opens no server-side run: its XP
+   * multiplier is 1x, so there is nothing for a run to authorise. */
+  runId?: string;
+  fixedLadder?: boolean;
 }) {
   const { t } = useLanguage();
   const keys = NAME_KEYS[mode];
@@ -50,6 +59,7 @@ export function ModeRunner({
       backHref="/challenges"
       modeRules={rules}
       runId={runId}
+      fixedLadder={fixedLadder}
     />
   );
 }

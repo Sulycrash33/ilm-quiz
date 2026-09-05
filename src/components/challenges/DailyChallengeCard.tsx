@@ -99,11 +99,15 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallengeVie
             {pending ? t("processingLabel") : t("challengeClaim")}
           </Button>
         ) : (
-          challenge.categorySlug && (
-            <Button asChild variant="outline" className="w-full sm:w-auto">
-              <Link href={`/quiz/${challenge.categorySlug}`}>{t("startChallenge")}</Link>
-            </Button>
-          )
+          /* `/play/daily`, not a category. This button used to point at
+             `/quiz/<the challenge's category>` — a whole subject to hunt
+             through, in which the five questions the challenge is about turned
+             up only by chance. Since migration 0056 a day spans the arena bank
+             and there is no category to point at, so it rendered nothing at
+             all. */
+          <Button asChild variant="outline" className="w-full sm:w-auto">
+            <Link href="/play/daily">{t("startChallenge")}</Link>
+          </Button>
         ))}
     </motion.section>
   );

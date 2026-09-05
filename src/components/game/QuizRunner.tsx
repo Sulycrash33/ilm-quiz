@@ -21,6 +21,10 @@ interface QuizRunnerProps {
   /** Set for a level-locked run: which tier (1-9) this run is confined to.
    * Passed straight through to `HuntView` as `forceTier`. */
   tier?: number;
+  /** Play exactly the questions given, in one fixed order, rather than
+   * sampling a ladder from them. The daily challenge, and only it — see
+   * `buildFixedLadder`. */
+  fixedLadder?: boolean;
   /** The category's URL slug, so a cleared level can link to the next one.
    * Level runs only — the modes and the classic hunt have no level path. */
   categorySlug?: string;
@@ -48,6 +52,7 @@ export function QuizRunner({
   questions,
   lifelinePrices,
   tier,
+  fixedLadder,
   categorySlug,
   backHref,
   modeRules,
@@ -66,6 +71,7 @@ export function QuizRunner({
           lifelinePrices={lifelinePrices}
           onExit={() => setStarted(false)}
           forceTier={tier}
+          fixedLadder={fixedLadder}
           categorySlug={categorySlug}
           modeRules={modeRules}
           runId={runId}
@@ -74,11 +80,14 @@ export function QuizRunner({
     );
   }
 
-  // A level run covers the whole tier; the adaptive Hunt still caps at
-  // `HUNT_RULES.runLength`. Keeping these in step matters because this number
-  // is what the pre-run brief promises the player.
+  // A level run covers the whole tier and the daily challenge covers all five
+  // of its questions; the adaptive Hunt still caps at `HUNT_RULES.runLength`.
+  // Keeping these in step matters because this number is what the pre-run
+  // brief promises the player.
   const runLength =
-    tier !== undefined ? questions.length : Math.min(HUNT_RULES.runLength, questions.length);
+    tier !== undefined || fixedLadder
+      ? questions.length
+      : Math.min(HUNT_RULES.runLength, questions.length);
 
   // The brief has to describe the mode being played, not the classic hunt. It
   // promised three lives and a fixed question count for every mode, which was
