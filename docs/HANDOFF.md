@@ -2,10 +2,14 @@
 
 Written 2026-09-03, rewritten through 2026-09-05. **Read this first if you are
 picking up work cold.** Every number below was checked against the live
-database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `5281d23` (PR #71,
+database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `70e9332` (PR #74,
 merged) — re-check anything you are about to depend on rather than trusting
-them blind. Four earlier notes were wrong about a count within a day of being
-written, which is the whole argument for checking.
+them blind. **Five** earlier notes have now been wrong about a count within a
+day of being written, which is the whole argument for checking. The fifth was
+this document's own translation figure, corrected below: it said "69 questions"
+where 69 is the number of *rows*, covering **65** questions. Rows and the
+things they describe are not the same number, and this file has now made that
+mistake about translations, categories and the question bank in turn.
 
 ## The one fact that reframes everything
 
@@ -14,18 +18,23 @@ written, which is the whole argument for checking.
 ```
 questions       10,466        profiles              1
 categories          42        attempts              0
-translations        69        scholar approved      0
+translations        65        scholar approved      0
+                              game runs             0
+                              quiz rooms            0
 ```
 
-The `attempts` table is **empty**. Every question, category, store item,
-achievement, challenge and rank tier is seeded and ready; one account exists,
-the owner's, and it has never answered anything.
+The `attempts` table is **empty**, and so are `game_runs` and `quiz_rooms` —
+nobody has ever opened a run or created a battle room either. Every question,
+category, store item, achievement, challenge and rank tier is seeded and ready;
+one account exists, the owner's, and it has never answered anything.
 
-Keep that in front of you when deciding what to build. **Thirteen pull requests
-have shipped since anyone last suggested playing it**, six of them on
+Keep that in front of you when deciding what to build. **Fifteen pull requests
+have shipped since anyone last suggested playing it**, eight of them on
 2026-09-05 alone. Everything in them was verified against the database and the
-gates; **none of it has been clicked through by a person.** That is now the
-single largest risk in this project, larger than any bug listed below.
+gates; **almost none of it has been clicked through by a person.** That is
+still the single largest risk in this project, larger than any bug listed
+below — and 2026-09-05 stopped it being a theoretical risk. See the next
+section.
 
 ## Where things stand
 
@@ -34,14 +43,14 @@ single largest risk in this project, larger than any bug listed below.
 | Questions | **10,466** — 5,220 browsable + **5,246 arena**, see below |
 | Published | **10,466** — the arena bank is published on arrival too |
 | Explanations | **10,466** written and live, **0 missing** |
-| Translations | **69** questions — quota-capped at ~20/day, see below |
+| Translations | **65** questions / **69** rows — quota-capped at 20/day, see below |
 | Hadith locales | `en` 391, `ar` 391, `fr` 391, `id` 278, `ha` 62, `ms` 0 — imported, never generated |
 | **Scholar approved** | **0** |
 | **Attempts, ever** | **0** |
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0056`**, disk and database in step |
+| Migrations | through **`0056`**, disk and database in step — 55 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -187,6 +196,49 @@ A refusal leaves that question English in that locale and puts the row on the
 - `GEMINI_MODEL` is an edge function env var. **Model names get retired** —
   `gemini-2.0-flash` 404'd on the very first real batch — so change the
   variable, not the code.
+
+## The failure this project actually has: right in the database, unreachable in the app
+
+Two bugs found on 2026-09-05 by the owner opening the app, both the same shape,
+and neither catchable by anything in the `Before you claim anything is done`
+list. **This is the most important section in this file.**
+
+| | The content | The path to it |
+|---|---|---|
+| Daily challenge (#73) | five questions chosen by date since 0011, correct, stored | the button went to the category grid |
+| Level runs (#74) | 36 Hausa translations, correct, all passing the read guard | the fetch never asked for them |
+
+In both, every gate was green, every number in this document checked out, and
+the feature had been described as finished. In the first the owner pressed
+"Start Daily Challenge" and was shown a subject picker; in the second a Hausa
+player would have read English on the one path this app is built around. Both
+had been live for two weeks.
+
+**Why the gates cannot catch this class of bug.** `tsc` type-checks a link, it
+does not follow it. `test:i18n` proves every string exists in six languages,
+not that the function serving the question asked for the translation.
+`test:engine` proves the ladder is correct given a pool, not that the pool is
+the one the player was promised. `npm run build` proves a route compiles, not
+that anything links to it. Every one of these passed on both bugs, for the
+entire time they existed.
+
+**What does catch it: opening the app.** Both were found in the first minutes
+of somebody using it. That is the whole argument for open item 1, and it is no
+longer a prediction.
+
+**So when you finish a feature, ask the second question.** Not "is the data
+right" — this project is extremely good at that, and 0049, 0054 and the
+translation guards are evidence of real care. Ask **"what does a player press
+to reach it, and have I followed that link myself?"** A feature complete in the
+database and unreachable in the app is not partly done. It is absent, and it
+looks finished from every angle this repository can currently see.
+
+**A related trap, since it caused #73 twice over.** A migration that removes a
+column's meaning does not remove the UI that read it. 0056 stopped writing
+`daily_challenges.category_id`, correctly and deliberately. It did not touch
+the two links built on it — so one button silently stopped rendering and the
+other kept pointing somewhere that no longer made sense. **When a migration
+drops a field's meaning, grep the app for every reader in the same change.**
 
 ## The five warnings this codebase has earned
 
@@ -476,9 +528,29 @@ Nothing caught it because **no room has ever been created** — the same reason
 nothing else here has been caught. 0056 removes the category filter entirely,
 so the bug leaves with it.
 
+**The fix is now proven rather than argued.** 0056 shipped verified against the
+function body, not against a room. On 2026-09-05 a room was created exactly as
+`CreateRoomModal` now makes one — no category, difficulty only — and
+`start_multiplayer_quiz_rpc` called as the host, in a transaction that kept
+nothing: **10 arena questions from 5 different subjects.** So battle seeds
+questions, from the right bank, across subjects, with no category anywhere.
+
+What that does **not** prove, and nobody should read it as proving: the room
+lifecycle. A second player joining by code, the lobby, the live question sync,
+the results screen. `quiz_rooms` is still **0** — no human has created a room —
+and that needs two people, which is why it stays on the open list.
+
 **The daily challenge for a past date keeps its old category.** `category_id`
-is nullable and is now written null; the fifteen stored before today still
-name the category they drew from, and that history is worth keeping legible.
+is nullable and is now written null. Checked: **14 of the 15** stored rows name
+the category they drew from and **1** (today's, the first since 0056) is null.
+That history is worth keeping legible.
+
+**The date-hash really does roll over, checked five days out.** Selection is
+deterministic in the date, which is easy to get subtly wrong in a way that
+serves the same five forever. Five consecutive days give five different sets,
+each spanning 4–5 arena subjects and tier bands of 2–6, 2–8, 2–9, 1–7 and 2–8.
+Different every day, the same for every player on a given day, and drawn across
+the whole bank — which is exactly the arrangement 0056 was for.
 
 ## The home screen, and what it stopped saying
 
@@ -658,9 +730,25 @@ considered position.
 | `KnowledgeTree`, `RankBadge`, `FriendsList`, `KnowledgeCategories` | defined, never used |
 | `.glass-card-hover` | referenced nowhere, so Tailwind drops it from the output entirely |
 | `spin_rewards.weight` | dead since 0008 removed the weighted roll |
+| `daily_challenges.category_id` | written null since 0056; kept only so past rows stay legible. `DailyChallengeView.categorySlug` read it and was removed in #73 |
 
 **Before building a screen, grep for whether it already exists and is simply
-not rendered.**
+not rendered.** And the sharper version this project keeps proving: **before
+building a screen, check whether it exists, is rendered, and is *linked to*.**
+`/play/daily` was the third case; the first two were `.glass-card-hover` and
+`StreakCounter`, which at least failed loudly by being absent.
+
+### The shared pieces, so nobody writes a second one
+
+Four helpers exist specifically so a rule lives in one place. Reach for these
+before writing a fetch or a ladder.
+
+| | What it is for |
+|---|---|
+| `localiseQuestions` (`quiz-service`) | the only definition of a question rendered in the player's language, including the option-count check that stops a translation mis-grading a run. Every player-facing fetch goes through it except `getModeQuestionPool` — see open item 7 |
+| `getQuestionsByIds` (`quiz-service`) | questions by id, in the order given, published only. The daily challenge's fetch; the only one in the app that selects by id |
+| `buildFixedLadder` (`hunt-engine`) | a ladder that *is* the pool it was handed, tier-ascending and stable, no rng. For a run whose questions the server chose |
+| `daily_task_questions()` (0053) | how many questions a day of study is. One line, one place, no redeploy |
 
 ## Open items
 
@@ -672,21 +760,49 @@ not rendered.**
    against the database and the five gates; not one was clicked.
    The highest-value hour anybody could spend on this project is signing in,
    answering five questions, claiming the daily reward, and starting a battle.
-   **This is no longer hypothetical.** The owner opened the daily challenge,
-   was shown a category picker, and asked why — which is how the missing
-   `/play/daily` route was found. Nothing in the database was wrong; the five
-   questions were there, correct, and unreachable. Every gate passed the whole
-   time. One person, one tap.
+   **This is no longer hypothetical, and it has now paid out twice.** The owner
+   opened the daily challenge, was shown a category picker, and asked why —
+   which found the missing `/play/daily` route (#73), and pulling that thread
+   found the level path serving English to Hausa players (#74). Neither was a
+   data problem. Both were unreachable-content problems, and every gate passed
+   the whole time they existed. See "right in the database, unreachable in the
+   app" above.
+
+   **What to press, in order, and what each proves.** Fifteen minutes total.
+
+   1. Sign in, open the daily challenge, answer all five → proves `/play/daily`,
+      the fixed ladder, `submit_quiz_answer`, and writes the first ever row to
+      `attempts`.
+   2. Claim the daily challenge reward on `/challenges` → proves
+      `complete_daily_challenge_rpc` and its check against `attempts`.
+   3. Claim the daily login reward → proves the 0053 gate, since five answers
+      is exactly `daily_task_questions()`.
+   4. Play one category level → proves the level path and the ladder.
+   5. Switch the profile to Hausa and open Sacred Places level 1 or Tafsir
+      level 5 → proves #74. Those tiers hold Hausa translations today; read one
+      against the English rather than trusting the score.
+   6. Create a battle room → the only step that needs a second person.
+
+   Steps 1–5 are one account and one sitting.
 2. ~~The answer-key exposure.~~ **Fixed in 0049** — see the section above.
 3. **The translation backfill is capped at twenty rows a day by the Gemini
    free tier, and the cap now names itself.** As of 2026-09-05 the 429 reads
    `quota=GenerateRequestsPerDayPerProjectPerModel-FreeTier limit=20`, so this
    is settled: a daily free-tier request cap, resetting at 07:00 UTC, not a
    per-minute throttle and not anything a dial here can reach. **26,036 still
-   queued, 69 done, zero failed** (re-checked 2026-09-05 evening). The arena
+   queued, 64 done, zero failed**, `max(attempts) = 1` (re-checked 2026-09-05
+   late). Note the queue's 64 against the 69 translation rows covering 65
+   questions: the queue is not the only way a translation arrives — a hand
+   edit at `/admin/translations` writes one directly, and this is the shape of
+   the "69 questions" error corrected at the top of this file. The arena
    bank's 5,246 questions are deliberately **not** in that queue — 0054's
-   trigger skips the pool — so this number is the browsable bank only. At this rate the backfill finishes in
-   about three and a half years. See "The translation system" above.
+   trigger skips the pool — so this number is the browsable bank only. At this
+   rate the backfill finishes in about three and a half years. See "The
+   translation system" above.
+   **Since #74 this has become more valuable, not less.** Until then the level
+   path — the path a seeker actually walks — served English regardless of how
+   many translations existed, so every row the pipeline produced was partly
+   wasted. That is fixed, so translations now show up where players are.
    **This is the actual next thing to unblock**: someone with access to the
    Gemini/Google Cloud billing needs to enable a paid plan; nothing further is
    tunable from `cron_run_translations` or `TRANSLATE_CONCURRENCY`. Once it's flowing, read a few Hausa samples —
@@ -760,22 +876,37 @@ not rendered.**
    carries the collection's own book/hadith reference beside the number, and
    across the 7,563 narrations common to the eng-, ara-, fra- and ind-bukhari
    editions that reference disagrees with the English in **zero** cases.
-6. **Nothing has been felt on a physical device.** Haptics need a real Android
+6. **A battle has never been played by two people.** The question seeding is
+   now proven — 10 arena questions from 5 subjects, host-checked, rolled back —
+   but `quiz_rooms` is 0, so the room lifecycle has never run: a second player
+   joining by code, the lobby, the live question sync, the results screen. This
+   is the one open item that cannot be closed by one person, and given that
+   `start_multiplayer_quiz_rpc` compared a slug to a uuid for months without
+   anyone noticing, assume the lifecycle holds a bug of the same kind until two
+   people have finished a match.
+7. **`getModeQuestionPool` does not localise, and that is a timer, not a
+   decision.** It is harmless today only because arena questions are
+   deliberately not queued for translation (0054's trigger skips the pool).
+   The day that condition is lifted — the same day the Gemini plan is fixed —
+   the daily challenge, battle and all three play modes start serving English
+   to a Hausa player, which is #74 again in a new place. **Remove the trigger
+   condition and route this through `localiseQuestions` in the same change.**
+8. **Nothing has been felt on a physical device.** Haptics need a real Android
    phone; no emulator reproduces a vibration.
-7. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
-8. **Streak reminders.** The two vault secrets that kept them dormant since
+9. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
+10. **Streak reminders.** The two vault secrets that kept them dormant since
    0027 are now set, so `ilm-streak-reminders` will fire at 17:00 UTC. Whether
    a push actually sends still depends on the VAPID keys, which have not been
    verified — check before assuming either way.
-9. **Timed-out questions in the round review withhold the answer.** Showing
+11. **Timed-out questions in the round review withhold the answer.** Showing
    them cleanly means recording a timeout as an attempt, which changes accuracy
    stats. A decision, not a fix.
-10. **No browser language detection.** One `navigator.language` fallback would
+12. **No browser language detection.** One `navigator.language` fallback would
     mean an Arabic phone opens in Arabic before anyone taps. Agreed, not done.
-11. **RTL arrow direction.** Forward and back arrows point the same physical
+13. **RTL arrow direction.** Forward and back arrows point the same physical
     way in Arabic across the whole app. One pass, app wide, or leave it.
-12. **Rank names are Latin inside Arabic text.** `RANKS` titles are data.
-13. Agreed but unbuilt: bulk actions, Excel export, a read-only auditor role.
+14. **Rank names are Latin inside Arabic text.** `RANKS` titles are data.
+15. Agreed but unbuilt: bulk actions, Excel export, a read-only auditor role.
 
 ## Deliberately declined, with reasons
 
