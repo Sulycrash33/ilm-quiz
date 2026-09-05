@@ -1,36 +1,39 @@
 # ILM Hunt — session handoff
 
-Written 2026-09-03, updated 2026-09-05. **Read this first if you are picking
-up work cold.** Everything below was checked against the live database
-(project `ziblpvwiqzpjnkqjwodl`) and `main` at `0408d87` (PR #65, merged) —
-re-check anything you are about to depend on rather than trusting the numbers
-blind. Four earlier notes were wrong about a count within
-a day of being written, which is the argument for checking.
+Written 2026-09-03, rewritten through 2026-09-05. **Read this first if you are
+picking up work cold.** Every number below was checked against the live
+database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `5281d23` (PR #71,
+merged) — re-check anything you are about to depend on rather than trusting
+them blind. Four earlier notes were wrong about a count within a day of being
+written, which is the whole argument for checking.
 
 ## The one fact that reframes everything
 
 **Nobody has ever played this app.**
 
 ```
-questions        5,220        profiles              1
-categories          29        attempts              0
-translations         69       scholar approved      0
+questions       10,466        profiles              1
+categories          42        attempts              0
+translations        69        scholar approved      0
 ```
 
 The `attempts` table is **empty**. Every question, category, store item,
 achievement, challenge and rank tier is seeded and ready; one account exists,
 the owner's, and it has never answered anything.
 
-Keep that in front of you when deciding what to build. Seven pull requests have
-shipped since anyone last suggested playing it.
+Keep that in front of you when deciding what to build. **Thirteen pull requests
+have shipped since anyone last suggested playing it**, six of them on
+2026-09-05 alone. Everything in them was verified against the database and the
+gates; **none of it has been clicked through by a person.** That is now the
+single largest risk in this project, larger than any bug listed below.
 
 ## Where things stand
 
 | | |
 |---|---|
 | Questions | **10,466** — 5,220 browsable + **5,246 arena**, see below |
-| Published | 5,220 |
-| Explanations | 5,220 written and live, 0 missing |
+| Published | **10,466** — the arena bank is published on arrival too |
+| Explanations | **10,466** written and live, **0 missing** |
 | Translations | **69** questions — quota-capped at ~20/day, see below |
 | Hadith locales | `en` 391, `ar` 391, `fr` 391, `id` 278, `ha` 62, `ms` 0 — imported, never generated |
 | **Scholar approved** | **0** |
@@ -601,15 +604,22 @@ not rendered.**
 ## Open items
 
 1. **Somebody needs to play the app.** Still the top item, still not a coding
-   task. Zero attempts means no screen shipped in the last week has ever
-   rendered with real data behind it.
+   task, and now by a wider margin than ever. Zero attempts means **no screen
+   shipped in the last two weeks has ever rendered with real data behind it**,
+   and 2026-09-05 alone changed the home screen, the daily reward, the daily
+   challenge, battle and all three play modes. Every one of those was verified
+   against the database and the five gates; not one was clicked.
+   The highest-value hour anybody could spend on this project is signing in,
+   answering five questions, claiming the daily reward, and starting a battle.
 2. ~~The answer-key exposure.~~ **Fixed in 0049** — see the section above.
 3. **The translation backfill is capped at twenty rows a day by the Gemini
    free tier, and the cap now names itself.** As of 2026-09-05 the 429 reads
    `quota=GenerateRequestsPerDayPerProjectPerModel-FreeTier limit=20`, so this
    is settled: a daily free-tier request cap, resetting at 07:00 UTC, not a
-   per-minute throttle and not anything a dial here can reach. 26,036 still
-   queued, 64 done, **zero failed**. At this rate the backfill finishes in
+   per-minute throttle and not anything a dial here can reach. **26,036 still
+   queued, 69 done, zero failed** (re-checked 2026-09-05 evening). The arena
+   bank's 5,246 questions are deliberately **not** in that queue — 0054's
+   trigger skips the pool — so this number is the browsable bank only. At this rate the backfill finishes in
    about three and a half years. See "The translation system" above.
    **This is the actual next thing to unblock**: someone with access to the
    Gemini/Google Cloud billing needs to enable a paid plan; nothing further is
@@ -617,7 +627,7 @@ not rendered.**
    especially fiqh, where the fard/sunnah distinction the guard exists for
    actually bites — rather than assuming the automatic checks caught
    everything.
-4. **Scholar review — still zero of 5,220.** `/admin/questions` filters to
+4. **Scholar review — still zero, now of 10,466.** `/admin/questions` filters to
    "Awaiting review". Contemporary Issues is the riskiest and so the most
    informative.
 5. **The daily hadith rotation is 391 narrations long, English only.** Built
@@ -817,6 +827,13 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| #71 | The arena opens: daily, battle and the play modes stop asking for a subject — and multiplayer, which could never have started a quiz, works |
+| #70 | Two banks — 5,246 arena questions imported, nothing serving them yet |
+| #69 | The daily reward asks for a day of study, and the home screen remembers |
+| #68 | Sixty-two narrations reach Hausa, and the rest honestly do not |
+| #67 | The daily hadith speaks Arabic, French and Indonesian |
+| #66 | The quota names itself (20/day, free tier), and a reclaim that was never reached |
+| #65 | The handoff before this one |
 | #64 | The language that would not stay, a hadith that is actually daily, and a backfill that turned out to be quota-blocked rather than slow |
 | #62 | What running the translation pipeline for real taught it |
 | #61 | Content translates itself, and Sunrise is a word again |
