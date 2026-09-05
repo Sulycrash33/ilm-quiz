@@ -132,11 +132,70 @@ function audioContext(): AudioContext | null {
       window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
     if (!Ctor) return null
     if (!ctx) ctx = new Ctor()
-    // Safari and mobile Chrome suspend the context when the tab loses focus.
-    if (ctx.state === "suspended") void ctx.resume()
     return ctx
   } catch {
     return null
+  }
+}
+
+/**
+ * ── Why the audio device has to be opened deliberately ────────────────────
+ *
+ * Every mobile browser refuses to start an AudioContext outside a user
+ * gesture. A context created anywhere else is born **suspended**, and a
+ * `resume()` that is not itself inside a gesture is refused.
+ *
+ * This app used to depend on whichever cue happened to fire first landing
+ * inside a tap. It does not: `/home` plays the streak cue from an effect on
+ * load, with no gesture anywhere near it, and `/home` is the front door on
+ * every open after onboarding. So the first context of the session was
+ * routinely created suspended, the cue that created it was scheduled into a
+ * context whose clock does not run, and — because the context is cached in
+ * the module for the life of the tab — the old code then called an
+ * unawaited `void ctx.resume()` from a *non*-gesture path and returned the
+ * context anyway, so the cue was silently dropped.
+ *
+ * The player therefore switched sound on, heard the confirmation cue on the
+ * settings screen (a real tap, so that one context was fine), reached the
+ * game through `/home`, and heard nothing. Which is exactly the report.
+ *
+ * Two changes fix it, and neither is clever:
+ *
+ *  1. **The device is opened on the first real gesture anywhere in the app**,
+ *     by the listener below, whatever the player happens to touch. Nothing
+ *     depends any more on which cue fires first.
+ *  2. **A suspended context is resumed and the cue is played after the
+ *     resume resolves**, rather than scheduled into a stopped clock and
+ *     lost. If the browser refuses the resume, nothing plays — which is
+ *     honest, and the next gesture will open it.
+ */
+function primeAudio(): void {
+  const ac = audioContext()
+  if (!ac) return
+  // iOS 16.4+ only. Without an audio session the hardware ring/silent switch
+  // mutes Web Audio outright, so an iPhone with the switch flipped is silent
+  // no matter what the player chose in this app — and roughly half this
+  // audience is on iPhone. "playback" says this audio is content the user
+  // asked for, which is true: sound is off by default and only an explicit
+  // opt-in turns it on. Set only when they have opted in, so the switch is
+  // still respected for everyone who has not.
+  try {
+    const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession
+    if (session && isSoundEnabled()) session.type = "playback"
+  } catch {
+    /* not supported, or refused — the cues simply obey the silent switch */
+  }
+  if (ac.state === "suspended") void ac.resume()
+}
+
+if (typeof window !== "undefined") {
+  // `capture` so it runs before any handler that might stop propagation, and
+  // `once` per event so this costs one listener and then nothing. All three
+  // events, because a phone sends pointer/touch and a keyboard player sends
+  // neither.
+  const open = () => primeAudio()
+  for (const evt of ["pointerdown", "touchend", "keydown"] as const) {
+    window.addEventListener(evt, open, { once: true, capture: true, passive: true })
   }
 }
 
@@ -234,6 +293,28 @@ export function playCue(cue: SoundCue): void {
   const ac = audioContext()
   if (!ac) return
 
+  // A suspended context has a clock that does not run, so anything scheduled
+  // into it is not "played quietly" — it is lost. Resume first and emit when
+  // the device is actually open. A browser that refuses the resume (because
+  // this call is not inside a gesture) leaves the context untouched for the
+  // next one rather than swallowing a cue and pretending it played.
+  if (ac.state === "suspended") {
+    void ac
+      .resume()
+      .then(() => {
+        if (ac.state === "running") emit(ac, cue)
+      })
+      .catch(() => {
+        /* refused: not inside a gesture. The unlock listener will get it. */
+      })
+    return
+  }
+
+  emit(ac, cue)
+}
+
+/** The cue itself, once the device is known to be open. */
+function emit(ac: AudioContext, cue: SoundCue): void {
   try {
     const out = output(ac)
     switch (cue) {
