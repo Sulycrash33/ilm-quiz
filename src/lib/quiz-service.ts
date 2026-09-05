@@ -173,6 +173,12 @@ export async function getCategoriesWithProgress(): Promise<QuizCategory[]> {
   const { data: cats } = await supabase
     .from('categories')
     .select('id, slug, name, description, icon')
+    // Only the browsable bank. Migration 0054 split the questions in two: the
+    // categories a seeker chooses, and the arena bank that daily challenge,
+    // battle and the play modes draw from unannounced. Arena categories are
+    // organisational — they exist so an arena question has a home and an admin
+    // can see what it is about — and must never appear on this grid.
+    .eq('pool', 'category')
     // The curriculum order, not the alphabet. `sort_order` has always held a
     // deliberate sequence — creed, then the names of Allah, then the pillars,
     // then the Qur'an and the seerah, out through law and character to the
@@ -274,6 +280,11 @@ export async function getModeQuestionPool(
     .from('questions')
     .select('id, question_text, choices, difficulty, tier')
     .eq('review_status', 'published')
+    // THE PIN. This selects by tier alone across every category, so without
+    // it the play modes would start serving arena questions the moment any
+    // exist. Migration 0054 landed the split without changing behaviour;
+    // flipping this to 'arena' is what turns the new bank on here.
+    .eq('pool', 'category')
     .gte('tier', low)
     .lte('tier', high)
     .limit(limit);
