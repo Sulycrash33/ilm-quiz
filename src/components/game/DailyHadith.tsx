@@ -33,8 +33,17 @@ import { getDailyHadith, type DailyHadithView } from "@/app/(app)/home/actions";
  *
  * Hadith text is never machine-translated. `0047` sets out why at length: a
  * narration is a claim about what the Prophet ﷺ said, published translations
- * exist, and there would be nothing to check a model's output against. Locales
- * are filled in by hand at `/admin/hadiths`.
+ * exist, and there would be nothing to check a model's output against. Text
+ * arrives either from a published edition — Arabic, French and most of the
+ * Indonesian were imported from one, see `import-hadith-editions` — or typed
+ * by hand at `/admin/hadiths`. Never from a model.
+ *
+ * Arabic needs nothing special here. `LanguageContext` writes `lang` and `dir`
+ * onto the document element when the locale changes, so the quotation inherits
+ * `lang="ar" dir="rtl"` and the serif renders right to left without this
+ * component knowing about it. The explicit `lang`/`dir` below is for the
+ * opposite case: English text showing inside a page that is set to something
+ * else.
  */
 export function DailyHadith() {
   const { t, locale } = useLanguage();
