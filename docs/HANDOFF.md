@@ -31,7 +31,8 @@ shipped since anyone last suggested playing it.
 | Questions | **5,220** — 29 categories × 9 tiers × 20 |
 | Published | 5,220 |
 | Explanations | 5,220 written and live, 0 missing |
-| Translations | **69** — the backfill is quota-capped at ~20/day, see below |
+| Translations | **69** questions — quota-capped at ~20/day, see below |
+| Hadith locales | `en` 391, `ar` 391, `fr` 391, `id` 278, `ha`/`ms` 0 — imported, never generated |
 | **Scholar approved** | **0** |
 | **Attempts, ever** | **0** |
 | Accounts | **1** — the owner, an admin |
@@ -492,10 +493,33 @@ not rendered.**
    published translations of Bukhari and Muslim exist and are what people
    cite, and the pipeline's guard — that a mistranslation must not change
    which answer is correct — has no counterpart here, because there is
-   nothing to check the output against. **Every locale but English still
-   falls back to English** on every one of the 391 — non-English text arrives
-   the same way English did, from a published edition entered by hand, never
-   generated.
+   nothing to check the output against.
+
+   **Arabic, French and most of Indonesian are now filled**, and they were
+   filled the way 0047 allows — from published editions, not from a model.
+   `supabase/functions/import-hadith-editions` fetches ara-/fra-/ind- editions
+   from the same pinned fawazahmed0 tag the English came from and inserts
+   them; it calls no model, only inserts, and ignores conflicts, so English and
+   anything typed by hand are beyond its reach and re-running is a no-op.
+
+   | locale | of 391 | where it comes from |
+   |---|---|---|
+   | `en` | 391 | 0050 |
+   | `ar` | **391** | the narration in the language it was narrated in |
+   | `fr` | **391** | fra- editions of Bukhari, Nawawi, Qudsi |
+   | `id` | **278** | ind-bukhari only; 31 entries have no text, and there is no Indonesian Nawawi or Qudsi |
+   | `ha` | 0 | no published Hausa edition in this source |
+   | `ms` | 0 | no published Malay edition in this source |
+
+   **Hausa and Malay still fall back to English**, and that is the designed
+   behaviour rather than a gap: the fallback is per narration and per locale.
+   Filling them means finding a published edition or an admin typing one —
+   never a model. The same is true of the 113 Indonesian gaps.
+
+   Matching by hadith number was **checked rather than assumed**: every entry
+   carries the collection's own book/hadith reference beside the number, and
+   across the 7,563 narrations common to the eng-, ara-, fra- and ind-bukhari
+   editions that reference disagrees with the English in **zero** cases.
 6. **Nothing has been felt on a physical device.** Haptics need a real Android
    phone; no emulator reproduces a vibration.
 7. **Offline play — not started.** `public/sw.js` caches nothing on purpose.
