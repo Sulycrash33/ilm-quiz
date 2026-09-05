@@ -675,6 +675,70 @@ without reading these.**
 - **No dash is used as punctuation in player-facing copy.** Check with
   `[a-zA-Z]-[a-zA-Z]`, and expect transliterated names as legitimate hits.
 
+## Sound: the device has to be opened deliberately
+
+**Symptom, reported five times before anyone believed it: sound is switched on
+and the game is still silent.** This document said the sound system was
+finished, which sent four sessions looking somewhere else.
+
+The cues were never the problem. `sound.ts` synthesises eight of them, the mix
+was balanced by ear, the storage rule is correct and the toggle persists. What
+was missing sat one level down: **nothing opened the audio device.**
+
+- Every mobile browser refuses to start an `AudioContext` outside a user
+  gesture. One created anywhere else is born **suspended**, and a `resume()`
+  that is not itself inside a gesture is refused.
+- The app had exactly **one** `resume()` — `void ctx.resume()`, unawaited,
+  inside `audioContext()` — and **no gesture listener anywhere**. So which
+  context the session got depended entirely on which cue fired first.
+- `/home` plays `playCue("streak")` **from an effect on mount**, and `/home` is
+  the front door on every open after onboarding. A context created there is
+  suspended; the cue is scheduled into a clock that does not run, which is not
+  "quiet" but *lost*; and the context is cached in a module for the life of the
+  tab.
+
+Two changes, neither clever. **A one-time `pointerdown` / `touchend` / `keydown`
+listener opens the device on the first real gesture anywhere in the app**, so
+nothing depends on which cue fires first. And **a suspended context is now
+resumed, with the cue emitted after the resume resolves** rather than thrown
+into a stopped clock — `playCue` splits into the gate and `emit`.
+
+**The iPhone silent switch is the other half, and may be the whole of it for
+some players.** On iOS the hardware ring/silent switch mutes Web Audio outright,
+whatever the app or the volume slider say. iOS 16.4+ exposes
+`navigator.audioSession`; setting `type = "playback"` exempts the app. It is set
+only when the player has explicitly switched sound on — sound is off by default,
+so opting in is a real signal — and therefore the switch is still respected for
+everyone who has not. **If that is judged too aggressive, deleting that block is
+the whole revert**, and the rest of the fix stands without it.
+
+### What was measured, and what was not
+
+Be precise here, because a confident wrong answer is what cost this bug five
+reports.
+
+**Measured**, in Chromium via Playwright against a production build, with
+`--autoplay-policy=document-user-activation-required`: after the fix, tapping a
+**heading** — a control with nothing to do with sound — creates the context and
+it is `running`; before the fix the same tap creates **no context at all**
+(`contexts: 0`). Every oscillator then starts against a running clock. That
+proves the unlock listener does what it claims.
+
+**Not measured, and nobody should claim otherwise:** the suspended-context
+failure itself. This environment's Chromium reports `state: "running"` for a
+context created with no gesture *even with the policy flag set*, so **the
+original symptom could not be reproduced here.** The causal chain above is read
+from the code plus documented browser behaviour, not observed. The remaining
+candidates, if a player still hears nothing:
+
+- an iPhone with the ring/silent switch on, on iOS **below** 16.4, where
+  `navigator.audioSession` does not exist and nothing in a web app can override
+  the switch;
+- the device or browser-tab volume itself;
+- **a different deployment.** `localStorage` is per origin, so sound switched on
+  at a `*-git-*.vercel.app` preview is not switched on at `ilm-quiz.vercel.app`.
+  Worth ruling out first, and it costs one look.
+
 ## i18n
 
 - **Six locales: en, ms, id, ha, fr, ar**, in that order in `i18n.ts`.
@@ -968,7 +1032,15 @@ authoring questions stops.
 - **The combo already escalates and the floating +XP already exists.**
 - **The fonts load correctly.** Investigated, reasoning sound, conclusion false.
 - **The sound system is finished**, including a calibration screen, a volume
-  control and eight cues.
+  control and eight cues. **This line was wrong for as long as it has been
+  here, and it is why the owner's repeated "I can't hear anything" was waved
+  away five times.** The cues, the mix and the screens were indeed finished;
+  what was missing is that **nothing ever opened the audio device**. There was
+  exactly one `resume()` in the whole app, fire-and-forget, and the context was
+  whatever the first cue to fire happened to create — including on `/home`,
+  which plays the streak cue from an effect with no gesture anywhere near it.
+  See "The audio device has to be opened deliberately" below. **Read a "this is
+  finished" line here as a claim about the code, never about the experience.**
 - **A level run is the whole tier — 20 questions**, not `HUNT_RULES.runLength`.
 - **Achievements are awarded by the database**, in `award_achievements()`.
 - **There is one account**, and it has never answered a question.
