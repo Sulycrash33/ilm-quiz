@@ -1,10 +1,10 @@
 # ILM Hunt — session handoff
 
-Written 2026-09-03, updating the note from earlier the same day. **Read this
-first if you are picking up work cold.** Everything below was checked against
-the live database (project `ziblpvwiqzpjnkqjwodl`) and `main` at `f7bd886`
-(PR #64, merged) — re-check anything you are about to depend on rather than
-trusting the numbers blind. Four earlier notes were wrong about a count within
+Written 2026-09-03, updated 2026-09-05. **Read this first if you are picking
+up work cold.** Everything below was checked against the live database
+(project `ziblpvwiqzpjnkqjwodl`) and `main` at `0408d87` (PR #65, merged) —
+re-check anything you are about to depend on rather than trusting the numbers
+blind. Four earlier notes were wrong about a count within
 a day of being written, which is the argument for checking.
 
 ## The one fact that reframes everything
@@ -14,7 +14,7 @@ a day of being written, which is the argument for checking.
 ```
 questions        5,220        profiles              1
 categories          29        attempts              0
-translations         26       scholar approved      0
+translations         69       scholar approved      0
 ```
 
 The `attempts` table is **empty**. Every question, category, store item,
@@ -31,13 +31,13 @@ shipped since anyone last suggested playing it.
 | Questions | **5,220** — 29 categories × 9 tiers × 20 |
 | Published | 5,220 |
 | Explanations | 5,220 written and live, 0 missing |
-| Translations | **26** — the backfill is queued but barely moving, see below |
+| Translations | **69** — the backfill is quota-capped at ~20/day, see below |
 | **Scholar approved** | **0** |
 | **Attempts, ever** | **0** |
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0050`**, disk and database in step |
+| Migrations | through **`0051`**, disk and database in step |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -103,9 +103,10 @@ A refusal leaves that question English in that locale and puts the row on the
   question" (one set-based statement, safe to re-run), the refusal list, and an
   editor for any translation. Saving marks it `human`.
 - **The backfill was queued** — all 26,100 rows went into `translation_queue`
-  in one statement on 2026-09-03. As of this writing it has drained only
-  **21 rows in roughly two hours.** That is not the concurrency dial working
-  as designed; see the next point.
+  in one statement on 2026-09-03. As of 2026-09-05 it has drained **64 rows in
+  two days**, and the queue stands at **26,036 queued, 0 in progress, 0
+  failed**. That is not the concurrency dial working as designed; see the next
+  point.
 - **Real bottleneck, found after 0048/0049 shipped: the Gemini API key is out
   of quota.** `query_logs` on `translate-questions` shows the model itself
   returning `"You exceeded your current quota, please check your plan and
@@ -122,9 +123,41 @@ A refusal leaves that question English in that locale and puts the row on the
   `console.error("translate-questions: retryable, ...")` added so this shows
   up in `query_logs` immediately next time, instead of needing a fresh
   `net._http_response` investigation.
-  **Next step is not code:** the account owner needs to check the Gemini API
-  key's plan/quota at ai.google.dev or the Google Cloud console. Nobody in
-  this session has access to that account.
+- **The quota now names itself, and it is 20 requests a day (2026-09-05).**
+  v6 logged the 429 but sliced the body at 300 characters, and Google puts the
+  prose first and the machine-readable part last — so every one of two days of
+  log lines ended `* Quota ex`, cut off mid-word, exactly before the part that
+  mattered. **v7** parses `error.details` and puts the summary in *front* of
+  the raw body:
+
+  ```
+  quota=GenerateRequestsPerDayPerProjectPerModel-FreeTier limit=20 retryDelay=57s
+  ```
+
+  So it is a **free-tier cap of twenty requests per day**, not a per-minute
+  throttle and not a burst limit — which is why no concurrency setting ever
+  moved it. It matches the observed drain exactly: 30, 19 and 20 rows on the
+  three days measured.
+
+  The pattern is visible in the timestamps too, and was how this was found
+  before the log was widened: successes cluster within *fifteen seconds* of
+  **07:00 UTC** — midnight Pacific, when the daily free-tier allowance resets —
+  run for eight to fourteen minutes until the twenty are spent, and then the
+  key returns 429 for the rest of the day.
+
+  At twenty a day the remaining ~26,000 rows take **about 3½ years.** The
+  worker is not the problem and has not been for some time: 719 invocations
+  in 24 hours, every one of them HTTP 200.
+  **Next step is not code:** the account owner needs to enable billing on the
+  Gemini API key at ai.google.dev or in the Google Cloud console. Nobody in
+  this session has access to that account. Nothing else is tunable — and now
+  there is a number to check it against, because the next 429 will say
+  `limit=` whatever the new plan allows.
+- **The refund has now been proven under sustained failure, not just argued
+  for.** Across two days and on the order of 17,000 rate-limited calls, the
+  queue shows `max(attempts) = 1` and **zero** rows `failed` out of 26,100.
+  Not one question was burned out of the backfill by the quota. That is 0048's
+  release-and-refund path doing exactly what it was built for.
 - **The arithmetic below is what 0048 made *possible*, not what is
   happening.** It holds once the quota is fixed; until then it is fiction.
 
@@ -199,6 +232,18 @@ in the same session: it must return 307 to `/login`.
   than overruling — it applies only when the device has no stored choice — and
   a pick made while the profile lookup is still in flight is no longer
   clobbered when it lands.
+- **A recovery path that exists is not a recovery path that can be reached.**
+  `claim_translation_batch` has always reclaimed a claim abandoned for more
+  than ten minutes, and the reclaim was correct. It was also unreachable:
+  the picked rows were ordered `by updated_at` alone, and *claiming a row sets
+  `updated_at`* — so an abandoned row instantly sorted behind every row the
+  backfill had not yet touched. Measured on the live queue, one row abandoned
+  for 25 hours had **16,807 rows ahead of it**, which at the current quota is
+  about two years. Migration **0051** orders stale claims first. Nothing
+  alerted, because the row was never lost — only last in a very long line, and
+  a queue with a working recovery path and a starved one look identical from
+  the outside. Check the *ordering* of a recovery path, not just its
+  existence.
 - **`correct_choice_index` is positional.** Anything that reorders, adds or
   drops a choice — a translation especially — mis-grades the question.
 - **A `"use server"` module may only export async functions.** Exporting a
@@ -417,13 +462,16 @@ not rendered.**
    task. Zero attempts means no screen shipped in the last week has ever
    rendered with real data behind it.
 2. ~~The answer-key exposure.~~ **Fixed in 0049** — see the section above.
-3. **The translation backfill is queued but effectively stalled — Gemini API
-   quota exhausted, not a code problem.** 26,100 rows queued, only ~21
-   completed after ~2 hours. See "The translation system" section above for
-   the full diagnosis. **This is the actual next thing to unblock**: someone
-   with access to the Gemini/Google Cloud billing needs to raise or restore
-   the quota; nothing further is tunable from `cron_run_translations` or
-   `TRANSLATE_CONCURRENCY`. Once it's flowing, read a few Hausa samples —
+3. **The translation backfill is capped at twenty rows a day by the Gemini
+   free tier, and the cap now names itself.** As of 2026-09-05 the 429 reads
+   `quota=GenerateRequestsPerDayPerProjectPerModel-FreeTier limit=20`, so this
+   is settled: a daily free-tier request cap, resetting at 07:00 UTC, not a
+   per-minute throttle and not anything a dial here can reach. 26,036 still
+   queued, 64 done, **zero failed**. At this rate the backfill finishes in
+   about three and a half years. See "The translation system" above.
+   **This is the actual next thing to unblock**: someone with access to the
+   Gemini/Google Cloud billing needs to enable a paid plan; nothing further is
+   tunable from `cron_run_translations` or `TRANSLATE_CONCURRENCY`. Once it's flowing, read a few Hausa samples —
    especially fiqh, where the fard/sunnah distinction the guard exists for
    actually bites — rather than assuming the automatic checks caught
    everything.

@@ -118,6 +118,49 @@ const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.6-flash";
  */
 class RetryableError extends Error {}
 
+/**
+ * What a 429 actually says, once enough of it is kept.
+ *
+ * This used to slice the response body at 300 characters and log that. Google
+ * puts the prose first and the machine-readable part last, so 300 characters
+ * captured the sentence everyone had already read — "You exceeded your current
+ * quota" — and cut off the only part that answers the next question. Two days
+ * of logs came back byte-identical, every one of them ending `* Quota ex`,
+ * which is the beginning of the word that mattered.
+ *
+ * The useful fields live in `error.details`: a `google.rpc.QuotaFailure` with
+ * one violation per limit hit, and often a `RetryInfo`. `quotaId` is what
+ * separates a per-minute throttle from a per-day cap — "slow down" from "come
+ * back tomorrow" — and nothing else in this function can tell those apart.
+ * Diagnosing it without them took reading two days of success *timestamps* to
+ * find they clustered at one hour of the day.
+ *
+ * The summary goes in front of the raw body deliberately. The failure being
+ * fixed here was a truncation, and a summary appended after 1,200 characters
+ * of JSON would be the same bug waiting for a longer error.
+ */
+function describeModelError(status: number, body: string): string {
+  const notes: string[] = [];
+  try {
+    const err = JSON.parse(body)?.error;
+    for (const d of err?.details ?? []) {
+      const type = String(d?.["@type"] ?? "");
+      if (type.endsWith("QuotaFailure")) {
+        for (const v of d?.violations ?? []) {
+          notes.push(`quota=${v?.quotaId ?? "?"} limit=${v?.quotaValue ?? "?"}`);
+        }
+      } else if (type.endsWith("RetryInfo") && d?.retryDelay) {
+        notes.push(`retryDelay=${d.retryDelay}`);
+      }
+    }
+  } catch {
+    // Not JSON, or not the shape expected. The raw body below still stands,
+    // and an unparseable body is itself worth seeing in full.
+  }
+  const summary = notes.length ? ` [${notes.join("; ")}]` : "";
+  return `model returned ${status}:${summary} ${body.slice(0, 1200)}`;
+}
+
 async function translate(row: QueueRow, apiKey: string) {
   const languageName = LOCALE_NAMES[row.o_locale] ?? row.o_locale;
 
@@ -145,7 +188,7 @@ async function translate(row: QueueRow, apiKey: string) {
   }
 
   if (!res.ok) {
-    const detail = `model returned ${res.status}: ${(await res.text()).slice(0, 300)}`;
+    const detail = describeModelError(res.status, await res.text());
     // 429 is the rate limit; 5xx is the model's own trouble. A 400 or a 404 is
     // ours — a bad prompt or a model name that has been retired — and those
     // must keep counting, because retrying them forever would hide them.
@@ -249,8 +292,10 @@ Deno.serve(async (req) => {
    * sized around, and the refund made that cheap enough to run for half an
    * hour before anyone noticed the throughput hadn't moved. Turned down to
    * two while the actual per-key quota is unknown; `console.error` above now
-   * logs what the API says, and the honest way to raise this again is to
-   * read that, not to guess a second number.
+   * logs what the API says — including, since the quota detail was widened,
+   * the `quotaId` that says whether the limit is per minute or per day — and
+   * the honest way to raise this again is to read that, not to guess a second
+   * number.
    *
    * And the failure mode is now cheap. A 429 releases the claim with its
    * attempt refunded, so pushing the rate too high costs throughput and
