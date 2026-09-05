@@ -205,6 +205,12 @@ export interface Translations {
   noProgressYet: string
   continueAnswered: string
   challengeQuestions: string
+  /** The rank ladder on the home screen: where the player is, and what is next. */
+  rankJourney: string
+  /** The daily login reward's condition — see migration 0053. */
+  dailyTaskTitle: string
+  dailyTaskCta: string
+  dailyTaskLocked: string
   challengeDone: string
   currentProgress: string
   noChallengeToday: string
@@ -1031,6 +1037,10 @@ const enTranslations: Translations = {
   noProgressYet: "You haven't answered anything yet",
   continueAnswered: "{answered} of {total} answered",
   challengeQuestions: "Answer {count} questions",
+  rankJourney: "{current} to {next}",
+  dailyTaskTitle: "Answer {required} questions today",
+  dailyTaskCta: "Start answering",
+  dailyTaskLocked: "Answer {required} questions to unlock",
   challengeDone: "Done for today",
   currentProgress: "{answered} of {total} answered",
   noChallengeToday: "No challenge today",
@@ -1841,6 +1851,10 @@ const msTranslations: Translations = {
   noProgressYet: "Anda belum menjawab apa-apa lagi",
   continueAnswered: "{answered} daripada {total} dijawab",
   challengeQuestions: "Jawab {count} soalan",
+  rankJourney: "{current} ke {next}",
+  dailyTaskTitle: "Jawab {required} soalan hari ini",
+  dailyTaskCta: "Mula menjawab",
+  dailyTaskLocked: "Jawab {required} soalan untuk membukanya",
   challengeDone: "Selesai hari ini",
   currentProgress: "{answered} daripada {total} dijawab",
   noChallengeToday: "Tiada cabaran hari ini",
@@ -2651,6 +2665,10 @@ const idTranslations: Translations = {
   noProgressYet: "Anda belum menjawab apa pun",
   continueAnswered: "{answered} dari {total} dijawab",
   challengeQuestions: "Jawab {count} pertanyaan",
+  rankJourney: "{current} ke {next}",
+  dailyTaskTitle: "Jawab {required} pertanyaan hari ini",
+  dailyTaskCta: "Mulai menjawab",
+  dailyTaskLocked: "Jawab {required} pertanyaan untuk membukanya",
   challengeDone: "Selesai hari ini",
   currentProgress: "{answered} dari {total} dijawab",
   noChallengeToday: "Tidak ada tantangan hari ini",
@@ -3461,6 +3479,10 @@ const haTranslations: Translations = {
   noProgressYet: "Ba ka amsa komai ba tukuna",
   continueAnswered: "{answered} daga {total} an amsa",
   challengeQuestions: "Amsa tambayoyi {count}",
+  rankJourney: "{current} zuwa {next}",
+  dailyTaskTitle: "Amsa tambayoyi {required} yau",
+  dailyTaskCta: "Fara amsawa",
+  dailyTaskLocked: "Amsa tambayoyi {required} don buɗewa",
   challengeDone: "An gama yau",
   currentProgress: "{answered} daga {total} an amsa",
   noChallengeToday: "Babu kalubale yau",
@@ -4271,6 +4293,10 @@ const frTranslations: Translations = {
   noProgressYet: "Vous n'avez encore rien répondu",
   continueAnswered: "{answered} sur {total} répondues",
   challengeQuestions: "Répondez à {count} questions",
+  rankJourney: "{current} vers {next}",
+  dailyTaskTitle: "Réponds à {required} questions aujourd'hui",
+  dailyTaskCta: "Commencer à répondre",
+  dailyTaskLocked: "Réponds à {required} questions pour débloquer",
   challengeDone: "Terminé pour aujourd'hui",
   currentProgress: "{answered} sur {total} répondues",
   noChallengeToday: "Aucun défi aujourd'hui",
@@ -5081,6 +5107,10 @@ const arTranslations: Translations = {
   noProgressYet: "لم تجب على أي شيء بعد",
   continueAnswered: "{answered} من {total} تمت الإجابة",
   challengeQuestions: "أجب عن {count} أسئلة",
+  rankJourney: "{current} إلى {next}",
+  dailyTaskTitle: "أجب عن {required} أسئلة اليوم",
+  dailyTaskCta: "ابدأ الإجابة",
+  dailyTaskLocked: "أجب عن {required} أسئلة لفتح المكافأة",
   challengeDone: "تم اليوم",
   currentProgress: "{answered} من {total} تمت الإجابة",
   noChallengeToday: "لا يوجد تحد اليوم",

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import { getDailyTaskProgress } from "./actions"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { RewardsPageClient } from "@/components/rewards/RewardsPageClient"
 import type { SpinSegment } from "@/components/rewards/SpinWheel"
@@ -58,8 +59,12 @@ export default async function RewardsPage() {
     .select("id, label, type, value")
     .order("id")
 
+  // The day's task, read from the same function that gates the claim.
+  const dailyTask = await getDailyTaskProgress()
+
   return (
     <RewardsPageClient
+      dailyTask={dailyTask}
       streakCount={profile?.streak_count ?? 0}
       longestStreak={profile?.longest_streak ?? 0}
       streakFreezesAvailable={profile?.streak_freezes_available ?? 0}

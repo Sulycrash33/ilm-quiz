@@ -9,6 +9,36 @@ export interface LoginClaimResult {
   dayNumber?: number
   coinsAwarded?: number
   xpAwarded?: number
+  /** The day's task, reported by the same function that enforces it. */
+  taskRequired?: number
+  taskAnswered?: number
+  /** The claim was refused because today's questions are not done yet. */
+  taskIncomplete?: boolean
+}
+
+export interface DailyTaskProgress {
+  required: number
+  answered: number
+  done: boolean
+}
+
+/**
+ * Today's questions, for the screen.
+ *
+ * Read through `daily_task_progress()` rather than counted here, so the number
+ * the player is shown and the number the claim is judged against come from one
+ * place. Counting attempts again in TypeScript is how the two drift, and a
+ * progress bar that says 5/5 beside a button that refuses is worse than no
+ * progress bar.
+ */
+export async function getDailyTaskProgress(): Promise<DailyTaskProgress> {
+  const supabase = await createClient()
+  const { data, error } = await supabase.rpc("daily_task_progress")
+  const row = Array.isArray(data) ? data[0] : data
+  if (error || !row) return { required: 0, answered: 0, done: false }
+  const required = Number(row.o_required ?? 0)
+  const answered = Number(row.o_answered ?? 0)
+  return { required, answered, done: required > 0 && answered >= required }
 }
 
 /** Real daily login claim via a SECURITY DEFINER function - see
@@ -29,10 +59,28 @@ export async function claimDailyLogin(): Promise<LoginClaimResult> {
   // Columns are `o_`-prefixed: the RPC's OUT parameters were renamed in
   // migration 0016 because `day_number` collided with the identically-named
   // column on `user_login_claims`, which made the function raise at call time.
-  if (row.o_already_claimed) return { success: false, alreadyClaimedToday: true, dayNumber: row.o_day_number }
-  if (!row.o_success) return { success: false, error: row.o_error ?? "Could not claim today's reward." }
+  const taskRequired = row.o_task_required ?? undefined
+  const taskAnswered = row.o_task_answered ?? undefined
 
-  return { success: true, dayNumber: row.o_day_number, coinsAwarded: row.o_coins_awarded, xpAwarded: row.o_xp_awarded }
+  if (row.o_already_claimed) {
+    return { success: false, alreadyClaimedToday: true, dayNumber: row.o_day_number, taskRequired, taskAnswered }
+  }
+  // 0053 gates the claim on answering the day's questions. The sentinel is
+  // matched rather than shown: the copy belongs in the string table, in six
+  // languages, not in an error string coming out of Postgres.
+  if (row.o_error === "daily_task_incomplete") {
+    return { success: false, taskIncomplete: true, taskRequired, taskAnswered }
+  }
+  if (!row.o_success) return { success: false, error: row.o_error ?? "Could not claim today's reward.", taskRequired, taskAnswered }
+
+  return {
+    success: true,
+    dayNumber: row.o_day_number,
+    coinsAwarded: row.o_coins_awarded,
+    xpAwarded: row.o_xp_awarded,
+    taskRequired,
+    taskAnswered,
+  }
 }
 
 export interface SpinResult {
