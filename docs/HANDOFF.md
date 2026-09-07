@@ -2,9 +2,9 @@
 
 Written 2026-09-03, rewritten through 2026-09-07. **Read this first if you are
 picking up work cold.** Every number below was checked against the live
-database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `6a50f33` (PR #76,
-merged) — re-check anything you are about to depend on rather than trusting
-them blind. **Five** earlier notes have now been wrong about a count within a
+database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `969c205` (PR #79,
+merged; #80 is this document catching up) — re-check anything you are about to
+depend on rather than trusting them blind. **Five** earlier notes have now been wrong about a count within a
 day of being written, which is the whole argument for checking. The fifth was
 this document's own translation figure, corrected below: it said "69 questions"
 where 69 is the number of *rows*, covering **65** questions. Rows and the
@@ -17,7 +17,7 @@ category grid, and a hadith of the day that was not a hadith. All three were
 real. None of them was a regression — the code shipped in #73 and #76 was
 correct and was live in production — and that is precisely what makes them
 worth reading carefully, because each one failed a step *past* the one the
-previous session had checked. See "The three ways a shipped fix still fails
+previous session had checked. See "The four ways a shipped fix still fails
 the player" below.
 
 ## The one fact that reframes everything
@@ -249,7 +249,7 @@ the two links built on it — so one button silently stopped rendering and the
 other kept pointing somewhere that no longer made sense. **When a migration
 drops a field's meaning, grep the app for every reader in the same change.**
 
-## The three ways a shipped fix still fails the player
+## The four ways a shipped fix still fails the player
 
 Added 2026-09-07, after the owner played the app and found all three of the
 previous day's headline fixes still broken from where they were sitting. This
@@ -1026,7 +1026,7 @@ considered position.
 | `home/page.tsx`'s bottom nav | a second fixed nav bar drawn on top of the layout's, with a different link set. Removed 2026-09-07 |
 | `DailyProgressCard` | imported by nothing, and it carries a **second** definition of the daily task size (`REWARD_RULES.dailyMissionQuestions`) alongside `daily_task_questions()`. Delete it or reconcile the two |
 | `focusLevel` (i18n) | the home screen's name for lifetime accuracy, which the profile and the run summary both call `accuracy`. Key removed from all six locales |
-| the pause machinery | `paused`, `pausedAt`, `setPausedTracking` and the paused overlay all went with the button |
+| the pause machinery | `paused`, `pausedAt`, `setPausedTracking`, the paused overlay and the four i18n keys (`pauseLabel`, `pausedTitle`, `pausedBody`, `resumeLabel`) across all six locales all went with the button |
 
 **Before building a screen, grep for whether it already exists and is simply
 not rendered.** And the sharper version this project keeps proving: **before
@@ -1326,7 +1326,7 @@ authoring questions stops.
   And then it was reported a sixth time, on 2026-09-07 — and the sixth had a
   fourth cause again: on the owner's Dell laptop and Android phone the engine
   worked and **nothing in the app outside a quiz run ever played a cue.** See
-  items 2 and 4 of "The three ways a shipped fix still fails the player". Six
+  items 2 and 4 of "The four ways a shipped fix still fails the player". Six
   reports, four causes, one symptom. **When the owner says they cannot hear
   anything, they are describing the experience, and the experience is the only
   thing that counts — so before answering, ask what is supposed to make a
@@ -1404,6 +1404,17 @@ and `metadataBase` not being set. Neither is a `⨯`.
 Then verify against the deployment, with a **fresh** share token, the file
 sanity guards, and the signed-out control described above.
 
+**And then open the app signed in.** That is now possible in this container —
+see the localhost Supabase bridge under "Environment traps" — and it is the
+only step that has ever caught anything in this project. The five gates above
+have a combined record, across two weeks, of **zero** findings against **nine**
+from one person opening the app: the daily challenge that opened a category
+picker, the level path serving English to Hausa players, an audio device
+nothing opened, an iOS session check that could never fire, an app with no
+sound outside a quiz run, a percentage printed twice on twenty-nine cards, a
+denominator the product rules forbid, two bottom navigation bars, and a nav
+covering the lifelines. Every one of them shipped green.
+
 ## Working agreement
 
 - Develop on a fresh `claude/...` branch, branched from `origin/main`. Open a
@@ -1428,6 +1439,7 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| #80 | The daily challenge's XP keeps counting, and this document catches up with the day |
 | #79 | One word, six meanings: the progress audit — a doubled percentage on every category card, a nav bar drawn twice, a nav covering the run, and the pause button that stopped a scored clock |
 | #78 | The sound had nothing to play: `tap` fires on every press, as `sound.ts` always said it did |
 | #77 | Three fixes that shipped green and still failed the player: the daily challenge gets a front door, the sound's iOS half becomes reachable, and a hadith that was not a hadith leaves the rotation |

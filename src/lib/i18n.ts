@@ -784,10 +784,6 @@ export interface Translations {
   howItWorksRankBody: string
   continueLabel: string
   dismissExplanation: string
-  pauseLabel: string
-  pausedTitle: string
-  pausedBody: string
-  resumeLabel: string
   roundReviewTitle: string
   roundReviewHint: string
   roundReviewYourAnswer: string
@@ -1611,10 +1607,6 @@ const enTranslations: Translations = {
   howItWorksRankBody: "XP carries across every category and moves you up nine ranks, from {first} to {last}.",
   continueLabel: "Continue",
   dismissExplanation: "Close the explanation",
-  pauseLabel: "Pause",
-  pausedTitle: "Paused",
-  pausedBody: "The clock is stopped and the question is hidden. Take as long as you need.",
-  resumeLabel: "Resume",
   roundReviewTitle: "Every question in this round",
   roundReviewHint: "Your answer, the right one, and why.",
   roundReviewYourAnswer: "You chose",
@@ -2425,10 +2417,6 @@ const msTranslations: Translations = {
   howItWorksRankBody: "XP terkumpul merentas semua kategori dan menaikkan anda sembilan pangkat, dari {first} ke {last}.",
   continueLabel: "Teruskan",
   dismissExplanation: "Tutup penerangan",
-  pauseLabel: "Jeda",
-  pausedTitle: "Dijeda",
-  pausedBody: "Jam berhenti dan soalan disembunyikan. Ambil masa yang anda perlukan.",
-  resumeLabel: "Sambung",
   roundReviewTitle: "Setiap soalan dalam pusingan ini",
   roundReviewHint: "Jawapan anda, jawapan yang betul, dan sebabnya.",
   roundReviewYourAnswer: "Anda pilih",
@@ -3239,10 +3227,6 @@ const idTranslations: Translations = {
   howItWorksRankBody: "XP terkumpul lintas kategori dan menaikkan kamu sembilan peringkat, dari {first} ke {last}.",
   continueLabel: "Lanjut",
   dismissExplanation: "Tutup penjelasan",
-  pauseLabel: "Jeda",
-  pausedTitle: "Dijeda",
-  pausedBody: "Waktu berhenti dan soal disembunyikan. Ambil waktu yang kamu perlukan.",
-  resumeLabel: "Lanjutkan",
   roundReviewTitle: "Setiap soal di ronde ini",
   roundReviewHint: "Jawabanmu, jawaban yang benar, dan alasannya.",
   roundReviewYourAnswer: "Kamu memilih",
@@ -4053,10 +4037,6 @@ const haTranslations: Translations = {
   howItWorksRankBody: "XP na tarawa a duk kashi kuma yana ɗaga ka darajoji tara, daga {first} zuwa {last}.",
   continueLabel: "Ci gaba",
   dismissExplanation: "Rufe bayanin",
-  pauseLabel: "Dakata",
-  pausedTitle: "An dakata",
-  pausedBody: "Agogo ya tsaya kuma an ɓoye tambayar. Ɗauki lokacin da kake buƙata.",
-  resumeLabel: "Ci gaba da wasa",
   roundReviewTitle: "Kowace tambaya a wannan zagaye",
   roundReviewHint: "Amsarka, amsar da ta dace, da dalilinta.",
   roundReviewYourAnswer: "Ka zaɓa",
@@ -4867,10 +4847,6 @@ const frTranslations: Translations = {
   howItWorksRankBody: "L'XP se cumule sur toutes les catégories et vous fait monter de neuf rangs, de {first} à {last}.",
   continueLabel: "Continuer",
   dismissExplanation: "Fermer l'explication",
-  pauseLabel: "Pause",
-  pausedTitle: "En pause",
-  pausedBody: "Le chronomètre est arrêté et la question est masquée. Prenez le temps qu'il vous faut.",
-  resumeLabel: "Reprendre",
   roundReviewTitle: "Chaque question de cette manche",
   roundReviewHint: "Votre réponse, la bonne, et pourquoi.",
   roundReviewYourAnswer: "Vous avez choisi",
@@ -5681,10 +5657,6 @@ const arTranslations: Translations = {
   howItWorksRankBody: "تتراكم نقاط الخبرة عبر الفئات كلها وترفعك تسع مراتب، من {first} إلى {last}.",
   continueLabel: "متابعة",
   dismissExplanation: "إغلاق الشرح",
-  pauseLabel: "إيقاف مؤقت",
-  pausedTitle: "متوقف مؤقتاً",
-  pausedBody: "توقف العد وأُخفي السؤال. خذ ما تحتاجه من وقت.",
-  resumeLabel: "استئناف",
   roundReviewTitle: "كل أسئلة هذه الجولة",
   roundReviewHint: "إجابتك، والإجابة الصحيحة، وسببها.",
   roundReviewYourAnswer: "اخترت",
