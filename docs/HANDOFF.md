@@ -378,6 +378,81 @@ different published edition, or an admin reading and correcting at
 0047 was deliberately built as an importer and not a translator for the same
 reason.
 
+## One word, six meanings: the progress audit
+
+Added 2026-09-07, after the owner asked why they had "seen 50% somewhere" and
+said the app had to be ready to ship. **This session is the first time anybody
+has driven this app signed in**, and the technique that made it possible is
+written up under "Environment traps" — read that before concluding, as four
+sessions did, that a signed-in click-through cannot be done here.
+
+**"Progress" meant six different things on six screens.** Every one of these
+was live:
+
+| Screen | What its "progress" measured |
+|---|---|
+| `/home` ring | XP toward the next rank |
+| `/home`, beside it | lifetime accuracy — **labelled "Focus Level"** |
+| `/quiz` category card | questions *answered* ÷ questions *published* |
+| `/quiz/<cat>` level node | questions *correct* ÷ questions *published* |
+| `/quiz/<cat>` header bar | levels *cleared* ÷ levels playable |
+| run header | stage ÷ stages, as **"Stage 1 of 5"** |
+
+Two of those are the same number under different names, two share a
+denominator with different numerators, and one is named after a concept that
+appears nowhere else in the product. A player cannot hold six definitions of
+one word, and neither can the next session.
+
+**What was actually wrong, measured rather than guessed:**
+
+- **The category cards printed the percentage twice.** `PremiumProgress`
+  renders `label` on the left and its own computed percentage on the right,
+  and the caller passed *that same percentage* as the label. Counted in the
+  browser: **58 instances of "0%" on `/quiz`, two per card, twenty-nine
+  cards.** That is the doubled figure in the owner's screenshot.
+- **And their denominator was the size of the bank** — the one thing this
+  file has said from the beginning the app must never hand a player. It was
+  taken off `/intro` and off the `/quiz` heading and left on all twenty-nine
+  cards. Independent research says the same thing the rule does: a progress
+  bar against a large denominator *lowers* completion rather than raising it.
+  The card now shows the player's own answered count and no denominator,
+  which "Two product decisions that live only in code" already permits.
+- **`/home` drew the bottom navigation twice.** The layout renders one for
+  every page inside `(app)`, and `home/page.tsx` rendered its own on top —
+  two fixed bars on the most visited screen, with *different* link sets, so
+  the next tab added would have gone into one of them and not the other.
+- **The bottom nav covered the run.** Measured at 412×915: the fixed nav sat
+  on top of the lifeline dock and clipped the "Why it's right" explanation
+  mid-sentence. `pb-nav-safe` reserves room for the nav; the run's column is
+  taller than the reserve. The nav is now hidden for the length of a run.
+- **`/challenges` showed the daily challenge twice** — `DailyChallengeCard`
+  at the top and a larger "Today's special" panel below it with a second
+  Start button, the two disagreeing about how much of it was done because
+  only one of them knew the player's progress.
+- **"Back to Levels" went to `/challenges`.** Every mode run and the daily
+  challenge pass `backHref="/challenges"`, and `QuizRunner` labelled any
+  `backHref` as "Back to Levels".
+
+**The pause button is gone, and the reason is worth keeping.** It did not
+freeze a question — `setPausedTracking` handed the paused span *back* to the
+question's clock, so one press converted a timed question into an untimed one.
+That is the button doing what it was built to do, which is precisely why it had
+to go: an exploit the app offers you a button for reads as permission. It
+existed only in the two places that score the clock (classic level runs and the
+daily challenge); Practice has `per_question_timer: false`, so it never had a
+pause and never needed one, and a player who wants to stop and think still has
+it. **It does not prevent cheating** — a second tab reaches the same answer with
+the clock running — and nobody should claim otherwise. Hiding the bottom nav
+during a run is the other half of the same argument.
+
+**What other apps do, since it was asked.** Duolingo's stated direction is that
+daily-quest XP and league XP are the *same* XP — "the best way to compete in
+your league is now also the best way to learn". Their daily quests feed overall
+progression rather than sitting beside it. That is evidence against splitting
+the daily challenge's XP out of rank progress, and it is recorded here because
+the owner asked for the opposite and the decision is still open — see open
+item 16.
+
 ## The five warnings this codebase has earned
 
 **Testing the happy path is not testing.** `case when attempts >= 3 then
@@ -948,6 +1023,10 @@ considered position.
 | `daily_challenges.category_id` | written null since 0056; kept only so past rows stay legible. `DailyChallengeView.categorySlug` read it and was removed in #73 |
 | `BottomNavBar` | imported by nothing. The live bottom nav is inlined in `(app)/layout.tsx`. Worse than inert: the dead one has a **Challenges** tab the live one lacks, so the daily challenge's missing front door had a finished fix rotting in the tree |
 | the `tap` cue | documented in `sound.ts` as firing on every press anywhere; until #78 it was reached from two of thirteen `playCue` call sites, and outside a run the app made no sound at all |
+| `home/page.tsx`'s bottom nav | a second fixed nav bar drawn on top of the layout's, with a different link set. Removed 2026-09-07 |
+| `DailyProgressCard` | imported by nothing, and it carries a **second** definition of the daily task size (`REWARD_RULES.dailyMissionQuestions`) alongside `daily_task_questions()`. Delete it or reconcile the two |
+| `focusLevel` (i18n) | the home screen's name for lifetime accuracy, which the profile and the run summary both call `accuracy`. Key removed from all six locales |
+| the pause machinery | `paused`, `pausedAt`, `setPausedTracking` and the paused overlay all went with the button |
 
 **Before building a screen, grep for whether it already exists and is simply
 not rendered.** And the sharper version this project keeps proving: **before
@@ -1145,6 +1224,26 @@ before writing a fetch or a ladder.
     way in Arabic across the whole app. One pass, app wide, or leave it.
 14. **Rank names are Latin inside Arabic text.** `RANKS` titles are data.
 15. Agreed but unbuilt: bulk actions, Excel export, a read-only auditor role.
+16. **Does the daily challenge's XP count toward rank? Still undecided.** The
+    owner asked that only the *claimed reward* count, not the per-question XP,
+    so answering the daily would not move the ring or the lifetime answered
+    count. It is **not implemented**, deliberately: the research asked for on
+    the same day points the other way — Duolingo aligns quest XP with league
+    and overall XP on purpose, so that competing and learning pull together —
+    and splitting them would mean the same question pays differently depending
+    on which screen served it. One `submit_quiz_answer` branch either way, and
+    cheap to reverse. Needs the owner's call with that evidence in front of
+    them.
+17. **The category card has no bar any more, only a count.** That is correct —
+    the old bar measured the bank — but the honest bar does exist: *levels
+    cleared*, which `LevelPath` already computes and shows inside the category.
+    Putting it on the card needs `category_progress` to return cleared tiers.
+    That would collapse two of the six progress definitions into one and is the
+    natural next step.
+18. **`PrayerTimesCard` renders as a large empty panel** when location is
+    unavailable or still resolving — seen in the browser on `/home`. Worth
+    checking what a player who *denies* location actually gets, because on the
+    front door an empty card reads as broken.
 
 ## Deliberately declined, with reasons
 
@@ -1257,7 +1356,22 @@ authoring questions stops.
     `sound.ts` **and to run the same test against `origin/main` as a control.**
     That is how #77's sound claim was proved rather than argued: the same
     script fails on the deployed code and passes on the fix.
-  - **None of that is a person using the app**, and the whole of open item 1
+  - **A signed-in click-through IS possible, and this is how.** Solved on
+    2026-09-07 after four sessions worked around it. The browser cannot reach
+    `*.supabase.co`, but it *can* reach localhost, and Node's `fetch` goes out
+    fine through `HTTPS_PROXY`. So put a ~40-line HTTP proxy on
+    `127.0.0.1:54321` that forwards every request to the Supabase URL and
+    echoes permissive CORS headers back, point
+    `NEXT_PUBLIC_SUPABASE_URL` at it, rebuild (**it is inlined at build time**),
+    and sign in normally. Everything works: auth, RLS, server actions, RPCs.
+    That is how `/quiz`'s fifty-eight `0%` were counted, how the nav was seen
+    covering the lifelines, and how the daily challenge was played end to end
+    for the first time.
+    Make the account by inserting into `auth.users` with
+    `crypt(pw, gen_salt('bf'))` — public signup is off, so `signUp` will not
+    work — and **delete it afterwards**: the register's `attempts = 0` is a
+    real project fact and a QA row corrupts it.
+  - **None of that is the owner using the app**, and the whole of open item 1
     still stands.
 - **A run's per-question timer is 25s at tier 1 rising to 45s at tier 9**,
   shorter than a browser automation round trip. The option letter lives in
@@ -1305,6 +1419,7 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| #79 | One word, six meanings: the progress audit — a doubled percentage on every category card, a nav bar drawn twice, a nav covering the run, and the pause button that stopped a scored clock |
 | #78 | The sound had nothing to play: `tap` fires on every press, as `sound.ts` always said it did |
 | #77 | Three fixes that shipped green and still failed the player: the daily challenge gets a front door, the sound's iOS half becomes reachable, and a hadith that was not a hadith leaves the rotation |
 | #76 | Sound: nothing ever opened the audio device |

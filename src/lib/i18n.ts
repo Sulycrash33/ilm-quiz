@@ -42,7 +42,6 @@ export interface Translations {
   // Home Dashboard
   todayProgress: string
   xpGained: string
-  focusLevel: string
   inProgress: string
   lessonOf: string
   minsRemaining: string
@@ -147,6 +146,7 @@ export interface Translations {
   levelLocked: string
   completeLevelToUnlock: string
   backToLevels: string
+  backToChallenges: string
   levelComplete: string
   /** The CTA that was missing: after clearing a level, the way into the next
    * one. Nothing linked forward, so testers replayed the same tier instead. */
@@ -911,7 +911,6 @@ const enTranslations: Translations = {
   // Home Dashboard
   todayProgress: "Today's Progress",
   xpGained: "Barakah gained",
-  focusLevel: "Focus Level",
   inProgress: "In Progress",
   lessonOf: "Lesson {current} of {total}",
   minsRemaining: "{mins} mins remaining",
@@ -967,7 +966,7 @@ const enTranslations: Translations = {
   lifelineTimeBoostDesc: "Add 15 seconds",
 
   // The Hunt (run loop)
-  huntStage: "Stage {current} of {total}",
+  huntStage: "Question {current} of {total}",
   comboLabel: "Combo",
   comboX: "{multiplier}× combo",
   livesLabel: "Lives",
@@ -987,6 +986,7 @@ const enTranslations: Translations = {
   levelLocked: "Locked",
   completeLevelToUnlock: "Complete this level to unlock the next one",
   backToLevels: "Back to Levels",
+  backToChallenges: "Back to Challenges",
   levelComplete: "Level complete! The next level is unlocked.",
   nextLevel: "Next level",
   levelUnlockProgress: "{correct} of {total} answered correctly. Get them all right to unlock the next level.",
@@ -1725,7 +1725,6 @@ const msTranslations: Translations = {
   // Home Dashboard
   todayProgress: "Kemajuan Hari Ini",
   xpGained: "Barakah diperoleh",
-  focusLevel: "Tahap Fokus",
   inProgress: "Sedang Berjalan",
   lessonOf: "Pelajaran {current} daripada {total}",
   minsRemaining: "{mins} minit lagi",
@@ -1781,7 +1780,7 @@ const msTranslations: Translations = {
   lifelineTimeBoostDesc: "Tambah 15 saat",
 
   // The Hunt (run loop)
-  huntStage: "Peringkat {current} daripada {total}",
+  huntStage: "Soalan {current} daripada {total}",
   comboLabel: "Kombo",
   comboX: "Kombo {multiplier}×",
   livesLabel: "Nyawa",
@@ -1801,6 +1800,7 @@ const msTranslations: Translations = {
   levelLocked: "Berkunci",
   completeLevelToUnlock: "Selesaikan tahap ini untuk membuka tahap seterusnya",
   backToLevels: "Kembali ke Tahap",
+  backToChallenges: "Kembali ke Cabaran",
   levelComplete: "Tahap selesai! Tahap seterusnya telah dibuka.",
   nextLevel: "Tahap seterusnya",
   levelUnlockProgress: "{correct} daripada {total} dijawab dengan betul. Jawab semuanya dengan betul untuk membuka tahap seterusnya.",
@@ -2539,7 +2539,6 @@ const idTranslations: Translations = {
   // Home Dashboard
   todayProgress: "Kemajuan Hari Ini",
   xpGained: "Berkah diperoleh",
-  focusLevel: "Tingkat Fokus",
   inProgress: "Sedang Berlangsung",
   lessonOf: "Pelajaran {current} dari {total}",
   minsRemaining: "{mins} menit lagi",
@@ -2595,7 +2594,7 @@ const idTranslations: Translations = {
   lifelineTimeBoostDesc: "Tambah 15 detik",
 
   // The Hunt (run loop)
-  huntStage: "Tahap {current} dari {total}",
+  huntStage: "Soal {current} dari {total}",
   comboLabel: "Kombo",
   comboX: "Kombo {multiplier}×",
   livesLabel: "Nyawa",
@@ -2615,6 +2614,7 @@ const idTranslations: Translations = {
   levelLocked: "Terkunci",
   completeLevelToUnlock: "Selesaikan level ini untuk membuka level berikutnya",
   backToLevels: "Kembali ke Level",
+  backToChallenges: "Kembali ke Tantangan",
   levelComplete: "Level selesai! Level berikutnya telah terbuka.",
   nextLevel: "Level berikutnya",
   levelUnlockProgress: "{correct} dari {total} dijawab dengan benar. Jawab semuanya dengan benar untuk membuka level berikutnya.",
@@ -3353,7 +3353,6 @@ const haTranslations: Translations = {
   // Home Dashboard
   todayProgress: "Ci gaban Yau",
   xpGained: "Albarkar da aka samu",
-  focusLevel: "Matakin Mayar da Hankali",
   inProgress: "Ana Ci Gaba",
   lessonOf: "Darasi {current} na {total}",
   minsRemaining: "Sauran mintuna {mins}",
@@ -3409,7 +3408,7 @@ const haTranslations: Translations = {
   lifelineTimeBoostDesc: "Kara dakika 15",
 
   // The Hunt (run loop)
-  huntStage: "Mataki {current} daga {total}",
+  huntStage: "Tambaya {current} daga {total}",
   comboLabel: "Haɗi",
   comboX: "Haɗi {multiplier}×",
   livesLabel: "Rayuwa",
@@ -3429,6 +3428,7 @@ const haTranslations: Translations = {
   levelLocked: "An kulle",
   completeLevelToUnlock: "Kammala wannan matakin domin buɗe na gaba",
   backToLevels: "Koma zuwa Matakai",
+  backToChallenges: "Koma zuwa Kalubale",
   levelComplete: "An kammala matakin! An buɗe matakin gaba.",
   nextLevel: "Mataki na gaba",
   levelUnlockProgress: "An amsa {correct} daga cikin {total} daidai. Ka amsa dukkansu daidai don buɗe mataki na gaba.",
@@ -4167,7 +4167,6 @@ const frTranslations: Translations = {
   // Home Dashboard
   todayProgress: "Progrès du jour",
   xpGained: "Barakah gagnée",
-  focusLevel: "Niveau de concentration",
   inProgress: "En cours",
   lessonOf: "Leçon {current} sur {total}",
   minsRemaining: "{mins} min restantes",
@@ -4223,7 +4222,7 @@ const frTranslations: Translations = {
   lifelineTimeBoostDesc: "Ajouter 15 secondes",
 
   // The Hunt (run loop)
-  huntStage: "Étape {current} sur {total}",
+  huntStage: "Question {current} sur {total}",
   comboLabel: "Combo",
   comboX: "Combo {multiplier}×",
   livesLabel: "Vies",
@@ -4243,6 +4242,7 @@ const frTranslations: Translations = {
   levelLocked: "Verrouillé",
   completeLevelToUnlock: "Terminez ce niveau pour débloquer le suivant",
   backToLevels: "Retour aux niveaux",
+  backToChallenges: "Retour aux défis",
   levelComplete: "Niveau terminé ! Le niveau suivant est débloqué.",
   nextLevel: "Niveau suivant",
   levelUnlockProgress: "{correct} sur {total} de bonnes réponses. Répondez correctement à toutes pour débloquer le niveau suivant.",
@@ -4981,7 +4981,6 @@ const arTranslations: Translations = {
   // Home Dashboard
   todayProgress: "تقدّم اليوم",
   xpGained: "البركة المكتسبة",
-  focusLevel: "مستوى التركيز",
   inProgress: "قيد التقدم",
   lessonOf: "الدرس {current} من {total}",
   minsRemaining: "بقي {mins} دقيقة",
@@ -5037,7 +5036,7 @@ const arTranslations: Translations = {
   lifelineTimeBoostDesc: "أضف 15 ثانية",
 
   // The Hunt (run loop)
-  huntStage: "المرحلة {current} من {total}",
+  huntStage: "السؤال {current} من {total}",
   comboLabel: "سلسلة",
   comboX: "سلسلة {multiplier}×",
   livesLabel: "المحاولات",
@@ -5057,6 +5056,7 @@ const arTranslations: Translations = {
   levelLocked: "مقفل",
   completeLevelToUnlock: "أكمل هذا المستوى لفتح المستوى التالي",
   backToLevels: "العودة إلى المستويات",
+  backToChallenges: "العودة إلى التحديات",
   levelComplete: "اكتمل المستوى! تم فتح المستوى التالي.",
   nextLevel: "المستوى التالي",
   levelUnlockProgress: "أجبت عن {correct} من {total} إجابة صحيحة. أجب عنها جميعًا بشكل صحيح لفتح المستوى التالي.",

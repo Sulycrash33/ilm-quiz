@@ -56,12 +56,27 @@ const navItems: { labelKey: keyof Translations; href: string; icon: React.ReactN
   },
 ]
 
+/**
+ * Is this route a question on the clock?
+ *
+ * The mode runs and the daily challenge live under `/play`, a level run is
+ * `/quiz/<category>/<tier>`, and `/review` replays a set the same way. The
+ * category grid (`/quiz`) and a category's level path (`/quiz/<category>`) are
+ * browsing, not playing, so they keep the nav.
+ */
+function isRunRoute(pathname: string): boolean {
+  if (pathname.startsWith("/play/")) return true
+  if (pathname === "/review" || pathname.startsWith("/review/")) return true
+  return /^\/quiz\/[^/]+\/[^/]+/.test(pathname)
+}
+
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const inRun = isRunRoute(pathname)
   const { t, dir } = useLanguage()
 
   return (
@@ -78,9 +93,25 @@ export default function AppLayout({
       <AppBackdrop />
 
       {/* Main Content */}
-      <main className="relative z-10 pb-nav-safe md:pb-8">{children}</main>
+      <main className={`relative z-10 ${inRun ? "pb-8" : "pb-nav-safe md:pb-8"}`}>{children}</main>
 
-      {/* Bottom Navigation */}
+      {/* Bottom Navigation — hidden while a question is on the clock.
+
+          Two reasons, and the first is a plain layout bug. The nav is
+          `position: fixed` at the bottom of every page, and the run screen puts
+          the lifeline dock and the "Why it's right" explanation at the bottom
+          of its column. Measured in a real browser at 412×915: the nav sat on
+          top of both — the LIFELINES heading was half covered, and the
+          explanation for a wrong answer was cut off mid-sentence. `pb-nav-safe`
+          reserves room for the nav, but the run's own content is taller than
+          the reserve.
+
+          The second is the reason the pause button went. A timed question with
+          five one-tap exits to other pages is a timed question a player can
+          step out of; hiding the chrome for the length of a run is what every
+          game of this shape does, and it is the other half of "the clock means
+          something". The run has its own way out — "Exit Quiz", top left. */}
+      {!inRun && (
       <nav className="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-around items-center py-2 pb-safe">
@@ -121,6 +152,7 @@ export default function AppLayout({
           </div>
         </div>
       </nav>
+      )}
     </div>
   )
 }
