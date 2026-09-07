@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { ArrowLeft, Lightbulb, Pause, Play, X } from "lucide-react";
+import { ArrowLeft, Lightbulb, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { rankFor } from "@/lib/ranks";
@@ -163,7 +163,6 @@ export function HuntView({
    *  in a learning mode; elsewhere the reveal still advances on a timer. */
   const [holding, setHolding] = useState(false);
   /** A deliberate stop, offered only where hesitating costs nobody anything. */
-  const [paused, setPaused] = useState(false);
   /** Every question of the run, kept so the summary can teach from it. The
    *  engine does not carry this: it is presentation, and `HuntState` should
    *  stay the smallest thing that decides a run. */
@@ -181,25 +180,22 @@ export function HuntView({
 
   const question = currentQuestion(state);
   const finished = state.status === "won" || state.status === "lost";
-  const locked = selected !== null || grading || finished || paused;
+  const locked = selected !== null || grading || finished;
 
   /** Whether this run holds the reveal and offers a pause. Practice and the
    *  classic level runs do; Survival and Speed Round do not, because both
    *  score the time a player spends thinking. */
   const learning = isLearningMode(rules);
-  /** A pause is only meaningful where a question clock is running. */
-  const canPause = learning && rules.perQuestionTimer && !finished && !holding;
 
   const questionStartedAt = useRef(Date.now());
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** The graded outcome waiting on a dismissal, in a mode that holds the
    *  reveal. Kept in a ref because it is not rendered — only applied. */
   const pendingAdvance = useRef<{ correct: boolean; xpEarned: number; msLeft: number } | null>(null);
-  /** When the current pause started, so the time spent paused can be given
-   *  back. The question is hidden while paused, so that time was never
-   *  thinking time — counting it would quietly forfeit the pace bonus and
+  /* The pause tracking that used to live here is gone with the pause button
+   * — see the note further down. It refunded paused time to the question
+   * clock, which is precisely what made pause an answer-lookup window.
    *  record a response time of several minutes on an attempt. */
-  const pausedAt = useRef<number | null>(null);
 
   /**
    * The multiplier stepping up, marked.
@@ -245,8 +241,6 @@ export function HuntView({
     setEliminated([]);
     setDoublePoints(false);
     setHolding(false);
-    setPaused(false);
-    pausedAt.current = null;
     setRemaining(question.timeLimit);
     questionStartedAt.current = Date.now();
   }, [question?.id, question?.stage]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -578,17 +572,6 @@ export function HuntView({
    * releases it. Reading for a minute cannot change what the run scored,
    * which is why holding the reveal is safe in the first place.
    */
-  const setPausedTracking = (next: boolean) => {
-    if (next) {
-      pausedAt.current = Date.now();
-    } else if (pausedAt.current !== null) {
-      // Hand the paused span back to the question's clock reading.
-      questionStartedAt.current += Date.now() - pausedAt.current;
-      pausedAt.current = null;
-    }
-    setPaused(next);
-  };
-
   const dismissReveal = () => {
     const pending = pendingAdvance.current;
     pendingAdvance.current = null;
@@ -603,8 +586,6 @@ export function HuntView({
     xpAtStart.current = profile?.totalXp ?? xpAtStart.current;
     setReview([]);
     setHolding(false);
-    setPaused(false);
-    pausedAt.current = null;
     pendingAdvance.current = null;
     setSeed(Math.floor(Math.random() * 2 ** 31));
   };
@@ -619,8 +600,6 @@ export function HuntView({
     timedOutStage.current = -1;
     setReview([]);
     setHolding(false);
-    setPaused(false);
-    pausedAt.current = null;
     pendingAdvance.current = null;
   }, [ladder]);
 
@@ -748,24 +727,7 @@ export function HuntView({
         frozen={rules.runSeconds !== null ? false : locked}
       />
 
-      {paused ? (
-        /* The question is hidden, not just frozen. A pause that leaves it on
-           screen is free thinking time, which is the one thing the clock
-           exists to price. */
-        <div className="flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-white/10 bg-surface-container p-8 text-center">
-          <Pause className="h-10 w-10 text-primary" aria-hidden="true" />
-          <div className="space-y-1">
-            <h2 className="font-headline text-2xl text-on-surface">{t("pausedTitle")}</h2>
-            <p className="max-w-prose text-sm text-on-surface-variant">{t("pausedBody")}</p>
-          </div>
-          <Button onClick={() => setPausedTracking(false)} className="h-11 px-8">
-            <Play className="me-2 h-4 w-4" aria-hidden="true" />
-            {t("resumeLabel")}
-          </Button>
-        </div>
-      ) : (
-        <QuestionCard text={question.text} questionId={question.id} />
-      )}
+      <QuestionCard text={question.text} questionId={question.id} />
 
       {doublePoints && (
         <p className="text-center text-sm font-semibold text-tertiary">
@@ -773,7 +735,7 @@ export function HuntView({
         </p>
       )}
 
-      <div className={`grid gap-3 ${paused ? "hidden" : ""}`}>
+      <div className="grid gap-3">
         {question.options.map((option, index) => (
           <OptionTile
             key={`${question.id}-${index}`}
@@ -786,16 +748,27 @@ export function HuntView({
         ))}
       </div>
 
-      {canPause && !paused && (
-        <button
-          type="button"
-          onClick={() => setPausedTracking(true)}
-          className="mx-auto inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-on-surface-variant transition-colors hover:bg-white/5"
-        >
-          <Pause className="h-4 w-4" aria-hidden="true" />
-          {t("pauseLabel")}
-        </button>
-      )}
+      {/* The pause button is gone. It stopped a clock that is being scored.
+
+          `setPausedTracking` handed the paused span back to the question's
+          timer, so pause did not freeze a question — it converted a timed
+          question into an untimed one, in one press, by design. Read the
+          question, pause, look the answer up, resume with the clock where you
+          left it. That is not a player abusing an oversight; it is the button
+          doing exactly what it was built to do.
+
+          It only ever existed in the two places that score the clock: classic
+          level runs and the daily challenge. Practice — the mode built for
+          unpressured learning — has `per_question_timer: false`, so it has no
+          clock and never had a pause, and a player who needs to stop and think
+          already has a home there. Removing this costs nothing Practice does
+          not already do better.
+
+          What it does NOT do is prevent cheating: a second browser tab reaches
+          the same answer with the clock running. What it removes is the
+          sanctioned, one-press, in-app version — and an exploit the app hands
+          you a button for reads as permission.
+ */}
 
       <AnimatePresence>
         {grade && (

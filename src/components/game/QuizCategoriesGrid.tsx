@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { PremiumCard } from "@/components/ui/premium-card"
-import { PremiumProgress } from "@/components/ui/premium-progress"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { QuizCategory } from "@/lib/quiz-service"
@@ -113,14 +112,37 @@ export function QuizCategoriesGrid({ categories }: { categories: QuizCategory[] 
                           )}
                         </div>
                       </div>
-                      <PremiumProgress
-                        value={category.answeredCount}
-                        max={category.publishedCount}
-                        showLabel
-                        label={`${Math.round(
-                          (category.answeredCount / Math.max(1, category.publishedCount)) * 100,
-                        )}%`}
-                      />
+                      {/* The player's own count, and no denominator.
+
+                          This was a `PremiumProgress` filled to
+                          `answeredCount / publishedCount`, which broke two
+                          rules at once.
+
+                          It printed the percentage TWICE. `PremiumProgress`
+                          renders `label` on the left and the computed
+                          percentage on the right, and the label passed in was
+                          that same percentage — so every card read "0%  0%",
+                          twenty-nine times down the screen, fifty-eight
+                          identical numbers on one page.
+
+                          And the denominator was the size of the bank. This
+                          project's oldest product rule is that a total hands
+                          the player something to finish instead of something
+                          to learn; it was taken off `/intro` and off this
+                          page's heading, and then left on every card. A
+                          seeker who cleared forty questions of Aqeedah saw
+                          "7%", which is a discouraging way to describe a good
+                          week — and the measured research on progress bars
+                          says exactly that: a large denominator lowers
+                          completion rather than raising it.
+
+                          A count about the player is explicitly fine, and is
+                          all this needs to be. */}
+                      {category.answeredCount > 0 && (
+                        <p className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant/70">
+                          {category.answeredCount} {t("questionsAnswered")}
+                        </p>
+                      )}
                     </PremiumCard>
                   </Link>
                 ) : (

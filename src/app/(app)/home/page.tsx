@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, useReducedMotion } from "framer-motion"
-import { Trophy, Zap, Users, Gamepad2 } from "lucide-react"
+import { Trophy, Zap, Users, Gamepad2, Gift } from "lucide-react"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { CountUp } from "@/components/ui/count-up"
 import { ProgressRing } from "@/components/game/ProgressRing"
@@ -256,7 +256,13 @@ export default function HomePage() {
                     </span>
                   </div>
                   <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">
-                    {t("focusLevel")}
+                    {/* "Accuracy", as it is called on the profile and on the
+                        run summary. This said "Focus Level" — a term that
+                        appears nowhere else in the app — for the same lifetime
+                        accuracy figure, and it sat inches from the rank ring's
+                        percentage. Two percentages side by side, meaning
+                        different things, one of them named after nothing. */}
+                    {t("accuracy")}
                   </p>
                 </div>
               </div>
@@ -280,18 +286,17 @@ export default function HomePage() {
             of the daily coins, stated where the coins are collected. Migration
             0053 enforces it in the database. */}
 
-        {/* Additional Content */}
-        <motion.div variants={cardVariants} initial="hidden" animate="visible">
-          <Link href="/rewards" className="glass-card p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
-            <div>
-              <h3 className="font-bold text-on-surface">{t("dailyLoginRewards")}</h3>
-              <p className="text-sm text-on-surface-variant">{t("claimRewards")}</p>
-            </div>
-            <svg className="w-5 h-5 text-on-surface-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </motion.div>
+        {/* The "Daily login rewards" row stood here, directly under the
+            progress card, and is gone at the owner's request: with the daily
+            challenge card now above the ring, two separate "here is your daily
+            thing" rows bracketed the overall progress and neither said which
+            was which.
+
+            It was also the only link to `/rewards` in the entire app, so it
+            could not simply be deleted — the daily login reward, the spin
+            wheel and the streak freeze would all have become unreachable, the
+            exact failure this session has already fixed twice. It moves into
+            the Explore grid below, where the other rooms live. */}
 
         {/* Explore - the only entry point to these pages besides typing the URL.
 
@@ -306,16 +311,21 @@ export default function HomePage() {
           variants={cardVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"
+          className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-4"
         >
           {[
             { href: "/achievements", label: t("achievements"), Icon: Trophy, tint: "from-warning/25 to-warning/10", fg: "text-warning-bright" },
             { href: "/challenges", label: t("challenges"), Icon: Zap, tint: "from-special/25 to-special-container/10", fg: "text-special-bright" },
             { href: "/community", label: t("communityHub"), Icon: Users, tint: "from-info/25 to-info-container/10", fg: "text-info-bright" },
             { href: "/multiplayer", label: t("multiplayerQuiz"), Icon: Gamepad2, tint: "from-success/25 to-success/10", fg: "text-success-bright" },
-          ].map(({ href, label, Icon, tint, fg }, i) => (
+            /* Rewards, rehomed from the row that used to sit under the
+               progress card. Last, and full width on a phone, so an odd fifth
+               tile reads as deliberate rather than as a gap. */
+            { href: "/rewards", label: t("dailyLoginRewards"), Icon: Gift, tint: "from-tertiary/25 to-tertiary/10", fg: "text-tertiary", wide: true },
+          ].map(({ href, label, Icon, tint, fg, wide }, i) => (
             <motion.div
               key={href}
+              className={wide ? "col-span-2 md:col-span-1" : undefined}
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i, duration: 0.35 }}
@@ -336,39 +346,18 @@ export default function HomePage() {
         </motion.div>
       </main>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-6 bg-surface/60 backdrop-blur-xl border-t border-white/10 shadow-[0_-10px_20px_0_rgba(0,0,0,0.1)] rounded-t-xl">
-        <Link href="/home" className="flex flex-col items-center justify-center bg-primary-container/20 text-primary dark:text-primary-fixed rounded-xl px-3 py-1 transition-transform active:scale-95 duration-200">
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-          </svg>
-          <span className="font-label-caps text-label-caps mt-1">{t("home")}</span>
-        </Link>
-        <Link href="/quiz" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" />
-          </svg>
-          <span className="font-label-caps text-label-caps mt-1">{t("learning")}</span>
-        </Link>
-        <Link href="/leaderboard" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z" />
-          </svg>
-          <span className="font-label-caps text-label-caps mt-1">{t("rankings")}</span>
-        </Link>
-        <Link href="/store" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.78 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z" />
-          </svg>
-          <span className="font-label-caps text-label-caps mt-1">{t("shop")}</span>
-        </Link>
-        <Link href="/profile" className="flex flex-col items-center justify-center text-on-surface-variant/70 hover:bg-white/5 transition-colors rounded-xl px-3 py-1">
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-          </svg>
-          <span className="font-label-caps text-label-caps mt-1">{t("profile")}</span>
-        </Link>
-      </nav>
+      {/* The home screen used to render its own copy of the bottom navigation
+          here, on top of the one `(app)/layout.tsx` already draws for every
+          page inside it. Two fixed nav bars, stacked, on the most visited
+          screen in the app — visible in a browser as the tab row printed
+          twice, and a second full-width fixed element the phone had to
+          composite on every scroll.
+
+          They had drifted, too, which is the part that matters: this copy
+          linked Rankings to `/leaderboard` and Shop to `/store` with its own
+          icons and its own active state, while the layout's copy kept its own.
+          Two navigations for one app is two places to add the next tab to, and
+          only one of them would have been remembered. */}
     </div>
   )
 }
