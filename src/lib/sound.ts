@@ -82,6 +82,11 @@ export function setSoundEnabled(on: boolean): void {
   } catch {
     /* nothing to do — the cue simply stays off for this session */
   }
+  // Switching sound on is the one moment we know for certain the player wants
+  // to hear this app, and on iOS it is the only moment that can lift the
+  // ring/silent switch. It must happen after the write above, because the
+  // session is only claimed when `isSoundEnabled()` already reads true.
+  if (on) applyAudioSession()
 }
 
 /**
@@ -169,22 +174,45 @@ function audioContext(): AudioContext | null {
  *     lost. If the browser refuses the resume, nothing plays — which is
  *     honest, and the next gesture will open it.
  */
-function primeAudio(): void {
-  const ac = audioContext()
-  if (!ac) return
-  // iOS 16.4+ only. Without an audio session the hardware ring/silent switch
-  // mutes Web Audio outright, so an iPhone with the switch flipped is silent
-  // no matter what the player chose in this app — and roughly half this
-  // audience is on iPhone. "playback" says this audio is content the user
-  // asked for, which is true: sound is off by default and only an explicit
-  // opt-in turns it on. Set only when they have opted in, so the switch is
-  // still respected for everyone who has not.
+/**
+ * Exempt this app from the iPhone ring/silent switch, if it may be exempted.
+ *
+ * iOS 16.4+ only. Without an audio session the hardware switch mutes Web Audio
+ * outright, so an iPhone with the switch flipped is silent no matter what the
+ * player chose in this app — and roughly half this audience is on iPhone.
+ * "playback" says this audio is content the user asked for, which is true:
+ * sound is off by default and only an explicit opt-in turns it on. Set only
+ * when they have opted in, so the switch is still respected for everyone who
+ * has not.
+ *
+ * ── Why this is called from more than one place ───────────────────────────
+ * It used to live inside `primeAudio` alone, and `primeAudio` runs from a
+ * `{ once: true }` listener on the first gesture in the tab. That made the
+ * opt-in check unsatisfiable by construction: sound is off by default, the
+ * only way to switch it on is to reach the toggle, and reaching the toggle
+ * takes at least one tap — which is the tap that spends the `once` listener.
+ * So on iOS the session was evaluated exactly once, always while sound was
+ * still off, always skipped, and never reconsidered. An iPhone player could
+ * switch sound on, watch the toggle turn gold, hear the confirmation cue play
+ * into a muted output, and conclude the sound was still broken.
+ *
+ * It is now applied whenever the app has reason to believe sound is wanted:
+ * on the first gesture (for a player who had it on already) and at the moment
+ * it is switched on. Idempotent, and a no-op everywhere but iOS 16.4+.
+ */
+function applyAudioSession(): void {
   try {
     const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession
     if (session && isSoundEnabled()) session.type = "playback"
   } catch {
     /* not supported, or refused — the cues simply obey the silent switch */
   }
+}
+
+function primeAudio(): void {
+  applyAudioSession()
+  const ac = audioContext()
+  if (!ac) return
   if (ac.state === "suspended") void ac.resume()
 }
 
@@ -290,6 +318,11 @@ function drum(ac: AudioContext, start: number, out: AudioNode, gain = 0.22): voi
  */
 export function playCue(cue: SoundCue): void {
   if (!isSoundEnabled()) return
+  // Cheap, idempotent, and the backstop for every route into "sound is on"
+  // that does not pass through `setSoundEnabled` in this tab — a preference
+  // set in another tab, or a session that began with it already on and whose
+  // first gesture was spent before this module loaded.
+  applyAudioSession()
   const ac = audioContext()
   if (!ac) return
 

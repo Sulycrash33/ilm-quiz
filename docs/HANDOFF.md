@@ -1,8 +1,8 @@
 # ILM Hunt — session handoff
 
-Written 2026-09-03, rewritten through 2026-09-05. **Read this first if you are
+Written 2026-09-03, rewritten through 2026-09-07. **Read this first if you are
 picking up work cold.** Every number below was checked against the live
-database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `70e9332` (PR #74,
+database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `6a50f33` (PR #76,
 merged) — re-check anything you are about to depend on rather than trusting
 them blind. **Five** earlier notes have now been wrong about a count within a
 day of being written, which is the whole argument for checking. The fifth was
@@ -10,6 +10,15 @@ this document's own translation figure, corrected below: it said "69 questions"
 where 69 is the number of *rows*, covering **65** questions. Rows and the
 things they describe are not the same number, and this file has now made that
 mistake about translations, categories and the question bank in turn.
+
+**2026-09-07 opened with the owner angry, and right.** They played the app and
+reported three things: no sound, the daily challenge still sending them to the
+category grid, and a hadith of the day that was not a hadith. All three were
+real. None of them was a regression — the code shipped in #73 and #76 was
+correct and was live in production — and that is precisely what makes them
+worth reading carefully, because each one failed a step *past* the one the
+previous session had checked. See "The three ways a shipped fix still fails
+the player" below.
 
 ## The one fact that reframes everything
 
@@ -239,6 +248,86 @@ column's meaning does not remove the UI that read it. 0056 stopped writing
 the two links built on it — so one button silently stopped rendering and the
 other kept pointing somewhere that no longer made sense. **When a migration
 drops a field's meaning, grep the app for every reader in the same change.**
+
+## The three ways a shipped fix still fails the player
+
+Added 2026-09-07, after the owner played the app and found all three of the
+previous day's headline fixes still broken from where they were sitting. This
+section is the sharpest thing in this file, because every item in it passed
+every gate, was verified against the live database, **and was live in
+production at the moment it was reported broken.** Deployment was checked:
+Vercel had `6a50f33` on production, `/play/daily` answered 307 to `/login`
+rather than 404, and the five questions were visible to the owner's own account
+under RLS. The code was right. The player still could not get there.
+
+**1. Reachable is not discoverable — the daily challenge, again.**
+#73 gave the daily challenge a route and pointed both of its buttons at it.
+Both buttons live on `/challenges`. The only way to `/challenges` is one of
+four 44px tiles, below the fold, on the home screen. So a player who opens the
+app to answer today's five questions is shown a greeting, a hadith, a ring and
+some stats, and the only obvious route to *questions* on that screen is the
+Learning tab in the bottom bar — which is the category grid. The report reads
+"the daily challenge keeps taking me to the category" and the link was never
+wrong. **The handoff drew the lesson one step short.** "What does a player
+press to reach it, and have I followed that link myself?" catches the button.
+It does not catch that nothing tells the player the button exists. Ask the
+next question too: **"starting from the front door, with no knowledge of this
+codebase, how does a player find out this feature is here?"** A feature only
+reachable by someone who already knows where it is, is reachable only by its
+author. Fixed by putting the real `DailyChallengeCard` on `/home`, above the
+ring — the same component, so there is still one definition of what the
+challenge says.
+
+**2. A condition that cannot be satisfied is not a condition — the sound, on
+iPhone.** #76 was right that nothing opened the audio device, and the unlock
+listener it added is right. But it also set `navigator.audioSession.type =
+"playback"` — the only thing that can lift the iOS ring/silent switch — inside
+`primeAudio`, which runs from a `{ once: true }` listener on the first gesture
+in the tab, and only `if (isSoundEnabled())`. Sound is **off by default**. The
+only way to turn it on is to reach the toggle. Reaching the toggle costs at
+least one tap. That tap *is* the `once` listener. So on iOS the check ran
+exactly once, always while sound was still off, always skipped, and was never
+reconsidered — an iPhone player could switch sound on, see the toggle turn
+gold, and hear the confirmation cue play into a muted output. The session is
+now applied wherever the app has reason to believe sound is wanted: on first
+gesture, on `setSoundEnabled(true)`, and defensively in `playCue`.
+**The general shape: when a guard reads state that the user can only change
+*after* the guard has already run for the last time, the guard is dead code
+that looks like caution.**
+
+**3. A spot-check is a sample of one — the hadith.** The owner was shown, as
+the hadith of the day, `bukhari:127` in full: *"Narrated Abu at-Tufail: The
+above mentioned Statement of `Ali"*. That is a cross-reference, not a
+narration. 0050 fetched the English from fawazahmed0/hadith-api and
+spot-checked **Bukhari 1** before trusting the rest; Bukhari 1 is fine.
+Measured properly on 2026-09-07: **7,458 of the 7,589 entries in that edition
+(98.3%) end without sentence-final punctuation**, and 384 of our 391 do. The
+mirror systematically drops the closing punctuation, and in a minority of
+entries drops real content with it. **This is upstream, not ours** — the same
+fragments are in the source JSON, and re-running the importer reproduces them
+exactly.
+
+  The first detector tried for it was wrong, and that is worth keeping.
+  Comparing English length to the Arabic already imported for all 391 flagged
+  43 rows on the theory that a badly-cut English would be far shorter than its
+  Arabic. Reading those 43 showed the ratio measures something else: the Arabic
+  carries a full isnad the English edition omits. `bukhari:15` — *"None of you
+  will have faith till he loves me more than his father, his children and all
+  mankind"* — scores 0.33 and is complete. Acting on that measure would have
+  removed dozens of sound narrations from an Islamic education app.
+  **Measuring beat reasoning; then reading beat measuring.** 0057 deactivates
+  five rows, named individually because five rows of Bukhari deserve naming,
+  and strips eight truncated editorial `(See Hadith No…)` tails.
+
+**What still needs a person, and cannot be closed from here:** the remaining
+~379 English narrations are missing their final full stop, and an unknown
+subset of those are genuinely cut short. A full stop must not simply be
+appended — on a truncated narration that would *hide* the truncation and
+assert a completeness nobody has checked. Closing this properly means a
+different published edition, or an admin reading and correcting at
+`/admin/hadiths`. It is the one open item here that is a content decision, and
+0047 was deliberately built as an importer and not a translator for the same
+reason.
 
 ## The five warnings this codebase has earned
 
@@ -712,6 +801,19 @@ so opting in is a real signal — and therefore the switch is still respected fo
 everyone who has not. **If that is judged too aggressive, deleting that block is
 the whole revert**, and the rest of the fix stands without it.
 
+**That half was dead on arrival in #76, and #77 fixed it.** The session claim
+lived inside `primeAudio`, which runs from a `{ once: true }` first-gesture
+listener, guarded by `isSoundEnabled()`. Sound is off by default and the toggle
+takes a tap to reach — the same tap that spends the `once` listener — so the
+guard was evaluated exactly once, always before the player could possibly have
+opted in, and never again. It is now applied on first gesture, on
+`setSoundEnabled(true)`, and defensively at the top of `playCue`, so every
+route into "sound is on" claims the session. **If the owner still hears nothing
+on an iPhone after this, the remaining candidates are iOS below 16.4 (where
+nothing in a web app can override the switch), the device volume, or sound
+switched on at a different origin — `localStorage` is per origin, so a preview
+deployment does not share it with `ilm-quiz.vercel.app`.**
+
 ### What was measured, and what was not
 
 Be precise here, because a confident wrong answer is what cost this bug five
@@ -832,6 +934,15 @@ before writing a fetch or a ladder.
    the whole time they existed. See "right in the database, unreachable in the
    app" above.
 
+   **It paid out a third, fourth and fifth time on 2026-09-07**, when the owner
+   played the app again and found that all three of the previous day's headline
+   fixes were still broken from a player's seat — the daily challenge
+   undiscoverable, the sound's iOS half unsatisfiable, the hadith of the day a
+   cross-reference fragment. Every one of those shipped green and was live in
+   production. **Five findings, from one person opening the app, against zero
+   found by five gates over two weeks.** If there is one number in this
+   document to act on, it is that one.
+
    **What to press, in order, and what each proves.** Fifteen minutes total.
 
    1. Sign in, open the daily challenge, answer all five → proves `/play/daily`,
@@ -876,7 +987,19 @@ before writing a fetch or a ladder.
 4. **Scholar review — still zero, now of 10,466.** `/admin/questions` filters to
    "Awaiting review". Contemporary Issues is the riskiest and so the most
    informative.
-5. **The daily hadith rotation is 391 narrations long, English only.** Built
+5. **The daily hadith rotation is 386 narrations long (was 391), and its
+   English text comes from a mirror that truncates.** This is the open item
+   that grew teeth on 2026-09-07: the owner was served `bukhari:127` — *"The
+   above mentioned Statement of `Ali"*, a cross-reference with no narration in
+   it — as the hadith of the day. **98.3% of the upstream eng-bukhari edition
+   ends without sentence-final punctuation** and a minority of entries lose
+   real content with it; it is upstream, not our import. 0057 deactivated the
+   five entries that carry nothing standing alone and stripped eight truncated
+   `(See Hadith No…)` tails. **Still open, and it is a content decision:** the
+   remaining ~379 are missing their final full stop, an unknown subset are
+   genuinely cut short, and appending a period would hide that rather than fix
+   it. Closing it wants a different published edition or an admin reading at
+   `/admin/hadiths`. Everything below still holds. Built
    in `0047`: `hadiths` + `hadith_translations`, locale-aware from the first
    migration, a `daily_hadith()` that picks by date so every player sees the
    same narration on the same day, and an importer at `/admin/hadiths`. `0050`
@@ -1041,6 +1164,11 @@ authoring questions stops.
   which plays the streak cue from an effect with no gesture anywhere near it.
   See "The audio device has to be opened deliberately" below. **Read a "this is
   finished" line here as a claim about the code, never about the experience.**
+  And then it was reported a sixth time, on 2026-09-07, because #76's iOS half
+  could never fire — see item 2 of "The three ways a shipped fix still fails
+  the player". Six reports, three different causes, one symptom. **When the
+  owner says they cannot hear anything, they are describing the experience, and
+  the experience is the only thing that counts.**
 - **A level run is the whole tier — 20 questions**, not `HUNT_RULES.runLength`.
 - **Achievements are awarded by the database**, in `award_achievements()`.
 - **There is one account**, and it has never answered a question.
@@ -1053,9 +1181,30 @@ authoring questions stops.
 - **A fresh container has no `node_modules` and no `.env.local`.** `npm ci`,
   then write `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` or
   the build fails prerendering `/intro` with "supabaseUrl is required".
-- **Headless Chrome has no outbound network here, but localhost works.** The
-  Playwright chromium at `/opt/pw-browsers` is the one that exists; there is no
-  `chromium` on PATH.
+- **Headless Chrome has no outbound network here, and the agent proxy does not
+  rescue it.** The Playwright chromium at `/opt/pw-browsers` is the one that
+  exists; there is no `chromium` on PATH. Tried on 2026-09-07, and worth not
+  retrying blind: launching with `--proxy-server=http://127.0.0.1:46331` plus
+  `--ignore-certificate-errors` makes localhost work but **every request to
+  `*.supabase.co` returns `ERR_CONNECTION_RESET`**, on three attempts, while
+  `curl` to the same host from the same container succeeds. So a **signed-in
+  browser click-through cannot be done in this container at all** — the app
+  loads, the sign-in POST cannot leave. Plan verification around that:
+  - server-side truth: impersonate the account in a rolled-back transaction
+    (`set_config('request.jwt.claims', ...)`) and run the query the page runs;
+  - reachability: `curl` the deployment and read the status — `/play/daily`
+    answering **307 to `/login`** proves the route exists where a 404 would
+    prove it does not, with a signed-out control alongside it;
+  - "did it actually ship into the page": read `.next/app-build-manifest.json`
+    for the route's chunk list and grep those chunks for the link or string you
+    added. A component that compiles is not a component the page pulls in;
+  - pure module logic: Node 22's `--experimental-strip-types` runs a `.ts` file
+    directly, so a fake `window`/`navigator` is enough to test something like
+    `sound.ts` **and to run the same test against `origin/main` as a control.**
+    That is how #77's sound claim was proved rather than argued: the same
+    script fails on the deployed code and passes on the fix.
+  - **None of that is a person using the app**, and the whole of open item 1
+    still stands.
 - **A run's per-question timer is 25s at tier 1 rising to 45s at tier 9**,
   shorter than a browser automation round trip. The option letter lives in
   `aria-label`, not `innerText`.
@@ -1102,6 +1251,9 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| #77 | Three fixes that shipped green and still failed the player: the daily challenge gets a front door, the sound's iOS half becomes reachable, and a hadith that was not a hadith leaves the rotation |
+| #76 | Sound: nothing ever opened the audio device |
+| #75 | The handoff catches up with a session that found two unreachable features |
 | #74 | The level path speaks Hausa: the one question fetch that never asked for a translation |
 | #73 | The daily challenge can be played: five questions the server chose, and no category picker on the way in |
 | #71 | The arena opens: daily, battle and the play modes stop asking for a subject — and multiplayer, which could never have started a quiz, works |
