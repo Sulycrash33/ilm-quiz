@@ -56,6 +56,9 @@ export function OptionTile({ label, index, state, disabled, onSelect }: OptionTi
   return (
     <motion.button
       type="button"
+      // Plays its own `tap` below, so the app-wide TapCue listener skips it
+      // rather than stacking a second click on the same press.
+      data-self-cue=""
       disabled={disabled || state === "eliminated"}
       onClick={() => {
         // The tap, acknowledged in the hand and the ear before the server
