@@ -1224,16 +1224,25 @@ before writing a fetch or a ladder.
     way in Arabic across the whole app. One pass, app wide, or leave it.
 14. **Rank names are Latin inside Arabic text.** `RANKS` titles are data.
 15. Agreed but unbuilt: bulk actions, Excel export, a read-only auditor role.
-16. **Does the daily challenge's XP count toward rank? Still undecided.** The
-    owner asked that only the *claimed reward* count, not the per-question XP,
-    so answering the daily would not move the ring or the lifetime answered
-    count. It is **not implemented**, deliberately: the research asked for on
-    the same day points the other way — Duolingo aligns quest XP with league
-    and overall XP on purpose, so that competing and learning pull together —
-    and splitting them would mean the same question pays differently depending
-    on which screen served it. One `submit_quiz_answer` branch either way, and
-    cheap to reverse. Needs the owner's call with that evidence in front of
-    them.
+16. ~~Does the daily challenge's XP count toward rank?~~ **Settled
+    2026-09-07: yes, and no code was written.** The owner first asked that only
+    the claimed reward count. Shown the research they had asked for — Duolingo
+    deliberately makes quest XP and league XP the *same* XP, so that competing
+    and learning pull in one direction — they chose to keep it counting.
+
+    That is what the app already did, and it was checked rather than assumed
+    before "no change needed" was claimed. `submit_quiz_answer` adds `v_xp` to
+    `profiles.total_xp` and `profiles.coins` on **every** correct answer, with
+    no branch on mode and no exclusion for the daily. The daily passes
+    `p_run_id => null` (it opens no `game_runs` row, by 0030's reasoning), so
+    `v_mode_num/v_mode_den` stay 1/1: base XP `round((20 + 5 * tier) / 3)`,
+    times the streak multiplier (up to 3×), at a 1× mode multiplier. It lands
+    in `total_xp`, so it moves the rank ring like any other answer.
+
+    **The thing to leave alone:** there is exactly one XP path in this app, and
+    that is the point. Splitting the daily out would have meant the same
+    question paying differently depending on which screen served it, and a
+    second definition of what an answer is worth. Do not add one.
 17. **The category card has no bar any more, only a count.** That is correct —
     the old bar measured the bank — but the honest bar does exist: *levels
     cleared*, which `LevelPath` already computes and shows inside the category.
