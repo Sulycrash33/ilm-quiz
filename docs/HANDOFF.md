@@ -319,6 +319,55 @@ exactly.
   five rows, named individually because five rows of Bukhari deserve naming,
   and strips eight truncated editorial `(See Hadith No…)` tails.
 
+**4. A cue nothing ever played — the sixth sound report, and the real one for
+this owner.** The owner is on a **Dell laptop and an Android phone**, so item 2
+above — the iOS ring/silent switch — could never have been their problem, and
+saying "sound is fixed" to them on the strength of it would have been the sixth
+wrong answer in a row. Measured instead, in Chromium with
+`--autoplay-policy=document-user-activation-required`: flipping the sound
+switch **does** start an oscillator on a running clock at gain 0.75. The engine
+was fine. So the question was not "why is it broken" but **"what in this app is
+supposed to make a sound?"**
+
+Counted: `playCue` had **thirteen call sites**, and they are all in three
+places — inside a quiz run (`HuntView`, `OptionTile`, `RunSummary`), the spin
+wheel, and `/home`'s `streak` cue, which fires only when the streak actually
+*advances*. `tap` — which `sound.ts` itself describes as *"Every press,
+anywhere in the game… the most frequent cue in the app by a wide margin"*, and
+whose gain (0.035) and length (35ms) are tuned to be nearly subliminal
+**because it was meant to fire constantly** — was reached from exactly two of
+those thirteen: an answer tile, and the volume slider.
+
+With `attempts` at **0** and `streak` at **0**, there was therefore *no
+reachable sound in this application at all* outside the confirmation cue on the
+toggle itself. A player could switch sound on, walk through home, learning,
+rankings, shop and profile, and hear nothing — correctly, by construction.
+**The audio engine was repaired twice, in #76 and #77, and there was still
+nothing for it to play.** That is the whole of the sixth report.
+
+`TapCue` (root layout) now plays `tap` on `pointerdown` for anything pressable
+— one delegated listener, for the same reason `.glass-card` carries the khatim
+in one CSS rule: a cue added button by button is a cue missing from the next
+button somebody writes. It also catches links and nav items and the home
+tiles, which are not buttons and would each have needed their own handler.
+`OptionTile` carries `data-self-cue` so its own `tap` is not doubled.
+
+Measured with a control, which is the only reason to believe any of it:
+
+| press "English" on `/language` | oscillators |
+|---|---|
+| sound **on** | 1, `state: running`, master gain 0.75 — **audible** |
+| sound **off** | 0 — silent |
+
+**And a second front door was sitting in the repo the whole time.**
+`src/components/layout/BottomNavBar.tsx` is imported by **nothing**, and it
+carries a **Challenges** tab. The live nav is the one inlined in
+`src/app/(app)/layout.tsx` — Home, Learning, Rankings, Shop, Profile — with no
+route to the daily challenge at all. So the discoverability bug in item 1 had
+a built, styled, translated fix sitting dead in the tree. Add it to the dead
+code table below and decide: either wire that nav in, or delete it. Do not
+leave a third copy.
+
 **What still needs a person, and cannot be closed from here:** the remaining
 ~379 English narrations are missing their final full stop, and an unknown
 subset of those are genuinely cut short. A full stop must not simply be
@@ -897,6 +946,8 @@ considered position.
 | `.glass-card-hover` | referenced nowhere, so Tailwind drops it from the output entirely |
 | `spin_rewards.weight` | dead since 0008 removed the weighted roll |
 | `daily_challenges.category_id` | written null since 0056; kept only so past rows stay legible. `DailyChallengeView.categorySlug` read it and was removed in #73 |
+| `BottomNavBar` | imported by nothing. The live bottom nav is inlined in `(app)/layout.tsx`. Worse than inert: the dead one has a **Challenges** tab the live one lacks, so the daily challenge's missing front door had a finished fix rotting in the tree |
+| the `tap` cue | documented in `sound.ts` as firing on every press anywhere; until #78 it was reached from two of thirteen `playCue` call sites, and outside a run the app made no sound at all |
 
 **Before building a screen, grep for whether it already exists and is simply
 not rendered.** And the sharper version this project keeps proving: **before
@@ -1164,11 +1215,14 @@ authoring questions stops.
   which plays the streak cue from an effect with no gesture anywhere near it.
   See "The audio device has to be opened deliberately" below. **Read a "this is
   finished" line here as a claim about the code, never about the experience.**
-  And then it was reported a sixth time, on 2026-09-07, because #76's iOS half
-  could never fire — see item 2 of "The three ways a shipped fix still fails
-  the player". Six reports, three different causes, one symptom. **When the
-  owner says they cannot hear anything, they are describing the experience, and
-  the experience is the only thing that counts.**
+  And then it was reported a sixth time, on 2026-09-07 — and the sixth had a
+  fourth cause again: on the owner's Dell laptop and Android phone the engine
+  worked and **nothing in the app outside a quiz run ever played a cue.** See
+  items 2 and 4 of "The three ways a shipped fix still fails the player". Six
+  reports, four causes, one symptom. **When the owner says they cannot hear
+  anything, they are describing the experience, and the experience is the only
+  thing that counts — so before answering, ask what is supposed to make a
+  sound on the screen they are actually looking at.**
 - **A level run is the whole tier — 20 questions**, not `HUNT_RULES.runLength`.
 - **Achievements are awarded by the database**, in `award_achievements()`.
 - **There is one account**, and it has never answered a question.
@@ -1251,6 +1305,7 @@ sanity guards, and the signed-out control described above.
 
 | PR | What |
 |---|---|
+| #78 | The sound had nothing to play: `tap` fires on every press, as `sound.ts` always said it did |
 | #77 | Three fixes that shipped green and still failed the player: the daily challenge gets a front door, the sound's iOS half becomes reachable, and a hadith that was not a hadith leaves the rotation |
 | #76 | Sound: nothing ever opened the audio device |
 | #75 | The handoff catches up with a session that found two unreachable features |
