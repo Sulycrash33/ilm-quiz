@@ -10,6 +10,7 @@ import { ProgressRing } from "@/components/game/ProgressRing"
 import { PrayerTimesCard } from "@/components/game/PrayerTimesCard"
 import { SalaamGreeting } from "@/components/game/SalaamGreeting"
 import { DailyHadith } from "@/components/game/DailyHadith"
+import { HomeDailyChallenge } from "@/components/home/HomeDailyChallenge"
 import { ReviewCallout } from "@/components/game/ReviewCallout"
 import { LogoutButton } from "@/components/layout/LogoutButton"
 
@@ -146,6 +147,23 @@ export default function HomePage() {
             thing here that is not a number: opening on rings and streak counts
             makes a scoreboard, and this is meant to be a place of study. */}
         <DailyHadith />
+
+        {/* Today's five questions, on the front door.
+
+            #73 gave the daily challenge a route and pointed its two buttons at
+            it, and it was still not reachable in practice: both buttons live on
+            `/challenges`, and the only way to `/challenges` is one of four
+            small tiles below the fold on this screen. A player opening the app
+            to answer today's questions saw no mention of them, and the one
+            obvious way to questions from here is the Learning tab — the
+            category grid. Same class of bug as #73 and #74, one step further
+            out: the content was right, the link was right, and the player
+            still could not get there.
+
+            It sits above the ring on purpose. The ring is a record of what has
+            been done; this is the invitation to do something today, and the
+            invitation goes first. */}
+        <HomeDailyChallenge />
 
         {/* Prayer times, directly under the greeting. This is the real card:
             it locates the seeker, counts down to the next salah, and rolls over
