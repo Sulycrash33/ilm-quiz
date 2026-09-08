@@ -67,6 +67,12 @@ interface HuntViewProps {
    */
   fixedLadder?: boolean;
   /**
+   * Whether the summary offers "play again". True everywhere but the daily
+   * challenge, whose five questions are fixed for the day and whose reward is
+   * claimed once — see `RunSummary.onPlayAgain`.
+   */
+  allowReplay?: boolean;
+  /**
    * The category's URL slug. Only a level run has one, and only a level run
    * can offer a next level — that is why this is optional rather than derived
    * from `categoryId`, which is a uuid and not routable.
@@ -109,6 +115,7 @@ export function HuntView({
   onExit,
   forceTier,
   fixedLadder,
+  allowReplay = true,
   categorySlug,
   modeRules,
   runId,
@@ -649,7 +656,7 @@ export function HuntView({
           summary={summarize(state)}
           review={review}
           xpBefore={xpAtStart.current ?? 0}
-          onPlayAgain={playAgain}
+          onPlayAgain={allowReplay ? playAgain : undefined}
           onExit={onExit}
           nextLevelHref={nextLevelHref}
         />
