@@ -73,7 +73,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0059`**, disk and database in step — 58 files, because `0052` was never used |
+| Migrations | through **`0060`**, disk and database in step — 59 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -391,6 +391,82 @@ different published edition, or an admin reading and correcting at
 `/admin/hadiths`. It is the one open item here that is a content decision, and
 0047 was deliberately built as an importer and not a translator for the same
 reason.
+
+## A chest you earned
+
+Added 2026-09-08. The owner, told the chests were a problem, asked the right
+question back: **"shouldn't the chest be mysterious?"** Yes. A chest with no
+mystery is a receipt, and the mystery was never what was wrong with them.
+
+**What is wrong is mystery with a price on it.** You paid 100 coins and
+received an unknown return: that is a loot box, and it is why 0008 stripped the
+randomness out — leaving a husk that still *looked* like a gamble. The Rewards
+Center advertised **"Bronze — 20-60 coins"** while `open_chest_rpc` paid exactly
+**40** every time out of `reward_coins`. A fake gamble is not an improvement on
+a real one; arguably it is worse, because it teaches the habit without even
+paying the variance.
+
+And on this app it is not only a design objection. Paying a set price for an
+uncertain return is **gharar**; staking on an unknown outcome is **maysir**.
+The Fiqh and Contemporary Issues categories will one day ask a child about
+exactly that, two taps from the shop.
+
+**The line, and it is the owner's:**
+
+> **Barakah may come from a chest you earned. Never from a chest you bought.**
+
+An earned chest has no stake, so it can be as mysterious as it likes — the spin
+wheel has been precisely this since 0008 and nobody calls it a gamble. And
+barakah belongs in it, which is **consistent with 0058 rather than an exception
+to it**: you got the chest by studying, exactly as the daily challenge bonus is
+paid for answering five questions.
+
+- **`chest_awards`** holds the milestones, shaped like `achievements.criteria`
+  so the two read the same way: streaks at 3/7/30/100 days, correct answers at
+  50/250/1000, and ten categories attempted. Scarce on purpose — the brief was
+  "one shouldn't just get them easy while playing".
+- **`user_chests`** holds what you have been granted and not yet opened. RLS
+  lets you read your own and write nothing: every insert and every open goes
+  through a SECURITY DEFINER function, which is 0034's rule applied to a new
+  table rather than rediscovered on it later.
+- **`award_chests()` is modelled on `award_achievements()` deliberately**, down
+  to the `on conflict do nothing`. It recomputes from scratch and grants only
+  what is missing, so calling it after every answer — which is where it is
+  called, beside the achievements — cannot double-grant.
+- **`open_chest_rpc(uuid)` rolls at open time, server side.** Nothing knows
+  what is inside before then, including the page. The old
+  `open_chest_rpc(text)` — the one that charged coins — is **dropped**, not
+  left beside it: two functions under one name, one of them selling a loot box,
+  is exactly the kind of thing this tree keeps turning up.
+- **Opening is idempotent by construction, not by check.** The row is claimed
+  with `update ... where opened_at is null returning`, so two taps race for one
+  chest and one loses. That is this morning's lesson built in rather than
+  tested for.
+- **`chest_types.min_coins/max_coins/min_xp/max_xp` are live again** — they are
+  the roll — after being dead data since 0008 *while still being printed to the
+  player*. `reward_coins/reward_xp` are dead in their place.
+
+**Verified signed in**, through the localhost bridge, with two chests granted to
+a throwaway account: two on the shelf, **no "20-60" anywhere on the page**,
+opening Bronze paid **+58 coins and +40 barakah** (a real roll inside 20-60 and
+10-40), the chest left the shelf, one remained, and the coin header moved 0 →
+58. Pressed twice in SQL first: `award_chests()` granted 1 then **0**, and the
+same chest opened once then was refused. The QA account was deleted.
+
+**Still open, and it is the other half of what the owner asked for:** a *shop*
+chest, for a player who is here to enjoy the app rather than to learn and would
+rather stock up. It must be a **stated bundle** — contents listed before you
+pay, lifelines and cosmetics, **never barakah** — because the moment a bought
+chest is mysterious it is the loot box again, and the moment it holds barakah
+it sells rank. The store already has a `bundles` tab with four items in it
+(13, 14, 15, 16), all out of stock and granting nothing. That is where it goes.
+
+**And the monetisation note, since it is why the question arose:** the plan is
+eventually to sell from the store. Cosmetics and a subscription are the parts
+that can be sold without selling progress; six cosmetics already exist. One
+thing to decide before it bites — **the `double-points` lifeline multiplies
+XP**, so if it ever becomes purchasable for money it is pay-for-rank through a
+side door, whatever the chests do.
 
 ## A question pays once
 
@@ -1705,6 +1781,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #84 | A chest you earned: the loot box leaves the shop and the mystery moves to a chest you were given |
 | #83 | A question pays once: replaying the daily printed XP, and the combo and the daily gate counted repeats too |
 | #82 | Only studying earns barakah: the wheel and the login ladder stop paying rank, and the home ring stops calling itself overall progress |
 | #81 | Two names for one day: the daily challenge moves inside the daily login reward, and "Start answering" stops opening the category grid |

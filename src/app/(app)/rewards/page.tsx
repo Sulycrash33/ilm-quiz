@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { getDailyTaskProgress } from "./actions"
+import { getDailyTaskProgress, getEarnedChests } from "./actions"
 import { getDailyChallenge } from "@/app/(app)/challenges/actions"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { RewardsPageClient } from "@/components/rewards/RewardsPageClient"
@@ -46,11 +46,6 @@ export default async function RewardsPage() {
     .select("day_number, coins, xp, is_special")
     .order("day_number")
 
-  const { data: chestTypes } = await supabase
-    .from("chest_types")
-    .select("tier, price_coins, min_coins, max_coins, min_xp, max_xp")
-    .order("price_coins")
-
   // The wheel's segments. Ordered by id because `spin_wheel_rpc` selects its
   // reward with `row_number() over (order by sr.id)`, so any other ordering
   // here would draw a wheel whose segments do not correspond to the ones the
@@ -73,10 +68,15 @@ export default async function RewardsPage() {
   // so calling it here is what generates today's row on the first visit.
   const dailyChallenge = await getDailyChallenge()
 
+  // The chests this player has earned and not opened. There is no catalogue to
+  // fetch any more: chests are not bought, so there is nothing to price.
+  const earnedChests = await getEarnedChests()
+
   return (
     <RewardsPageClient
       dailyTask={dailyTask}
       dailyChallenge={dailyChallenge}
+      earnedChests={earnedChests}
       streakCount={profile?.streak_count ?? 0}
       longestStreak={profile?.longest_streak ?? 0}
       streakFreezesAvailable={profile?.streak_freezes_available ?? 0}
@@ -86,7 +86,6 @@ export default async function RewardsPage() {
       claimedToday={!!todayClaim}
       currentDayNumber={nextDayNumber}
       loginRewards={loginRewards ?? []}
-      chestTypes={chestTypes ?? []}
       spinRewards={(spinRewards ?? []) as SpinSegment[]}
     />
   )

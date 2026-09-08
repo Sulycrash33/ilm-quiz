@@ -127,28 +127,77 @@ export async function spinWheel(): Promise<SpinResult> {
   return { success: true, label: row.label, type: row.reward_type as "coins" | "xp", value: row.value }
 }
 
+export interface EarnedChest {
+  id: string
+  tier: "bronze" | "silver" | "gold" | "diamond"
+  awardSlug: string | null
+  grantedAt: string
+}
+
 export interface ChestOpenResult {
   success: boolean
   error?: string
+  tier?: string
   coinsAwarded?: number
   xpAwarded?: number
 }
 
-/** Real purchase-and-open via a SECURITY DEFINER function - deducts the
- * chest price and rolls a reward within that tier's real range, atomically. */
-export async function purchaseAndOpenChest(tier: "bronze" | "silver" | "gold" | "diamond"): Promise<ChestOpenResult> {
+/**
+ * The chests this player has earned and not yet opened.
+ *
+ * There is no purchase path any more. A chest used to be bought for coins and
+ * paid an unknown return, which is a loot box however carefully the roll was
+ * removed — and migration 0008 removed the roll while leaving the shop
+ * advertising "20-60 coins" over a payout that was always exactly 40. Mystery
+ * with a price on it is a gamble; mystery you were given is a surprise. See
+ * migration 0060.
+ */
+export async function getEarnedChests(): Promise<EarnedChest[]> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const { data, error } = await supabase
+    .from("user_chests")
+    .select("id, tier, award_slug, granted_at")
+    .is("opened_at", null)
+    .order("granted_at", { ascending: true })
+
+  if (error || !Array.isArray(data)) return []
+
+  return data.map((row: { id: string; tier: string; award_slug: string | null; granted_at: string }) => ({
+    id: row.id,
+    tier: row.tier as EarnedChest["tier"],
+    awardSlug: row.award_slug,
+    grantedAt: row.granted_at,
+  }))
+}
+
+/**
+ * Open one. The contents are rolled by the server at this moment and not
+ * before, so nothing — not this action, not the page, not the player — knows
+ * what is inside until it is opened.
+ *
+ * Opening is idempotent by construction rather than by check: the row is
+ * claimed with `update ... where opened_at is null returning`, so a second tap
+ * is refused by the database rather than paid twice. That lesson cost this
+ * project a day; see migration 0059.
+ */
+export async function openEarnedChest(chestId: string): Promise<ChestOpenResult> {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return { success: false, error: "You must be signed in." }
 
-  const { data, error } = await supabase.rpc("open_chest_rpc", { p_tier: tier })
+  const { data, error } = await supabase.rpc("open_chest_rpc", { p_chest_id: chestId })
   if (error) return { success: false, error: error.message || "Could not open that chest." }
 
   const row = Array.isArray(data) ? data[0] : data
   if (!row) return { success: false, error: "Could not open that chest." }
   if (!row.success) return { success: false, error: row.error ?? "Could not open that chest." }
 
-  return { success: true, coinsAwarded: row.coins_awarded, xpAwarded: row.xp_awarded }
+  return { success: true, tier: row.tier, coinsAwarded: row.coins_awarded, xpAwarded: row.xp_awarded }
 }

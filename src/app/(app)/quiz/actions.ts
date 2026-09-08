@@ -2,6 +2,14 @@
 
 import { createClient } from '@/lib/supabase/server';
 import type { EarnedAchievement, GradeResult } from '@/lib/types';
+
+/** A chest just granted by `award_chests()`. Announced in the run, opened on
+ *  the Rewards Center — the reveal belongs where the coins live, not mid-run. */
+export interface EarnedChestGrant {
+  id: string;
+  tier: string;
+  slug: string | null;
+}
 import { getCategoryLevels } from '@/lib/quiz-service';
 
 interface SubmitOptions {
@@ -28,7 +36,7 @@ export async function submitAnswer(
   questionId: string,
   choiceIndex: number,
   opts: SubmitOptions = {},
-): Promise<GradeResult & { streakMultiplier: number; newAchievements: EarnedAchievement[] }> {
+): Promise<GradeResult & { streakMultiplier: number; newAchievements: EarnedAchievement[]; newChests: EarnedChestGrant[] }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('You must be signed in to answer.');
@@ -57,6 +65,7 @@ export async function submitAnswer(
     xpEarned: row.o_xp_earned,
     streakMultiplier: row.o_streak_multiplier,
     newAchievements: await awardAchievements(supabase),
+    newChests: await awardChests(supabase),
   };
 }
 
@@ -84,6 +93,35 @@ async function awardAchievements(
       name: row.o_name,
       description: row.o_description ?? '',
       icon: row.o_icon ?? '\u2b50',
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * The same job for chests, and for the same reason.
+ *
+ * `award_chests()` (migration 0060) recomputes from scratch what the player
+ * has earned and grants only what is missing, so calling it here after every
+ * answer cannot double-grant — the shape is copied from `award_achievements()`
+ * deliberately, including the `on conflict do nothing` that makes a second
+ * caller a no-op.
+ *
+ * Best-effort in exactly the same way: the answer is graded and banked before
+ * this runs, so a failure here costs a chest arriving a few answers late, not
+ * a point. Never let it throw into the answer path.
+ */
+async function awardChests(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+): Promise<EarnedChestGrant[]> {
+  try {
+    const { data, error } = await supabase.rpc('award_chests');
+    if (error || !Array.isArray(data)) return [];
+    return data.map((row: { o_id: string; o_tier: string; o_slug: string | null }) => ({
+      id: row.o_id,
+      tier: row.o_tier,
+      slug: row.o_slug,
     }));
   } catch {
     return [];
