@@ -4,8 +4,10 @@ Written 2026-09-03, rewritten through 2026-09-08. **Read this first if you are
 picking up work cold.** Every number below was checked against the live
 database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `e7c88a0` (PR #80,
 merged) — re-check anything you are about to depend on rather than trusting
-them blind. Re-checked 2026-09-08: `attempts` **0**, `profiles` **1**,
-`user_login_claims` **0**. Still nobody. **Five** earlier notes have now been wrong about a count within a
+them blind. Re-checked 2026-09-08, and this line finally changed: **`attempts` 5**,
+`profiles` **1**, `user_login_claims` **1**, `game_runs` **0**. The owner
+played the daily challenge. See "Only studying earns barakah" for what that
+first sitting immediately found. **Five** earlier notes have now been wrong about a count within a
 day of being written, which is the whole argument for checking. The fifth was
 this document's own translation figure, corrected below: it said "69 questions"
 where 69 is the number of *rows*, covering **65** questions. Rows and the
@@ -28,18 +30,21 @@ the player" below.
 
 ## The one fact that reframes everything
 
-**Nobody has ever played this app.**
+**Somebody has finally played this app — once, on 2026-09-08.**
 
 ```
 questions       10,466        profiles              1
-categories          42        attempts              0
+categories          42        attempts              5
 translations        65        scholar approved      0
                               game runs             0
                               quiz rooms            0
 ```
 
-The `attempts` table is **empty**, and so are `game_runs` and `quiz_rooms` —
-nobody has ever opened a run or created a battle room either. Every question,
+Five attempts, all correct, all from the daily challenge, on the day the daily
+challenge got its front door. `game_runs` and `quiz_rooms` are **still 0** — no
+Speed Round, Survival or Practice run has ever been opened and no battle room
+has ever been created — and **no category level has ever been played**, which
+the owner is doing next. Every question,
 category, store item, achievement, challenge and rank tier is seeded and ready;
 one account exists, the owner's, and it has never answered anything.
 
@@ -65,7 +70,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0056`**, disk and database in step — 55 files, because `0052` was never used |
+| Migrations | through **`0058`**, disk and database in step — 57 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -383,6 +388,87 @@ different published edition, or an admin reading and correcting at
 `/admin/hadiths`. It is the one open item here that is a content decision, and
 0047 was deliberately built as an importer and not a translator for the same
 reason.
+
+## Only studying earns barakah
+
+Added 2026-09-08, **the first day anybody ever played this app**, and it was
+found within minutes of the owner doing so. They answered the five daily
+questions, claimed both rewards, spun the wheel, and asked why the home screen
+said they were **43% of the way to Talib** when they had not opened a single
+category. Every number was correct. That was the problem.
+
+```
+five answers            104 XP    (8, 12, 18, 36, 30 — tiers 1,3,7,7,5;
+                                   the jump at the fourth is the combo)
+daily challenge bonus    50 XP
+day 1 login reward       50 XP
+the wheel                10 XP
+                        ------
+                        214 XP    Talib begins at 500.  214/500 = 43%
+```
+
+**More than half of the rank ring came from pressing claim.** 110 XP from three
+buttons against 104 from five questions. And **day 7 of the login ladder paid
+500 XP on its own** — the entire Mubtadi-to-Talib band, for opening the app
+seven days running.
+
+That contradicts this project's own written position. **0053 put a condition on
+the daily login reward precisely because "paying for opening the app competed
+with the thing the app exists to make attractive."** The gate was added; the
+payout was never revisited. So the leak moved rather than closing: you still
+ranked up by claiming, you just had to answer five questions first. Two
+sessions read 0053 — including the one that wrote this document's summary of it
+— and neither looked at what the reward actually paid.
+
+**The rule, settled by the owner: barakah is the record of what you have
+studied; coins are what gifts give you to spend.** A gift may hand you coins.
+It may not hand you rank.
+
+- **`daily_login_rewards.xp` is 0 on all seven days** (0058). The coin ladder is
+  untouched — 10/20/30/40/50/75/100, still ascending, day 7 still its top.
+- **All eight wheel segments pay coins** — 20/30/40/75/100/250/50/150. Six were
+  XP. **The ids were left exactly as they were and there are still eight
+  segments**, because `spin_wheel_rpc` picks the day's prize by `row_number()
+  over (order by sr.id)` against the date: renumbering or deleting a row would
+  silently change which prize every future day lands on.
+- **The daily challenge bonus keeps its 50 XP**, and that is not an exception to
+  the rule. It is paid for answering all five of the day's questions, which is
+  study.
+- **Answering still pays both**, deliberately: `submit_quiz_answer` adds the
+  same amount to `total_xp` and `coins`, so studying funds the shop. The
+  owner's 174 coins were 104 earned this way plus 70 gifted.
+- **`achievements` has no reward column at all** — checked, not assumed. Nothing
+  to fix there.
+- **No function changed.** Both RPCs read their payouts from
+  `daily_login_rewards` and `spin_rewards` and add whatever they find, so the
+  rule lives in the data, and 0058 ends with guard rails that fail loudly if a
+  future edit puts XP back or changes the segment count.
+- **`claimSuccessMsg` no longer says "+{xp} XP"** in any of the six locales, and
+  the page stopped adding a guaranteed zero to the header. A message reading
+  "+10 coins, +0 XP" is worse than no message.
+- **The home ring is now labelled "Rank Progress", not "Overall Progress"**, in
+  all six locales. It always measured rank; "overall progress" invited exactly
+  the reading the owner gave it — *how far through the app am I* — and that
+  reading was half right for the wrong reason. Six meanings of "progress" is
+  still open item 17; this is one of them closed.
+
+**The hole this does NOT close, stated plainly because it is real.** Mystery
+chests still convert coins into barakah: bronze costs 100 coins and returns
+20–60 coins **plus 10–40 XP**; diamond costs 1000 and returns 250–600 XP. The
+wheel can now pay 250 coins in a day, so four days of gifts buys a diamond
+chest and most of a rank band — the same leak by a longer road. It is left open
+**on purpose rather than patched blind**, because closing it is a product
+decision: coins-only would make every chest a guaranteed loss (pay 100, get
+back 20–60), which is a fine and not a shop item, and making the coin return
+exceed the price turns the chest into a coin gamble, which **0008 removed on
+loot-box grounds** and which this app must not have. Reprice them, pay
+something that is not rank, or take them out — the owner decides. **Do not
+"fix" this by making chests profitable.**
+
+**The lesson.** A gate on a reward is not a limit on a reward. 0053 asked the
+player to earn the right to claim and never asked what claiming was worth, and
+the document then recorded the gate as though it had settled the question.
+**When you attach a condition to a payout, read the payout in the same change.**
 
 ## Two names for one day: the daily challenge and the daily login reward
 
@@ -1539,6 +1625,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #82 | Only studying earns barakah: the wheel and the login ladder stop paying rank, and the home ring stops calling itself overall progress |
 | #81 | Two names for one day: the daily challenge moves inside the daily login reward, and "Start answering" stops opening the category grid |
 | #80 | The daily challenge's XP keeps counting, and this document catches up with the day |
 | #79 | One word, six meanings: the progress audit — a doubled percentage on every category card, a nav bar drawn twice, a nav covering the run, and the pause button that stopped a scored clock |

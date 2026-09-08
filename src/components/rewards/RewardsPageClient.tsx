@@ -157,9 +157,13 @@ export function RewardsPageClient({
       const result = await claimDailyLogin()
       if (result.success) {
         setClaimedToday(true)
+        // Coins only. Migration 0058 zeroed the ladder's XP: a gift may hand
+        // the player coins, it may not hand them rank. The RPC still reports
+        // an `xpAwarded`, and it is now always 0, so adding it to the header
+        // and printing "+0 XP" would be noise at best and a promise the app no
+        // longer keeps at worst.
         setCoins((c) => c + (result.coinsAwarded ?? 0))
-        setXp((x) => x + (result.xpAwarded ?? 0))
-        setMessage(t("claimSuccessMsg", { day: result.dayNumber ?? "", coins: result.coinsAwarded ?? 0, xp: result.xpAwarded ?? 0 }))
+        setMessage(t("claimSuccessMsg", { day: result.dayNumber ?? "", coins: result.coinsAwarded ?? 0 }))
       } else if (result.alreadyClaimedToday) {
         setClaimedToday(true)
         setMessage(t("alreadyClaimedMsg"))
