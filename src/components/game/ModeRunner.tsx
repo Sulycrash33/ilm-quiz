@@ -61,6 +61,11 @@ export function ModeRunner({
       questions={questions}
       lifelinePrices={lifelinePrices}
       backHref={backHref}
+      /* The daily challenge does not offer a replay. Its five questions are the
+         same five all day, its reward is claimed once, and since 0059 a second
+         answer pays nothing — so the button could only mislead. Speed Round,
+         Survival and Practice draw a fresh pool each time and keep theirs. */
+      allowReplay={mode !== "daily"}
       modeRules={rules}
       runId={runId}
       fixedLadder={fixedLadder}

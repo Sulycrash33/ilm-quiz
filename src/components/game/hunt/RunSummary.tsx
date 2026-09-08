@@ -32,7 +32,17 @@ interface RunSummaryProps {
   /** Every question of the run, in order, so the screen can teach from it
    *  rather than only score it. Empty for a run that answered nothing. */
   review?: RunReviewEntry[];
-  onPlayAgain: () => void;
+  /**
+   * Replay this run. **Optional, and absent means the button is not drawn.**
+   *
+   * The daily challenge passes nothing. Its five questions are the same five
+   * all day and its reward is claimed once, so "play again" there invited a
+   * player to re-answer questions that, since migration 0059, pay nothing —
+   * and before 0059 it was an XP printer: three passes in two and a half
+   * minutes took a fresh account to 51% of a rank. Replaying a *level* to
+   * learn it is still the point of a study app, so that keeps its button.
+   */
+  onPlayAgain?: () => void;
   onExit: () => void;
   /**
    * The way forward out of a cleared level. Absent for the classic hunt and
@@ -241,17 +251,19 @@ export function RunSummary({
           </Button>
         )}
         <div className="flex flex-col gap-3 sm:flex-row">
+          {onPlayAgain && (
+            <Button
+              size="lg"
+              variant={nextLevelHref ? "outline" : "default"}
+              className="flex-1"
+              onClick={onPlayAgain}
+            >
+              {t("playAgain")}
+            </Button>
+          )}
           <Button
             size="lg"
-            variant={nextLevelHref ? "outline" : "default"}
-            className="flex-1"
-            onClick={onPlayAgain}
-          >
-            {t("playAgain")}
-          </Button>
-          <Button
-            size="lg"
-            variant={nextLevelHref ? "ghost" : "outline"}
+            variant={nextLevelHref || onPlayAgain ? "ghost" : "default"}
             className="flex-1"
             onClick={onExit}
           >

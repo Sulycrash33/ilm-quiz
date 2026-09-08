@@ -25,6 +25,8 @@ interface QuizRunnerProps {
    * sampling a ladder from them. The daily challenge, and only it — see
    * `buildFixedLadder`. */
   fixedLadder?: boolean;
+  /** Whether the run summary offers "play again". The daily challenge says no. */
+  allowReplay?: boolean;
   /** The category's URL slug, so a cleared level can link to the next one.
    * Level runs only — the modes and the classic hunt have no level path. */
   categorySlug?: string;
@@ -53,6 +55,7 @@ export function QuizRunner({
   lifelinePrices,
   tier,
   fixedLadder,
+  allowReplay,
   categorySlug,
   backHref,
   modeRules,
@@ -72,6 +75,7 @@ export function QuizRunner({
           onExit={() => setStarted(false)}
           forceTier={tier}
           fixedLadder={fixedLadder}
+          allowReplay={allowReplay}
           categorySlug={categorySlug}
           modeRules={modeRules}
           runId={runId}

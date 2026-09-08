@@ -40,8 +40,11 @@ translations        65        scholar approved      0
                               quiz rooms            0
 ```
 
-Five attempts, all correct, all from the daily challenge, on the day the daily
-challenge got its front door. `game_runs` and `quiz_rooms` are **still 0** — no
+Five questions, four of them correct, all from the daily challenge, on the day
+the daily challenge got its front door. That count was briefly **15** — the
+same five answered three times through a "Play again" button that paid full XP
+every pass; see "A question pays once". The ten repeats were deleted and the
+balance rebuilt from what was earned. `game_runs` and `quiz_rooms` are **still 0** — no
 Speed Round, Survival or Practice run has ever been opened and no battle room
 has ever been created — and **no category level has ever been played**, which
 the owner is doing next. Every question,
@@ -70,7 +73,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0058`**, disk and database in step — 57 files, because `0052` was never used |
+| Migrations | through **`0059`**, disk and database in step — 58 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -388,6 +391,76 @@ different published edition, or an admin reading and correcting at
 `/admin/hadiths`. It is the one open item here that is a content decision, and
 0047 was deliberately built as an importer and not a translator for the same
 reason.
+
+## A question pays once
+
+Added 2026-09-08, and it is the worst bug this project has had. The owner reset
+their account, played the five daily questions, and pressed **"Play again"** on
+the summary screen. Three passes, **two minutes twenty-six seconds**, zero to
+**51% of the way to Talib**.
+
+```
+attempts               15
+distinct questions      5
+XP from answers       207     one honest pass is ~104
+```
+
+**`submit_quiz_answer` had no duplicate check of any kind.** It looked the
+question up, computed XP, inserted an attempt and added XP *and* coins to the
+profile — every call, same question, without limit. The button made it one tap,
+and the daily challenge's five are the same five all day.
+
+**The leak was in three places, and fixing only the obvious one would have left
+it open.**
+
+1. **The award.** A repeat now earns **0 XP and 0 coins**. The attempt is still
+   recorded — practice, the spaced-review queue and the round summary all need
+   the row — but it pays nothing. `attempts.is_first_answer` marks which is
+   which, backfilled from the earliest attempt per (user, question).
+2. **The combo multiplier**, computed from the last 20 attempts *of any kind*.
+   Replaying three questions you already know built a 3× multiplier that then
+   applied to the next **new** question — so even with the award fixed, a
+   replay was still worth farming. The streak now counts first answers only.
+3. **"Answer 5 questions today"**, the gate on the daily login reward, counted
+   `count(*)` of today's attempts in **two** places — `daily_task_progress()`
+   and `claim_daily_login_rpc`'s own inline copy. Answering one question five
+   times satisfied it. Both count distinct questions now.
+
+`complete_daily_challenge_rpc` needed nothing: it already counted
+`count(distinct a.question_id)`. One function out of four had the thought.
+
+**Three locks on the daily specifically**, because one is not enough on
+something this cheap to exploit: the award is gone (0059), the **"Play again"
+button is gone** from the daily's summary (`RunSummary.onPlayAgain` is optional
+now, and `ModeRunner` passes `allowReplay={mode !== "daily"}`), and
+**`/play/daily` redirects to `/rewards`** once all five are answered rather than
+only once the reward is claimed, so re-entering by URL fails too. A level run
+keeps its replay button — replaying a level to learn it is the point of a study
+app; what changed is that it pays nothing.
+
+**Proved by exploiting it**, in a rolled-back transaction against the live
+function, impersonating the account: the same question answered three times
+returned `20 / 0 / 0`, the profile moved `+20 XP` and `+20 coins` **once**, and
+all three attempt rows were still written. The gate was checked against the
+owner's own farmed data: `daily_task_progress()` went from **15** to **5**.
+
+**The owner's balance was repaired to what was actually earned**: the 10 repeat
+attempts deleted and the profile rebuilt from first answers (81) plus the
+claimed challenge reward — **131 XP, 171 coins**, down from 257/297. Rebuilt
+from the rows rather than adjusted by a delta, so it cannot drift.
+
+**Why nothing caught it.** `attempts` was **0 until today**. The function had
+never been called twice for one question by anybody, so the hole had never been
+stood in. Every gate passed. The database was verified. The arithmetic in this
+very document was walked through line by line — *by a session that had the
+function body on screen and never asked whether it could be called twice.*
+
+**The lesson, and it is now the first item in "Before you claim anything is
+done": press the button twice.** Every reward path in this app assumes it is
+called once — a claim, a spin, a submitted answer, a level completion. The
+question is never "does it work", it is **"what happens on the second call, and
+the tenth?"** Idempotency is not an advanced concern to reach later. It is the
+first question to ask of anything that pays.
 
 ## Only studying earns barakah
 
@@ -1576,6 +1649,13 @@ authoring questions stops.
 
 ## Before you claim anything is done
 
+**Press the button twice.** Before anything below. Every reward path here
+assumes it is called once, and on 2026-09-08 one of them was not: replaying the
+daily challenge paid full XP every pass, three passes in two and a half minutes
+taking a fresh account to 51% of a rank. Claims, spins, submitted answers,
+level completions — ask what the *second* call does, and the tenth. The five
+gates below have never once caught this class of bug.
+
 ```bash
 npx tsc --noEmit        # supabase/functions is excluded — it is Deno
 npm run build           # read the WHOLE log; a warning still exits 0
@@ -1625,6 +1705,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #83 | A question pays once: replaying the daily printed XP, and the combo and the daily gate counted repeats too |
 | #82 | Only studying earns barakah: the wheel and the login ladder stop paying rank, and the home ring stops calling itself overall progress |
 | #81 | Two names for one day: the daily challenge moves inside the daily login reward, and "Start answering" stops opening the category grid |
 | #80 | The daily challenge's XP keeps counting, and this document catches up with the day |
