@@ -465,6 +465,23 @@ export function HuntView({
         }, 450);
       }
 
+      // A chest is rarer than an achievement — the cheapest is a thirty day
+      // streak or 250 correct answers (migration 0061) — so it is announced
+      // here rather than found later, and it says where it went. It is opened
+      // on `/achievements` and not mid-run: the reveal deserves the player's
+      // attention, and a run has a clock.
+      if (result.newChests.length > 0) {
+        const delay = 450 + result.newAchievements.length * 900;
+        setTimeout(() => {
+          toast({
+            title: `\u{1F381} ${t("chestEarnedTitle")}`,
+            description: t("chestEarnedBody"),
+          });
+          playCue("rankUp");
+          playHaptic("rankUp");
+        }, delay);
+      }
+
       if (result.correct) {
         setParticles(true);
         setTimeout(() => setParticles(false), 1000);

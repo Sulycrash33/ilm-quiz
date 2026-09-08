@@ -12,6 +12,8 @@ import { RARITY_POINTS, isMilestone } from "@/lib/achievement-rarity"
 import { PremiumProgress } from "@/components/ui/premium-progress"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { AchievementView } from "@/lib/profile-stats"
+import { EarnedChestShelf } from "@/components/achievements/EarnedChestShelf"
+import type { EarnedChest } from "@/app/(app)/rewards/actions"
 
 type Tab = "achievements" | "challenges"
 
@@ -26,9 +28,14 @@ interface TodayChallenge {
 export function AchievementsPageClient({
   achievements,
   todayChallenge,
+  earnedChests,
 }: {
   achievements: AchievementView[]
   todayChallenge: TodayChallenge | null
+  /** Chests earned and not yet opened. They live here, with the other things
+   *  that had to be earned, and deliberately not on `/rewards` where every
+   *  other panel is something you get for showing up. See migration 0061. */
+  earnedChests: EarnedChest[]
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("achievements")
   const { t, dir } = useLanguage()
@@ -104,7 +111,11 @@ export function AchievementsPageClient({
       </motion.div>
 
       {activeTab === "achievements" ? (
-        achievements.length === 0 ? (
+        <>
+        {/* The chests, above the trophies, because an unopened one is the only
+            thing on this page that asks the player to do something. */}
+        <EarnedChestShelf chests={earnedChests} />
+        {achievements.length === 0 ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-8 text-center">
             <p className="text-on-surface-variant">{t("noAchievementsYet")}</p>
           </motion.div>
@@ -134,7 +145,8 @@ export function AchievementsPageClient({
               </div>
             </section>
           </motion.div>
-        )
+        )}
+        </>
       ) : (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           {!todayChallenge ? (

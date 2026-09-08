@@ -73,7 +73,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0060`**, disk and database in step — 59 files, because `0052` was never used |
+| Migrations | through **`0061`**, disk and database in step — 60 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -391,6 +391,68 @@ different published edition, or an admin reading and correcting at
 `/admin/hadiths`. It is the one open item here that is a content decision, and
 0047 was deliberately built as an importer and not a translator for the same
 reason.
+
+## A chest is not a handout
+
+Added 2026-09-08, immediately after "A chest you earned" shipped. The owner
+looked at it and said: **"mystery box is not free and it's not cheaply gotten,
+so one has to work hard to get it, or if there is a special occasion. But you
+can't just check daily reward and see it there."**
+
+Two objections, and they are different problems. 0060 fixed the *price* of a
+chest and left both standing.
+
+**1. It was cheap.** The first chest landed at a three day streak or fifty
+correct answers — about a week of casual use. A reward that arrives that
+easily teaches the player it is not worth having.
+
+| was | now |
+|---|---|
+| streak 3 → bronze | streak **30** → bronze |
+| streak 7 → silver | streak **100** → silver |
+| streak 30 → gold | streak **365** → gold |
+| 50 correct → bronze | **250** correct → bronze |
+| 250 correct → silver | **1,000** correct → silver |
+| 1,000 correct → gold | **5,000** correct → gold |
+| 10 categories → silver | **25** categories → silver |
+| streak 100 → diamond | *diamond is no longer grindable at all* |
+
+**Diamond is occasion only.** Nothing you can grind produces one, which is what
+makes it worth being the top of the ladder — the same reasoning that keeps the
+question bank's size off the player's screen. 0061 ends with a check that fails
+the migration if any award drops below a thirty day streak or 250 correct
+answers, **or if a diamond becomes grindable**, so the next person to soften
+these has to mean it.
+
+**2. Special occasions have a mechanism and no dates.** A criteria of
+`{"type":"occasion","from":...,"to":...}` grants once to anyone who opens the
+app inside the window, and the unique index on `(user_id, award_slug)` makes it
+once ever rather than once a day. **The dates are deliberately not guessed:**
+Ramadan, the two Eids and Laylat al Qadr move against the Gregorian calendar
+and are settled by sighting, and a migration asserting them would be wrong in a
+way this app cannot afford. The owner names the occasion; the row is one insert,
+and 0061 carries the exact statement in a comment.
+
+**3. The sharper point: it was on the wrong screen.** The shelf sat on
+`/rewards`, between the seven day coin ladder and the free spin. **Everything
+on that page is something you get for showing up.** An earned chest among them
+reads as one more handout — which is exactly the distinction 0058 spent a whole
+migration establishing, quietly undone in the player's head while the database
+stayed right. It moves to `/achievements`, above the trophies, where the things
+you earned already live. `EarnedChestShelf` renders **nothing at all** when
+there are none: a permanent "you have no chests" panel on the page a player
+opens to see what they *have* is a reminder of absence.
+
+**And it is announced when it lands.** `submit_quiz_answer`'s caller already
+returned `newChests` and nothing displayed it, so a chest earned after a month
+of study would have appeared in silence. `HuntView` now toasts it behind any
+achievement toasts, with the rank up cue, and says where it went. The opening
+still happens on `/achievements` rather than mid-run: a reveal deserves
+attention and a run has a clock.
+
+**Verified signed in:** `/rewards` shows no chest panel and zero Open buttons;
+`/achievements` shows the shelf, and opening paid **+59 coins and +11 barakah**
+before emptying it. QA account deleted, owner's account untouched at 131/171.
 
 ## A chest you earned
 
@@ -1781,6 +1843,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #85 | A chest is not a handout: harder to earn, diamond reserved for occasions, and off the screen that hands things out |
 | #84 | A chest you earned: the loot box leaves the shop and the mystery moves to a chest you were given |
 | #83 | A question pays once: replaying the daily printed XP, and the combo and the daily gate counted repeats too |
 | #82 | Only studying earns barakah: the wheel and the login ladder stop paying rank, and the home ring stops calling itself overall progress |
