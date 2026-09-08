@@ -9,7 +9,8 @@ import { PremiumCard } from "@/components/ui/premium-card"
 import {
   claimDailyLogin,
   spinWheel,
-  purchaseAndOpenChest,
+  openEarnedChest,
+  type EarnedChest,
   type SpinResult,
   type DailyTaskProgress,
 } from "@/app/(app)/rewards/actions"
@@ -24,14 +25,6 @@ interface LoginReward {
   coins: number
   xp: number
   is_special: boolean
-}
-interface ChestType {
-  tier: string
-  price_coins: number
-  min_coins: number
-  max_coins: number
-  min_xp: number
-  max_xp: number
 }
 
 /**
@@ -69,7 +62,7 @@ export function RewardsPageClient({
   claimedToday: initialClaimedToday,
   currentDayNumber,
   loginRewards,
-  chestTypes,
+  earnedChests: initialChests,
   spinRewards,
 }: {
   dailyTask: DailyTaskProgress
@@ -84,7 +77,7 @@ export function RewardsPageClient({
   claimedToday: boolean
   currentDayNumber: number
   loginRewards: LoginReward[]
-  chestTypes: ChestType[]
+  earnedChests: EarnedChest[]
   spinRewards: SpinSegment[]
 }) {
   const { t, dir } = useLanguage()
@@ -116,6 +109,10 @@ export function RewardsPageClient({
   const [pendingSpin, setPendingSpin] = useState<SpinResult | null>(null)
   /** Bumped once per spin so an identical target still starts the wheel. */
   const [spinToken, setSpinToken] = useState(0)
+  /** Unopened chests, held in state so an opened one leaves the shelf at once
+   *  rather than after a round trip. The server is still the authority: a
+   *  second tap on the same chest is refused by `open_chest_rpc`, not by this. */
+  const [chests, setChests] = useState<EarnedChest[]>(initialChests)
 
   /**
    * Once a second, not once every thirty.
@@ -240,15 +237,30 @@ export function RewardsPageClient({
     if (pendingSpin) applySpinResult(pendingSpin)
   }
 
-  const handleOpenChest = (tier: string) => {
-    setPendingAction(`chest-${tier}`)
+  /**
+   * Open an earned chest.
+   *
+   * The chest is removed from the shelf the moment the server confirms, and
+   * only then — an optimistic removal would hide a refusal, and a refusal is
+   * exactly what a second tap is supposed to get. `open_chest_rpc` claims the
+   * row with `where opened_at is null`, so two taps race for one chest and one
+   * of them loses; this reads the loser's error rather than guessing.
+   */
+  const handleOpenChest = (chest: EarnedChest) => {
+    setPendingAction(`chest-${chest.id}`)
     startTransition(async () => {
-      const result = await purchaseAndOpenChest(tier as "bronze" | "silver" | "gold" | "diamond")
+      const result = await openEarnedChest(chest.id)
       if (result.success) {
-        const chest = chestTypes.find((c) => c.tier === tier)
-        if (chest) setCoins((c) => c - chest.price_coins + (result.coinsAwarded ?? 0))
+        setChests((list) => list.filter((c) => c.id !== chest.id))
+        setCoins((c) => c + (result.coinsAwarded ?? 0))
         setXp((x) => x + (result.xpAwarded ?? 0))
-        setMessage(t("chestOpenedMsg", { tier: CHEST_NAME_KEYS[tier] ? t(CHEST_NAME_KEYS[tier]) : tier, coins: result.coinsAwarded ?? 0, xp: result.xpAwarded ?? 0 }))
+        setMessage(
+          t("chestOpenedMsg", {
+            tier: CHEST_NAME_KEYS[chest.tier] ? t(CHEST_NAME_KEYS[chest.tier]) : chest.tier,
+            coins: result.coinsAwarded ?? 0,
+            xp: result.xpAwarded ?? 0,
+          })
+        )
       } else {
         setMessage(result.error ?? t("chestErrorMsg"))
       }
@@ -450,27 +462,48 @@ export function RewardsPageClient({
           </PremiumButton>
         </motion.div>
 
-        {/* Mystery chests - real purchase + real reward roll */}
+        {/* Mystery chests, earned rather than bought.
+
+            They used to be a purchase: pay 100 coins, receive an unknown
+            return. That is a loot box, which is why 0008 removed the roll —
+            and what it left behind was worse in one way, because this grid
+            went on advertising "20-60 coins" over a payout that was always
+            exactly 40. A fake gamble is not an improvement on a real one.
+
+            Mystery with a price is a gamble; mystery you were given is a
+            surprise. So the price is gone and the roll is back: a chest is
+            earned at a study milestone (`award_chests`, 0060), and its
+            contents are rolled by the server at the moment it is opened. It
+            pays barakah, and that is consistent with 0058 rather than an
+            exception to it — you got it by studying. */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass-card p-6">
           <h2 className="font-headline-md text-headline-md text-on-surface mb-4">{t("mysteryChests")}</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {chestTypes.map((chest) => (
-              <PremiumCard key={chest.tier} className="p-3 text-center">
-                <p className="font-bold text-on-surface">{CHEST_NAME_KEYS[chest.tier] ? t(CHEST_NAME_KEYS[chest.tier]) : chest.tier}</p>
-                <p className="text-xs text-on-surface-variant mb-2">
-                  {chest.min_coins}-{chest.max_coins} {t("coinsWord").toLowerCase()}
-                </p>
-                <PremiumButton
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => handleOpenChest(chest.tier)}
-                  disabled={coins < chest.price_coins || (isPending && pendingAction === `chest-${chest.tier}`)}
-                >
-                  {isPending && pendingAction === `chest-${chest.tier}` ? t("openingLabel") : `${chest.price_coins} ${t("coinsWord").toLowerCase()}`}
-                </PremiumButton>
-              </PremiumCard>
-            ))}
-          </div>
+          {chests.length === 0 ? (
+            <p className="text-sm text-on-surface-variant">{t("noChestsYet")}</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {chests.map((chest) => (
+                <PremiumCard key={chest.id} className="p-3 text-center">
+                  <p className="text-3xl" aria-hidden="true">🎁</p>
+                  <p className="font-bold text-on-surface">
+                    {CHEST_NAME_KEYS[chest.tier] ? t(CHEST_NAME_KEYS[chest.tier]) : chest.tier}
+                  </p>
+                  {/* No range printed. Nobody knows what is inside, including
+                      this page: the roll happens server side on open. */}
+                  <PremiumButton
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => handleOpenChest(chest)}
+                    disabled={isPending && pendingAction === `chest-${chest.id}`}
+                  >
+                    {isPending && pendingAction === `chest-${chest.id}`
+                      ? t("openingLabel")
+                      : t("openChestLabel")}
+                  </PremiumButton>
+                </PremiumCard>
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
 
