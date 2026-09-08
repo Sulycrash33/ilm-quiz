@@ -49,14 +49,14 @@ import { MosqueIcon } from '@/components/icons/MosqueIcon';
  */
 export const RANKS: Rank[] = [
   { level: 1, title: 'Mubtadi', icon: Sprout, theme: 'text-success', minPoints: 0 },
-  { level: 2, title: 'Talib', icon: BookOpen, theme: 'text-info', minPoints: 500 },
-  { level: 3, title: 'Hafiz', icon: BookMarked, theme: 'text-info-bright', minPoints: 1500 },
-  { level: 4, title: 'Faqih', icon: Scale, theme: 'text-special', minPoints: 3000 },
-  { level: 5, title: 'Muhaddith', icon: ScrollText, theme: 'text-special-bright', minPoints: 5000 },
-  { level: 6, title: 'Mufassir', icon: Search, theme: 'text-secondary', minPoints: 8000 },
-  { level: 7, title: 'Shaykh', icon: MosqueIcon, theme: 'text-warning', minPoints: 12000 },
-  { level: 8, title: 'Imam', icon: Crown, theme: 'text-medal-gold', minPoints: 18000 },
-  { level: 9, title: 'Mujaddid', icon: Flame, theme: 'text-primary', minPoints: 25000 },
+  { level: 2, title: 'Talib', icon: BookOpen, theme: 'text-info', minPoints: 3000 },
+  { level: 3, title: 'Hafiz', icon: BookMarked, theme: 'text-info-bright', minPoints: 9000 },
+  { level: 4, title: 'Faqih', icon: Scale, theme: 'text-special', minPoints: 18000 },
+  { level: 5, title: 'Muhaddith', icon: ScrollText, theme: 'text-special-bright', minPoints: 30000 },
+  { level: 6, title: 'Mufassir', icon: Search, theme: 'text-secondary', minPoints: 48000 },
+  { level: 7, title: 'Shaykh', icon: MosqueIcon, theme: 'text-warning', minPoints: 72000 },
+  { level: 8, title: 'Imam', icon: Crown, theme: 'text-medal-gold', minPoints: 108000 },
+  { level: 9, title: 'Mujaddid', icon: Flame, theme: 'text-primary', minPoints: 150000 },
 ];
 
 /**

@@ -19,7 +19,7 @@ import { playCue } from "@/lib/sound"
 import { playHaptic } from "@/lib/haptics"
 import { takeStreakAdvance } from "@/lib/streak-cue"
 import { useLifetimeStats } from "@/hooks/use-lifetime-stats"
-import { rankProgress } from "@/lib/ranks"
+import { useLevelsProgress } from "@/hooks/use-levels-progress"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 const cardVariants = {
@@ -64,7 +64,9 @@ export default function HomePage() {
 
   const reduceMotion = useReducedMotion()
   /** The ladder the ring is measured against — never the size of the bank. */
-  const rank = rankProgress(profile?.totalXp ?? 0)
+  // What the ring measures now: levels cleared, not points earned. See
+  // `useLevelsProgress` and migration 0062.
+  const levels = useLevelsProgress()
   const streakAlive = (profile?.streakCount ?? 0) > 0
 
   return (
@@ -183,20 +185,35 @@ export default function HomePage() {
             goal nobody had agreed to; missing it read as failure for a person
             who answered nine.
 
-            ── The denominator problem, which is why the ring shows rank ──────
-            The obvious fix is a percentage of the bank, and it is the one thing
-            this app must not do. Stating the size of the question bank hands
-            the player a denominator, and from then on every run is measured
-            against finishing rather than against learning — which is why the
-            total was removed from `/intro` and `/quiz`. `answered / 5,220`
-            would have put it back on the busiest screen in the app.
+            ── Why the ring shows levels and not rank ────────────────────────
+            It showed rank, and the owner's objection to that was exact: *"I
+            answered just five questions, that is a separate entity entirely to
+            my progress in a game that has categories I haven't even opened,
+            and I am at 31%."*
 
-            So the ring is progress toward the next rank instead. It is a real
-            total — it only ever goes up, and it survives midnight — but it is
-            measured against the player's own next step rather than against the
-            end of the corpus. `rankProgress` already computes it from
-            `total_xp`, the same ladder the profile and the rank-up cue use, so
-            there is no second definition to drift.
+            Right twice over. The ladder was mis-scaled by a factor of six —
+            the ninth and highest rank arrived at about 16% of the bank, fixed
+            in migration 0062 — and even scaled correctly, a points total has
+            nothing to say about twenty-nine untouched subjects. A study app's
+            front door should measure the study.
+
+            So it shows **levels cleared**: one tier of one category, cleared
+            when every published question in it has been answered correctly.
+            That is not a new rule invented for this ring; it is the one
+            `getCategoryLevels` already uses to unlock the next level, read in
+            one query by `levels_progress()` so the two cannot disagree.
+
+            ── The denominator, which this project has a rule about ──────────
+            "Never state the size of the question bank" still stands, and this
+            does not break it: the denominator is **levels**, not questions.
+            The same paragraph that forbids the bank size explicitly permits
+            the subject count, because it says how wide the app is rather than
+            where it stops — and a level count is the shape of the journey. It
+            is also the only honest way to answer "categories I haven't even
+            opened", which is what was asked for.
+
+            The rank has not disappeared: it is the title beside the player's
+            name at the top of this screen, which is what a rank is for.
 
             The two numbers beside it are lifetime and unbounded: questions
             answered, and accuracy across all of them. Counts about the player
@@ -209,10 +226,10 @@ export default function HomePage() {
         >
           <div className="flex items-center gap-4 sm:gap-5">
             <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0">
-              <ProgressRing progress={rank.percent} size={96} strokeWidth={7} />
+              <ProgressRing progress={levels?.percent ?? 0} size={96} strokeWidth={7} />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="font-headline-md text-headline-md text-primary tabular-nums">
-                  <CountUp value={Math.round(rank.percent)} format={(n) => `${n}%`} />
+                  <CountUp value={Math.round(levels?.percent ?? 0)} format={(n) => `${n}%`} />
                 </span>
               </div>
             </div>
@@ -221,12 +238,13 @@ export default function HomePage() {
               <p className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
                 {t("overallProgress")}
               </p>
-              {/* At the top of the ladder there is no "next", and inventing one
-                  would be a lie on the screen. */}
+              {/* Nothing at all until the count arrives, rather than a
+                  confident "0 of 0" that would be wrong for the instant before
+                  the query lands. */}
               <p className="font-bold text-headline-md text-on-surface mt-0.5 break-words">
-                {rank.isMax || !rank.next
-                  ? rank.rank.title
-                  : t("rankJourney", { current: rank.rank.title, next: rank.next.title })}
+                {levels
+                  ? t("levelsCleared", { done: levels.cleared, total: levels.total })
+                  : "\u2014"}
               </p>
 
               <div className="flex gap-6 mt-3">

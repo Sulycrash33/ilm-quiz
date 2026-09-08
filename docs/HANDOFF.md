@@ -73,7 +73,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0061`**, disk and database in step — 60 files, because `0052` was never used |
+| Migrations | through **`0062`**, disk and database in step — 61 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -391,6 +391,74 @@ different published edition, or an admin reading and correcting at
 `/admin/hadiths`. It is the one open item here that is a content decision, and
 0047 was deliberately built as an importer and not a translator for the same
 reason.
+
+## A rank that means the bank, and a ring that means the app
+
+Added 2026-09-08. **"I answered just five questions and I am at 31%, in a game
+that has categories I haven't even opened. Which kind of logic is that? If you
+can't fix it just remove it entirely, because this is screaming we don't have
+an idea what we are doing."**
+
+Measured, not argued:
+
+```
+published questions                                        10,466
+XP for answering every one, correctly, once, without combo 156,528
+XP for Mujaddid, the ninth and highest rank                 25,000
+```
+
+**The highest rank in the game arrived at about 16% of the app.** A player
+could be Mujaddid — the reviver — with eight thousand questions unopened, and
+from there the ladder said nothing at all. Talib, the *second* rank, sat at 500
+XP: about **thirty-three questions out of ten thousand.**
+
+So five questions really was a quarter of a rank. The arithmetic was correct
+and what it was told was wrong: **the ladder was never scaled against the
+content it claims to measure.** Nobody noticed because until this day nobody
+had ever earned a point.
+
+**1. The ladder, times six.** Mujaddid now lands at 150,000, ~96% of what the
+published bank pays without combo — reachable, since combo pays up to 3× and
+nobody answers everything, but only after real work. Every rank keeps its
+original proportion; only the scale moves. Talib is 3,000, about 200 questions.
+Five questions is now ~5% of the first rank rather than a quarter of it.
+`rank_tiers.min_xp` **and** `RANKS` in `src/lib/constants.ts` moved in the same
+commit, as that file's own comment has always demanded, and 0062 re-derives
+`current_rank_id` on every existing profile rather than waiting for the 0018
+trigger to notice. It ends with a check that fails if the top rank ever drops
+below 100,000 again.
+
+**2. The ring measures the app now, not the points.** Rescaling alone would
+have left the deeper objection standing, and it was put exactly: rank is *"a
+separate entity entirely to my progress in a game that has categories"*. It is
+a points total. It has nothing to say about twenty-nine untouched subjects.
+
+`levels_progress()` answers what was actually asked — **how much of this app
+have I worked through?** A level is one tier of one category, cleared when
+every published question in it has been answered correctly at least once. That
+is **not a new rule**: it is the one `getCategoryLevels` already uses to unlock
+the next level, now readable in one query so the ring and the level path cannot
+disagree. It is pinned to `pool = 'category'` for the same reason
+`getCategoriesWithProgress` is — arena categories are organisational, and their
+tiers are levels no player can open.
+
+A fresh account reads **"0 of 261 levels cleared", 0%**, which is the honest
+answer to "categories I haven't even opened".
+
+**On the denominator, because this project has a rule about it.** "Never state
+the size of the question bank" stands: the denominator is **levels**, not
+questions. The same paragraph that forbids the bank size explicitly permits the
+subject count — it says how wide the app is rather than where it stops — and a
+level count is the shape of the journey. **The rank did not disappear**: it is
+the title beside the player's name at the top of the same screen, with "3,000
+XP to Talib" under it, which is what a rank is for.
+
+**The lesson, and it is a different one from today's others.** Every number in
+this app was checked against the database and none of them was ever checked
+against *each other*. A rank ladder, a question bank and an XP formula were
+each internally right and jointly absurd. **When two systems produce numbers a
+player will see side by side, do the division once.** Nine ranks over ten
+thousand questions is one division, and it had never been done.
 
 ## A chest is not a handout
 
@@ -1843,6 +1911,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #86 | A rank that means the bank: the ladder was scaled to a sixth of the app, and the home ring now counts levels |
 | #85 | A chest is not a handout: harder to earn, diamond reserved for occasions, and off the screen that hands things out |
 | #84 | A chest you earned: the loot box leaves the shop and the mystery moves to a chest you were given |
 | #83 | A question pays once: replaying the daily printed XP, and the combo and the daily gate counted repeats too |
