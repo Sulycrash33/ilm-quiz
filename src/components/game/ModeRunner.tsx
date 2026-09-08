@@ -35,6 +35,7 @@ export function ModeRunner({
   rules,
   runId,
   fixedLadder,
+  backHref = "/challenges",
 }: {
   mode: string;
   questions: QuizQuestion[];
@@ -44,6 +45,9 @@ export function ModeRunner({
    * multiplier is 1x, so there is nothing for a run to authorise. */
   runId?: string;
   fixedLadder?: boolean;
+  /** Where the header's back link goes. The play modes live on `/challenges`;
+   * the daily challenge lives on `/rewards`, beside the coins it pays for. */
+  backHref?: string;
 }) {
   const { t } = useLanguage();
   const keys = NAME_KEYS[mode];
@@ -56,7 +60,7 @@ export function ModeRunner({
       categoryId={null}
       questions={questions}
       lifelinePrices={lifelinePrices}
-      backHref="/challenges"
+      backHref={backHref}
       modeRules={rules}
       runId={runId}
       fixedLadder={fixedLadder}

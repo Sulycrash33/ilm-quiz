@@ -147,6 +147,7 @@ export interface Translations {
   completeLevelToUnlock: string
   backToLevels: string
   backToChallenges: string
+  backToRewards: string
   levelComplete: string
   /** The CTA that was missing: after clearing a level, the way into the next
    * one. Nothing linked forward, so testers replayed the same tier instead. */
@@ -210,6 +211,7 @@ export interface Translations {
   /** The daily login reward's condition — see migration 0053. */
   dailyTaskTitle: string
   dailyTaskCta: string
+  dailyTaskDone: string
   dailyTaskLocked: string
   challengeDone: string
   currentProgress: string
@@ -983,6 +985,7 @@ const enTranslations: Translations = {
   completeLevelToUnlock: "Complete this level to unlock the next one",
   backToLevels: "Back to Levels",
   backToChallenges: "Back to Challenges",
+  backToRewards: "Back to Rewards",
   levelComplete: "Level complete! The next level is unlocked.",
   nextLevel: "Next level",
   levelUnlockProgress: "{correct} of {total} answered correctly. Get them all right to unlock the next level.",
@@ -1036,6 +1039,7 @@ const enTranslations: Translations = {
   rankJourney: "{current} to {next}",
   dailyTaskTitle: "Answer {required} questions today",
   dailyTaskCta: "Start answering",
+  dailyTaskDone: "Collect your reward",
   dailyTaskLocked: "Answer {required} questions to unlock",
   challengeDone: "Done for today",
   currentProgress: "{answered} of {total} answered",
@@ -1793,6 +1797,7 @@ const msTranslations: Translations = {
   completeLevelToUnlock: "Selesaikan tahap ini untuk membuka tahap seterusnya",
   backToLevels: "Kembali ke Tahap",
   backToChallenges: "Kembali ke Cabaran",
+  backToRewards: "Kembali ke Ganjaran",
   levelComplete: "Tahap selesai! Tahap seterusnya telah dibuka.",
   nextLevel: "Tahap seterusnya",
   levelUnlockProgress: "{correct} daripada {total} dijawab dengan betul. Jawab semuanya dengan betul untuk membuka tahap seterusnya.",
@@ -1846,6 +1851,7 @@ const msTranslations: Translations = {
   rankJourney: "{current} ke {next}",
   dailyTaskTitle: "Jawab {required} soalan hari ini",
   dailyTaskCta: "Mula menjawab",
+  dailyTaskDone: "Kutip ganjaran anda",
   dailyTaskLocked: "Jawab {required} soalan untuk membukanya",
   challengeDone: "Selesai hari ini",
   currentProgress: "{answered} daripada {total} dijawab",
@@ -2603,6 +2609,7 @@ const idTranslations: Translations = {
   completeLevelToUnlock: "Selesaikan level ini untuk membuka level berikutnya",
   backToLevels: "Kembali ke Level",
   backToChallenges: "Kembali ke Tantangan",
+  backToRewards: "Kembali ke Hadiah",
   levelComplete: "Level selesai! Level berikutnya telah terbuka.",
   nextLevel: "Level berikutnya",
   levelUnlockProgress: "{correct} dari {total} dijawab dengan benar. Jawab semuanya dengan benar untuk membuka level berikutnya.",
@@ -2656,6 +2663,7 @@ const idTranslations: Translations = {
   rankJourney: "{current} ke {next}",
   dailyTaskTitle: "Jawab {required} pertanyaan hari ini",
   dailyTaskCta: "Mulai menjawab",
+  dailyTaskDone: "Ambil hadiah Anda",
   dailyTaskLocked: "Jawab {required} pertanyaan untuk membukanya",
   challengeDone: "Selesai hari ini",
   currentProgress: "{answered} dari {total} dijawab",
@@ -3413,6 +3421,7 @@ const haTranslations: Translations = {
   completeLevelToUnlock: "Kammala wannan matakin domin buɗe na gaba",
   backToLevels: "Koma zuwa Matakai",
   backToChallenges: "Koma zuwa Kalubale",
+  backToRewards: "Koma zuwa Lada",
   levelComplete: "An kammala matakin! An buɗe matakin gaba.",
   nextLevel: "Mataki na gaba",
   levelUnlockProgress: "An amsa {correct} daga cikin {total} daidai. Ka amsa dukkansu daidai don buɗe mataki na gaba.",
@@ -3466,6 +3475,7 @@ const haTranslations: Translations = {
   rankJourney: "{current} zuwa {next}",
   dailyTaskTitle: "Amsa tambayoyi {required} yau",
   dailyTaskCta: "Fara amsawa",
+  dailyTaskDone: "Karɓi ladanka",
   dailyTaskLocked: "Amsa tambayoyi {required} don buɗewa",
   challengeDone: "An gama yau",
   currentProgress: "{answered} daga {total} an amsa",
@@ -4223,6 +4233,7 @@ const frTranslations: Translations = {
   completeLevelToUnlock: "Terminez ce niveau pour débloquer le suivant",
   backToLevels: "Retour aux niveaux",
   backToChallenges: "Retour aux défis",
+  backToRewards: "Retour aux récompenses",
   levelComplete: "Niveau terminé ! Le niveau suivant est débloqué.",
   nextLevel: "Niveau suivant",
   levelUnlockProgress: "{correct} sur {total} de bonnes réponses. Répondez correctement à toutes pour débloquer le niveau suivant.",
@@ -4276,6 +4287,7 @@ const frTranslations: Translations = {
   rankJourney: "{current} vers {next}",
   dailyTaskTitle: "Réponds à {required} questions aujourd'hui",
   dailyTaskCta: "Commencer à répondre",
+  dailyTaskDone: "Récupère ta récompense",
   dailyTaskLocked: "Réponds à {required} questions pour débloquer",
   challengeDone: "Terminé pour aujourd'hui",
   currentProgress: "{answered} sur {total} répondues",
@@ -5033,6 +5045,7 @@ const arTranslations: Translations = {
   completeLevelToUnlock: "أكمل هذا المستوى لفتح المستوى التالي",
   backToLevels: "العودة إلى المستويات",
   backToChallenges: "العودة إلى التحديات",
+  backToRewards: "العودة إلى المكافآت",
   levelComplete: "اكتمل المستوى! تم فتح المستوى التالي.",
   nextLevel: "المستوى التالي",
   levelUnlockProgress: "أجبت عن {correct} من {total} إجابة صحيحة. أجب عنها جميعًا بشكل صحيح لفتح المستوى التالي.",
@@ -5086,6 +5099,7 @@ const arTranslations: Translations = {
   rankJourney: "{current} إلى {next}",
   dailyTaskTitle: "أجب عن {required} أسئلة اليوم",
   dailyTaskCta: "ابدأ الإجابة",
+  dailyTaskDone: "استلم مكافأتك",
   dailyTaskLocked: "أجب عن {required} أسئلة لفتح المكافأة",
   challengeDone: "تم اليوم",
   currentProgress: "{answered} من {total} تمت الإجابة",

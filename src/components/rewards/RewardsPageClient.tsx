@@ -14,6 +14,8 @@ import {
   type DailyTaskProgress,
 } from "@/app/(app)/rewards/actions"
 import { SpinWheel, type SpinSegment } from "@/components/rewards/SpinWheel"
+import { DailyChallengeCard } from "@/components/challenges/DailyChallengeCard"
+import type { DailyChallengeView } from "@/app/(app)/challenges/actions"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Translations } from "@/lib/i18n"
 
@@ -57,6 +59,7 @@ const CHEST_NAME_KEYS: Record<string, keyof Translations> = {
 
 export function RewardsPageClient({
   dailyTask,
+  dailyChallenge,
   streakCount,
   longestStreak,
   streakFreezesAvailable,
@@ -70,6 +73,8 @@ export function RewardsPageClient({
   spinRewards,
 }: {
   dailyTask: DailyTaskProgress
+  /** Today's five questions. Null on a day the arena cannot fill a challenge. */
+  dailyChallenge: DailyChallengeView | null
   streakCount: number
   longestStreak: number
   streakFreezesAvailable: number
@@ -304,8 +309,29 @@ export function RewardsPageClient({
         </div>
       </motion.div>
 
-      {/* Daily login rewards - real 7-day cycle */}
+      {/* The day, in one panel: the five questions, then what finishing them
+          pays.
+
+          These were two features with one body. The "daily challenge" — five
+          questions the server picks for everyone, on `/challenges` — and the
+          "daily login reward" — answer five questions, collect the day's coins,
+          here — are the same five questions and the same day. The player met
+          them on two screens under two names, and the one on this page did not
+          even lead to the questions: its "Start answering" pointed at `/quiz`,
+          the category grid, which is precisely the complaint #73 and #77 were
+          each supposed to have closed. Reported a third time, from this screen.
+
+          So the challenge moves in above the ladder, and the ladder becomes
+          what it was always meant to be from here: the answer to "what do I get
+          for doing this". One card, one task, one place to press. It is the
+          same `DailyChallengeCard` component, so there is still exactly one
+          definition of what the challenge says and what it pays. */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-6 mb-8">
+        {dailyChallenge && (
+          <div className="mb-6">
+            <DailyChallengeCard challenge={dailyChallenge} />
+          </div>
+        )}
         <h2 className="font-headline-md text-headline-md text-on-surface mb-4">{t("dailyLoginRewards")}</h2>
         <div className="grid grid-cols-7 gap-2 mb-4">
           {loginRewards.map((r) => {
@@ -329,15 +355,27 @@ export function RewardsPageClient({
             )
           })}
         </div>
-        {/* The day's task.
+        {/* The day's task, for a day with no challenge on it.
 
             This reward used to pay for opening the app. 0053 attaches a
             condition to it and enforces that condition in the database; this
             strip is what makes the condition visible, because a button that
             refuses without saying why is a bug as far as the player is
             concerned. Hidden once claimed: at that point the task is history
-            and the only useful thing to say is that the reward is spent. */}
-        {!claimedToday && taskRequired > 0 && (
+            and the only useful thing to say is that the reward is spent.
+
+            Hidden too whenever there *is* a challenge above, because then this
+            strip is a second progress bar for the same five questions with a
+            worse link on it — two bars disagreeing about one day is the
+            confusion this whole change is undoing. The challenge card carries
+            the bar; the claim button below still names the condition when it
+            is not met, so nothing goes unexplained.
+
+            It survives for the days the arena cannot fill a challenge. On those
+            the gate is still real and still has to be reachable, and `/quiz` is
+            then the honest destination rather than the wrong one: any five
+            answers satisfy `daily_task_progress()`, from any room. */}
+        {!dailyChallenge && !claimedToday && taskRequired > 0 && (
           <div className="mb-4 rounded-lg border border-white/5 bg-surface-container-high/60 p-4">
             <div className="flex items-center justify-between gap-3">
               <p className="font-bold text-on-surface">

@@ -103,15 +103,17 @@ export function QuizRunner({
         <Button asChild variant="ghost" size="sm">
           <Link href={backHref ?? "/quiz"}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {/* Labelled by where it goes. Every mode run and the daily
-                challenge pass `backHref="/challenges"`, and all of them said
-                "Back to Levels" — a destination that is not levels and not
-                where the link leads. */}
+            {/* Labelled by where it goes. Every mode run passes
+                `backHref="/challenges"` and the daily challenge passes
+                `/rewards`, and all of them once said "Back to Levels" — a
+                destination that is not levels and not where the link leads. */}
             {backHref === "/challenges"
               ? t("backToChallenges")
-              : backHref
-                ? t("backToLevels")
-                : t("backToCategories")}
+              : backHref === "/rewards"
+                ? t("backToRewards")
+                : backHref
+                  ? t("backToLevels")
+                  : t("backToCategories")}
           </Link>
         </Button>
       </header>

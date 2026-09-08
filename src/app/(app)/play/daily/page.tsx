@@ -49,10 +49,16 @@ export default async function DailyChallengePage() {
 
   // Already claimed: the day is finished, and replaying it would be five
   // questions the player has answered for a reward that cannot pay twice.
-  if (challenge?.completed) redirect("/challenges");
+  //
+  // Both exits lead to `/rewards`, not `/challenges`. The daily challenge and
+  // the daily login reward were two names for one day's five questions, on two
+  // screens, and the login one sent the player to the category grid. They are
+  // one panel on the Rewards Center now, so that is where a player who cannot
+  // play today belongs — beside the coins it pays and the wheel.
+  if (challenge?.completed) redirect("/rewards");
 
   // No challenge today, or its questions were unpublished after it was set.
-  if (questions.length === 0) redirect("/challenges");
+  if (questions.length === 0) redirect("/rewards");
 
   return (
     <ModeRunner
@@ -60,6 +66,7 @@ export default async function DailyChallengePage() {
       questions={questions}
       lifelinePrices={lifelinePrices}
       fixedLadder
+      backHref="/rewards"
       rules={{
         lives: null,
         runSeconds: null,
