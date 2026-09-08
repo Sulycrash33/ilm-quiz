@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { getDailyTaskProgress, getEarnedChests } from "./actions"
+import { getDailyTaskProgress } from "./actions"
 import { getDailyChallenge } from "@/app/(app)/challenges/actions"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { RewardsPageClient } from "@/components/rewards/RewardsPageClient"
@@ -68,15 +68,10 @@ export default async function RewardsPage() {
   // so calling it here is what generates today's row on the first visit.
   const dailyChallenge = await getDailyChallenge()
 
-  // The chests this player has earned and not opened. There is no catalogue to
-  // fetch any more: chests are not bought, so there is nothing to price.
-  const earnedChests = await getEarnedChests()
-
   return (
     <RewardsPageClient
       dailyTask={dailyTask}
       dailyChallenge={dailyChallenge}
-      earnedChests={earnedChests}
       streakCount={profile?.streak_count ?? 0}
       longestStreak={profile?.longest_streak ?? 0}
       streakFreezesAvailable={profile?.streak_freezes_available ?? 0}

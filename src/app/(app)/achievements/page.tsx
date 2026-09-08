@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { getProfileStats } from "@/lib/profile-stats"
+import { getEarnedChests } from "@/app/(app)/rewards/actions"
 import { AchievementsPageClient } from "@/components/achievements/AchievementsPageClient"
 
 export default async function AchievementsPage() {
@@ -15,6 +16,10 @@ export default async function AchievementsPage() {
   }
 
   const stats = await getProfileStats(user.id)
+
+  // Earned and unopened. They live on this page rather than on `/rewards`,
+  // where every other panel is something handed to you for showing up.
+  const earnedChests = await getEarnedChests()
 
   const today = new Date().toISOString().slice(0, 10)
   const { data: todayChallenge } = await supabase
@@ -47,6 +52,7 @@ export default async function AchievementsPage() {
   return (
     <AchievementsPageClient
       achievements={stats?.achievements ?? []}
+      earnedChests={earnedChests}
       todayChallenge={
         challenge
           ? {

@@ -539,6 +539,8 @@ export interface Translations {
   nextSpinIn: string
   openingLabel: string
   openChestLabel: string
+  chestEarnedTitle: string
+  chestEarnedBody: string
   noChestsYet: string
   noteLabel: string
   rewardsFootnote: string
@@ -1369,6 +1371,8 @@ const enTranslations: Translations = {
   nextSpinIn: "Next spin in {time}",
   openingLabel: "Opening...",
   openChestLabel: "Open",
+  chestEarnedTitle: "You earned a chest",
+  chestEarnedBody: "Open it on your Achievements page.",
   noChestsYet: "Chests arrive as you study. Keep your streak and keep answering.",
   noteLabel: "Note",
   rewardsFootnote: "Claims, spins and chest openings are saved to your account. Refreshing the page will not repeat them.",
@@ -2183,6 +2187,8 @@ const msTranslations: Translations = {
   nextSpinIn: "Putaran seterusnya dalam {time}",
   openingLabel: "Membuka...",
   openChestLabel: "Buka",
+  chestEarnedTitle: "Anda memperoleh peti",
+  chestEarnedBody: "Bukanya di halaman Pencapaian anda.",
   noChestsYet: "Peti tiba apabila anda belajar. Kekalkan rentetan anda dan teruskan menjawab.",
   noteLabel: "Nota",
   rewardsFootnote: "Tuntutan, putaran dan pembukaan peti disimpan pada akaun anda. Menyegarkan halaman tidak akan mengulanginya.",
@@ -2997,6 +3003,8 @@ const idTranslations: Translations = {
   nextSpinIn: "Putaran berikutnya dalam {time}",
   openingLabel: "Membuka...",
   openChestLabel: "Buka",
+  chestEarnedTitle: "Anda mendapatkan peti",
+  chestEarnedBody: "Buka di halaman Pencapaian Anda.",
   noChestsYet: "Peti datang seiring Anda belajar. Pertahankan rentetan dan teruslah menjawab.",
   noteLabel: "Catatan",
   rewardsFootnote: "Klaim, putaran dan pembukaan peti disimpan di akun Anda. Menyegarkan halaman tidak akan mengulanginya.",
@@ -3811,6 +3819,8 @@ const haTranslations: Translations = {
   nextSpinIn: "Juyi na gaba a cikin {time}",
   openingLabel: "Ana Buɗewa...",
   openChestLabel: "Buɗe",
+  chestEarnedTitle: "Ka samu akwati",
+  chestEarnedBody: "Buɗe shi a shafin Nasarorinka.",
   noChestsYet: "Akwatuna na zuwa yayin da kake karatu. Ci gaba da jerinka da amsa tambayoyi.",
   noteLabel: "Lura",
   rewardsFootnote: "Ana ajiye karɓa, juyawa da buɗe akwatuna a asusunka. Sabunta shafi ba zai maimaita su ba.",
@@ -4625,6 +4635,8 @@ const frTranslations: Translations = {
   nextSpinIn: "Prochain tour dans {time}",
   openingLabel: "Ouverture...",
   openChestLabel: "Ouvrir",
+  chestEarnedTitle: "Tu as gagné un coffre",
+  chestEarnedBody: "Ouvre le sur ta page Trophées.",
   noChestsYet: "Les coffres arrivent au fil de tes études. Garde ta série et continue à répondre.",
   noteLabel: "Remarque",
   rewardsFootnote: "Les réclamations, les tours et les ouvertures de coffres sont enregistrés sur votre compte. Actualiser la page ne les répète pas.",
@@ -5439,6 +5451,8 @@ const arTranslations: Translations = {
   nextSpinIn: "الدورة التالية خلال {time}",
   openingLabel: "جارٍ الفتح...",
   openChestLabel: "افتح",
+  chestEarnedTitle: "لقد ربحت صندوقًا",
+  chestEarnedBody: "افتحه في صفحة الإنجازات.",
   noChestsYet: "تصل الصناديق مع مواصلتك الدراسة. حافظ على سلسلتك وواصل الإجابة.",
   noteLabel: "ملاحظة",
   rewardsFootnote: "تُحفظ عمليات الاستلام والدوران وفتح الصناديق في حسابك. لا يعيدها تحديث الصفحة.",
