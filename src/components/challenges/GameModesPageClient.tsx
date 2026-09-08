@@ -83,12 +83,10 @@ export function GameModesPageClient({
   totalAttempts,
   accuracyPct,
   totalXp,
-  todayChallenge,
 }: {
   totalAttempts: number
   accuracyPct: number
   totalXp: number
-  todayChallenge: { rewardCoins: number; rewardXp: number; completed: boolean } | null
 }) {
   const { t, dir } = useLanguage()
 
@@ -110,16 +108,17 @@ export function GameModesPageClient({
         <div className="w-20" />
       </motion.div>
 
-      {/* The daily challenge card used to be rendered here as well, so
-          `/challenges` showed it twice: `DailyChallengeCard` at the top of the
-          page (progress bar, reward, claim button) and this larger "Today's
-          special" panel underneath with a second Start button. Two cards for
-          one thing, disagreeing about how much of it was done — the compact
-          one knew the player's progress and this one did not.
+      {/* The daily challenge is not on this page at all any more, and neither
+          is a `todayChallenge` prop describing it.
 
-          `DailyChallengeCard` is the survivor because it is the one that also
-          renders on `/home`, so the daily challenge now says the same thing in
-          both places. This page keeps the game modes, which is its job. */}
+          It was rendered here twice once — a compact `DailyChallengeCard` that
+          knew the player's progress, and a larger "Today's special" panel that
+          did not — and after that was fixed the surviving card still stood
+          beside a `Daily Login Reward` on `/rewards` asking for the same five
+          questions under a different name. The two are one thing, so they are
+          in one place: the Rewards Center, where the coins the five questions
+          pay for are collected. This page keeps the game modes, which is its
+          job. */}
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
         <h2 className="font-headline-md text-headline-md text-on-surface mb-6">{t("allGameModesTitle")}</h2>

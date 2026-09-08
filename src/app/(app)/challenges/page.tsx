@@ -1,9 +1,18 @@
 import { createClient } from "@/lib/supabase/server"
 import { getProfileStats } from "@/lib/profile-stats"
 import { GameModesPageClient } from "@/components/challenges/GameModesPageClient"
-import { DailyChallengeCard } from "@/components/challenges/DailyChallengeCard"
-import { getDailyChallenge } from "./actions"
 
+/**
+ * The game modes: Classic, Speed Round, Survival, Practice, Multiplayer.
+ *
+ * The daily challenge used to open this page and no longer appears on it. It
+ * and the daily login reward were the same five questions on the same day
+ * wearing two names on two screens — and the login one, on `/rewards`, sent
+ * the player to the category grid instead of to the questions. They are one
+ * panel on the Rewards Center now, so the challenge is fetched, played and
+ * claimed there. Nothing here needs `getDailyChallenge`, and `/rewards`
+ * materialising the day lazily is what generates today's row.
+ */
 export default async function ChallengesPage() {
   const supabase = await createClient()
 
@@ -13,45 +22,11 @@ export default async function ChallengesPage() {
 
   const stats = user ? await getProfileStats(user.id) : null
 
-  // Generates today's challenge if this is the first request of the day; there
-  // is no scheduler, so it is materialised lazily (migration 0011).
-  const dailyChallenge = await getDailyChallenge()
-
-  const today = new Date().toISOString().slice(0, 10)
-  const { data: todayChallenge } = await supabase
-    .from("daily_challenges")
-    .select("id, reward_coins, reward_xp")
-    .eq("challenge_date", today)
-    .maybeSingle()
-
-  let challengeCompleted = false
-  if (todayChallenge && user) {
-    const { data: completion } = await supabase
-      .from("user_daily_challenge_completions")
-      .select("completed_at")
-      .eq("user_id", user.id)
-      .eq("daily_challenge_id", todayChallenge.id)
-      .maybeSingle()
-    challengeCompleted = !!completion
-  }
-
   return (
-    <div className="space-y-6">
-      {dailyChallenge && (
-        <div className="mx-auto max-w-7xl px-5 pt-6">
-          <DailyChallengeCard challenge={dailyChallenge} />
-        </div>
-      )}
-      <GameModesPageClient
+    <GameModesPageClient
       totalAttempts={stats?.totalAttempts ?? 0}
       accuracyPct={stats?.accuracyPct ?? 0}
       totalXp={stats?.profile.totalXp ?? 0}
-      todayChallenge={
-        todayChallenge
-          ? { rewardCoins: todayChallenge.reward_coins, rewardXp: todayChallenge.reward_xp, completed: challengeCompleted }
-          : null
-      }
-      />
-    </div>
+    />
   )
 }

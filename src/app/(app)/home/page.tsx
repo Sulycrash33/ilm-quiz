@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, useReducedMotion } from "framer-motion"
-import { Trophy, Zap, Users, Gamepad2, Gift } from "lucide-react"
+import { Trophy, Zap, Users, Gamepad2 } from "lucide-react"
 import { PremiumAvatar } from "@/components/ui/premium-avatar"
 import { CountUp } from "@/components/ui/count-up"
 import { ProgressRing } from "@/components/game/ProgressRing"
 import { PrayerTimesCard } from "@/components/game/PrayerTimesCard"
 import { SalaamGreeting } from "@/components/game/SalaamGreeting"
 import { DailyHadith } from "@/components/game/DailyHadith"
-import { HomeDailyChallenge } from "@/components/home/HomeDailyChallenge"
+import { HomeRewardsCard } from "@/components/home/HomeRewardsCard"
 import { ReviewCallout } from "@/components/game/ReviewCallout"
 import { LogoutButton } from "@/components/layout/LogoutButton"
 
@@ -148,22 +148,21 @@ export default function HomePage() {
             makes a scoreboard, and this is meant to be a place of study. */}
         <DailyHadith />
 
-        {/* Today's five questions, on the front door.
+        {/* The day's invitation, on the front door.
 
-            #73 gave the daily challenge a route and pointed its two buttons at
-            it, and it was still not reachable in practice: both buttons live on
-            `/challenges`, and the only way to `/challenges` is one of four
-            small tiles below the fold on this screen. A player opening the app
-            to answer today's questions saw no mention of them, and the one
-            obvious way to questions from here is the Learning tab — the
-            category grid. Same class of bug as #73 and #74, one step further
-            out: the content was right, the link was right, and the player
-            still could not get there.
+            The daily challenge card stood here, and the position is the point
+            — it sits above the ring because the ring is a record of what has
+            been done and this is the invitation to do something today, and the
+            invitation goes first.
 
-            It sits above the ring on purpose. The ring is a record of what has
-            been done; this is the invitation to do something today, and the
-            invitation goes first. */}
-        <HomeDailyChallenge />
+            What changed is where it leads. The daily challenge and the daily
+            login reward were the same five questions on the same day, on two
+            screens, under two names — and the login one sent the player to the
+            category grid. They are one panel on the Rewards Center now, so the
+            front door points there: same slot, same invitation, one
+            destination. That also retires the `/rewards` tile from the Explore
+            grid below, which was the app's only other link to the page. */}
+        <HomeRewardsCard />
 
         {/* Prayer times, directly under the greeting. This is the real card:
             it locates the seeker, counts down to the next salah, and rolls over
@@ -311,21 +310,22 @@ export default function HomePage() {
           variants={cardVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-4"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"
         >
           {[
             { href: "/achievements", label: t("achievements"), Icon: Trophy, tint: "from-warning/25 to-warning/10", fg: "text-warning-bright" },
             { href: "/challenges", label: t("challenges"), Icon: Zap, tint: "from-special/25 to-special-container/10", fg: "text-special-bright" },
             { href: "/community", label: t("communityHub"), Icon: Users, tint: "from-info/25 to-info-container/10", fg: "text-info-bright" },
             { href: "/multiplayer", label: t("multiplayerQuiz"), Icon: Gamepad2, tint: "from-success/25 to-success/10", fg: "text-success-bright" },
-            /* Rewards, rehomed from the row that used to sit under the
-               progress card. Last, and full width on a phone, so an odd fifth
-               tile reads as deliberate rather than as a gap. */
-            { href: "/rewards", label: t("dailyLoginRewards"), Icon: Gift, tint: "from-tertiary/25 to-tertiary/10", fg: "text-tertiary", wide: true },
-          ].map(({ href, label, Icon, tint, fg, wide }, i) => (
+            /* Rewards is no longer here. It was the app's only link to
+               `/rewards` when it was added, and now the card above the ring is
+               a better one: the daily challenge lives on that page, so the
+               front door's daily invitation and the route to the Rewards
+               Center are one link rather than two that compete. Four tiles
+               again, and none of them `wide`. */
+          ].map(({ href, label, Icon, tint, fg }, i) => (
             <motion.div
               key={href}
-              className={wide ? "col-span-2 md:col-span-1" : undefined}
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i, duration: 0.35 }}

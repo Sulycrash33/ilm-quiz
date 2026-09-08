@@ -1,15 +1,21 @@
 # ILM Hunt — session handoff
 
-Written 2026-09-03, rewritten through 2026-09-07. **Read this first if you are
+Written 2026-09-03, rewritten through 2026-09-08. **Read this first if you are
 picking up work cold.** Every number below was checked against the live
-database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `969c205` (PR #79,
-merged; #80 is this document catching up) — re-check anything you are about to
-depend on rather than trusting them blind. **Five** earlier notes have now been wrong about a count within a
+database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `e7c88a0` (PR #80,
+merged) — re-check anything you are about to depend on rather than trusting
+them blind. Re-checked 2026-09-08: `attempts` **0**, `profiles` **1**,
+`user_login_claims` **0**. Still nobody. **Five** earlier notes have now been wrong about a count within a
 day of being written, which is the whole argument for checking. The fifth was
 this document's own translation figure, corrected below: it said "69 questions"
 where 69 is the number of *rows*, covering **65** questions. Rows and the
 things they describe are not the same number, and this file has now made that
 mistake about translations, categories and the question bank in turn.
+
+**2026-09-08 was the sixth finding from one person opening the app**, and the
+third time the category grid has been the answer to a question about the daily
+challenge — this time from a *different* feature asking for the same five
+questions. See "Two names for one day" below.
 
 **2026-09-07 opened with the owner angry, and right.** They played the app and
 reported three things: no sound, the daily challenge still sending them to the
@@ -377,6 +383,98 @@ different published edition, or an admin reading and correcting at
 `/admin/hadiths`. It is the one open item here that is a content decision, and
 0047 was deliberately built as an importer and not a translator for the same
 reason.
+
+## Two names for one day: the daily challenge and the daily login reward
+
+Added 2026-09-08, and it is the same finding as every other one in this file
+that mattered: **the owner opened the app and pressed the thing that looked
+like the way in.** They were on the Rewards Center, under *"Answer 5 questions
+today — 0/5"*, and pressed **"Start answering"**. It took them to the category
+grid. Third time. #73 fixed the daily challenge's button, #77 gave it a front
+door, and this one was never either of those buttons — it was a *different*
+feature asking for the same five questions on a different screen.
+
+**They were one thing wearing two names.**
+
+| | Where it lived | What it asked for | Where its button went |
+|---|---|---|---|
+| Daily challenge | `/challenges`, and `/home` since #77 | today's five questions | `/play/daily` — correct |
+| Daily login reward | `/rewards` | "answer 5 questions today" | **`/quiz`, the category grid** |
+
+Both are five questions. Both are today. The number in the login reward's task
+is `daily_task_questions()`, which returns 5; the challenge is five ids stored
+on the day's row. A player met them on two screens, under two names, with two
+progress bars that could disagree, and the one that named the task could not
+serve it.
+
+**What shipped.** The challenge moves into the Rewards Center, above the Day
+1–7 ladder, in the same card — so the ladder finally reads as the answer to
+"what do I get for doing this", which is what the owner said it was for. It is
+the same `DailyChallengeCard` component, so there is still exactly one
+definition of what the challenge says, what it pays and when it can be claimed.
+
+- **The `/quiz` task strip is gone when there is a challenge**, because it was
+  then a second progress bar for the same five questions with a worse link on
+  it. The claim button still names the condition when it is not met, so nothing
+  goes unexplained. The strip survives for a day the arena cannot fill a
+  challenge — on those the gate is still real, still has to be reachable, and
+  `/quiz` is then the honest destination rather than the wrong one, because
+  `daily_task_progress()` counts any five answers from any room.
+- **`/home` keeps the slot, not the card.** `HomeDailyChallenge` is deleted;
+  `HomeRewardsCard` stands in its place, above the ring, showing
+  `daily_task_progress()` and linking to `/rewards`. The position was the point
+  of #77 and is kept; a second copy of the challenge card was not, because a
+  screen whose problem was duplicate definitions is the last place to add one.
+  It reads the same server action the Rewards Center reads — one number, one
+  source.
+- **The `/rewards` tile leaves the Explore grid** (four tiles again, no `wide`,
+  `md:grid-cols-4`). It was the app's only link to the page when it was added;
+  the card above the ring is a better one, and two competing links to one page
+  is how this whole class of bug starts.
+- **`/challenges` loses the daily card** and the dead `todayChallenge` prop
+  that `GameModesPageClient` accepted and never rendered. It keeps the game
+  modes, which is its job.
+- **`/play/daily` now exits to `/rewards`** — both redirects, and the header
+  link, which reads **"Back to Rewards"**. `ModeRunner` grew a `backHref` prop
+  (default `/challenges`, so the play modes are unchanged) and `QuizRunner`
+  learned the label. New key `backToRewards` in all six locales, plus
+  `dailyTaskDone` for the home card's collect state.
+
+**Verified by opening it, signed in**, through the localhost Supabase bridge
+under "Environment traps" — because this is precisely the class of bug the five
+gates cannot see, and all five were green on it the whole time it existed.
+Driven at 412×915 as a real player: sign in, land on `/home`, press the card,
+land on `/rewards`, press "Start Challenge", land on `/play/daily`.
+
+| checked | result |
+|---|---|
+| `/home` — "Rewards Center" card, links to `/rewards` | 1 card, 1 link |
+| `/home` — a second "Daily Challenge" card | **0** |
+| `/rewards` — "Daily Challenge" above "Daily Login Rewards" | both, in that order, one card |
+| `/rewards` — "Start answering" pointing at `/quiz` | **0** (the only `/quiz` link left is the Learning tab) |
+| `/rewards` — link to `/play/daily` | 1 |
+| `/play/daily` — header | **"Back to Rewards"** |
+| `/challenges` — any daily challenge | **0** |
+| signed-out control | `/home` → 307 `/login` |
+
+The QA account was made by hand in `auth.users` and **deleted afterwards** —
+`attempts`, `profiles` and `user_login_claims` were all re-counted after the
+delete and are 0, 1 and 0, unchanged. One trap worth writing down, because it
+costs twenty minutes: a hand-inserted `auth.users` row whose `confirmation_token`,
+`recovery_token`, `email_change*`, `phone_change*` and `reauthentication_token`
+are **NULL rather than `''`** makes GoTrue answer every sign-in with `500
+{"code":"unexpected_failure","message":"Database error querying schema"}`. It
+is not the password, the schema or the bridge. Insert those columns as empty
+strings.
+
+**The lesson, which is a new one and belongs beside the other two.** #73 asked
+*what does a player press to reach it, and have I followed that link myself?*
+#77 added *starting from the front door, how does a player find out this
+feature is here?* Both were answered correctly here and the bug was still on
+screen, because there were **two** front doors to one feature and only one of
+them worked. So: **is there more than one thing in this app claiming to be this
+thing, and do they agree?** Two screens naming the same task is not redundancy
+to tidy up later. It is a coin flip the player loses half the time.
 
 ## One word, six meanings: the progress audit
 
@@ -1026,6 +1124,8 @@ considered position.
 | `home/page.tsx`'s bottom nav | a second fixed nav bar drawn on top of the layout's, with a different link set. Removed 2026-09-07 |
 | `DailyProgressCard` | imported by nothing, and it carries a **second** definition of the daily task size (`REWARD_RULES.dailyMissionQuestions`) alongside `daily_task_questions()`. Delete it or reconcile the two |
 | `focusLevel` (i18n) | the home screen's name for lifetime accuracy, which the profile and the run summary both call `accuracy`. Key removed from all six locales |
+| `HomeDailyChallenge` | deleted 2026-09-08. It rendered `DailyChallengeCard` on `/home`, which was right in #77 and became a second definition of the day once the challenge moved into the Rewards Center. `HomeRewardsCard` holds the slot |
+| `GameModesPageClient.todayChallenge` | a prop `/challenges` computed with two queries and passed down, destructured, and never rendered — dead since #79 removed the "Today's special" panel. Removed with the daily card |
 | the pause machinery | `paused`, `pausedAt`, `setPausedTracking`, the paused overlay and the four i18n keys (`pauseLabel`, `pausedTitle`, `pausedBody`, `resumeLabel`) across all six locales all went with the button |
 
 **Before building a screen, grep for whether it already exists and is simply
@@ -1439,6 +1539,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #81 | Two names for one day: the daily challenge moves inside the daily login reward, and "Start answering" stops opening the category grid |
 | #80 | The daily challenge's XP keeps counting, and this document catches up with the day |
 | #79 | One word, six meanings: the progress audit — a doubled percentage on every category card, a nav bar drawn twice, a nav covering the run, and the pause button that stopped a scored clock |
 | #78 | The sound had nothing to play: `tap` fires on every press, as `sound.ts` always said it did |

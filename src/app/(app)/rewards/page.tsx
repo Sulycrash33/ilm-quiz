@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { getDailyTaskProgress } from "./actions"
+import { getDailyChallenge } from "@/app/(app)/challenges/actions"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { RewardsPageClient } from "@/components/rewards/RewardsPageClient"
 import type { SpinSegment } from "@/components/rewards/SpinWheel"
@@ -62,9 +63,20 @@ export default async function RewardsPage() {
   // The day's task, read from the same function that gates the claim.
   const dailyTask = await getDailyTaskProgress()
 
+  // Today's challenge — the five questions themselves, which is what the task
+  // above has always been asking for. It used to live on `/challenges` while
+  // this page told the player to "start answering" on `/quiz`, the category
+  // grid: one day, one set of five, two screens, and only one of them could
+  // actually play them. This page is now the only place either appears.
+  //
+  // `getDailyChallenge` materialises the day lazily (there is no scheduler),
+  // so calling it here is what generates today's row on the first visit.
+  const dailyChallenge = await getDailyChallenge()
+
   return (
     <RewardsPageClient
       dailyTask={dailyTask}
+      dailyChallenge={dailyChallenge}
       streakCount={profile?.streak_count ?? 0}
       longestStreak={profile?.longest_streak ?? 0}
       streakFreezesAvailable={profile?.streak_freezes_available ?? 0}
