@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Trophy, HeartCrack, Flame, Target, Gauge, Sparkl
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Translations } from "@/lib/i18n";
 import type { RunSummary as RunSummaryData } from "@/lib/hunt-engine";
 import { rankProgress, rankUpBetween } from "@/lib/ranks";
 import { useEffect, useState } from "react";
@@ -44,6 +45,10 @@ interface RunSummaryProps {
    */
   onPlayAgain?: () => void;
   onExit: () => void;
+  /** What the exit button says. Named from `backHref` by `backLabelKey` so it
+   *  agrees with where `onExit` actually goes; it used to say "Back to
+   *  Categories" on every run in the app, the daily challenge included. */
+  exitLabelKey?: keyof Translations;
   /**
    * The way forward out of a cleared level. Absent for the classic hunt and
    * for the modes, which have no next level to point at, and absent on a level
@@ -70,6 +75,7 @@ export function RunSummary({
   review = [],
   onPlayAgain,
   onExit,
+  exitLabelKey = "backToCategories",
   nextLevelHref = null,
 }: RunSummaryProps) {
   const { t, dir } = useLanguage();
@@ -267,7 +273,7 @@ export function RunSummary({
             className="flex-1"
             onClick={onExit}
           >
-            {t("backToCategories")}
+            {t(exitLabelKey)}
           </Button>
         </div>
       </div>

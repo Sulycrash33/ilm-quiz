@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { HUNT_RULES, type ModeRules } from "@/lib/hunt-engine";
 import type { LifelinePrice } from "@/app/(app)/quiz/actions";
 import { HuntView } from "./hunt/HuntView";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { backLabelKey } from "@/lib/back-destination";
 
 interface QuizRunnerProps {
   categoryName: string;
@@ -63,6 +65,26 @@ export function QuizRunner({
 }: QuizRunnerProps) {
   const [started, setStarted] = useState(false);
   const { t, dir } = useLanguage();
+  const router = useRouter();
+
+  /**
+   * Leaving a finished run goes where the run came from.
+   *
+   * It used to call `setStarted(false)`, which put the player back on the
+   * **pre-run brief** — the "Daily Challenge / 5 Questions / Begin the hunt"
+   * screen they had already passed through on the way in. After the daily that
+   * reads as being offered the challenge again, seconds after finishing it and
+   * being told it is one attempt a day; the owner's words were "one should land
+   * directly at the daily login reward page, not the same page one encountered
+   * before playing".
+   *
+   * `backHref` already names the right destination for every run, and the
+   * header link is already labelled with it: `/rewards` for the daily,
+   * `/challenges` for a mode, the category's level map for a level run, and
+   * `/quiz` for the classic hunt. So exiting now goes there rather than
+   * rewinding to a gate the player has already opened.
+   */
+  const leave = () => router.push(backHref ?? "/quiz");
 
   if (started) {
     return (
@@ -72,10 +94,11 @@ export function QuizRunner({
           categoryTitle={categoryName}
           categoryId={categoryId}
           lifelinePrices={lifelinePrices}
-          onExit={() => setStarted(false)}
+          onExit={leave}
           forceTier={tier}
           fixedLadder={fixedLadder}
           allowReplay={allowReplay}
+          exitLabelKey={backLabelKey(backHref)}
           categorySlug={categorySlug}
           modeRules={modeRules}
           runId={runId}
@@ -111,13 +134,7 @@ export function QuizRunner({
                 `backHref="/challenges"` and the daily challenge passes
                 `/rewards`, and all of them once said "Back to Levels" — a
                 destination that is not levels and not where the link leads. */}
-            {backHref === "/challenges"
-              ? t("backToChallenges")
-              : backHref === "/rewards"
-                ? t("backToRewards")
-                : backHref
-                  ? t("backToLevels")
-                  : t("backToCategories")}
+            {t(backLabelKey(backHref))}
           </Link>
         </Button>
       </header>
