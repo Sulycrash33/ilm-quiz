@@ -556,6 +556,8 @@ export interface Translations {
   chestGold: string
   chestDiamond: string
   countdownNow: string
+  nextChallengeIn: string
+  challengeSpentToday: string
   spinTheWheel: string
   spinForFree: string
   nextFreeSpin: string
@@ -1388,6 +1390,8 @@ const enTranslations: Translations = {
   chestGold: "Gold",
   chestDiamond: "Diamond",
   countdownNow: "now",
+  nextChallengeIn: "Next challenge in {time}",
+  challengeSpentToday: "Today's challenge is done. One attempt a day.",
   spinTheWheel: "Spin the Wheel",
   spinForFree: "Spin for Free!",
   nextFreeSpin: "Next free spin in {hours} hours",
@@ -2204,6 +2208,8 @@ const msTranslations: Translations = {
   chestGold: "Emas",
   chestDiamond: "Berlian",
   countdownNow: "sekarang",
+  nextChallengeIn: "Cabaran seterusnya dalam {time}",
+  challengeSpentToday: "Cabaran hari ini selesai. Satu percubaan sehari.",
   spinTheWheel: "Putar Roda",
   spinForFree: "Putar Percuma!",
   nextFreeSpin: "Putaran percuma seterusnya dalam {hours} jam",
@@ -3020,6 +3026,8 @@ const idTranslations: Translations = {
   chestGold: "Emas",
   chestDiamond: "Berlian",
   countdownNow: "sekarang",
+  nextChallengeIn: "Tantangan berikutnya dalam {time}",
+  challengeSpentToday: "Tantangan hari ini selesai. Satu percobaan sehari.",
   spinTheWheel: "Putar Roda",
   spinForFree: "Putar Gratis!",
   nextFreeSpin: "Putaran gratis berikutnya dalam {hours} jam",
@@ -3836,6 +3844,8 @@ const haTranslations: Translations = {
   chestGold: "Zinariya",
   chestDiamond: "Lu'ulu'u",
   countdownNow: "yanzu",
+  nextChallengeIn: "Kalubale na gaba cikin {time}",
+  challengeSpentToday: "Kalubalen yau ya kare. Gwaji daya a kowace rana.",
   spinTheWheel: "Juya Dabaran",
   spinForFree: "Juya Kyauta!",
   nextFreeSpin: "Juyi na gaba na kyauta cikin awa {hours}",
@@ -4652,6 +4662,8 @@ const frTranslations: Translations = {
   chestGold: "Or",
   chestDiamond: "Diamant",
   countdownNow: "maintenant",
+  nextChallengeIn: "Prochain défi dans {time}",
+  challengeSpentToday: "Le défi du jour est terminé. Une tentative par jour.",
   spinTheWheel: "Tourner la roue",
   spinForFree: "Tournez gratuitement !",
   nextFreeSpin: "Prochain tour gratuit dans {hours} heures",
@@ -5468,6 +5480,8 @@ const arTranslations: Translations = {
   chestGold: "ذهبي",
   chestDiamond: "ماسي",
   countdownNow: "الآن",
+  nextChallengeIn: "التحدي القادم بعد {time}",
+  challengeSpentToday: "تحدي اليوم انتهى. محاولة واحدة في اليوم.",
   spinTheWheel: "أدر العجلة",
   spinForFree: "أدرها مجاناً!",
   nextFreeSpin: "الدورة المجانية التالية بعد {hours} ساعة",
