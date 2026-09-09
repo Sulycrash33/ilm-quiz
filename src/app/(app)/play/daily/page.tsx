@@ -57,19 +57,18 @@ export default async function DailyChallengePage() {
   // play today belongs — beside the coins it pays and the wheel.
   if (challenge?.completed) redirect("/rewards");
 
-  // Answered but not yet claimed is also finished. The reward is claimed on
-  // `/rewards`, so a player who has answered all five has nothing left to do
-  // here — and re-entering by URL was the other half of the replay hole that
-  // 0059 closed in the database. The button is gone from the summary
+  // Answered but not yet claimed is also finished. **The daily is one go, not
+  // one win**: pass all five or fail all five, once, and then come back
+  // tomorrow. Losing it and replaying it would make the reward a matter of
+  // persistence rather than knowledge, and before 0059 replaying it was an XP
+  // printer as well.
+  //
+  // `attemptSpent` is computed in `getDailyChallenge` rather than re-derived
+  // here, so the route that refuses entry and the card that shows the
+  // countdown are reading the same fact. The button is gone from the summary
   // (`allowReplay`), the award is gone from a repeat answer (0059), and this
   // is the third lock: the route itself refuses.
-  if (
-    challenge &&
-    challenge.questionCount > 0 &&
-    challenge.answered >= challenge.questionCount
-  ) {
-    redirect("/rewards");
-  }
+  if (challenge?.attemptSpent) redirect("/rewards");
 
   // No challenge today, or its questions were unpublished after it was set.
   if (questions.length === 0) redirect("/rewards");

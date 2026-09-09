@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { getQuestionsByIds } from "@/lib/quiz-service"
+import { nextDailyResetAt } from "@/lib/countdown"
 import type { QuizQuestion } from "@/lib/types"
 
 export interface DailyChallengeView {
@@ -13,6 +14,26 @@ export interface DailyChallengeView {
   completed: boolean
   /** How many of today's questions the player has answered so far. */
   answered: number
+  /**
+   * Today's attempt is spent: every one of the day's questions has been
+   * answered, right or wrong. **The daily is one go, not one win.** Losing it
+   * and replaying it would make the reward a matter of persistence rather than
+   * knowledge, and before migration 0059 replaying it was also an XP printer.
+   *
+   * Kept separate from `completed`, which means the *reward* has been claimed.
+   * A player who answered all five and has not yet collected is finished with
+   * the questions and not finished with the day.
+   */
+  attemptSpent: boolean
+  /**
+   * When the next challenge arrives, as an ISO instant.
+   *
+   * **The database's midnight, not the player's** — the challenge is keyed on
+   * `current_date` and Postgres here runs in UTC, checked rather than assumed.
+   * The copy that renders this never names an hour for that reason; see
+   * `nextDailyResetAt`.
+   */
+  resetsAt: string
 }
 
 /**
@@ -73,6 +94,8 @@ export async function getDailyChallenge(): Promise<DailyChallengeView | null> {
     rewardXp: (challenge as any).reward_xp,
     completed,
     answered,
+    attemptSpent: questionIds.length > 0 && answered >= questionIds.length,
+    resetsAt: nextDailyResetAt().toISOString(),
   }
 }
 

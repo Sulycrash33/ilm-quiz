@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Target, CheckCircle2, Coins, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatCountdown } from "@/lib/countdown";
 import { claimDailyChallenge, type DailyChallengeView } from "@/app/(app)/challenges/actions";
 
 /**
@@ -22,6 +23,24 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallengeVie
   const [message, setMessage] = useState<string | null>(null);
 
   const allAnswered = challenge.answered >= challenge.questionCount;
+
+  /**
+   * A clock, ticking once a second, for the wait until tomorrow's challenge.
+   *
+   * Started only when the day is actually spent, so a player mid-challenge is
+   * not running an interval for a countdown nobody is looking at. Once a second
+   * rather than once a minute for the same reason the spin cooldown is: a
+   * number that sits still for thirty seconds reads as a frozen screen rather
+   * than as a wait.
+   */
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!challenge.attemptSpent) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [challenge.attemptSpent]);
+
+  const msUntilReset = new Date(challenge.resetsAt).getTime() - now;
   const progress =
     challenge.questionCount === 0
       ? 0
@@ -109,6 +128,26 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallengeVie
             <Link href="/play/daily">{t("startChallenge")}</Link>
           </Button>
         ))}
+
+      {/* The wait, once the day is spent.
+          **One attempt a day, pass or fail.** Shown whether or not the reward
+          has been claimed, because the questions are finished either way — a
+          player who answered all five and has not collected still cannot play
+          again, and telling them when they can is the whole point of putting a
+          clock here rather than a dead button.
+
+          The copy never names an hour. The challenge turns over at the
+          database's midnight and the database is UTC, so "12:00am" would be
+          wrong for a player in Lagos by one hour and for one in Kuala Lumpur by
+          eight. See `nextDailyResetAt`. */}
+      {challenge.attemptSpent && (
+        <div className="space-y-1 border-t border-white/5 pt-3">
+          <p className="text-sm text-on-surface-variant">{t("challengeSpentToday")}</p>
+          <p className="font-bold tabular-nums text-tertiary">
+            {t("nextChallengeIn", { time: formatCountdown(msUntilReset, t("countdownNow")) })}
+          </p>
+        </div>
+      )}
     </motion.section>
   );
 }

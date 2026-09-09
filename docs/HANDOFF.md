@@ -392,6 +392,62 @@ different published edition, or an admin reading and correcting at
 0047 was deliberately built as an importer and not a translator for the same
 reason.
 
+## One attempt a day, and a clock that tells the truth about midnight
+
+Added 2026-09-09. **"The daily challenge can only be played once — either pass
+all or fail all, only once, not more than once. Then come back tomorrow. You
+can put a countdown till the next day at 12:00am."**
+
+**The daily is one go, not one win.** Answer the five, right or wrong, and the
+day is spent. Losing and replaying would make the reward a matter of
+persistence rather than knowledge — and before 0059 replaying it was also an XP
+printer. `attemptSpent` is computed once in `getDailyChallenge` and read by
+both the route that refuses entry and the card that shows the clock, so they
+cannot disagree about whether the day is over.
+
+Three locks, unchanged in kind from #83 and now with a fourth face: no award
+for a repeat (0059), no "Play again" on the summary (`allowReplay`), the route
+redirects (`/play/daily` → `/rewards`), and now the card offers no button at
+all once the day is spent.
+
+**The countdown, and the thing that nearly made it a lie.** The obvious
+implementation counts to the player's midnight. That would be **wrong**:
+
+```
+current_setting('TimeZone')  ->  UTC
+```
+
+The challenge is keyed on `current_date`, so **the day turns at 00:00 UTC for
+everyone on earth at the same instant** — 01:00 for the owner in Nigeria, 08:00
+for a player in Kuala Lumpur. A countdown captioned "midnight" or "12:00am"
+would have been off by an hour for its own author and by eight for a Malay
+player, which is exactly the class of on-screen lie this project has spent
+itself removing. **So the copy never names an hour**: it says *"Next challenge
+in 13h 57m 48s"* and `nextDailyResetAt` computes the real instant.
+
+**Open, and it is the owner's call:** whether the day should turn at the
+player's own midnight instead. It is a bigger change than it looks — the daily
+is *"the same five questions for everyone on a given day"*, and a per-player
+date breaks that promise unless every reader of `current_date` learns a
+timezone, which the profile does not currently store.
+
+**Also open, and noticed while verifying:** `complete_daily_challenge_rpc`
+checks that all five were **answered**, not that any were **correct**. A player
+who fails all five still claims the full 60 coins and 50 barakah. That is what
+"answer every question first" was written to mean and it may well be right —
+the daily is meant to be attempted, not aced — but the owner framed this as
+*"pass all or fail all"*, so it is worth deciding rather than inheriting.
+
+`formatCountdown` moved out of `RewardsPageClient` into `src/lib/countdown.ts`
+and is now shared with the challenge card. Two copies of a cooldown string is
+how this app once promised a spin "every 4 hours" in six languages while the
+server refused anything inside twenty-four.
+
+**Verified signed in**, on an account whose five were answered and **all five
+wrong** — the fail case specifically: *"Today's challenge is done. One attempt a
+day."*, *"Next challenge in 13h 57m 48s"* ticking once a second, **no** Start
+button, "5 of 5 answered", and `/play/daily` landing on `/rewards`.
+
 ## A rank that means the bank, and a ring that means the app
 
 Added 2026-09-08. **"I answered just five questions and I am at 31%, in a game
@@ -1911,6 +1967,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #87 | One attempt a day: the daily locks once its five are answered, with a countdown to the real rollover |
 | #86 | A rank that means the bank: the ladder was scaled to a sixth of the app, and the home ring now counts levels |
 | #85 | A chest is not a handout: harder to earn, diamond reserved for occasions, and off the screen that hands things out |
 | #84 | A chest you earned: the loot box leaves the shop and the mystery moves to a chest you were given |

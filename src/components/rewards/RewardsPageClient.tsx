@@ -16,6 +16,7 @@ import { SpinWheel, type SpinSegment } from "@/components/rewards/SpinWheel"
 import { DailyChallengeCard } from "@/components/challenges/DailyChallengeCard"
 import type { DailyChallengeView } from "@/app/(app)/challenges/actions"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { formatCountdown } from "@/lib/countdown"
 import type { Translations } from "@/lib/i18n"
 
 interface LoginReward {
@@ -121,15 +122,9 @@ export function RewardsPageClient({
    * button was supposed to come alive. Seconds are zero-padded so the width
    * does not jitter as they count down.
    */
-  const formatCountdown = (ms: number): string => {
-    if (ms <= 0) return t("countdownNow")
-    const total = Math.floor(ms / 1000)
-    const hours = Math.floor(total / 3600)
-    const minutes = Math.floor((total % 3600) / 60)
-    const seconds = total % 60
-    const pad = (n: number) => String(n).padStart(2, "0")
-    return hours > 0 ? `${hours}h ${pad(minutes)}m ${pad(seconds)}s` : `${minutes}m ${pad(seconds)}s`
-  }
+  // One definition, shared with the daily challenge's countdown. See
+  // `src/lib/countdown.ts`.
+  const countdown = (ms: number): string => formatCountdown(ms, t("countdownNow"))
 
   const spinReady = !spinAvailableAt || new Date(spinAvailableAt).getTime() <= now
 
@@ -412,7 +407,7 @@ export function RewardsPageClient({
               ? t("spinningLabel")
               : spinReady
                 ? t("spinNowLabel")
-                : t("nextSpinIn", { time: formatCountdown(new Date(spinAvailableAt!).getTime() - now) })}
+                : t("nextSpinIn", { time: countdown(new Date(spinAvailableAt!).getTime() - now) })}
           </PremiumButton>
         </motion.div>
 
