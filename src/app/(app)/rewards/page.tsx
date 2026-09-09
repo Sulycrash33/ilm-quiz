@@ -16,57 +16,74 @@ export default async function RewardsPage() {
     return <TranslatedNotice messageKey="signInToViewRewards" />
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("streak_count, longest_streak, streak_freezes_available, coins, total_xp, last_spin_at")
-    .eq("id", user.id)
-    .single()
-
   const today = new Date().toISOString().slice(0, 10)
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
 
-  const { data: todayClaim } = await supabase
-    .from("user_login_claims")
-    .select("day_number")
-    .eq("user_id", user.id)
-    .eq("claim_date", today)
-    .maybeSingle()
-
-  const { data: yesterdayClaim } = await supabase
-    .from("user_login_claims")
-    .select("day_number")
-    .eq("user_id", user.id)
-    .eq("claim_date", yesterday)
-    .maybeSingle()
+  /*
+   * Seven round trips, at once rather than in a queue.
+   *
+   * These were seven sequential `await`s, and not one of them depended on
+   * another — every one needs only `user.id`, which the auth call above has
+   * already produced. Serialised, they cost seven times the latency of one,
+   * and the latency of one is not small: **the database is in eu-west-1
+   * (Ireland) and this function runs in Vercel's default `iad1` (Washington
+   * DC)**, so each query crossed the Atlantic and came back. Read off the
+   * deployment record rather than a header: production
+   * `dpl_5pMKy2pUPzjUiqwJVdrPiiwvCBwz` reports `regions: ["iad1"]`, and the
+   * Supabase project reports `eu-west-1`.
+   *
+   * `vercel.json` now pins the function to `dub1`, which puts it beside the
+   * database and turns each of those crossings into a same-region hop. This
+   * `Promise.all` is the other half: even at 2ms a query, seven in a row is
+   * seven times longer than it needs to be, and the fix costs nothing.
+   *
+   * `getDailyChallenge` is in here too and does more than one query of its own
+   * — it materialises the day lazily, since there is no scheduler.
+   */
+  const [
+    { data: profile },
+    { data: todayClaim },
+    { data: yesterdayClaim },
+    { data: loginRewards },
+    { data: spinRewards },
+    dailyTask,
+    dailyChallenge,
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("streak_count, longest_streak, streak_freezes_available, coins, total_xp, last_spin_at")
+      .eq("id", user.id)
+      .single(),
+    supabase
+      .from("user_login_claims")
+      .select("day_number")
+      .eq("user_id", user.id)
+      .eq("claim_date", today)
+      .maybeSingle(),
+    supabase
+      .from("user_login_claims")
+      .select("day_number")
+      .eq("user_id", user.id)
+      .eq("claim_date", yesterday)
+      .maybeSingle(),
+    supabase
+      .from("daily_login_rewards")
+      .select("day_number, coins, xp, is_special")
+      .order("day_number"),
+    // Ordered by id because `spin_wheel_rpc` selects its reward with
+    // `row_number() over (order by sr.id)`, so any other ordering here would
+    // draw a wheel whose segments do not correspond to the ones the server is
+    // choosing between.
+    supabase
+      .from("spin_rewards")
+      .select("id, label, type, value")
+      .order("id"),
+    // The day's task, read from the same function that gates the claim.
+    getDailyTaskProgress(),
+    getDailyChallenge(),
+  ])
 
   const nextDayNumber = todayClaim ? todayClaim.day_number : yesterdayClaim ? (yesterdayClaim.day_number % 7) + 1 : 1
-
-  const { data: loginRewards } = await supabase
-    .from("daily_login_rewards")
-    .select("day_number, coins, xp, is_special")
-    .order("day_number")
-
-  // The wheel's segments. Ordered by id because `spin_wheel_rpc` selects its
-  // reward with `row_number() over (order by sr.id)`, so any other ordering
-  // here would draw a wheel whose segments do not correspond to the ones the
-  // server is choosing between.
-  const { data: spinRewards } = await supabase
-    .from("spin_rewards")
-    .select("id, label, type, value")
-    .order("id")
-
-  // The day's task, read from the same function that gates the claim.
-  const dailyTask = await getDailyTaskProgress()
-
-  // Today's challenge — the five questions themselves, which is what the task
-  // above has always been asking for. It used to live on `/challenges` while
-  // this page told the player to "start answering" on `/quiz`, the category
-  // grid: one day, one set of five, two screens, and only one of them could
-  // actually play them. This page is now the only place either appears.
-  //
-  // `getDailyChallenge` materialises the day lazily (there is no scheduler),
-  // so calling it here is what generates today's row on the first visit.
-  const dailyChallenge = await getDailyChallenge()
 
   return (
     <RewardsPageClient

@@ -153,18 +153,57 @@ function evaluateCriteria(
 export async function getProfileStats(userId: string): Promise<ProfileStats | null> {
   const supabase = await createClient()
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, display_name, avatar_id, total_xp, coins, current_rank_id, streak_count, longest_streak, high_score")
-    .eq("id", userId)
-    .single()
+  /*
+   * ── Two waves instead of seven queries in a queue ────────────────────────
+   *
+   * This function ran seven reads one after another and is called from three
+   * pages — `/profile`, `/achievements` and `/challenges` — so it was the
+   * slowest thing in the app by a distance. Nothing about the first four
+   * needed the ones before them: they want `userId`, which is an argument.
+   *
+   * Why it mattered so much: **the database is in eu-west-1 (Ireland) and
+   * Vercel's default function region is `iad1` (Washington DC)**, measured on
+   * the live site rather than assumed. Every one of those `await`s was a
+   * transatlantic round trip, taken in turn. `vercel.json` now pins the
+   * function to `dub1` so the trip is a same-region hop; this stops taking it
+   * seven times in a row.
+   *
+   * `award_achievements()` joins this wave rather than waiting: it needs
+   * nothing from the reads, and it only has to finish before
+   * `user_achievements` is read, which is the second wave.
+   */
+  const [{ data: profile }, { data: ranks }, { data: attemptRows }, { data: achievementDefs }] =
+    await Promise.all([
+      supabase
+        .from("profiles")
+        .select("id, display_name, avatar_id, total_xp, coins, current_rank_id, streak_count, longest_streak, high_score")
+        .eq("id", userId)
+        .single(),
+      supabase
+        .from("rank_tiers")
+        .select("slug, name, min_xp, sort_order")
+        .order("sort_order"),
+      supabase
+        .from("attempts")
+        .select(
+          "is_correct, xp_earned, used_ask_the_imam_hint, is_first_answer, created_at, questions(question_text, category_id, categories(slug, name))"
+        )
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("achievements")
+        .select("id, slug, name, description, icon, criteria")
+        .order("id"),
+      // Award first, then read. Deciding what has been earned is the
+      // database's job (migration 0023) — this page used to be the *only*
+      // place that ever wrote `user_achievements`, which is why badges arrived
+      // late. The RPC is idempotent, so calling it on every page load is free
+      // once everything earned is already stored, and best-effort: a failure
+      // here must not blank the profile.
+      supabase.rpc("award_achievements"),
+    ])
 
   if (!profile) return null
-
-  const { data: ranks } = await supabase
-    .from("rank_tiers")
-    .select("slug, name, min_xp, sort_order")
-    .order("sort_order")
 
   const rankList = ranks ?? []
   const rankSortOrderBySlug = new Map(rankList.map((r) => [r.slug, r.sort_order]))
@@ -189,14 +228,6 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
         : null
     }
   }
-
-  const { data: attemptRows } = await supabase
-    .from("attempts")
-    .select(
-      "is_correct, xp_earned, used_ask_the_imam_hint, is_first_answer, created_at, questions(question_text, category_id, categories(slug, name))"
-    )
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
 
   type AttemptRow = {
     is_correct: boolean
@@ -254,23 +285,24 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
   }
   const categories = Array.from(categoryMap.values())
 
-  const { data: achievementDefs } = await supabase
-    .from("achievements")
-    .select("id, slug, name, description, icon, criteria")
-    .order("id")
-
-  // Award first, then read. Deciding what has been earned is the database's
-  // job now (migration 0023) — this page used to be the *only* place that
-  // ever wrote `user_achievements`, which is why badges arrived late. The RPC
-  // is idempotent, so calling it on every page load is free once everything
-  // earned is already stored, and best-effort: a failure here must not blank
-  // the profile.
-  await supabase.rpc("award_achievements")
-
-  const { data: userAchievementRows } = await supabase
-    .from("user_achievements")
-    .select("achievement_id, earned_at")
-    .eq("user_id", userId)
+  /*
+   * Wave two: the only two reads that genuinely had to wait.
+   *
+   * `user_achievements` has to be read after `award_achievements()` has had a
+   * chance to grant anything newly earned, and the leaderboard position needs
+   * this player's XP, which arrived with `profile`. Everything else was in
+   * wave one.
+   */
+  const [{ data: userAchievementRows }, { count: higherCount }] = await Promise.all([
+    supabase
+      .from("user_achievements")
+      .select("achievement_id, earned_at")
+      .eq("user_id", userId),
+    supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .gt("total_xp", profile.total_xp),
+  ])
 
   const earnedMap = new Map((userAchievementRows ?? []).map((ua) => [ua.achievement_id, ua.earned_at]))
 
@@ -309,11 +341,6 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
       rarity: achievementRarity(def.criteria),
     })
   }
-
-  const { count: higherCount } = await supabase
-    .from("profiles")
-    .select("id", { count: "exact", head: true })
-    .gt("total_xp", profile.total_xp)
 
   const globalRank = higherCount !== null ? higherCount + 1 : null
 

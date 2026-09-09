@@ -392,6 +392,82 @@ different published edition, or an admin reading and correcting at
 0047 was deliberately built as an importer and not a translator for the same
 reason.
 
+## The server was on the wrong continent
+
+Added 2026-09-09. **"I don't know why it's a bit slow, I don't know if it's my
+network, but I want the whole game to be swift fast."** It was not the network.
+Measured, not guessed:
+
+```
+Supabase project region                 eu-west-1   (Ireland)
+Vercel function region                  iad1        (Washington DC)
+```
+
+The Vercel deployment record is the authority here, not a response header:
+production `dpl_5pMKy2pUPzjUiqwJVdrPiiwvCBwz` reports `"regions": ["iad1"]`,
+and `get_project` reports the database at `eu-west-1`. (`x-vercel-id` names the
+edge PoP that *received* the request, which is decided by where the client sits
+— it is not the function region, so don't read it as one.)
+There was **no `vercel.json` at all**, so the functions sat in Vercel's default
+region while the database sat in Ireland. Every server-side query went Nigeria
+→ Virginia → Ireland → Virginia → Nigeria. **One transatlantic round trip is
+~80ms of pure distance, and each `await` paid it separately.**
+
+**And the pages paid it in single file.**
+
+| page | sequential awaits | Promise.all |
+|---|---|---|
+| `/rewards` | **9** | 0 |
+| `getProfileStats` | **7** | 0 |
+| `/achievements` | 6 | 0 |
+| `/profile` | 4 | 0 |
+
+`getProfileStats` is the worst of these because **three pages call it** —
+`/profile`, `/achievements` and `/challenges` — so `/achievements` was roughly
+eleven round trips, taken one at a time, each crossing an ocean.
+
+**Two fixes, and they multiply rather than add.**
+
+- **`vercel.json` pins the region to `dub1`** (Dublin, the same AWS region the
+  database is in). A query stops crossing the Atlantic and becomes a
+  same-region hop. Nigeria to Dublin is also a shorter first hop than Nigeria
+  to Virginia.
+- **The independent queries now run at once.** `/rewards` went from nine
+  serial awaits to two waves; `getProfileStats` from seven to two. Nothing was
+  reordered that had a real dependency: the daily challenge's completion check
+  still waits for the challenge id, `user_achievements` is still read only
+  after `award_achievements()` has had its chance to grant, and the leaderboard
+  position still waits for the player's own XP.
+
+**Verified signed in** that rearranging the fetches did not move any number: a
+throwaway account with 7 attempts and 4 correct reads **57%** on both
+`/profile` and `/challenges`, all four pages render with no error, and the
+account was deleted.
+
+**What was deliberately not touched, and one of them is a bug waiting:**
+
+- **Every authenticated page is dynamic** and cannot be cached, because reading
+  the auth cookie opts a route out of static rendering permanently. That is
+  inherent to being signed in; `/intro` is the one page that dodges it with an
+  anonymous client and it is 5ms instead of 500ms.
+- **`getProfileStats` still selects every attempt with no limit** and filters
+  in JavaScript. **PostgREST caps an unbounded select at 1,000 rows** — a trap
+  this file already records being hit twice. Today the owner has twelve
+  attempts so nothing is wrong; **past a thousand, the profile's totals and
+  accuracy silently go wrong in the direction nobody checks, and the query gets
+  slow as well.** It wants counting in the database, like `useLifetimeStats`
+  already does. Not done here because it is a correctness change wearing a
+  performance change's clothes, and it deserves its own pass.
+- The home screen still makes several separate client-side calls. Those go
+  browser → Ireland directly, so they never had the Virginia detour, and they
+  are already concurrent.
+
+**The lesson.** Nobody had ever asked where the code runs relative to where the
+data lives. Both halves were individually sensible — a database in Ireland for
+a Nigerian audience is a good choice, and Vercel's default region is a
+reasonable default — and the pairing was the problem. **When something is slow,
+measure the distance before optimising the code.**
+
 ## Review teaches, and the exit goes where it says
 
 Added 2026-09-09. Two requests: **"the review that pops up shouldn't have any
@@ -2036,6 +2112,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #89 | The server was on the wrong continent: functions pinned to Dublin beside the database, and the serial queries made concurrent |
 | #88 | Review teaches without counting, and a finished run exits to where its label points |
 | #87 | One attempt a day: the daily locks once its five are answered, with a countdown to the real rollover |
 | #86 | A rank that means the bank: the ladder was scaled to a sixth of the app, and the home ring now counts levels |
