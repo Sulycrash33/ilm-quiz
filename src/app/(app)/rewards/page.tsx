@@ -27,8 +27,10 @@ export default async function RewardsPage() {
    * already produced. Serialised, they cost seven times the latency of one,
    * and the latency of one is not small: **the database is in eu-west-1
    * (Ireland) and this function runs in Vercel's default `iad1` (Washington
-   * DC)**, so each query crossed the Atlantic and came back. Measured on the
-   * live site: `x-vercel-id: iad1::`, project region `eu-west-1`.
+   * DC)**, so each query crossed the Atlantic and came back. Read off the
+   * deployment record rather than a header: production
+   * `dpl_5pMKy2pUPzjUiqwJVdrPiiwvCBwz` reports `regions: ["iad1"]`, and the
+   * Supabase project reports `eu-west-1`.
    *
    * `vercel.json` now pins the function to `dub1`, which puts it beside the
    * database and turns each of those crossings into a same-region hop. This

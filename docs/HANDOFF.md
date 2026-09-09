@@ -403,7 +403,11 @@ Supabase project region                 eu-west-1   (Ireland)
 Vercel function region                  iad1        (Washington DC)
 ```
 
-`x-vercel-id: iad1::` on the live site, and `get_project` reports `eu-west-1`.
+The Vercel deployment record is the authority here, not a response header:
+production `dpl_5pMKy2pUPzjUiqwJVdrPiiwvCBwz` reports `"regions": ["iad1"]`,
+and `get_project` reports the database at `eu-west-1`. (`x-vercel-id` names the
+edge PoP that *received* the request, which is decided by where the client sits
+— it is not the function region, so don't read it as one.)
 There was **no `vercel.json` at all**, so the functions sat in Vercel's default
 region while the database sat in Ireland. Every server-side query went Nigeria
 → Virginia → Ireland → Virginia → Nigeria. **One transatlantic round trip is
