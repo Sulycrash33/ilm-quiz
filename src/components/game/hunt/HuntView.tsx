@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { rankFor } from "@/lib/ranks";
 import { useProfile } from "@/hooks/use-profile";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { Translations } from "@/lib/i18n";
 import { playCue } from "@/lib/sound";
 import { playHaptic } from "@/lib/haptics";
 import type { GradeResult, QuizQuestion } from "@/lib/types";
@@ -72,6 +73,9 @@ interface HuntViewProps {
    * claimed once — see `RunSummary.onPlayAgain`.
    */
   allowReplay?: boolean;
+  /** What the exit buttons say. Decided from `backHref` by `backLabelKey`, so
+   *  the header link and the summary's button name the same destination. */
+  exitLabelKey?: keyof Translations;
   /**
    * The category's URL slug. Only a level run has one, and only a level run
    * can offer a next level — that is why this is optional rather than derived
@@ -116,6 +120,7 @@ export function HuntView({
   forceTier,
   fixedLadder,
   allowReplay = true,
+  exitLabelKey = "backToCategories",
   categorySlug,
   modeRules,
   runId,
@@ -635,7 +640,7 @@ export function HuntView({
           {t("questionsBeingPrepared", { category: categoryTitle })}
         </p>
         <Button onClick={onExit} className="mt-6">
-          {t("backToCategories")}
+          {t(exitLabelKey)}
         </Button>
       </div>
     );
@@ -674,6 +679,7 @@ export function HuntView({
           review={review}
           xpBefore={xpAtStart.current ?? 0}
           onPlayAgain={allowReplay ? playAgain : undefined}
+          exitLabelKey={exitLabelKey}
           onExit={onExit}
           nextLevelHref={nextLevelHref}
         />
@@ -686,7 +692,7 @@ export function HuntView({
       <div dir={dir} className="flex flex-col items-center justify-center p-8 text-center">
         <h2 className="mb-2 font-headline text-2xl">{t("couldNotLoadQuestion")}</h2>
         <Button onClick={onExit} className="mt-6">
-          {t("backToCategories")}
+          {t(exitLabelKey)}
         </Button>
       </div>
     );

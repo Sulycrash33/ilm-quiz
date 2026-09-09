@@ -193,7 +193,7 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
   const { data: attemptRows } = await supabase
     .from("attempts")
     .select(
-      "is_correct, xp_earned, used_ask_the_imam_hint, created_at, questions(question_text, category_id, categories(slug, name))"
+      "is_correct, xp_earned, used_ask_the_imam_hint, is_first_answer, created_at, questions(question_text, category_id, categories(slug, name))"
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
@@ -202,6 +202,8 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
     is_correct: boolean
     xp_earned: number
     used_ask_the_imam_hint: boolean
+    /** False for a re-answer. See migration 0059. */
+    is_first_answer: boolean
     created_at: string
     questions: {
       question_text: string
@@ -211,13 +213,30 @@ export async function getProfileStats(userId: string): Promise<ProfileStats | nu
   }
   const attemptList = (attemptRows ?? []) as unknown as AttemptRow[]
 
-  const totalAttempts = attemptList.length
-  const correctCount = attemptList.filter((a) => a.is_correct).length
+  /**
+   * The stats count first answers only; the list itself keeps every row.
+   *
+   * A review session re-serves questions the player has already answered, and
+   * the owner's rule for it is that it **teaches without counting**: no XP, no
+   * coins, and no movement in anything that measures progress. Migration 0063
+   * applies that to the achievements, the chests and the daily task in the
+   * database; these are the same numbers on the profile, and they have to
+   * agree or the badge and the figure beside it will disagree in front of the
+   * player.
+   *
+   * `attemptList` stays whole on purpose: the recent-activity feed below is a
+   * history, and a review session genuinely happened. What changes is what
+   * gets *counted*, which is the distinction 0059 drew and 0063 finished.
+   */
+  const scored = attemptList.filter((a) => a.is_first_answer)
+
+  const totalAttempts = scored.length
+  const correctCount = scored.filter((a) => a.is_correct).length
   const accuracyPct = totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0
   const usedLifelineEver = attemptList.some((a) => a.used_ask_the_imam_hint)
 
   const categoryMap = new Map<string, CategoryStat>()
-  for (const a of attemptList) {
+  for (const a of scored) {
     const cat = a.questions?.categories
     if (!cat) continue
     if (!categoryMap.has(cat.slug)) {

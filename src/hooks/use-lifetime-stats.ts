@@ -43,15 +43,27 @@ export function useLifetimeStats() {
         return;
       }
 
+      /*
+       * First answers only, both of them.
+       *
+       * "Questions answered" should mean questions, not answers: a review
+       * session re-serves what you have already seen, and counting it again
+       * inflated this figure while the achievements, chests and daily task
+       * (migration 0063) had stopped counting it. Two numbers for one idea,
+       * disagreeing on the busiest screen in the app, is the shape of bug this
+       * project keeps finding — so this reads `is_first_answer` too.
+       */
       const [total, correct] = await Promise.all([
         supabase
           .from("attempts")
           .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id),
+          .eq("user_id", user.id)
+          .eq("is_first_answer", true),
         supabase
           .from("attempts")
           .select("*", { count: "exact", head: true })
           .eq("user_id", user.id)
+          .eq("is_first_answer", true)
           .eq("is_correct", true),
       ]);
 

@@ -73,7 +73,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0062`**, disk and database in step — 61 files, because `0052` was never used |
+| Migrations | through **`0063`**, disk and database in step — 62 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -391,6 +391,75 @@ different published edition, or an admin reading and correcting at
 `/admin/hadiths`. It is the one open item here that is a content decision, and
 0047 was deliberately built as an importer and not a translator for the same
 reason.
+
+## Review teaches, and the exit goes where it says
+
+Added 2026-09-09. Two requests: **"the review that pops up shouldn't have any
+effect, it's just to help players better, it shouldn't carry any point or
+coins"**, and **"after the daily challenge one should land directly at the daily
+login reward page, not the same page one encountered before playing"**.
+
+### 1. Review teaches. It does not pay, and it does not count
+
+**Half of this was already true.** A review session draws from
+`user_question_schedule`, built out of questions the player has already
+answered, so since 0059 every review answer already earned **0 XP and 0 coins**.
+
+**The other half was not, and it was the larger half.** Three things still moved:
+
+- **`award_achievements` counted every attempt** — `count(*)` for
+  `attempts_count`, `count(*) filter (where is_correct)` for `correct_count`,
+  and a per-category `count(*)` for `category_count` and breadth. Re-answering
+  one question ten times advanced all four.
+- **`award_chests` counted the same way** (0060), so review pushed a player
+  toward the 250 / 1,000 / 5,000 correct-answer chests — the milestones 0061
+  had just been asked to make **harder**.
+- **The daily task counted it.** `daily_task_progress` and
+  `claim_daily_login_rpc` count distinct questions answered today, and a review
+  answer is one, so five review answers unlocked the login reward with no new
+  question studied.
+
+**The rule, and it is wider than review on purpose: progression counts first
+answers; the attempts table keeps everything.** Every row still lands in
+`attempts` — the round summary, the SM-2 schedule and an honest history need it
+— but anything that *advances* the player reads `is_first_answer`, the column
+0059 added for exactly this. Replaying a category level teaches and does not
+advance you either; same answer, same column.
+
+0063 patches the four functions from their own stored source with an assertion
+per substitution, and the app's own counters follow: `useLifetimeStats` and
+`getProfileStats` count first answers, so the home screen's "questions
+answered" and accuracy agree with the badge sitting next to them.
+**`getProfileStats` keeps its query whole** and filters only what it counts —
+the recent-activity feed is a history, and a review session genuinely happened.
+
+**Proved by replaying a known question** through the live functions, as review
+would, impersonating the account in a rolled-back transaction: XP **94 → 94**,
+daily task **3 → 3**, achievements **3 → 3**, and the attempt row still written.
+
+### 2. The exit goes where it says it goes
+
+`QuizRunner` exited with `setStarted(false)`, which put the player back on the
+**pre-run brief** — the "Daily Challenge / 5 Questions / Begin the hunt" screen
+they had already passed on the way in. After the daily that reads as being
+offered the challenge again, seconds after being told it is one attempt a day.
+
+Exiting now navigates to `backHref`, which already names the right destination
+for every run: `/rewards` for the daily, `/challenges` for a mode, the level map
+for a level run, `/quiz` for the classic hunt.
+
+**And the label was lying while I was in there.** The summary's exit button said
+**"Back to Categories"** on every run in the app — the daily included, which
+goes to `/rewards`. The header link above the run had grown a correct version of
+that rule; `backLabelKey` in `src/lib/back-destination.ts` is now that rule in
+one place, used by the header **and** both exit buttons. One `backHref`, one
+destination, one label.
+
+**Verified by playing the daily end to end**, signed in: five questions
+answered, summary reads "Hunt complete", the exit button reads **"Back to
+Rewards"**, there are **zero** "Play again" buttons, and pressing it lands on
+`/rewards` showing "5 of 5 answered", "Today's challenge is done. One attempt a
+day." and "Next challenge in 13h 19m 04s". QA account deleted.
 
 ## One attempt a day, and a clock that tells the truth about midnight
 
@@ -1967,6 +2036,7 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #88 | Review teaches without counting, and a finished run exits to where its label points |
 | #87 | One attempt a day: the daily locks once its five are answered, with a countdown to the real rollover |
 | #86 | A rank that means the bank: the ladder was scaled to a sixth of the app, and the home ring now counts levels |
 | #85 | A chest is not a handout: harder to earn, diamond reserved for occasions, and off the screen that hands things out |
