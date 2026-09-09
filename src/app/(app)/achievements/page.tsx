@@ -15,18 +15,32 @@ export default async function AchievementsPage() {
     return <TranslatedNotice messageKey="signInToViewAchievements" />
   }
 
-  const stats = await getProfileStats(user.id)
-
-  // Earned and unopened. They live on this page rather than on `/rewards`,
-  // where every other panel is something handed to you for showing up.
-  const earnedChests = await getEarnedChests()
-
   const today = new Date().toISOString().slice(0, 10)
-  const { data: todayChallenge } = await supabase
-    .from("daily_challenges")
-    .select("id, challenge_date, category_id, question_ids, reward_coins, reward_xp, categories(name)")
-    .eq("challenge_date", today)
-    .maybeSingle()
+
+  /*
+   * Three independent reads, at once.
+   *
+   * They were sequential and none of them needed the one before it. That
+   * matters more than it looks: the database is in eu-west-1 and Vercel's
+   * default function region is `iad1`, so each `await` was a transatlantic
+   * round trip taken in turn. `vercel.json` moves the function to `dub1` to
+   * shorten the trip; this stops taking it three times in a row.
+   *
+   * The completion check below cannot join this batch — it needs the
+   * challenge's id — so it stays a second step rather than being faked into
+   * the first.
+   */
+  const [stats, earnedChests, { data: todayChallenge }] = await Promise.all([
+    getProfileStats(user.id),
+    // Earned and unopened. They live on this page rather than on `/rewards`,
+    // where every other panel is something handed to you for showing up.
+    getEarnedChests(),
+    supabase
+      .from("daily_challenges")
+      .select("id, challenge_date, category_id, question_ids, reward_coins, reward_xp, categories(name)")
+      .eq("challenge_date", today)
+      .maybeSingle(),
+  ])
 
   let completed = false
   if (todayChallenge) {
