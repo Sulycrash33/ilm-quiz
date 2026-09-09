@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { AppBackdrop } from "@/components/layout/AppBackdrop"
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar"
+import { TimezoneSync } from "@/components/layout/TimezoneSync"
 import type { Translations } from "@/lib/i18n"
 
 const navItems: { labelKey: keyof Translations; href: string; icon: React.ReactNode }[] = [
@@ -82,6 +83,11 @@ export default function AppLayout({
   return (
     <div dir={dir} className="relative min-h-[100dvh] bg-background">
       <ServiceWorkerRegistrar />
+      {/* Reports this browser's timezone once per session, so the day turns at
+          the player's midnight rather than at 00:00 UTC. Renders nothing; see
+          `TimezoneSync` for what is and is not sent. Mounted in the layout
+          because every signed-in screen depends on the answer. */}
+      <TimezoneSync />
 
       {/* The same field onboarding sits on, from the same file. This used to be
           a hand-copied duplicate of `OnboardingBackdrop`, and it had drifted:

@@ -18,7 +18,6 @@ import { useProfile } from "@/hooks/use-profile"
 import { playCue } from "@/lib/sound"
 import { playHaptic } from "@/lib/haptics"
 import { takeStreakAdvance } from "@/lib/streak-cue"
-import { useLifetimeStats } from "@/hooks/use-lifetime-stats"
 import { useLevelsProgress } from "@/hooks/use-levels-progress"
 import { useLanguage } from "@/contexts/LanguageContext"
 
@@ -29,7 +28,6 @@ const cardVariants = {
 
 export default function HomePage() {
   const { profile, loading } = useProfile()
-  const { answered: lifetimeAnswered, accuracy: lifetimeAccuracy } = useLifetimeStats()
   const { t, dir } = useLanguage()
   const [currentTime, setCurrentTime] = useState("")
 
@@ -215,9 +213,24 @@ export default function HomePage() {
             The rank has not disappeared: it is the title beside the player's
             name at the top of this screen, which is what a rank is for.
 
-            The two numbers beside it are lifetime and unbounded: questions
-            answered, and accuracy across all of them. Counts about the player
-            are fine; it is the bank's size that stays private. */}
+            ── Why the two numbers beside it are gone ───────────────────────
+            "Questions answered" and "Accuracy" used to sit here, lifetime and
+            unbounded. The owner's objection, looking at a card headed
+            *Overall Progress* that read **0 of 261 levels cleared, 0%** with
+            **67%** printed inches away: *"it's not specifying, that's why it
+            shouldn't be there."*
+
+            Both numbers were true. 67% was six of nine first answers correct.
+            The problem was that nothing on the card said so, and the five
+            questions of the daily challenge — a thing deliberately separate
+            from the categories — were feeding a figure sitting under a heading
+            about category progress. Two percentages side by side meaning
+            different things, one of them unlabelled, is not a stat; it is a
+            reader's puzzle.
+
+            They are not lost. Both live on `/profile`, under headings that
+            say what they measure. Here the card now says one thing: how much
+            of the journey has been cleared. */}
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -247,42 +260,6 @@ export default function HomePage() {
                   : "\u2014"}
               </p>
 
-              <div className="flex gap-6 mt-3">
-                <div>
-                  <div className="flex items-center gap-1">
-                    <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z" />
-                    </svg>
-                    <span className="font-bold text-title-md text-on-surface tabular-nums">
-                      <CountUp value={lifetimeAnswered} />
-                    </span>
-                  </div>
-                  <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">
-                    {t("questionsAnswered")}
-                  </p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <svg className="w-4 h-4 text-secondary" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17.66 7.93L12 2.27 6.34 7.93c-3.12 3.12-3.12 8.19 0 11.31C7.9 20.8 9.95 21.58 12 21.58c2.05 0 4.1-.78 5.66-2.34 3.12-3.12 3.12-8.19 0-11.31zM12 19.59c-1.6 0-3.11-.62-4.24-1.76C6.62 16.69 6 15.19 6 13.59s.62-3.11 1.76-4.24L12 5.1v14.49z" />
-                    </svg>
-                    {/* Null until the first answer. Interpolating it once
-                        rendered a bare "%" with no number in front of it. */}
-                    <span className="font-bold text-title-md text-on-surface tabular-nums">
-                      {lifetimeAccuracy === null ? "\u2014" : `${lifetimeAccuracy}%`}
-                    </span>
-                  </div>
-                  <p className="font-label-caps text-label-caps text-on-surface-variant/70 uppercase tracking-widest">
-                    {/* "Accuracy", as it is called on the profile and on the
-                        run summary. This said "Focus Level" — a term that
-                        appears nowhere else in the app — for the same lifetime
-                        accuracy figure, and it sat inches from the rank ring's
-                        percentage. Two percentages side by side, meaning
-                        different things, one of them named after nothing. */}
-                    {t("accuracy")}
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </motion.section>

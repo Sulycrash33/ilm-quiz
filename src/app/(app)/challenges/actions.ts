@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { getQuestionsByIds } from "@/lib/quiz-service"
-import { nextDailyResetAt } from "@/lib/countdown"
+import { getMyDayBounds } from "@/lib/day-bounds"
 import type { QuizQuestion } from "@/lib/types"
 
 export interface DailyChallengeView {
@@ -28,10 +28,16 @@ export interface DailyChallengeView {
   /**
    * When the next challenge arrives, as an ISO instant.
    *
-   * **The database's midnight, not the player's** — the challenge is keyed on
-   * `current_date` and Postgres here runs in UTC, checked rather than assumed.
-   * The copy that renders this never names an hour for that reason; see
-   * `nextDailyResetAt`.
+   * **The player's own midnight**, since migration 0064. It used to be the
+   * database's, and the database is UTC — so a player in Lagos was told to
+   * come back "tomorrow" and tomorrow began at 01:00 their time. The instant
+   * is computed in Postgres from `profiles.timezone` and read here through
+   * `getMyDayBounds`; nothing on this side works out what day it is.
+   *
+   * Note what this does *not* promise: a countdown to a fixed midnight is
+   * always **less** than 24 hours, and is only exactly 24 at the moment the
+   * day flips. That is the trade the midnight rule makes against a rolling
+   * cooldown, which would always read 24h but would drift later every day.
    */
   resetsAt: string
 }
@@ -49,17 +55,25 @@ export async function getDailyChallenge(): Promise<DailyChallengeView | null> {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: ensured } = await supabase.rpc("ensure_daily_challenge")
+  // Which day it is, decided in Postgres from the player's stored timezone.
+  // This used to be `new Date().toISOString().slice(0, 10)` right here — the
+  // UTC date — which matched the database only for as long as the database was
+  // also keyed on UTC. Since 0064 it is not, and a page that works out its own
+  // date would be asking about a different day than the one it materialises.
+  const day = await getMyDayBounds()
+
+  // Materialised for that date explicitly. The function's default would now
+  // reach the same answer on its own, but passing it means the row generated
+  // and the row read below cannot be two different days.
+  const { data: ensured } = await supabase.rpc("ensure_daily_challenge", { p_date: day.localDate })
   const row = Array.isArray(ensured) ? ensured[0] : ensured
   // No challenge is generated on a day the arena bank cannot fill one.
   if (!row?.o_id) return null
 
-  const today = new Date().toISOString().slice(0, 10)
-
   const { data: challenge } = await supabase
     .from("daily_challenges")
     .select("id, question_ids, reward_coins, reward_xp")
-    .eq("challenge_date", today)
+    .eq("challenge_date", day.localDate)
     .maybeSingle()
 
   if (!challenge) return null
@@ -76,12 +90,16 @@ export async function getDailyChallenge(): Promise<DailyChallengeView | null> {
         .eq("user_id", user.id)
         .eq("daily_challenge_id", (challenge as any).id)
         .maybeSingle(),
+      // The player's day, as a half-open window between two real instants.
+      // `>= ${today}T00:00:00Z` was the UTC day and would now disagree with
+      // the RPC that actually pays the reward.
       supabase
         .from("attempts")
         .select("question_id")
         .eq("user_id", user.id)
         .in("question_id", questionIds)
-        .gte("created_at", `${today}T00:00:00Z`),
+        .gte("created_at", day.dayStart)
+        .lt("created_at", day.nextMidnight),
     ])
     completed = !!completion
     answered = new Set((attempts ?? []).map((a: { question_id: string }) => a.question_id)).size
@@ -95,7 +113,7 @@ export async function getDailyChallenge(): Promise<DailyChallengeView | null> {
     completed,
     answered,
     attemptSpent: questionIds.length > 0 && answered >= questionIds.length,
-    resetsAt: nextDailyResetAt().toISOString(),
+    resetsAt: day.nextMidnight,
   }
 }
 
@@ -118,13 +136,13 @@ export async function getDailyChallenge(): Promise<DailyChallengeView | null> {
 export async function getDailyChallengeQuestions(): Promise<QuizQuestion[]> {
   const supabase = await createClient()
 
-  await supabase.rpc("ensure_daily_challenge")
+  const day = await getMyDayBounds()
+  await supabase.rpc("ensure_daily_challenge", { p_date: day.localDate })
 
-  const today = new Date().toISOString().slice(0, 10)
   const { data: challenge } = await supabase
     .from("daily_challenges")
     .select("question_ids")
-    .eq("challenge_date", today)
+    .eq("challenge_date", day.localDate)
     .maybeSingle()
 
   const ids = ((challenge as any)?.question_ids ?? []) as string[]

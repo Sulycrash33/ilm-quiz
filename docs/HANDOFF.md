@@ -73,7 +73,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0063`**, disk and database in step — 62 files, because `0052` was never used |
+| Migrations | through **`0064`**, disk and database in step — 63 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -503,9 +503,10 @@ answers; the attempts table keeps everything.** Every row still lands in
 advance you either; same answer, same column.
 
 0063 patches the four functions from their own stored source with an assertion
-per substitution, and the app's own counters follow: `useLifetimeStats` and
-`getProfileStats` count first answers, so the home screen's "questions
-answered" and accuracy agree with the badge sitting next to them.
+per substitution, and the app's own counters followed: `useLifetimeStats` and
+`getProfileStats` count first answers. (`useLifetimeStats` is gone as of 0064 —
+the two numbers it fed were removed from the home screen; `getProfileStats`
+still counts first answers, on `/profile`, where they are labelled.)
 **`getProfileStats` keeps its query whole** and filters only what it counts —
 the recent-activity feed is a history, and a review session genuinely happened.
 
@@ -1711,6 +1712,111 @@ before writing a fetch or a ladder.
 | `getQuestionsByIds` (`quiz-service`) | questions by id, in the order given, published only. The daily challenge's fetch; the only one in the app that selects by id |
 | `buildFixedLadder` (`hunt-engine`) | a ladder that *is* the pool it was handed, tier-ascending and stable, no rng. For a run whose questions the server chose |
 | `daily_task_questions()` (0053) | how many questions a day of study is. One line, one place, no redeploy |
+
+## The day turns at the player's midnight
+
+**"Inside you see that the countdown is for 12 hours which is supposed to be
+for 24 hours."** Finished the daily at about 12:17 in Lagos; the card said
+*Next challenge in 12h 42m 56s*.
+
+The 12h was arithmetically right and still wrong. The challenge was keyed on
+`current_date`, this database runs in **UTC**, and 12:17 in Lagos is 11:17 UTC.
+The screen was promising *"come back tomorrow"*, and tomorrow began at **01:00
+their time** — an hour nobody chose and nobody could have guessed.
+
+**Two rules were on the table and they cannot both hold.** A fixed midnight is
+0–24h away and is only ever *exactly* 24h at the instant it flips. A rolling
+24h from completion always reads 24h but drifts later every day — finish at 8pm
+Monday and you are locked out until 8pm Tuesday — and it breaks "the same five
+for everyone today" the moment a cooldown straddles a calendar. The owner chose
+the midnight, moved to **the player's own timezone**.
+
+**What that costs, written down rather than discovered later.** Two players in
+the same zone still get the same five questions on the same day. Two players
+eight zones apart are on different `challenge_date` rows for part of each real
+day. That is inherent to a local midnight and no version of this avoids it.
+
+### The client says what zone, never what day
+
+`profiles.timezone` (IANA name, default `UTC`) is the only input, written only
+through `set_my_timezone_rpc`, which validates against `pg_timezone_names` and
+rate limits changes to one per 20 hours. `authenticated` has **no UPDATE grant
+on that column** — checked, not assumed — so the RPC is the only door.
+
+**If the day came from the request, the day would be the player's to choose**,
+and a player who chooses the day mints a fresh daily on demand. That is the
+shape of the replay bug 0059 closed.
+
+`TimezoneSync` (mounted in `(app)/layout.tsx`) reports
+`Intl.DateTimeFormat().resolvedOptions().timeZone` once per session. No
+geolocation, no permission prompt, no date, no time — the zone name only.
+
+### What a zone jump actually buys, measured
+
+Guessed first, then measured, and the guess was wrong. Run against a real
+account, rolled back:
+
+```
+Africa/Lagos        local 2026-09-09   login: already claimed   challenge: already completed
+Pacific/Kiritimati  local 2026-09-10   login: PAID 20 coins     challenge: a new day's row
+```
+
+So a jump east does pay. What it **cannot** do is pay twice for one day — every
+one of these is keyed on a calendar date (`user_login_claims.claim_date`,
+`daily_challenges.challenge_date` unique per date, completions unique per
+`(user, challenge)`), and a date pays once. Jumping back west lands on days
+already claimed, which pays nothing. **Ceiling: a player can run at most one
+calendar day ahead of themselves, and can never collect a day twice.** Plus the
+20-hour rate limit on top. Left open deliberately: closing it means deferring a
+zone change to the next local midnight, which would strand every new player on
+UTC for their first day.
+
+### What moved, and what deliberately did not
+
+Moved to the player's day: `ensure_daily_challenge` (its default is now
+`user_local_date()`), `complete_daily_challenge_rpc`, `daily_task_progress`,
+`claim_daily_login_rpc`, and `touch_streak_on_attempt` — the streak sits
+directly above the countdown on the same card, and a streak rolling over at a
+different hour than the reward beside it is the split this project keeps paying
+to remove.
+
+Not moved: `daily_hadith` (cosmetic), `spin_wheel_rpc` (already a rolling 24h
+from `last_spin_at`, so it has no midnight), the league week.
+
+**Four pages used to compute `new Date().toISOString().slice(0, 10)` for
+themselves.** That is the UTC date, and it agreed with the database only while
+the database was also UTC. They all read `getMyDayBounds()` now — one RPC,
+wrapped in React `cache` so a render pays for it once. `nextDailyResetAt` is
+deleted; its own comment had warned that the local midnight would be "a
+different change and a bigger one", and this is that change.
+
+## The home screen stopped showing a number it could not explain
+
+**"It's not specifying, that's why it shouldn't be there."** The Overall
+Progress card read **0 of 261 levels cleared, 0%** with **67%** printed inches
+away, and **9 questions answered** under a heading about category progress.
+
+Both numbers were true — 67% was six of nine first answers. The problem was
+that nothing said so, and the daily challenge's five questions, deliberately
+separate from the categories, were feeding a figure sitting under a heading
+about categories. Two percentages side by side meaning different things, one
+unlabelled, is a reader's puzzle rather than a stat.
+
+Both are gone from `/home` and both still live on `/profile` under headings
+that name them. `useLifetimeStats` was their only consumer and is deleted.
+
+## The front door stopped inviting you through a locked door
+
+**"After I am done with the daily challenge the countdown should be on the home
+page, not inside it. From the home you can still see it's still inviting."**
+
+`HomeRewardsCard` kept its arrow and its "Collect your reward" whether or not
+anything was left to collect, so the front door invited the player into a page
+whose only news was that they were finished. It now reads the challenge as well
+as the task, and once the attempt is spent it shows the same countdown, from
+the same `resetsAt`, as the card on `/rewards`. The arrow survives only while
+something is genuinely collectable — a spent challenge with an unclaimed reward
+still invites, because tapping through still gets you something.
 
 ## Open items
 
