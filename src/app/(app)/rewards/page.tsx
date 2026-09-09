@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { getDailyTaskProgress } from "./actions"
 import { getDailyChallenge } from "@/app/(app)/challenges/actions"
+import { getMyDayBounds, previousLocalDate } from "@/lib/day-bounds"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { RewardsPageClient } from "@/components/rewards/RewardsPageClient"
 import type { SpinSegment } from "@/components/rewards/SpinWheel"
@@ -16,8 +17,23 @@ export default async function RewardsPage() {
     return <TranslatedNotice messageKey="signInToViewRewards" />
   }
 
-  const today = new Date().toISOString().slice(0, 10)
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+  /*
+   * The player's day, not the server's.
+   *
+   * These were `new Date().toISOString()` — the UTC date, and `Date.now() -
+   * 86400000` for yesterday. Since migration 0064 the login claim is written
+   * and read against the player's local date, so looking the claims up by the
+   * UTC date would have shown "not claimed yet" to a Lagos player for the hour
+   * between 23:00 and midnight UTC, and offered them a second claim the RPC
+   * would then refuse.
+   *
+   * Yesterday is calendar arithmetic on the local date rather than a
+   * subtraction of milliseconds, which is the only version that survives a
+   * daylight-saving change: not every day is 86,400,000ms long.
+   */
+  const day = await getMyDayBounds()
+  const today = day.localDate
+  const yesterday = previousLocalDate(today)
 
   /*
    * Seven round trips, at once rather than in a queue.

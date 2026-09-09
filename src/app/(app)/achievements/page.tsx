@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server"
 import { TranslatedNotice } from "@/components/layout/TranslatedNotice"
 import { getProfileStats } from "@/lib/profile-stats"
 import { getEarnedChests } from "@/app/(app)/rewards/actions"
+import { getMyDayBounds } from "@/lib/day-bounds"
 import { AchievementsPageClient } from "@/components/achievements/AchievementsPageClient"
 
 export default async function AchievementsPage() {
@@ -15,7 +16,9 @@ export default async function AchievementsPage() {
     return <TranslatedNotice messageKey="signInToViewAchievements" />
   }
 
-  const today = new Date().toISOString().slice(0, 10)
+  // The player's local date (migration 0064), not the UTC one this used to
+  // compute for itself.
+  const today = (await getMyDayBounds()).localDate
 
   /*
    * Three independent reads, at once.

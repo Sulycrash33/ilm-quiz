@@ -5,7 +5,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Gift } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatCountdown } from "@/lib/countdown";
 import { getDailyTaskProgress, type DailyTaskProgress } from "@/app/(app)/rewards/actions";
+import { getDailyChallenge, type DailyChallengeView } from "@/app/(app)/challenges/actions";
 
 /**
  * The day's invitation, on the front door: answer today's questions, collect
@@ -35,18 +37,40 @@ import { getDailyTaskProgress, type DailyTaskProgress } from "@/app/(app)/reward
  * `daily_task_progress()` — the same function that gates the claim, through
  * the same server action the Rewards Center uses — and renders nothing of its
  * own devising. One number, one source.
+ *
+ * ── The countdown, and why it had to come up here ─────────────────────────
+ * The owner's report: *"after I am done with the daily challenge the countdown
+ * should be on the home page, not inside it. From the home you can still see
+ * it's still inviting."* Exactly right, and it was the worse half of the bug.
+ * The card kept its arrow and its "Collect your reward" whether or not there
+ * was anything left to do, so the front door invited a player into a page
+ * whose only news was that they were finished. An invitation that leads to a
+ * locked door is worse than no invitation.
+ *
+ * So this reads the challenge as well as the task, and once the attempt is
+ * spent it says when the next one arrives — the same string, from the same
+ * `resetsAt`, as the card on `/rewards`. The arrow stays only while something
+ * is actually collectable.
  */
 export function HomeRewardsCard() {
   const { t } = useLanguage();
   const [task, setTask] = useState<DailyTaskProgress | null>(null);
+  const [challenge, setChallenge] = useState<DailyChallengeView | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       try {
-        const result = await getDailyTaskProgress();
-        if (!cancelled) setTask(result);
+        // Both at once. They are independent reads and the home screen is the
+        // most opened page in the app.
+        const [taskResult, challengeResult] = await Promise.all([
+          getDailyTaskProgress(),
+          getDailyChallenge(),
+        ]);
+        if (cancelled) return;
+        setTask(taskResult);
+        setChallenge(challengeResult);
       } catch {
         // A card that cannot load leaves the rest of the home screen alone.
       }
@@ -58,10 +82,32 @@ export function HomeRewardsCard() {
     };
   }, []);
 
+  /**
+   * A clock, ticking once a second, only once the day is actually spent.
+   *
+   * Declared before the early return below because hooks cannot be
+   * conditional; the interval itself is still conditional, so a player who is
+   * mid-challenge is not running a timer for a countdown that is not on screen.
+   */
+  const spent = !!challenge?.attemptSpent;
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!spent) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [spent]);
+
   if (!task || task.required <= 0) return null;
 
   const answered = Math.min(task.answered, task.required);
   const percent = Math.round((answered / task.required) * 100);
+
+  // Is there still something to collect? The challenge's own reward is
+  // `challenge.completed`; the login reward is what `task.done` unlocks. While
+  // either is outstanding the card keeps its arrow, because tapping through
+  // still gets the player something.
+  const somethingToCollect = task.done && challenge != null && !challenge.completed;
+  const msUntilReset = challenge ? new Date(challenge.resetsAt).getTime() - now : 0;
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -96,10 +142,20 @@ export function HomeRewardsCard() {
           />
         </div>
 
-        <p className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary">
-          {task.done ? t("dailyTaskDone") : t("dailyTaskCta")}
-          <span aria-hidden="true">&rarr;</span>
-        </p>
+        {/* Spent and nothing left to collect: the clock, not an invitation. */}
+        {spent && !somethingToCollect ? (
+          <div className="mt-3 space-y-1">
+            <p className="text-sm text-on-surface-variant">{t("challengeSpentToday")}</p>
+            <p className="text-sm font-bold tabular-nums text-tertiary">
+              {t("nextChallengeIn", { time: formatCountdown(msUntilReset, t("countdownNow")) })}
+            </p>
+          </div>
+        ) : (
+          <p className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-primary">
+            {task.done ? t("dailyTaskDone") : t("dailyTaskCta")}
+            <span aria-hidden="true">&rarr;</span>
+          </p>
+        )}
       </Link>
     </motion.div>
   );

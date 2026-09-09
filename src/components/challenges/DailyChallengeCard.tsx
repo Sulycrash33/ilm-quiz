@@ -136,10 +136,15 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallengeVie
           again, and telling them when they can is the whole point of putting a
           clock here rather than a dead button.
 
-          The copy never names an hour. The challenge turns over at the
-          database's midnight and the database is UTC, so "12:00am" would be
-          wrong for a player in Lagos by one hour and for one in Kuala Lumpur by
-          eight. See `nextDailyResetAt`. */}
+          The copy still never names an hour, but the reason changed. It used
+          to be that naming one would be a lie: the day turned at the
+          database's UTC midnight, which is 01:00 in Lagos and 08:00 in Kuala
+          Lumpur. Since migration 0064 it genuinely is the player's own
+          midnight — and it stays unnamed anyway, because a countdown to a
+          fixed midnight is only exactly 24 hours at the instant it flips, so
+          the honest thing to show is the remaining time and not a promise
+          about its size. `resetsAt` comes from Postgres via
+          `getMyDayBounds`; this side no longer computes a date. */}
       {challenge.attemptSpent && (
         <div className="space-y-1 border-t border-white/5 pt-3">
           <p className="text-sm text-on-surface-variant">{t("challengeSpentToday")}</p>

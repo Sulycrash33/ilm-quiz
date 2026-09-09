@@ -21,27 +21,19 @@ export function formatCountdown(ms: number, nowLabel: string): string {
   return hours > 0 ? `${hours}h ${pad(minutes)}m ${pad(seconds)}s` : `${minutes}m ${pad(seconds)}s`;
 }
 
-/**
- * The instant the daily challenge rolls over, as a timestamp.
+/*
+ * `nextDailyResetAt` lived here and is gone.
  *
- * **This is the database's midnight, not the player's.** The challenge is keyed
- * on `current_date` in Postgres and the database runs in **UTC**, checked
- * rather than assumed (`current_setting('TimeZone')` returns `UTC`). So the day
- * turns at 00:00 UTC for everyone on earth at the same instant, which is 01:00
- * for a player in Nigeria and 08:00 for one in Malaysia.
+ * It computed the next **UTC** midnight, and its own doc comment carried the
+ * warning: *"if the rollover should follow the player's own midnight instead,
+ * that is a different change and a bigger one."* Migration 0064 is that
+ * change. The reset instant is now derived in Postgres from
+ * `profiles.timezone` and read through `getMyDayBounds`, so there is nothing
+ * left for this side to compute — and nothing left to disagree with the
+ * server about.
  *
- * A countdown that promised "midnight" would therefore be a lie on the screen
- * for almost every player, which is the exact class of bug this project has
- * spent itself removing. So the copy says *when the next challenge arrives*
- * and never names an hour, and this function computes the real instant.
- *
- * If the rollover should follow the player's own midnight instead, that is a
- * different change and a bigger one: the daily is the same five questions for
- * everyone on a given day, and a per-player date breaks that promise unless
- * every reader of `current_date` learns a timezone.
+ * The countdown copy still never names an hour, for a different reason than
+ * before: it is now genuinely the player's midnight, but a fixed midnight is
+ * only ever exactly 24 hours away at the instant it flips, so promising a
+ * number would be promising the wrong one for most of the day.
  */
-export function nextDailyResetAt(from: Date = new Date()): Date {
-  return new Date(
-    Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate() + 1, 0, 0, 0, 0)
-  );
-}
