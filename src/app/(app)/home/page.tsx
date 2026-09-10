@@ -13,6 +13,7 @@ import { DailyHadith } from "@/components/game/DailyHadith"
 import { HomeRewardsCard } from "@/components/home/HomeRewardsCard"
 import { ReviewCallout } from "@/components/game/ReviewCallout"
 import { LogoutButton } from "@/components/layout/LogoutButton"
+import { BrandWordmark } from "@/components/layout/BrandWordmark"
 
 import { useProfile } from "@/hooks/use-profile"
 import { playCue } from "@/lib/sound"
@@ -99,16 +100,36 @@ export default function HomePage() {
             {/* The greeting moved into <main> as <SalaamGreeting />. It used to
                 live here behind `hidden sm:block`, a 640px width breakpoint no
                 phone reaches in portrait, so no phone user ever saw it. The
-                wordmark stays and is shown at every size. */}
-            <h1 className="font-headline-md text-headline-md bg-gradient-to-br from-[#f6dfa0] via-primary to-[#c9962f] bg-clip-text text-transparent drop-shadow-[0_1px_6px_rgba(240,205,109,0.25)]">
-              ILM Hunt
+                wordmark stays and is shown at every size.
+
+                It is a lockup now rather than a styled `<h1>`; see
+                `BrandWordmark` for what was wrong with the old one and why the
+                new one is set in the serif the rest of the app uses for the
+                brand. */}
+            <h1>
+              <BrandWordmark />
             </h1>
           </Link>
           {/* Streak and coins. Both numbers climb rather than snap, and the
               flame only breathes while a streak is actually alive — a cold
-              streak sitting still is information, not an oversight. */}
+              streak sitting still is information, not an oversight.
+
+              Both are now *named*, on hover and to a screen reader. They were
+              two bare figures side by side — 1 and 122 — with only a flame and
+              a coin to tell them apart, on a screen whose other number is a
+              barakah total. The owner read the set as inconsistent, and they
+              were not wrong that nothing on the screen said which was which: a
+              reader heard "1 122" and a mouse got nothing at all. Barakah,
+              coins and the streak are three different quantities that go up,
+              and the app now says so wherever two of them sit together.
+
+              The name goes in an `sr-only` span rather than an `aria-label` on
+              the `div`. ARIA prohibits a label on an element with no role, and
+              assistive technology is entitled to drop it — which would have
+              left the accessible reading exactly as bare as before, while
+              looking fixed in the source. */}
           <div className="flex items-center gap-4 bg-surface-container-high/40 px-4 py-1.5 rounded-full border border-white/5">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5" title={t("dayStreak")}>
               <CountUp value={profile?.streakCount ?? 0} className={`tabular-nums ${streakAlive ? "text-warning" : "text-on-surface-variant"}`} />
               <motion.svg
                 /* A live streak is warm. This drew a `tertiary` mint flame with a
@@ -120,16 +141,19 @@ export default function HomePage() {
                 viewBox="0 0 24 24"
                 animate={streakAlive && !reduceMotion ? { scale: [1, 1.14, 1] } : { scale: 1 }}
                 transition={{ duration: 1.7, repeat: streakAlive && !reduceMotion ? Infinity : 0, ease: "easeInOut" }}
+                aria-hidden="true"
               >
                 <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" />
               </motion.svg>
+              <span className="sr-only">{t("dayStreak")}</span>
             </div>
             <div className="w-px h-4 bg-white/10" />
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5" title={t("coinsWord")}>
               <CountUp value={profile?.coins ?? 0} className="text-primary-fixed tabular-nums" />
-              <svg className="w-4 h-4 text-primary-fixed" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-primary-fixed" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.98-3.12 3.19z" />
               </svg>
+              <span className="sr-only">{t("coinsWord")}</span>
             </div>
           </div>
           <LogoutButton className="flex items-center justify-center h-9 w-9 rounded-full text-on-surface-variant/70 hover:bg-white/5 hover:text-error transition-colors" />

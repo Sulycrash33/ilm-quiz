@@ -19,6 +19,7 @@ import { HapticsToggle } from "@/components/profile/HapticsToggle"
 import { VolumeSlider } from "@/components/profile/VolumeSlider"
 import { KnowledgeBreakdown } from "@/components/profile/KnowledgeBreakdown"
 import { StreakReminderToggle } from "@/components/profile/StreakReminderToggle"
+import { emblemForRank } from "@/components/icons/RankEmblems"
 import { useLanguage } from "@/contexts/LanguageContext"
 import type { Locale, Translations } from "@/lib/i18n"
 import type { ProfileStats } from "@/lib/profile-stats"
@@ -63,7 +64,8 @@ export function ProfilePageClient({
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("overview")
   const { locale, setLocale, t, dir } = useLanguage()
-  const { profile, currentRank, nextRank, totalAttempts, accuracyPct, categories, achievements, globalRank, recentAttempts } = stats
+  const { profile, currentRank, nextRank, totalAttempts, correctCount, accuracyPct, categories, achievements, globalRank, recentAttempts } = stats
+  const RankEmblem = emblemForRank(currentRank?.slug)
 
   const unlockedAchievements = achievements.filter((a) => a.unlocked)
   const xpIntoCurrentRank = currentRank ? profile.totalXp - currentRank.minXp : profile.totalXp
@@ -114,11 +116,28 @@ export function ProfilePageClient({
       {/* Profile Card */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8 mb-8">
         <div className="flex flex-col md:flex-row items-center gap-8">
-          <div className="relative">
+          {/* The rank sits **under** the face, not on it.
+
+              It was absolutely positioned at `-top-2 -right-2`, which put the
+              chip over the top-right of the avatar — across the shoulder of
+              every one of the drawn faces, and across the ear of several. The
+              owner's report was that the rank "is entering the avatar, which
+              is not supposed to; it should be above or below". Right: a badge
+              overlapping a portrait is a notification dot's job, and this is
+              a title. A title goes under the picture, the way it does on every
+              identity card ever printed.
+
+              Stacking it also gives the chip room to carry its emblem and its
+              name at a legible size instead of being squeezed to `sm` so as
+              not to cover more of the face. */}
+          <div className="flex flex-col items-center gap-3">
             <PremiumAvatar size="xl" ring ringColor="primary" avatarId={profile.avatarId} />
             {currentRank && (
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }} className="absolute -top-2 -right-2">
-                <PremiumBadge variant="warning" size="sm">{currentRank.name.toUpperCase()}</PremiumBadge>
+              <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                <PremiumBadge variant="warning" size="md">
+                  {RankEmblem && <RankEmblem className="h-4 w-4 shrink-0" />}
+                  {currentRank.name.toUpperCase()}
+                </PremiumBadge>
               </motion.div>
             )}
           </div>
@@ -144,7 +163,11 @@ export function ProfilePageClient({
               <PremiumStat label={t("totalXp")} value={<CountUp value={profile.totalXp} />} />
               <PremiumStat label={t("dayStreak")} value={<CountUp value={profile.streakCount} />} />
               <PremiumStat label={t("globalRank")} value={globalRank ? `#${globalRank}` : "—"} />
-              <PremiumStat label={t("accuracy")} value={totalAttempts > 0 ? `${accuracyPct}%` : "—"} />
+              <PremiumStat
+                label={t("accuracy")}
+                value={totalAttempts > 0 ? `${accuracyPct}%` : "—"}
+                hint={totalAttempts > 0 ? t("correctOfAttempts", { correct: correctCount, total: totalAttempts }) : undefined}
+              />
             </div>
 
             {currentRank && (

@@ -69,3 +69,30 @@ export function IlmHuntGlyph(props: SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
+
+/**
+ * The star on its own.
+ *
+ * The eight-pointed compass star out of the middle of the mark, with nothing
+ * around it. It is the smallest piece of the brand that still reads as the
+ * brand, which is what an ornament in a line of type has to be.
+ *
+ * The path is the glyph's star, byte for byte, cropped to by the `viewBox`
+ * rather than moved: the star is centred on (66, 50) with a radius of 12, so a
+ * 24-wide window starting at (54, 38) frames it exactly. Re-deriving the twelve
+ * points at a new origin would be twelve chances to be a pixel out, for no
+ * gain. The same reasoning as the crescent above, for the same reason.
+ */
+export function IlmHuntStar(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="54 38 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M66.00 38.00 L67.84 45.57 L74.49 41.51 L70.43 48.16 L78.00 50.00 L70.43 51.84 L74.49 58.49 L67.84 54.43 L66.00 62.00 L64.16 54.43 L57.51 58.49 L61.57 51.84 L54.00 50.00 L61.57 48.16 L57.51 41.51 L64.16 45.57 Z" />
+    </svg>
+  )
+}

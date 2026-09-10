@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Quote } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { splitNarration } from "@/lib/narration";
 import { getDailyHadith, type DailyHadithView } from "@/app/(app)/home/actions";
 
 /**
@@ -37,6 +38,14 @@ import { getDailyHadith, type DailyHadithView } from "@/app/(app)/home/actions";
  * arrives either from a published edition — Arabic, French and most of the
  * Indonesian were imported from one, see `import-hadith-editions` — or typed
  * by hand at `/admin/hadiths`. Never from a model.
+ *
+ * ── The narrator ─────────────────────────────────────────────────────────
+ * The chain is drawn above the quotation and the reference below it, and the
+ * two are pulled apart by `splitNarration` at render rather than by an edit to
+ * the table. That file has the whole argument; the short version is that the
+ * rule against rewriting hadith text does not stop at machine translation, and
+ * a heading that was flattened into the body by an importer is a presentation
+ * fault, so it gets a presentation fix.
  *
  * Arabic needs nothing special here. `LanguageContext` writes `lang` and `dir`
  * onto the document element when the locale changes, so the quotation inherits
@@ -79,6 +88,12 @@ export function DailyHadith() {
   // switch voice rather than reading English aloud in a Hausa one.
   const isFallback = !hadith.byLocale[locale];
 
+  // The chain, off the front of the text. See `narration.ts` — in short, the
+  // English edition was imported with its narrator headings flattened into the
+  // body, so the card was rendering "Narrated Abu Huraira:I heard…": no "by",
+  // and no space. The stored text is not touched; it is read apart here.
+  const { narrator, body } = splitNarration(entry.text);
+
   return (
     <section className="glass-card relative overflow-hidden rounded-xl p-6 text-center">
       {/* The khatim moved into `.glass-card` itself, so every box in the game
@@ -90,11 +105,25 @@ export function DailyHadith() {
 
         <h2 className="sr-only">{t("dailyHadith")}</h2>
 
+        {/* The chain above the narration and the reference below it, which is
+            how a printed collection sets a hadith and, not coincidentally, how
+            the edition this text came from set it before the import flattened
+            the two together.
+
+            No `lang="en"` here even when the body carries one: the label is in
+            the reader's own language and only the name inside it is not, and a
+            transliterated name is not English so much as it is a name. */}
+        {narrator && (
+          <p className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant/70">
+            {t("narratedBy", { narrator })}
+          </p>
+        )}
+
         <blockquote
           className="font-quote-italic text-quote-italic italic text-on-surface"
           {...(isFallback ? { lang: "en", dir: "ltr" } : {})}
         >
-          {entry.text}
+          {body}
         </blockquote>
 
         <cite

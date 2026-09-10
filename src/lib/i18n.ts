@@ -64,6 +64,8 @@ export interface Translations {
   quizComplete: string
   score: string
   accuracy: string
+  narratedBy: string
+  correctOfAttempts: string
   tryAgain: string
   questionsBeingPrepared: string
   backToCategories: string
@@ -937,6 +939,8 @@ const enTranslations: Translations = {
   quizComplete: "Quiz Complete!",
   score: "Score",
   accuracy: "Accuracy",
+  narratedBy: "Narrated by {narrator}",
+  correctOfAttempts: "{correct} of {total} correct",
   tryAgain: "Try Again",
   questionsBeingPrepared: "Questions for the \u201c{category}\u201d category are being prepared.",
   backToCategories: "Back to Categories",
@@ -1755,6 +1759,8 @@ const msTranslations: Translations = {
   quizComplete: "Kuiz Selesai!",
   score: "Skor",
   accuracy: "Ketepatan",
+  narratedBy: "Diriwayatkan oleh {narrator}",
+  correctOfAttempts: "{correct} daripada {total} betul",
   tryAgain: "Cuba Lagi",
   questionsBeingPrepared: "Soalan untuk kategori \u201c{category}\u201d sedang disediakan.",
   backToCategories: "Kembali ke Kategori",
@@ -2573,6 +2579,8 @@ const idTranslations: Translations = {
   quizComplete: "Kuis Selesai!",
   score: "Skor",
   accuracy: "Akurasi",
+  narratedBy: "Diriwayatkan oleh {narrator}",
+  correctOfAttempts: "{correct} daripada {total} benar",
   tryAgain: "Coba Lagi",
   questionsBeingPrepared: "Pertanyaan untuk kategori \u201c{category}\u201d sedang disiapkan.",
   backToCategories: "Kembali ke Kategori",
@@ -3391,6 +3399,8 @@ const haTranslations: Translations = {
   quizComplete: "An Kammala Jarabawa!",
   score: "Maki",
   accuracy: "Daidaito",
+  narratedBy: "Ruwayar {narrator}",
+  correctOfAttempts: "{correct} daga {total} daidai",
   tryAgain: "Sake Gwadawa",
   questionsBeingPrepared: "Ana shirya tambayoyi don rukunin \u201c{category}\u201d.",
   backToCategories: "Koma zuwa Rukunoni",
@@ -4209,6 +4219,8 @@ const frTranslations: Translations = {
   quizComplete: "Quiz terminé !",
   score: "Score",
   accuracy: "Précision",
+  narratedBy: "Rapporté par {narrator}",
+  correctOfAttempts: "{correct} sur {total} correctes",
   tryAgain: "Réessayer",
   questionsBeingPrepared: "Les questions de la cat\u00e9gorie \u00ab\u00a0{category}\u00a0\u00bb sont en pr\u00e9paration.",
   backToCategories: "Retour aux cat\u00e9gories",
@@ -5027,6 +5039,8 @@ const arTranslations: Translations = {
   quizComplete: "اكتمل الاختبار!",
   score: "النتيجة",
   accuracy: "الدقة",
+  narratedBy: "رواه {narrator}",
+  correctOfAttempts: "{correct} من {total} صحيحة",
   tryAgain: "حاول مرة أخرى",
   questionsBeingPrepared: "يتم إعداد أسئلة فئة \u201c{category}\u201d.",
   backToCategories: "العودة إلى الفئات",
