@@ -1,16 +1,19 @@
 # ILM Hunt — session handoff
 
-Written 2026-09-03, rewritten through 2026-09-08. **Read this first if you are
+Written 2026-09-03, rewritten through 2026-09-10. **Read this first if you are
 picking up work cold.** Every number below was checked against the live
-database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `e7c88a0` (PR #80,
+database (project `ziblpvwiqzpjnkqjwodl`) with `main` at `c726074` (PR #94,
 merged) — re-check anything you are about to depend on rather than trusting
-them blind. Re-checked 2026-09-08, and this line finally changed: **`attempts` 5**,
-`profiles` **1**, `user_login_claims` **1**, `game_runs` **0**. The owner
-played the daily challenge. See "Only studying earns barakah" for what that
-first sitting immediately found. **Five** earlier notes have now been wrong about a count within a
-day of being written, which is the whole argument for checking. The fifth was
-this document's own translation figure, corrected below: it said "69 questions"
-where 69 is the number of *rows*, covering **65** questions. Rows and the
+them blind. Re-checked **2026-09-10 11:20 UTC**, and the line moved twice in one
+day: `attempts` went 0 → 5 → **0**, because the owner played the daily challenge
+on the 9th and pressed Reset Progress on the 10th. `profiles` **1**,
+`user_login_claims` **0**, `game_runs` **0**. See "Only studying earns barakah" for what that
+first sitting immediately found. **Six** earlier notes have now been wrong about a count within a
+day of being written, which is the whole argument for checking. The sixth is
+in this file already: a section added at 09:50 on 2026-09-10 opens "The
+register says: five attempts" and was false by 10:27 the same morning. The
+fifth was this document's own translation figure, corrected below: it said "69
+questions" where 69 is the number of *rows*, covering **65** questions. Rows and the
 things they describe are not the same number, and this file has now made that
 mistake about translations, categories and the question bank in turn.
 
@@ -30,26 +33,51 @@ the player" below.
 
 ## The one fact that reframes everything
 
-**Somebody has finally played this app — once, on 2026-09-08.**
+**Somebody has played this app twice — 2026-09-08 and 2026-09-09 — and then
+wiped the register on 2026-09-10.**
 
 ```
 questions       10,466        profiles              1
-categories          42        attempts              5
+categories          42        attempts              0   ← was 5 this morning
 translations        65        scholar approved      0
-                              game runs             0
-                              quiz rooms            0
+hadith rows      1,515        game runs             0
+  of them machine    2        quiz rooms            0
 ```
 
-Five questions, four of them correct, all from the daily challenge, on the day
-the daily challenge got its front door. That count was briefly **15** — the
-same five answered three times through a "Play again" button that paid full XP
-every pass; see "A question pays once". The ten repeats were deleted and the
-balance rebuilt from what was earned. `game_runs` and `quiz_rooms` are **still 0** — no
-Speed Round, Survival or Practice run has ever been opened and no battle room
-has ever been created — and **no category level has ever been played**, which
-the owner is doing next. Every question,
-category, store item, achievement, challenge and rank tier is seeded and ready;
-one account exists, the owner's, and it has never answered anything.
+**Read the arrow.** At 09:00 UTC on 2026-09-10 this table said `attempts 5`,
+and a whole session was spent explaining what those five rows meant — a 40%
+accuracy, 72 barakah, 122 coins. At **10:27:23 UTC** the owner pressed Reset
+Progress on `/profile`, and every one of those numbers is now zero: `total_xp`,
+`coins`, `streak_count`, `longest_streak`, `high_score`, and all five attempts.
+The section below titled "The numbers were right and the screen was wrong" was
+written **ninety minutes** before that happened and describes a register that
+no longer exists. Its reasoning stands; its numbers do not.
+
+That is the **sixth** time a count in this document has gone stale within a day
+of being written, and the first time one went stale within the same session.
+Check the database. Do not trust this paragraph either.
+
+What the reset cleared, from `reset_my_progress` (0022) and confirmed against
+the live tables: `attempts`, `user_question_schedule`, `weekly_xp`,
+`leaderboard_cohorts`, `hunt_runs`, `user_achievements`,
+`user_daily_challenge_completions`, `user_login_claims`, `user_chest_opens`,
+`user_inventory`, and the profile's own counters.
+
+What it did **not** clear, which is a real if small gap: **`lifeline_spends`**.
+Two rows survive from 2026-09-08, a `time-boost` and a `skip`, both
+`consumed_at is null`. Those rows are keyed to a specific `question_id`, and
+`buy_lifeline` treats an existing row for that question as *already bought* and
+returns without charging. So two particular questions now carry a free lifeline
+that a reset was supposed to have taken away. Nobody has decided whether that
+matters; it is recorded here because it is exactly the kind of thing that gets
+found the hard way. `user_chests` is missed by the same list and is empty, so
+it costs nothing today.
+
+`game_runs` and `quiz_rooms` are **still 0** — no Speed Round, Survival or
+Practice run has ever been opened and no battle room has ever been created —
+and **no category level has ever been played**. Every question, category, store
+item, achievement, challenge and rank tier is seeded and ready; one account
+exists, the owner's, and as of now it has answered nothing.
 
 Keep that in front of you when deciding what to build. **Fifteen pull requests
 have shipped since anyone last suggested playing it**, eight of them on
@@ -1826,9 +1854,12 @@ The headline one is worth reading carefully because the code was correct:
 > *"How did it get 40 percent accuracy when all I have been playing is just the
 > daily challenge?"*
 
-The register says: five attempts, all first answers, all from the daily
-challenge of 2026-09-09, **two correct**. Two of five is 40%. `profile-stats.ts`
-computed it exactly as intended and there was no bug to find.
+The register said, at the time: five attempts, all first answers, all from the
+daily challenge of 2026-09-09, **two correct**. Two of five is 40%.
+`profile-stats.ts` computed it exactly as intended and there was no bug to
+find. (Those five rows were deleted ninety minutes later — see the reset at the
+top of this file. The `hint` on the stat is what remains, and with zero
+attempts the card now correctly reads "—" with no hint at all.)
 
 The bug was that **nothing on the card said "of five"**. `PremiumStat` printed a
 bare `40%` under the word ACCURACY, between a rank and a global position, with
@@ -1947,6 +1978,11 @@ tested.
 
 **Two rows exist so far**, both Hausa: `bukhari:6469` (2026-09-10) and
 `bukhari:6529` (2026-09-11), so the card and its rollover can both be seen.
+What is left, checked live on 2026-09-10: **322** Hausa gaps, **111**
+Indonesian, **386** Malay — Malay has never had a single hadith in it. Arabic
+and French are complete. At roughly twenty model calls a day on the free key,
+Hausa alone is a fortnight; the owner intends to move to a paid translation
+API, and everything provider-specific is inside `translateOne`.
 
 **One consequence worth knowing before it surprises you.** `splitNarration`
 lifts the chain out of the text for English only — the pattern begins with the
@@ -1958,9 +1994,64 @@ languages now present the same narration differently, and extending the reader
 to five more languages is a thing to decide rather than to guess at.
 
 Incidentally, the model rendered the heading as **"An ruwaito daga"** where
-`i18n.ts` renders `narratedBy` as **"Ruwayar {narrator}"**. That is not evidence
-of anything — it is one model's opinion — but it is worth putting to the owner,
-who reads Hausa, along with the four strings listed under the Cibiyar Lada fix.
+`i18n.ts` rendered `narratedBy` as **"Ruwayar {narrator}"**. That was put to the
+owner, who reads Hausa, and **the model was right** — see "The dangling -n"
+below. One model's opinion is not evidence, but it was worth asking about.
+
+## The dangling -n, and why nobody here can fix Hausa by eye
+
+**2026-09-10.** The owner, who reads Hausa, opened the Rewards Center and found
+the header saying **Cibiyar Ladan** where it should say **Cibiyar Lada**. That
+one string turned into two pull requests and a rule worth keeping.
+
+**The rule.** In Hausa, `-n` / `-r` is *both* the genitive linker ("X of Y") and
+the definite marker ("the X"). So a word ending in `-n` is only wrong when it
+is the **head of a construct with nothing after it**:
+
+```
+Cibiyar Ladan     ✗   "the centre of the reward-of-…"   nothing follows
+Cibiyar Lada      ✓   "the Rewards Centre"
+Jerin Bajoji      ✓   "the list of badges"              a noun follows, so -n is doing its job
+Wannan Makon      ✓   "this week"                       definite, not a construct
+```
+
+The owner's phrasing was "always remove the last n", and taken literally that
+would break correct Hausa in at least four places. What they meant, and what
+was applied, is the rule above. Read that as a warning about instructions in a
+language you do not speak: the shortest true statement of a rule is not always
+the safest one to execute.
+
+**What changed** (PRs #92 and #94), all in `src/lib/i18n.ts`:
+
+| Key | Was | Is |
+|---|---|---|
+| `rewardsCenter` | Cibiyar Lada**n** | Cibiyar Lada |
+| `settings` | Saituna**n** | Saituna |
+| `storeItem17Name` | Garkuwar Jeri**n** | Garkuwar Jeri |
+| `systemStatus` | Halin Tsari**n** | Halin Tsari |
+| `introEyebrowTwo` | Fili**n** | Fili |
+| `collectionBadges` | Bajojin Tari**n** | **Jerin Bajoji** |
+| `narratedBy` | Ruwayar {narrator} | **An ruwaito daga {narrator}** |
+| `claimRewards` | Karbi Ladan Ka Ka Gwada… | Karɓi Ladanka Ka Gwada… |
+| `claimedForToday`, `claimingLabel`, `hostQuiz` | Kar**b**a / Kar**b**i | Kar**ɓ**a / Kar**ɓ**i |
+
+`collectionBadges` took two passes and is the most instructive of them. Dropping
+the linker gave "Bajojin Tari", which is *well-formed and still wrong*; the
+right phrase reverses the two nouns. A rule can be applied correctly and still
+not produce the right words.
+
+**Deliberately untouched, and they must stay that way:** `Wannan Makon`,
+`Juya Dabaran`, `Nasarorin Kwanan Nan`, `Ayyukan Kwanan Nan` ("kwanan nan" is a
+fixed idiom for "recently"), `Tarin Musamman`, `Ladan Shiga`,
+`Ladan Rana {day}`, `ladan yau`.
+
+**The lesson for a future session.** The `karɓ` fixes were safe to make without
+a speaker, because they are an *internal inconsistency*: the same verb was
+spelled with the hooked ɓ in eight strings and a plain b in four, and the file
+answers the question by itself. The `-n` fixes were **not** safe that way, and
+were left in a list for the owner rather than guessed at. That distinction —
+"the file can settle this" versus "only a speaker can" — is the one to apply to
+the other four locales, none of which anyone here reads either.
 
 ## Open items
 
@@ -2373,6 +2464,11 @@ covering the lifelines. Every one of them shipped green.
 
 | PR | What |
 |---|---|
+| #94 | An ruwaito daga: the owner rules on the dangling -n, and Jerin Bajoji reverses two nouns |
+| #93 | Hadith may be machine-translated, and only where nothing is written |
+| #92 | Cibiyar Lada: a genitive linker with nothing to link to |
+| #91 | Forty percent of what: the accuracy says what it counts, nine ranks get drawn emblems, the rank chip comes off the avatar's face, and the hadith gets its narrator back |
+| #90 | The day turns at the player's midnight, and the front door says so |
 | #89 | The server was on the wrong continent: functions pinned to Dublin beside the database, and the serial queries made concurrent |
 | #88 | Review teaches without counting, and a finished run exits to where its label points |
 | #87 | One attempt a day: the daily locks once its five are answered, with a countdown to the real rollover |
