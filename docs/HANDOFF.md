@@ -73,7 +73,7 @@ section.
 | Accounts | **1** — the owner, an admin |
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
-| Migrations | through **`0064`**, disk and database in step — 63 files, because `0052` was never used |
+| Migrations | through **`0065`**, disk and database in step — 63 files, because `0052` was never used |
 | Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware`, `test:narration` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
@@ -1895,6 +1895,72 @@ Six of the 302 leave a body starting mid-clause — *"Narrated `Abbas: that he
 said to the Prophet…"* — which reads as a fragment under its heading. That is
 how the printed collections set them too, and rewriting six narrations to read
 more smoothly is exactly what the rule above forbids.
+
+## Machine translation is switched on for hadith, at the owner's request
+
+**2026-09-10.** `0047` forbade this and its reasons still stand — a narration is
+a claim about what the Prophet ﷺ said, published translations already exist, and
+the question pipeline's guard (a mistranslation must not change which answer is
+correct) has no equivalent for prose. The owner read that and turned it on
+anyway, for testing, with one account in existence: *"allow machine translation
+just for testing sake — when I want it stopped I will let you know."* Their call.
+`0065` is the narrowest thing that does it.
+
+**Read this before changing anything here.** The rule that is not negotiable:
+
+> **A machine may only write a locale that is empty.**
+
+Enforced in the database, not the worker. `complete_hadith_translation` inserts
+with `on conflict do nothing` and there is **no update statement in the file**.
+No published edition, no hand-typed row and no earlier machine row can be
+overwritten through that path. Proved against the live table before anything was
+written: an overwrite of an existing Hausa row returned false and left the text
+and the flag untouched, English was refused, and a nine-character body was
+refused. 1,513 rows, 0 changed.
+
+**How to stop it**, which is the whole reason `is_machine` survived the owner's
+reasonable question about whether a single tester needs flags:
+
+```sql
+delete from public.hadith_translations where is_machine;
+```
+
+The imported editions and the 62 hand-typed Hausa rows are untouchable by that
+statement. Then drop the `translate-hadiths` function if it should not come back.
+
+**What was deliberately left out.** No queue table, no trigger, no cron, and no
+badge on the card — the owner asked for the marker to be left off and asked
+whether the ceremony was needed for one tester. It was not. The worker runs only
+when somebody runs it, which is a far easier thing to stop than a timer.
+
+```
+POST /functions/v1/translate-hadiths
+{ "locale": "ha", "limit": 20 }
+{ "locale": "ha", "reference": "bukhari:6469" }   // one narration
+```
+
+`p_reference` is not a convenience. On the day this was built there were **324**
+Hausa gaps and the hadith actually on screen was the **209th** of them; on a key
+capped at twenty calls a day, reaching it by walking the list would have taken a
+fortnight, and a translation you cannot look at is not a translation you have
+tested.
+
+**Two rows exist so far**, both Hausa: `bukhari:6469` (2026-09-10) and
+`bukhari:6529` (2026-09-11), so the card and its rollover can both be seen.
+
+**One consequence worth knowing before it surprises you.** `splitNarration`
+lifts the chain out of the text for English only — the pattern begins with the
+literal word "Narrated". The model's Hausa opens *"An ruwaito daga Abu
+Huraira: …"*, which is the same heading in Hausa and is **not** lifted, so the
+English card shows a NARRATED BY eyebrow and the Hausa card does not. Not
+broken, and the Hausa colon is spaced so it reads correctly inline — but the two
+languages now present the same narration differently, and extending the reader
+to five more languages is a thing to decide rather than to guess at.
+
+Incidentally, the model rendered the heading as **"An ruwaito daga"** where
+`i18n.ts` renders `narratedBy` as **"Ruwayar {narrator}"**. That is not evidence
+of anything — it is one model's opinion — but it is worth putting to the owner,
+who reads Hausa, along with the four strings listed under the Cibiyar Lada fix.
 
 ## Open items
 
