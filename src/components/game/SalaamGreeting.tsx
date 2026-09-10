@@ -64,7 +64,7 @@ export function SalaamGreeting() {
           title={
             isMax
               ? rank.title
-              : `${rank.title} · ${xpToNext} XP to ${next?.title ?? ""}`
+              : `${rank.title} · ${t("xpToRank", { xp: xpToNext, rank: next?.title ?? "" })}`
           }
         >
           <RankIcon className="h-3.5 w-3.5 text-primary" aria-hidden />
@@ -85,9 +85,18 @@ export function SalaamGreeting() {
             />
           </div>
           {/* "500 XP → Talib" beside a MUBTADI badge read as though the
-              seeker held two ranks at once. Saying "to" makes it a target. */}
+              seeker held two ranks at once. Saying "to" makes it a target.
+
+              It said "XP", and the profile — the only other screen that shows
+              this same number — calls it **Barakah**. One quantity, two names,
+              on the two screens a player flips between; the owner read the
+              pair as two different figures that failed to agree. `xpToRank`
+              was already in the string table, already saying Barakah, and
+              already translated into all six languages. This line was simply
+              never wired to it, so it was also the last English left on the
+              home screen for a Hausa reader. */}
           <p className="mt-1 text-[11px] text-on-surface-variant/60">
-            {xpToNext} XP to {next?.title}
+            {t("xpToRank", { xp: xpToNext, rank: next?.title ?? "" })}
           </p>
         </div>
       )}

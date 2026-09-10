@@ -1,12 +1,5 @@
 import {
-  Sprout,
-  BookOpen,
-  BookMarked,
   Scale,
-  ScrollText,
-  Search,
-  Crown,
-  Flame,
   Book,
   Heart,
   Landmark,
@@ -27,7 +20,7 @@ import {
   Plus
 } from 'lucide-react';
 import type { Rank, Category, Question, Topic, CategoryAchievement, CategoryDetails } from './types';
-import { MosqueIcon } from '@/components/icons/MosqueIcon';
+import { RANK_EMBLEMS } from '@/components/icons/RankEmblems';
 
 /**
  * The nine ranks.
@@ -46,17 +39,26 @@ import { MosqueIcon } from '@/components/icons/MosqueIcon';
  * classes picked with no relation to each other; they are tokens now, ordered
  * as a deliberate cool-to-warm climb that ends on the brand gold, so the ramp
  * itself reads as ascent rather than nine unrelated hues.
+ *
+ * `icon` is no longer borrowed from lucide. Each rank carries an emblem drawn
+ * for it — see `RankEmblems.tsx`, which also records why a magnifying glass
+ * for Mufassir and a crown for Imam were the wrong pictures.
+ *
+ * `slug` matches `rank_tiers.slug`, and is what keys the emblem map. The
+ * emblems are looked up by that rather than by position so that inserting a
+ * tier in the database cannot silently move eight emblems onto the wrong
+ * ranks.
  */
 export const RANKS: Rank[] = [
-  { level: 1, title: 'Mubtadi', icon: Sprout, theme: 'text-success', minPoints: 0 },
-  { level: 2, title: 'Talib', icon: BookOpen, theme: 'text-info', minPoints: 3000 },
-  { level: 3, title: 'Hafiz', icon: BookMarked, theme: 'text-info-bright', minPoints: 9000 },
-  { level: 4, title: 'Faqih', icon: Scale, theme: 'text-special', minPoints: 18000 },
-  { level: 5, title: 'Muhaddith', icon: ScrollText, theme: 'text-special-bright', minPoints: 30000 },
-  { level: 6, title: 'Mufassir', icon: Search, theme: 'text-secondary', minPoints: 48000 },
-  { level: 7, title: 'Shaykh', icon: MosqueIcon, theme: 'text-warning', minPoints: 72000 },
-  { level: 8, title: 'Imam', icon: Crown, theme: 'text-medal-gold', minPoints: 108000 },
-  { level: 9, title: 'Mujaddid', icon: Flame, theme: 'text-primary', minPoints: 150000 },
+  { level: 1, slug: 'mubtadi', title: 'Mubtadi', icon: RANK_EMBLEMS.mubtadi, theme: 'text-success', minPoints: 0 },
+  { level: 2, slug: 'talib', title: 'Talib', icon: RANK_EMBLEMS.talib, theme: 'text-info', minPoints: 3000 },
+  { level: 3, slug: 'hafiz', title: 'Hafiz', icon: RANK_EMBLEMS.hafiz, theme: 'text-info-bright', minPoints: 9000 },
+  { level: 4, slug: 'faqih', title: 'Faqih', icon: RANK_EMBLEMS.faqih, theme: 'text-special', minPoints: 18000 },
+  { level: 5, slug: 'muhaddith', title: 'Muhaddith', icon: RANK_EMBLEMS.muhaddith, theme: 'text-special-bright', minPoints: 30000 },
+  { level: 6, slug: 'mufassir', title: 'Mufassir', icon: RANK_EMBLEMS.mufassir, theme: 'text-secondary', minPoints: 48000 },
+  { level: 7, slug: 'shaykh', title: 'Shaykh', icon: RANK_EMBLEMS.shaykh, theme: 'text-warning', minPoints: 72000 },
+  { level: 8, slug: 'imam', title: 'Imam', icon: RANK_EMBLEMS.imam, theme: 'text-medal-gold', minPoints: 108000 },
+  { level: 9, slug: 'mujaddid', title: 'Mujaddid', icon: RANK_EMBLEMS.mujaddid, theme: 'text-primary', minPoints: 150000 },
 ];
 
 /**

@@ -1,4 +1,5 @@
 import type { AchievementRarity } from "./design-tokens"
+import { RANKS } from "./constants"
 
 /**
  * How rare an achievement is.
@@ -40,18 +41,17 @@ interface Criteria {
   category_slug?: string
 }
 
-/** Rank slugs in ladder order, used to score a `rank` criterion by depth. */
-const RANK_ORDER = [
-  "mubtadi",
-  "talib",
-  "hafiz",
-  "faqih",
-  "muhaddith",
-  "mufassir",
-  "shaykh",
-  "imam",
-  "mujaddid",
-]
+/**
+ * Rank slugs in ladder order, used to score a `rank` criterion by depth.
+ *
+ * Derived from `RANKS` rather than typed out. It was a second hand-written
+ * copy of the same nine slugs, which is a drift waiting to happen: a tenth
+ * tier added to the database and to `constants.ts` would have scored zero
+ * here — `indexOf` returns -1 and the branch below reads that as "not a rank
+ * achievement" — so the rarest badge in the game would have rendered as the
+ * commonest, silently. One list now.
+ */
+const RANK_ORDER: string[] = RANKS.map((r) => r.slug)
 
 /**
  * A single effort score. Higher is harder.

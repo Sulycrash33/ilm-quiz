@@ -1,7 +1,19 @@
 import type { LucideIcon } from 'lucide-react';
+import type { RankSlug } from '@/components/icons/RankEmblems';
 
 export interface Rank {
   level: number;
+  /**
+   * Matches `rank_tiers.slug`, which is what the database keys on and what
+   * `RANK_EMBLEMS` is keyed by.
+   *
+   * New. `Rank` carried a display `title` and nothing else identifying, so a
+   * rank read off `profiles` and a rank derived here had no field in common
+   * and could not be matched at all without comparing prose. `achievement-
+   * rarity.ts` had already needed the ladder as slugs and had solved it by
+   * writing all nine out again; it reads them from here now.
+   */
+  slug: RankSlug;
   title: string;
   icon: LucideIcon | React.FC<React.SVGProps<SVGSVGElement>>;
   theme: string;

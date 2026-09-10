@@ -244,11 +244,29 @@ export default {
           '0%, 100%': {boxShadow: '0 0 22px -8px rgba(240, 205, 109, 0.35)'},
           '50%': {boxShadow: '0 0 34px -4px rgba(240, 205, 109, 0.6)'},
         },
+        // The wordmark's gold, moving. The gradient is painted twice as wide
+        // as the text and slid across it, so the light travels through the
+        // letters rather than the letters changing colour. Nine seconds and
+        // ease-in-out on purpose: this sits at the top of the most-visited
+        // screen in the app, and anything faster is a distraction on a page
+        // people come to in order to read.
+        'wordmark-sheen': {
+          '0%, 100%': {backgroundPosition: '0% 50%'},
+          '50%': {backgroundPosition: '100% 50%'},
+        },
+        // The star beside it, breathing. Offset from the sheen's period so the
+        // two never sync up into a single pulse.
+        'star-twinkle': {
+          '0%, 100%': {opacity: '0.55', transform: 'scale(0.9) rotate(0deg)'},
+          '50%': {opacity: '1', transform: 'scale(1) rotate(45deg)'},
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'pulse-slow': 'pulse-slow 2.8s ease-in-out infinite',
+        'wordmark-sheen': 'wordmark-sheen 9s ease-in-out infinite',
+        'star-twinkle': 'star-twinkle 6.5s ease-in-out infinite',
       },
     },
   },

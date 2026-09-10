@@ -74,7 +74,7 @@ section.
 | Active pg_cron jobs | **6** |
 | `vault.secrets` | **2 of 2 set** |
 | Migrations | through **`0064`**, disk and database in step — 63 files, because `0052` was never used |
-| Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware` |
+| Gates | `tsc --noEmit`, `build`, `test:engine`, `test:i18n`, `test:middleware`, `test:narration` |
 
 Production: <https://ilm-quiz.vercel.app>. Admin: `/admin`, or Profile →
 Overview → the **Game master** card.
@@ -1818,11 +1818,90 @@ the same `resetsAt`, as the card on `/rewards`. The arrow survives only while
 something is genuinely collectable — a spent challenge with an unclaimed reward
 still invites, because tapping through still gets you something.
 
+## The numbers were right and the screen was wrong
+
+**2026-09-10, the second sitting by a real player, and it found five things.**
+The headline one is worth reading carefully because the code was correct:
+
+> *"How did it get 40 percent accuracy when all I have been playing is just the
+> daily challenge?"*
+
+The register says: five attempts, all first answers, all from the daily
+challenge of 2026-09-09, **two correct**. Two of five is 40%. `profile-stats.ts`
+computed it exactly as intended and there was no bug to find.
+
+The bug was that **nothing on the card said "of five"**. `PremiumStat` printed a
+bare `40%` under the word ACCURACY, between a rank and a global position, with
+no denominator anywhere on the page — and a figure a player cannot check is a
+figure a player is right to distrust. `PremiumStat` takes a `hint` now and the
+profile passes `2 of 5 correct`. This is the *third* time this project has been
+told the same thing in different words (see "The home screen stopped showing a
+number it could not explain", and "One word, six meanings"), and the rule that
+keeps falling out of it is worth writing down plainly:
+
+> **Never print a percentage without the count it came from.**
+
+The other four, in the order they were reported:
+
+- **The rank chip sat on the player's face.** It was absolutely positioned at
+  `-top-2 -right-2` over the profile avatar. It stacks under the portrait now.
+  A badge overlapping a face is a notification dot's job; a rank is a title.
+- **The nine ranks all wore borrowed icons.** A magnifying glass for Mufassir,
+  a crown for Imam — a crown being close to the opposite of what an imam is —
+  and two lucide books that are the same picture at chip size. Nine emblems are
+  drawn for them now in `RankEmblems.tsx`, keyed by `rank_tiers.slug`. Read the
+  comment at the top of that file before touching them: **four of the nine were
+  wrong in ways only a rendering showed**, and the record of what each wrong
+  one actually looked like is the useful part.
+- **XP and Barakah were the same number under two names.** `SalaamGreeting`
+  said "2928 XP to Talib"; `/profile`, one tap away, called the same quantity
+  Barakah. The string it needed — `xpToRank`, already saying Barakah, already
+  in six languages — had been in the table the whole time and was never wired
+  up, so that line was also the last untranslated English on the home screen.
+  The two unlabelled figures in the header pill (streak and coins) now name
+  themselves to a screen reader and on hover for the same reason.
+- **The hadith of the day was not a sentence.** It rendered
+  `Narrated Abu Huraira:I heard Allah's Messenger…` — no "by", no space. Both
+  faults come from the import: the printed edition sets the narrator as a
+  heading above the text, and flattening that into one string produced 302 rows
+  like this, 250 of them with the colon jammed against the next word.
+
+## The hadith text is repaired at render, never in the table
+
+Worth its own heading because the tempting fix is a one-line `update` and it is
+the wrong fix. `0047`'s rule is that hadith text comes from a published edition
+or a human's keyboard and is never rewritten — a "tidied" narration no longer
+matches the edition it cites. So `src/lib/narration.ts` splits the heading off
+at render time and the stored bytes never move.
+
+Two regexes, both narrowed by real rows rather than by taste, and the
+narrowings are the whole content of the file:
+
+- The narrator pattern is bounded to 90 characters. Unbounded, it swallows
+  everything up to the first colon of a **Qur'anic citation** and presents a
+  paragraph as a narrator's name.
+- The colon repair requires a Latin letter or `)` before the colon. Without
+  that, the twelve rows citing verses as `(6:83)` become `(6: 83)`.
+- It requires a letter or an opening quote after it. Without that,
+  `an-Nawawi says:] We have related` becomes `says: ]`.
+
+Checked against the whole live table, not a sample: of 1,513 rows, 302 English
+ones yield a narrator, 5 more get only a colon spaced, **0 citations are
+broken**, and every Arabic, French, Hausa, Indonesian and Malay row comes back
+byte-identical. `npm run test:narration` holds all of it, including the two
+citations that broke earlier drafts.
+
+Six of the 302 leave a body starting mid-clause — *"Narrated `Abbas: that he
+said to the Prophet…"* — which reads as a fragment under its heading. That is
+how the printed collections set them too, and rewriting six narrations to read
+more smoothly is exactly what the rule above forbids.
+
 ## Open items
 
 1. **Somebody needs to play the app.** Still the top item, still not a coding
-   task, and now by a wider margin than ever. Zero attempts means **no screen
-   shipped in the last two weeks has ever rendered with real data behind it**,
+   task, and now by a wider margin than ever. Five attempts, all of them the
+   one daily challenge of 2026-09-09, means **almost no screen shipped in the
+   last two weeks has ever rendered with real data behind it**,
    and 2026-09-05 alone changed the home screen, the daily reward, the daily
    challenge, battle and all three play modes. Every one of those was verified
    against the database and the five gates; not one was clicked.
@@ -1845,11 +1924,21 @@ still invites, because tapping through still gets you something.
    found by five gates over two weeks.** If there is one number in this
    document to act on, it is that one.
 
+   **And a sixth through tenth on 2026-09-10.** One sitting, one screenshot of
+   the profile and one of the home screen, five faults: an unexplained
+   percentage, a rank badge sitting on the avatar's face, nine ranks wearing
+   borrowed icons, one quantity called XP on one screen and Barakah on the
+   next, and a hadith missing a word and a space. See "The numbers were right
+   and the screen was wrong". Note what kind of faults these are — not one is
+   a wrong value, and not one is anything a gate can assert. **Ten of ten
+   findings in this project's history came from a person looking at it.**
+
    **What to press, in order, and what each proves.** Fifteen minutes total.
 
    1. Sign in, open the daily challenge, answer all five → proves `/play/daily`,
-      the fixed ladder, `submit_quiz_answer`, and writes the first ever row to
-      `attempts`.
+      the fixed ladder and `submit_quiz_answer`. **Done once, on 2026-09-09**;
+      it is the only one of these six that has ever been pressed, and it is
+      where every number on the profile today comes from.
    2. Claim the daily challenge reward on `/challenges` → proves
       `complete_daily_challenge_rpc` and its check against `attempts`.
    3. Claim the daily login reward → proves the 0053 gate, since five answers
