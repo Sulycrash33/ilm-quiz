@@ -4122,7 +4122,7 @@ const haTranslations: Translations = {
   hapticsHint: "Gajeriyar girgiza sa’ad da ka amsa. A kunne ta asali, domin kai kaɗai ke jinta.",
   levelsCleared: "An kammala matakai {done} daga {total}",
   milestoneTrophies: "Kofunan Nasara",
-  collectionBadges: "Bajojin Tari",
+  collectionBadges: "Jerin Bajoji",
   achievementPoints: "Makin nasara",
   rarityCommon: "Talakawa",
   rarityUncommon: "Ba safai ba",
